@@ -3,14 +3,12 @@
 import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { SyllabusNode } from '@/types/syllabus'
-import upscData from '@/data/syllabus/upsc-gs1.json' 
-// We will add other imports (ssc, bank) later or load dynamically
 
 type SyllabusContextType = {
-  activeExam: string | null // 'upsc', 'ssc', 'custom', or null (nothing selected)
+  activeExam: string | null
   setActiveExam: (id: string) => void
   data: SyllabusNode[]
-  setData: (nodes: SyllabusNode[]) => void // Allow setting data manually (for Custom Uploads)
+  setData: (nodes: SyllabusNode[]) => void
   completedIds: string[]
   toggleNode: (id: string) => void
   stats: {
@@ -23,10 +21,13 @@ type SyllabusContextType = {
 
 const SyllabusContext = createContext<SyllabusContextType | undefined>(undefined)
 
-// HELPER: Count leaf nodes
+// HELPER: Count leaf nodes (Recursively)
 const countLeaves = (nodes: SyllabusNode[]): number => {
   let count = 0
   for (const node of nodes) {
+    // FIX: Skip 'mains_optional' to keep percentage accurate
+    if (node.id === 'mains_optional') continue;
+
     if (node.type === 'leaf') count++
     else if (node.children) count += countLeaves(node.children)
   }
@@ -36,19 +37,21 @@ const countLeaves = (nodes: SyllabusNode[]): number => {
 export function SyllabusProvider({ children }: { children: React.ReactNode }) {
   const supabase = createClient()
   
-  // 1. STATE
+  // --- STATE ---
   const [activeExam, setActiveExamState] = useState<string | null>(null)
   const [data, setData] = useState<SyllabusNode[]>([]) 
   const [completedIds, setCompletedIds] = useState<string[]>([])
   const [loading, setLoading] = useState(true)
 
-  // 2. INITIAL LOAD (Fetch Settings & Progress)
+  // 1. INITIAL INIT (Auth & Settings only)
   useEffect(() => {
     const init = async () => {
       const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
+      if (!user) {
+        setLoading(false)
+        return
+      }
 
-      // A. Get Active Exam
       const { data: settings } = await supabase
         .from('syllabus_settings')
         .select('active_exam_id')
@@ -57,41 +60,76 @@ export function SyllabusProvider({ children }: { children: React.ReactNode }) {
       
       if (settings?.active_exam_id) {
         setActiveExamState(settings.active_exam_id)
-        
-        // Load default data if it's a preset
-        if (settings.active_exam_id === 'upsc') setData(upscData as SyllabusNode[])
-        // else if (settings.active_exam_id === 'ssc') setData(sscData) ...
-        
-        // B. Get Progress for this exam
-        const { data: progress } = await supabase
-          .from('syllabus_progress')
-          .select('completed_ids')
-          .eq('user_id', user.id)
-          .eq('exam_id', settings.active_exam_id)
-          .single()
-
-        if (progress?.completed_ids) {
-          // Parse JSONB to string[]
-          const ids = typeof progress.completed_ids === 'string' 
-            ? JSON.parse(progress.completed_ids) 
-            : progress.completed_ids
-          setCompletedIds(ids)
-        }
+      } else {
+        setLoading(false)
       }
-      setLoading(false)
     }
     init()
   }, [])
 
-  // 3. SET ACTIVE EXAM (User Selects Card)
+
+  // 2. DATA LOADER
+  useEffect(() => {
+    if (!activeExam) return
+
+    const loadData = async () => {
+      setLoading(true)
+      try {
+        // A. Load The JSON File
+        if (activeExam === 'upsc') {
+          const mod = await import('@/data/exams/upsc')
+          setData(mod.default as SyllabusNode[])
+        } 
+        else if (activeExam === 'ssc') {
+          const mod = await import('@/data/exams/ssc/ssc-syllabus.json')
+          setData(mod.default as SyllabusNode[])
+        }
+        else if (activeExam === 'bank') {
+           const mod = await import('@/data/exams/bank/banking-exam.json')
+           setData(mod.default as SyllabusNode[])
+        }
+        else if (activeExam === 'custom') {
+           const saved = localStorage.getItem('krama_custom_syllabus_data')
+           if (saved) setData(JSON.parse(saved))
+           else setData([])
+        }
+
+        // B. Load Progress (With FIX for .maybeSingle)
+        const { data: { user } } = await supabase.auth.getUser()
+        if (user) {
+          const { data: progress, error } = await supabase
+            .from('syllabus_progress')
+            .select('completed_ids')
+            .eq('user_id', user.id)
+            .eq('exam_id', activeExam)
+            .maybeSingle() // <--- FIX: Don't error if row is missing
+
+          if (error) console.error("Load Error:", error)
+
+          if (progress?.completed_ids) {
+            const ids = typeof progress.completed_ids === 'string' 
+              ? JSON.parse(progress.completed_ids) 
+              : progress.completed_ids
+            setCompletedIds(ids)
+          } else {
+            setCompletedIds([])
+          }
+        }
+
+      } catch (e) {
+        console.error("Failed to load syllabus data", e)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadData()
+  }, [activeExam])
+
+
+  // 3. SET ACTIVE EXAM
   const setActiveExam = async (examId: string) => {
     setActiveExamState(examId)
-    
-    // Load Data immediately for UX
-    if (examId === 'upsc') setData(upscData as SyllabusNode[])
-    if (examId === 'custom') setData([]) // Clear data, wait for upload
-
-    // Save Preference to DB
     const { data: { user } } = await supabase.auth.getUser()
     if (user) {
       await supabase.from('syllabus_settings').upsert({
@@ -101,50 +139,48 @@ export function SyllabusProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-  // 4. TOGGLE NODE (With Debounced Cloud Save)
+  // 4. TOGGLE NODE (THE CRITICAL FIX)
   const toggleNode = useCallback(async (id: string) => {
-    // A. Optimistic Update (Instant UI)
+    // Optimistic Update
     let newIds: string[] = []
     setCompletedIds(prev => {
       newIds = prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
       return newIds
     })
 
-    // B. Save to Cloud (We trigger this immediately here, but usually debounce is better for high volume)
-    // For simplicity, we save on every click. Supabase is fast enough for 1 click/sec.
+    // Cloud Sync
     const { data: { user } } = await supabase.auth.getUser()
     if (user && activeExam) {
-       await supabase.from('syllabus_progress').upsert({
-         user_id: user.id,
-         exam_id: activeExam,
-         completed_ids: newIds // Saves the whole array
-       })
+       const { error } = await supabase.from('syllabus_progress').upsert(
+         {
+           user_id: user.id,
+           exam_id: activeExam,
+           completed_ids: newIds
+         },
+         { onConflict: 'user_id, exam_id' } // <--- FIX: Forces update instead of duplicate insert
+       )
+       
+       if (error) {
+         console.error("Save Failed:", error)
+         // Optional: Revert state if save fails? 
+         // For now, we just log it.
+       }
     }
   }, [activeExam])
 
-  // 5. STATS
+  // 5. STATS CALCULATION
   const stats = useMemo(() => {
     const totalLeaves = countLeaves(data)
-    // Only count ids that match current data (in case user switches files)
-    // Actually, for simplicity, we just count length. 
-    // Ideally we intersect, but for custom JSONs with changing IDs, length is risky.
-    // Let's stick to simple length for now.
     const completedLeaves = completedIds.length 
     const percentage = totalLeaves === 0 ? 0 : Math.round((completedLeaves / totalLeaves) * 100)
+    const safePercentage = Math.min(percentage, 100)
 
-    return { totalLeaves, completedLeaves, percentage }
+    return { totalLeaves, completedLeaves, percentage: safePercentage }
   }, [data, completedIds])
 
   return (
     <SyllabusContext.Provider value={{ 
-      activeExam, 
-      setActiveExam, 
-      data, 
-      setData, 
-      completedIds, 
-      toggleNode, 
-      stats,
-      loading 
+      activeExam, setActiveExam, data, setData, completedIds, toggleNode, stats, loading 
     }}>
       {children}
     </SyllabusContext.Provider>
