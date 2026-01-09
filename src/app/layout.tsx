@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import { Space_Grotesk } from "next/font/google"; 
 import "./globals.css";
 
-// 1. Import the AlertProvider we just created
+// 1. Import BOTH Providers
 import { AlertProvider } from '@/context/AlertContext'; 
+import { SyllabusProvider } from '@/context/SyllabusContext'; 
 
 const spaceGrotesk = Space_Grotesk({ 
   subsets: ["latin"],
@@ -24,9 +25,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${spaceGrotesk.className} antialiased bg-[#FBF9F6] text-[#1A1A1A]`}>
-        {/* 2. Wrap the entire app so popups work everywhere */}
+        {/* 2. Nest the Providers. 
+            AlertProvider is outer (UI), SyllabusProvider is inner (Data). 
+        */}
         <AlertProvider>
-          {children}
+          <SyllabusProvider>
+            {children}
+          </SyllabusProvider>
         </AlertProvider>
       </body>
     </html>

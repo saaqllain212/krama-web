@@ -5,11 +5,17 @@ import { createClient } from '@/lib/supabase/client'
 import { Play, Brain, CheckSquare } from 'lucide-react'
 import Link from 'next/link'
 import Countdown from '@/components/dashboard/Countdown'
+// 1. Import the Hook
+import { useSyllabus } from '@/context/SyllabusContext'
 
 export default function DashboardPage() {
   const [userName, setUserName] = useState('Student')
   const [focusMinutes, setFocusMinutes] = useState(0)
-  const [dueReviews, setDueReviews] = useState(0) // New State
+  const [dueReviews, setDueReviews] = useState(0)
+  
+  // 2. Get Real Stats
+  const { stats } = useSyllabus() // Returns { percentage, totalLeaves, completedLeaves }
+  
   const supabase = createClient()
 
   useEffect(() => {
@@ -17,12 +23,11 @@ export default function DashboardPage() {
       const { data: { user } } = await supabase.auth.getUser()
       
       if (user) {
-        // 1. Get Name
         if (user.user_metadata?.full_name) {
           setUserName(user.user_metadata.full_name.split(' ')[0])
         }
 
-        // 2. Get Focus Minutes (Today)
+        // Focus Minutes (Today)
         const todayStr = new Date().toISOString().split('T')[0]
         const { data: logs } = await supabase
           .from('focus_logs')
@@ -36,12 +41,11 @@ export default function DashboardPage() {
           setFocusMinutes(total)
         }
 
-        // 3. Get Due Reviews Count (Real Time)
-        // Logic: next_review is in the PAST (<= now) AND status is NOT completed
+        // Due Reviews
         const now = new Date().toISOString()
         const { count } = await supabase
           .from('topics')
-          .select('*', { count: 'exact', head: true }) // head: true means "don't fetch data, just count"
+          .select('*', { count: 'exact', head: true })
           .eq('user_id', user.id)
           .neq('status', 'completed')
           .lte('next_review', now)
@@ -101,14 +105,13 @@ export default function DashboardPage() {
           <Link href="/dashboard/focus" className="absolute inset-0" />
         </div>
 
-        {/* CARD 2: REVIEWS (Now Connected) */}
+        {/* CARD 2: REVIEWS */}
         <div className="group relative border-neo bg-brand p-6 text-black shadow-neo transition-all hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
           <div className="flex items-start justify-between">
             <div>
               <div className="text-sm font-bold uppercase tracking-widest text-black/60">
                 Due Reviews
               </div>
-              {/* REAL DATA */}
               <div className="mt-2 text-4xl font-bold tracking-tighter">
                 {dueReviews}
               </div>
@@ -120,23 +123,35 @@ export default function DashboardPage() {
           <Link href="/dashboard/review" className="absolute inset-0" />
         </div>
 
-        {/* CARD 3: SYLLABUS (Still Fake) */}
-        <div className="group border-neo bg-white p-6 shadow-neo transition-all hover:-translate-y-1">
+        {/* CARD 3: SYLLABUS (Now Real) */}
+        <div className="group relative border-neo bg-white p-6 shadow-neo transition-all hover:-translate-y-1">
           <div className="flex items-start justify-between">
             <div>
               <div className="text-sm font-bold uppercase tracking-widest text-black/40">
                 Syllabus
               </div>
-              <div className="mt-2 text-4xl font-bold tracking-tighter">12%</div>
+              {/* 3. Real Percentage */}
+              <div className="mt-2 text-4xl font-bold tracking-tighter">
+                {stats.percentage}%
+              </div>
             </div>
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-black/5">
               <CheckSquare className="h-5 w-5 stroke-[2.5px]" />
             </div>
           </div>
+          
+          {/* 4. Real Progress Bar */}
           <div className="mt-4 h-2 w-full overflow-hidden bg-black/10">
-            <div className="h-full w-[12%] bg-black" />
+            <div 
+              className="h-full bg-black transition-all duration-1000 ease-out" 
+              style={{ width: `${stats.percentage}%` }}
+            />
           </div>
+          
+          {/* Link to the Page we are about to build */}
+          <Link href="/dashboard/syllabus" className="absolute inset-0" />
         </div>
+
       </div>
     </div>
   )
