@@ -2,20 +2,39 @@
 
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { Play, Brain, CheckSquare } from 'lucide-react'
+import { 
+  Play, 
+  Brain, 
+  CheckSquare, 
+  Activity, 
+  Plus, 
+  Crown, 
+  Clock, 
+  AlertTriangle, 
+  Settings // <--- 1. Import Settings Icon
+} from 'lucide-react'
 import Link from 'next/link'
 import Countdown from '@/components/dashboard/Countdown'
-// 1. Import the Hook
 import { useSyllabus } from '@/context/SyllabusContext'
+import MocksModal from '@/components/mocks/MocksModal'
+import StudyHeatmap from '@/components/dashboard/StudyHeatmap'
+import SettingsModal from '@/components/dashboard/SettingsModal' // <--- 2. Import Modal
 
 export default function DashboardPage() {
   const [userName, setUserName] = useState('Student')
   const [focusMinutes, setFocusMinutes] = useState(0)
   const [dueReviews, setDueReviews] = useState(0)
+  const [mocksCount, setMocksCount] = useState(0)
   
-  // 2. Get Real Stats
-  const { stats } = useSyllabus() // Returns { percentage, totalLeaves, completedLeaves }
+  // MODAL STATES
+  const [isMocksModalOpen, setIsMocksModalOpen] = useState(false)
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false) // <--- 3. Settings State
   
+  // MEMBERSHIP STATE
+  const [isPremium, setIsPremium] = useState(false)
+  const [trialDaysLeft, setTrialDaysLeft] = useState<number | null>(null)
+
+  const { stats, activeExam } = useSyllabus() 
   const supabase = createClient()
 
   useEffect(() => {
@@ -27,7 +46,27 @@ export default function DashboardPage() {
           setUserName(user.user_metadata.full_name.split(' ')[0])
         }
 
-        // Focus Minutes (Today)
+        // --- 1. FETCH MEMBERSHIP STATUS ---
+        const { data: access } = await supabase
+          .from('user_access')
+          .select('is_premium, trial_starts_at')
+          .eq('user_id', user.id)
+          .single()
+
+        if (access) {
+          setIsPremium(access.is_premium)
+          
+          if (!access.is_premium) {
+            // Calculate Trial Days
+            const start = new Date(access.trial_starts_at)
+            const today = new Date()
+            const diffTime = Math.abs(today.getTime() - start.getTime())
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+            setTrialDaysLeft(14 - diffDays)
+          }
+        }
+
+        // --- 2. Focus Minutes (Today) ---
         const todayStr = new Date().toISOString().split('T')[0]
         const { data: logs } = await supabase
           .from('focus_logs')
@@ -41,27 +80,79 @@ export default function DashboardPage() {
           setFocusMinutes(total)
         }
 
-        // Due Reviews
+        // --- 3. Due Reviews ---
         const now = new Date().toISOString()
-        const { count } = await supabase
+        const { count: reviewCount } = await supabase
           .from('topics')
           .select('*', { count: 'exact', head: true })
           .eq('user_id', user.id)
           .neq('status', 'completed')
           .lte('next_review', now)
         
-        if (count !== null) setDueReviews(count)
+        if (reviewCount !== null) setDueReviews(reviewCount)
+
+        // --- 4. Mocks Count ---
+        const { data: mockData } = await supabase
+            .from('mock_logs')
+            .select('logs')
+            .eq('user_id', user.id)
+            .eq('exam_id', activeExam || 'upsc')
+            .maybeSingle()
+        
+        if (mockData?.logs) {
+            // @ts-ignore
+            setMocksCount(mockData.logs.length)
+        }
       }
     }
     getData()
-  }, [supabase])
+  }, [supabase, activeExam])
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-12 pb-20 relative">
       
       {/* HEADER */}
       <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
-        <div>
+        <div className="w-full md:w-auto md:flex-1">
+          
+          {/* TOP ROW: Badge (Left) + Settings (Right) */}
+          <div className="mb-4 flex items-center justify-between pr-2">
+            
+            {/* STATUS BADGE */}
+            <div className="inline-flex">
+              {isPremium ? (
+                <div className="flex items-center gap-2 rounded-full border border-black bg-yellow-400 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-black shadow-[2px_2px_0_0_#000]">
+                  <Crown size={12} fill="black" />
+                  Pro Member
+                </div>
+              ) : (
+                <div className={`flex items-center gap-2 rounded-full border border-black px-3 py-1 text-[10px] font-black uppercase tracking-widest shadow-[2px_2px_0_0_#000]
+                  ${(trialDaysLeft !== null && trialDaysLeft <= 3) ? 'bg-red-500 text-white' : 'bg-stone-200 text-stone-600'}`}>
+                  {trialDaysLeft !== null && trialDaysLeft > 0 ? (
+                    <>
+                      <Clock size={12} />
+                      Trial: {trialDaysLeft} Days Left
+                    </>
+                  ) : (
+                    <>
+                      <AlertTriangle size={12} />
+                      Trial Expired
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* NEW: SETTINGS BUTTON */}
+            <button 
+              onClick={() => setIsSettingsOpen(true)}
+              className="rounded-full bg-white p-2 text-stone-400 hover:bg-black hover:text-white transition-all shadow-sm border border-stone-200"
+              title="Settings"
+            >
+              <Settings size={20} />
+            </button>
+          </div>
+
           <h1 className="text-4xl font-bold tracking-tighter md:text-5xl">
             Good afternoon, {userName}.
           </h1>
@@ -71,11 +162,18 @@ export default function DashboardPage() {
           
           <div className="mt-6 flex gap-2">
             <Link 
-              href="/dashboard/insights" 
-              className="rounded-full border border-black/10 bg-white px-5 py-2 text-xs font-bold uppercase tracking-widest text-black/60 hover:bg-black hover:text-white transition-colors"
+              href="/dashboard/mocks/insights" 
+              className="rounded-full border border-black/10 bg-white px-5 py-2 text-xs font-bold uppercase tracking-widest text-black/60 hover:bg-black hover:text-white transition-colors flex items-center gap-2"
             >
-              View Insights
+              <Activity size={14} /> Insights
             </Link>
+
+            <button 
+              onClick={() => setIsMocksModalOpen(true)}
+              className="rounded-full border border-black/10 bg-black px-5 py-2 text-xs font-bold uppercase tracking-widest text-white hover:bg-stone-800 transition-colors flex items-center gap-2 shadow-lg shadow-black/20"
+            >
+              <Plus size={14} /> Log Mock
+            </button>
           </div>
         </div>
 
@@ -85,18 +183,13 @@ export default function DashboardPage() {
       </div>
 
       {/* STATS GRID */}
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-        
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
         {/* CARD 1: DEEP WORK */}
         <div className="group relative border-neo bg-black p-6 text-white shadow-neo transition-all hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(245,158,11,1)]">
           <div className="flex items-start justify-between">
             <div>
-              <div className="text-sm font-bold uppercase tracking-widest text-white/60">
-                Deep Work
-              </div>
-              <div className="mt-2 text-4xl font-bold tracking-tighter">
-                {focusMinutes}m
-              </div>
+              <div className="text-sm font-bold uppercase tracking-widest text-white/60">Deep Work</div>
+              <div className="mt-2 text-4xl font-bold tracking-tighter">{focusMinutes}m</div>
             </div>
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20">
               <Play className="h-5 w-5 fill-current" />
@@ -109,12 +202,8 @@ export default function DashboardPage() {
         <div className="group relative border-neo bg-brand p-6 text-black shadow-neo transition-all hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
           <div className="flex items-start justify-between">
             <div>
-              <div className="text-sm font-bold uppercase tracking-widest text-black/60">
-                Due Reviews
-              </div>
-              <div className="mt-2 text-4xl font-bold tracking-tighter">
-                {dueReviews}
-              </div>
+              <div className="text-sm font-bold uppercase tracking-widest text-black/60">Due Reviews</div>
+              <div className="mt-2 text-4xl font-bold tracking-tighter">{dueReviews}</div>
             </div>
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-black/10">
               <Brain className="h-5 w-5 stroke-[2.5px]" />
@@ -123,36 +212,56 @@ export default function DashboardPage() {
           <Link href="/dashboard/review" className="absolute inset-0" />
         </div>
 
-        {/* CARD 3: SYLLABUS (Now Real) */}
+        {/* CARD 3: SYLLABUS */}
         <div className="group relative border-neo bg-white p-6 shadow-neo transition-all hover:-translate-y-1">
           <div className="flex items-start justify-between">
             <div>
-              <div className="text-sm font-bold uppercase tracking-widest text-black/40">
-                Syllabus
-              </div>
-              {/* 3. Real Percentage */}
-              <div className="mt-2 text-4xl font-bold tracking-tighter">
-                {stats.percentage}%
-              </div>
+              <div className="text-sm font-bold uppercase tracking-widest text-black/40">Syllabus</div>
+              <div className="mt-2 text-4xl font-bold tracking-tighter">{stats.percentage}%</div>
             </div>
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-black/5">
               <CheckSquare className="h-5 w-5 stroke-[2.5px]" />
             </div>
           </div>
-          
-          {/* 4. Real Progress Bar */}
           <div className="mt-4 h-2 w-full overflow-hidden bg-black/10">
-            <div 
-              className="h-full bg-black transition-all duration-1000 ease-out" 
-              style={{ width: `${stats.percentage}%` }}
-            />
+            <div className="h-full bg-black transition-all duration-1000 ease-out" style={{ width: `${stats.percentage}%` }} />
           </div>
-          
-          {/* Link to the Page we are about to build */}
           <Link href="/dashboard/syllabus" className="absolute inset-0" />
         </div>
 
+        {/* CARD 4: MOCKS */}
+        <div className="group relative border-neo bg-white p-6 shadow-neo transition-all hover:-translate-y-1">
+          <div className="flex items-start justify-between">
+            <div>
+              <div className="text-sm font-bold uppercase tracking-widest text-black/40">Tests Taken</div>
+              <div className="mt-2 text-4xl font-bold tracking-tighter">{mocksCount}</div>
+            </div>
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-black/5">
+              <Activity className="h-5 w-5 stroke-[2.5px]" />
+            </div>
+          </div>
+          <Link href="/dashboard/mocks" className="absolute inset-0" />
+        </div>
       </div>
+
+      {/* HEATMAP */}
+      <div className="mt-12">
+        <StudyHeatmap />
+      </div>
+
+      {/* MOCKS MODAL */}
+      <MocksModal 
+         open={isMocksModalOpen} 
+         onClose={() => setIsMocksModalOpen(false)} 
+         examId={activeExam || 'upsc'} 
+         onSuccess={() => window.location.reload()} 
+      />
+
+      {/* SETTINGS MODAL */}
+      <SettingsModal 
+        open={isSettingsOpen} 
+        onClose={() => setIsSettingsOpen(false)} 
+      />
     </div>
   )
 }

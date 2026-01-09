@@ -3,28 +3,29 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowRight, Loader2 } from 'lucide-react'
+import { ArrowRight, Loader2, Lock, AlertTriangle } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 
 export default function SignupForm() {
   const router = useRouter()
   const supabase = createClient()
   
-  // 1. State Variables (To hold what the user types)
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  
+  // New State: To distinguish between a "Glitch" and a "Hard Block"
+  const [isCapacityError, setIsCapacityError] = useState(false)
 
-  // 2. The Signup Logic
   const handleSignup = async (e: React.FormEvent) => {
-    e.preventDefault() // Stop page refresh
+    e.preventDefault()
     setLoading(true)
     setError(null)
+    setIsCapacityError(false)
 
     try {
-      // Send data to Supabase
       const { data, error: authError } = await supabase.auth.signUp({
         email,
         password,
@@ -37,12 +38,17 @@ export default function SignupForm() {
 
       if (authError) throw authError
 
-      // If successful, go to dashboard
       if (data.user) {
          router.push('/dashboard')
       }
     } catch (err: any) {
-      setError(err.message || 'Something went wrong')
+      const msg = err.message || 'Something went wrong'
+      setError(msg)
+      
+      // Check if it's our "Bouncer" Trigger
+      if (msg.toLowerCase().includes('capacity') || msg.toLowerCase().includes('closed')) {
+        setIsCapacityError(true)
+      }
     } finally {
       setLoading(false)
     }
@@ -51,11 +57,26 @@ export default function SignupForm() {
   return (
     <form onSubmit={handleSignup} className="space-y-6">
       
-      {/* Error Message Box (Only shows if there is an error) */}
+      {/* ERROR DISPLAY */}
       {error && (
-        <div className="border-2 border-black bg-red-100 p-3 text-sm font-bold text-red-600">
-          {error}
-        </div>
+        isCapacityError ? (
+          // 1. CAPACITY/CLOSED MESSAGE (Professional)
+          <div className="border-2 border-amber-600 bg-amber-50 p-4 flex gap-3 items-start">
+             <Lock className="text-amber-600 shrink-0" size={20} />
+             <div>
+               <h3 className="font-black uppercase text-amber-900 text-sm">Membership Closed</h3>
+               <p className="text-xs font-bold text-amber-800 mt-1 leading-relaxed">
+                 {error}
+               </p>
+             </div>
+          </div>
+        ) : (
+          // 2. STANDARD ERROR (Red)
+          <div className="border-2 border-black bg-red-100 p-3 flex gap-2 text-sm font-bold text-red-600">
+            <AlertTriangle size={18} />
+            {error}
+          </div>
+        )
       )}
 
       <div className="space-y-2">
@@ -94,15 +115,15 @@ export default function SignupForm() {
       </div>
 
       <button 
-        disabled={loading}
-        className="group mt-8 flex w-full items-center justify-center gap-2 border-neo bg-black py-4 text-white shadow-neo transition-all hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(204,255,0,1)] active:translate-y-0 active:shadow-neo disabled:opacity-70"
+        disabled={loading || isCapacityError} // Disable if club is full
+        className="group mt-8 flex w-full items-center justify-center gap-2 border-neo bg-black py-4 text-white shadow-neo transition-all hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(204,255,0,1)] active:translate-y-0 active:shadow-neo disabled:opacity-70 disabled:cursor-not-allowed"
       >
         {loading ? (
           <Loader2 className="h-5 w-5 animate-spin" />
         ) : (
           <>
-            <span className="font-bold uppercase tracking-widest">Create Account</span>
-            <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+            <span className="font-bold uppercase tracking-widest">{isCapacityError ? 'Sold Out' : 'Create Account'}</span>
+            {!isCapacityError && <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />}
           </>
         )}
       </button>

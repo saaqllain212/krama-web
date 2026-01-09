@@ -1,14 +1,25 @@
 'use client'
 
 import { useState, useEffect, useMemo } from 'react'
-import { ArrowLeft, ChevronRight, Folder, Check, Home, Upload, FileJson, AlertCircle, RefreshCw, Search, X, Download, AlertTriangle } from 'lucide-react'
+import { ArrowLeft, ChevronRight, Folder, Check, Home, Upload, FileJson, AlertCircle, RefreshCw, Search, X, Download, AlertTriangle, BookOpen, Layers } from 'lucide-react'
 import Link from 'next/link'
 import { useSyllabus } from '@/context/SyllabusContext'
 import { SyllabusNode } from '@/types/syllabus'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAlert } from '@/context/AlertContext'
 
-// --- HELPER: Find path for search ---
+// --- CONSTANTS ---
+const OPTIONAL_SUBJECTS = [
+  { id: 'opt_anthro', label: 'Anthropology' },
+  { id: 'opt_economics', label: 'Economics' },
+  { id: 'opt_geography', label: 'Geography' },
+  { id: 'opt_history', label: 'History' },
+  { id: 'opt_psir', label: 'PSIR' },
+  { id: 'opt_pubad', label: 'Public Administration' },
+  { id: 'opt_socio', label: 'Sociology' },
+]
+
+// --- HELPERS ---
 const findPathToNode = (nodes: SyllabusNode[], targetId: string, currentPath: SyllabusNode[] = []): SyllabusNode[] | null => {
   for (const node of nodes) {
     if (node.id === targetId) return currentPath
@@ -30,7 +41,14 @@ const flattenNodes = (nodes: SyllabusNode[]): SyllabusNode[] => {
 }
 
 export default function SyllabusPage() {
-  const { activeExam, setActiveExam, data, setData, completedIds, toggleNode, stats, loading } = useSyllabus()
+  const { 
+    activeExam, setActiveExam, 
+    optionalSubject, setOptionalSubject, resetOptionalSelection,
+    data, setData, 
+    completedIds, toggleNode, 
+    loading 
+  } = useSyllabus()
+  
   const { showAlert, askConfirm } = useAlert()
   
   const [path, setPath] = useState<SyllabusNode[]>([])
@@ -40,7 +58,6 @@ export default function SyllabusPage() {
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
-
     const reader = new FileReader()
     reader.onload = (event) => {
       try {
@@ -56,19 +73,9 @@ export default function SyllabusPage() {
     reader.readAsText(file)
   }
 
-  // Generate a dummy template for the user
+  // Generate a dummy template
   const downloadTemplate = () => {
-    const template = [
-      {
-        "id": "root_subject",
-        "title": "My Subject (Example)",
-        "type": "branch",
-        "children": [
-          { "id": "chapter_1", "title": "Chapter 1", "type": "leaf" },
-          { "id": "chapter_2", "title": "Chapter 2", "type": "leaf" }
-        ]
-      }
-    ]
+    const template = [{ "id": "root", "title": "Example Subject", "type": "branch", "children": [] }]
     const blob = new Blob([JSON.stringify(template, null, 2)], { type: "application/json" })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
@@ -76,14 +83,6 @@ export default function SyllabusPage() {
     a.download = "syllabus_template.json"
     a.click()
   }
-
-  // Load Custom Data Logic
-  useEffect(() => {
-    if (activeExam === 'custom' && data.length === 0) {
-      const saved = localStorage.getItem('krama_custom_syllabus_data')
-      if (saved) setData(JSON.parse(saved))
-    }
-  }, [activeExam, data.length, setData])
 
   const handleChangeProtocol = () => {
     askConfirm("Switch protocols? Progress is safe.", () => {
@@ -110,10 +109,9 @@ export default function SyllabusPage() {
     }
   }
 
-
   if (loading) return <div className="min-h-screen bg-[#FBF9F6] p-12 flex items-center justify-center font-bold animate-pulse">LOADING INTEL...</div>
 
-  // --- RENDER 2: SELECTION SCREEN ---
+  // --- RENDER 1: EXAM SELECTION ---
   if (!activeExam) {
     return (
       <div className="min-h-screen bg-[#FBF9F6] p-6 md:p-12 text-black">
@@ -121,7 +119,7 @@ export default function SyllabusPage() {
            <ArrowLeft size={14} /> Dashboard
         </Link>
         
-        {/* WARNING BANNER */}
+        {/* RESTORED FULL DISCLAIMER */}
         <div className="max-w-4xl mx-auto mb-12 bg-amber-50 border border-amber-200 p-4 flex items-start gap-3 rounded-md">
            <AlertTriangle className="text-amber-600 shrink-0" size={20} />
            <p className="text-sm text-amber-900 leading-relaxed">
@@ -134,31 +132,21 @@ export default function SyllabusPage() {
           <h1 className="text-4xl md:text-6xl font-black tracking-tighter uppercase mb-4">Select Protocol</h1>
           <p className="text-black/60 font-medium">Select your active front. Switching protocols preserves your progress.</p>
         </div>
-
         <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
            <button onClick={() => setActiveExam('upsc')} className="group relative bg-white border-2 border-black p-8 text-left hover:bg-black hover:text-white transition-all shadow-[8px_8px_0_0_#000] hover:translate-y-1 hover:shadow-none">
-              <div className="text-xs font-bold uppercase tracking-widest opacity-50 mb-2">Standard Issue</div>
-              <h2 className="text-3xl font-black uppercase tracking-tighter mb-4">UPSC CSE</h2>
+              <h2 className="text-3xl font-black uppercase tracking-tighter mb-2">UPSC CSE</h2>
               <p className="text-sm font-medium opacity-80">Prelims + Mains (GS & Optionals).</p>
            </button>
-
            <button onClick={() => setActiveExam('ssc')} className="group relative bg-white border-2 border-black p-8 text-left hover:bg-black hover:text-white transition-all shadow-[8px_8px_0_0_#000] hover:translate-y-1 hover:shadow-none">
-              <div className="text-xs font-bold uppercase tracking-widest opacity-50 mb-2">Standard Issue</div>
-              <h2 className="text-3xl font-black uppercase tracking-tighter mb-4">SSC CGL</h2>
+              <h2 className="text-3xl font-black uppercase tracking-tighter mb-2">SSC CGL</h2>
               <p className="text-sm font-medium opacity-80">Full Syllabus (Tier I & II).</p>
            </button>
-
            <button onClick={() => setActiveExam('bank')} className="group relative bg-white border-2 border-black p-8 text-left hover:bg-black hover:text-white transition-all shadow-[8px_8px_0_0_#000] hover:translate-y-1 hover:shadow-none">
-              <div className="text-xs font-bold uppercase tracking-widest opacity-50 mb-2">Standard Issue</div>
-              <h2 className="text-3xl font-black uppercase tracking-tighter mb-4">Bank PO</h2>
+              <h2 className="text-3xl font-black uppercase tracking-tighter mb-2">Bank PO</h2>
               <p className="text-sm font-medium opacity-80">IBPS / SBI PO Syllabus.</p>
            </button>
-
            <button onClick={() => setActiveExam('custom')} className="group relative bg-amber-100 border-2 border-amber-400 border-dashed p-8 text-left hover:bg-amber-400 hover:text-black transition-all">
-              <div className="text-xs font-bold uppercase tracking-widest text-amber-700 group-hover:text-black mb-2 flex items-center gap-2">
-                 <Upload size={14}/> Custom Operation
-              </div>
-              <h2 className="text-3xl font-black uppercase tracking-tighter mb-4 text-amber-900 group-hover:text-black">Upload JSON</h2>
+              <h2 className="text-3xl font-black uppercase tracking-tighter mb-2 text-amber-900 group-hover:text-black">Upload JSON</h2>
               <p className="text-sm font-medium text-amber-800 group-hover:text-black">Bring your own syllabus file.</p>
            </button>
         </div>
@@ -166,42 +154,69 @@ export default function SyllabusPage() {
     )
   }
 
-  // --- RENDER 3: CUSTOM UPLOAD SCREEN ---
+  // --- RENDER 2: OPTIONAL SELECTION (UPSC ONLY) ---
+  if (activeExam === 'upsc' && !optionalSubject) {
+    return (
+      <div className="min-h-screen bg-[#FBF9F6] p-6 md:p-12 text-black flex flex-col items-center justify-center">
+        <div className="max-w-2xl w-full text-center">
+          <BookOpen size={48} className="mx-auto mb-6 text-black/20" />
+          <h1 className="text-3xl font-black uppercase tracking-tighter mb-4">Select Optional Subject</h1>
+          <p className="text-black/60 mb-12">This selection filters your syllabus to ensure accurate progress tracking. You can change this later.</p>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {OPTIONAL_SUBJECTS.map((opt) => (
+              <button 
+                key={opt.id} 
+                onClick={() => setOptionalSubject(opt.id)}
+                className="p-4 border-2 border-black/10 bg-white hover:border-black hover:bg-black hover:text-white transition-all font-bold uppercase tracking-tight text-left"
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+          
+          <button 
+            onClick={() => setActiveExam('')} 
+            className="mt-12 text-xs font-bold uppercase tracking-widest text-red-500 hover:text-red-700"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  // --- RENDER 3: CUSTOM UPLOAD ---
   if (activeExam === 'custom' && data.length === 0) {
     return (
        <div className="min-h-screen bg-[#FBF9F6] p-12 flex flex-col items-center justify-center text-center">
           <div className="bg-white border-4 border-black p-12 max-w-lg w-full shadow-[12px_12px_0_0_#000]">
              <FileJson size={48} className="mx-auto mb-6 text-black/20" />
              <h2 className="text-2xl font-black uppercase mb-4">Initialize Custom Protocol</h2>
-             
              <label className="block w-full cursor-pointer bg-black text-white font-bold uppercase py-4 hover:bg-stone-800 transition-colors mb-4">
                 Select JSON File
                 <input type="file" accept=".json" onChange={handleFileUpload} className="hidden" />
              </label>
-
-             {/* TEMPLATE DOWNLOAD BUTTON */}
              <button onClick={downloadTemplate} className="flex items-center justify-center gap-2 w-full text-xs font-bold uppercase tracking-widest text-black/40 hover:text-black mb-6">
-                <Download size={14} /> Download Structure Template
+                <Download size={14} /> Download Template
              </button>
-             
-             <button onClick={() => setActiveExam('')} className="text-xs font-bold uppercase tracking-widest text-red-500 hover:text-red-700">Cancel Operation</button>
+             <button onClick={() => setActiveExam('')} className="text-xs font-bold uppercase tracking-widest text-red-500 hover:text-red-700">Cancel</button>
           </div>
        </div>
     )
   }
 
-  // --- RENDER 4: WAR ROOM ---
+  // --- RENDER 4: WAR ROOM (MAIN LIST) ---
   const currentLevelNodes = path.length === 0 ? data : path[path.length - 1].children || []
   const isChecked = (id: string) => completedIds.includes(id)
 
   return (
     <div className="min-h-screen bg-[#FBF9F6] p-6 md:p-12 text-black">
-      
       {/* HEADER */}
       <div className="max-w-4xl mx-auto mb-8">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-6">
           <div className="w-full md:w-auto">
-            <div className="flex items-center gap-4 mb-2">
+            <div className="flex items-center gap-4 mb-2 flex-wrap">
                <Link href="/dashboard" className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-black/40 hover:text-black">
                  <ArrowLeft size={14} /> Dashboard
                </Link>
@@ -209,12 +224,23 @@ export default function SyllabusPage() {
                <button onClick={handleChangeProtocol} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-black/40 hover:text-red-600 transition-colors">
                  <RefreshCw size={12} /> Switch Protocol
                </button>
+               
+               {/* NEW: CHANGE OPTIONAL BUTTON (Visible only for UPSC) */}
+               {activeExam === 'upsc' && (
+                 <>
+                   <span className="text-black/20">|</span>
+                   <button onClick={resetOptionalSelection} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-black/40 hover:text-amber-600 transition-colors">
+                     <Layers size={12} /> Change Optional
+                   </button>
+                 </>
+               )}
             </div>
             <h1 className="text-4xl font-black tracking-tighter uppercase">
               {activeExam === 'upsc' ? 'UPSC' : activeExam === 'ssc' ? 'SSC' : activeExam === 'bank' ? 'Bank' : 'Custom'} War Room
             </h1>
           </div>
 
+          {/* SEARCH BAR */}
           <div className="relative w-full md:w-80">
             <div className="relative">
               <input 
@@ -231,7 +257,6 @@ export default function SyllabusPage() {
                 </button>
               )}
             </div>
-
             {searchQuery.length >= 2 && (
               <div className="absolute top-full left-0 right-0 mt-2 bg-white border-2 border-black shadow-xl z-50 max-h-60 overflow-y-auto">
                 {searchResults.length === 0 ? (
@@ -261,7 +286,6 @@ export default function SyllabusPage() {
           >
             <Home size={14} /> Root
           </button>
-          
           {path.map((node, index) => (
             <div key={node.id} className="flex items-center gap-2 whitespace-nowrap">
               <ChevronRight size={14} className="text-black/20" />
