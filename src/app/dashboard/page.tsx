@@ -11,7 +11,8 @@ import {
   Crown, 
   Clock, 
   AlertTriangle, 
-  Settings 
+  Settings,
+  BarChart2 // Added for the stats icon
 } from 'lucide-react'
 import Link from 'next/link'
 import Countdown from '@/components/dashboard/Countdown'
@@ -20,11 +21,11 @@ import MocksModal from '@/components/mocks/MocksModal'
 import StudyHeatmap from '@/components/dashboard/StudyHeatmap'
 import SettingsModal from '@/components/dashboard/SettingsModal'
 import OnboardingModal from '@/components/dashboard/OnboardingModal'
-import CheckoutModal from '@/components/dashboard/CheckoutModal' // <--- 1. IMPORT CHECKOUT
+import CheckoutModal from '@/components/dashboard/CheckoutModal'
 
 export default function DashboardPage() {
   const [userName, setUserName] = useState('Student')
-  const [userEmail, setUserEmail] = useState('') // <--- 2. STORE EMAIL FOR PAYMENT
+  const [userEmail, setUserEmail] = useState('')
   const [focusMinutes, setFocusMinutes] = useState(0)
   const [dueReviews, setDueReviews] = useState(0)
   const [mocksCount, setMocksCount] = useState(0)
@@ -32,7 +33,7 @@ export default function DashboardPage() {
   // MODAL STATES
   const [isMocksModalOpen, setIsMocksModalOpen] = useState(false)
   const [isSettingsOpen, setIsSettingsOpen] = useState(false) 
-  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false) // <--- 3. CHECKOUT STATE
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false)
   
   // MEMBERSHIP STATE
   const [isPremium, setIsPremium] = useState(false)
@@ -54,7 +55,7 @@ export default function DashboardPage() {
           setUserName(user.user_metadata.full_name.split(' ')[0])
         }
         if (user.email) {
-            setUserEmail(user.email) // <--- Capture Email
+            setUserEmail(user.email)
         }
 
         // --- 1. FETCH MEMBERSHIP STATUS ---
@@ -141,7 +142,7 @@ export default function DashboardPage() {
                 </div>
               ) : (
                 <button 
-                  onClick={() => setIsCheckoutOpen(true)} // <--- CLICK TO OPEN CHECKOUT
+                  onClick={() => setIsCheckoutOpen(true)}
                   className={`group flex items-center gap-2 rounded-full border border-black px-3 py-1 text-[10px] font-black uppercase tracking-widest shadow-[2px_2px_0_0_#000] transition-transform active:scale-95 cursor-pointer
                     ${(trialDaysLeft !== null && trialDaysLeft <= 3) ? 'bg-red-500 text-white hover:bg-red-600' : 'bg-stone-200 text-stone-600 hover:bg-stone-300'}`}
                 >
@@ -180,7 +181,7 @@ export default function DashboardPage() {
           {/* ACTION BUTTONS */}
           <div className="mt-6 flex gap-2">
             
-            {/* INSIGHTS: ALWAYS VISIBLE */}
+            {/* INSIGHTS (Mocks) */}
             <Link 
               href="/dashboard/mocks/insights" 
               className="rounded-full border border-black/10 bg-white px-5 py-2 text-xs font-bold uppercase tracking-widest text-black/60 hover:bg-black hover:text-white transition-colors flex items-center gap-2"
@@ -221,6 +222,15 @@ export default function DashboardPage() {
             </div>
           </div>
           <Link href="/dashboard/focus" className="absolute inset-0" />
+          
+          {/* ✅ NEW: FOCUS ANALYTICS BUTTON */}
+          <Link 
+             href="/dashboard/focus/insights" 
+             className="absolute bottom-4 right-4 z-20 rounded-full bg-white/20 p-2 text-white hover:bg-white hover:text-black transition-colors"
+             title="View Focus Analytics"
+          >
+             <BarChart2 size={16} /> 
+          </Link>
         </div>
 
         {/* CARD 2: REVIEWS (Always Visible) */}
