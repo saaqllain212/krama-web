@@ -1,13 +1,13 @@
 import { NextResponse } from 'next/server'
 import crypto from 'crypto'
-import { createClient } from '@supabase/supabase-js' // <--- CHANGED IMPORT
-import { createClient as createAuthClient } from '@/lib/supabase/server' // For getting the logged-in user
+import { createClient } from '@supabase/supabase-js' 
+import { createClient as createAuthClient } from '@/lib/supabase/server' 
 
 export async function POST(req: Request) {
   try {
-    const { orderCreationId, razorpayPaymentId, razorpaySignature } = await req.json()
+    const { orderCreationId, razorpayPaymentId, razorpaySignature, couponCode } = await req.json()
 
-    // 1. VERIFY SIGNATURE (Security Check)
+    // 1. VERIFY SIGNATURE
     const shasum = crypto.createHmac('sha256', process.env.RAZORPAY_KEY_SECRET!)
     shasum.update(`${orderCreationId}|${razorpayPaymentId}`)
     const digest = shasum.digest('hex')
@@ -16,8 +16,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Transaction not legit!' }, { status: 400 })
     }
 
-    // 2. GET USER ID (Who is paying?)
-    // We use the auth client just to get the Session User
+    // 2. GET USER ID
     const authSupabase = await createAuthClient()
     const { data: { user } } = await authSupabase.auth.getUser()
 
@@ -25,27 +24,55 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: 'User not found' }, { status: 401 })
     }
 
-    // 3. THE FIX: CONNECT AS ADMIN
-    // Use the Service Role Key to bypass RLS and force the update
+    // 3. CONNECT AS ADMIN
     const supabaseAdmin = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     )
 
-    // 4. UPDATE DATABASE (Flip to Premium)
-    const { error } = await supabaseAdmin
-      .from('user_access')
-      .update({ 
-        is_premium: true,
-        // Optional: track the payment ID if you added that column
-        // payment_id: razorpayPaymentId 
-      })
-      .eq('user_id', user.id)
+    // 4. EXECUTE UPDATES
+    // FIX: Use 'any[]' to allow both Supabase Builders and normal Promises
+    const updates: any[] = [
+        // A. Flip user to Premium
+        supabaseAdmin
+          .from('user_access')
+          .update({ is_premium: true })
+          .eq('user_id', user.id),
 
-    if (error) {
-      console.error('Database Update Failed:', error)
-      return NextResponse.json({ error: 'Database update failed' }, { status: 500 })
+        // B. Create Receipt (Payment History)
+        supabaseAdmin
+          .from('payment_history')
+          .insert({
+            user_id: user.id,
+            amount_paid: 0, // You can update this later if needed
+            status: 'success',
+            order_id: orderCreationId,
+            payment_id: razorpayPaymentId,
+            coupon_used: couponCode || null
+          })
+    ]
+
+    // C. Increment Coupon Usage (If one was used)
+    if (couponCode) {
+        updates.push(
+             supabaseAdmin
+              .from('coupons')
+              .select('times_used')
+              .eq('code', couponCode)
+              .single()
+              .then(({ data }) => {
+                 if(data) {
+                    return supabaseAdmin
+                     .from('coupons')
+                     .update({ times_used: data.times_used + 1 })
+                     .eq('code', couponCode)
+                 }
+              })
+        )
     }
+
+    // Wait for all DB operations to finish
+    await Promise.all(updates)
 
     return NextResponse.json({ 
       success: true, 

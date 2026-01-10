@@ -15,7 +15,7 @@ export default function PricingCard() {
               Krama Lifetime Access
             </div>
             <div className="mt-2 text-6xl font-bold tracking-tighter">
-              ₹199
+              ₹299
             </div>
             <div className="mt-2 font-mono text-sm text-black/60">
               One payment. Forever. Price may go up soon.

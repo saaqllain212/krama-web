@@ -8,10 +8,15 @@ import ToolsGrid from "./ToolsGrid";
 import MobileSection from "./MobileSection";
 import PricingCard from "./PricingCard";
 import Footer from "./Footer";
+import TopBanner from "./TopBanner"; // <--- 3. IMPORT TOP BANNER
 
 export default function LandingPage() {
   return (
     <div className="flex min-h-screen flex-col bg-[#FBF9F6] text-black">
+      
+      {/* 4. INSERT BANNER HERE (Above Navbar) */}
+      <TopBanner />
+
       <Navbar />
       
       <main>

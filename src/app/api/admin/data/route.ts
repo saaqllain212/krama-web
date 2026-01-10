@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { createClient as createAuthClient } from '@/lib/supabase/server'
 
-// 1. Setup Admin Client (The Master Key)
+// 1. Setup Admin Client
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -10,37 +10,33 @@ const supabaseAdmin = createClient(
 
 export async function POST(req: Request) {
   try {
-    // 2. SECURITY CHECK: Are you the Admin?
+    // 2. SECURITY CHECK
     const authClient = await createAuthClient()
     const { data: { user } } = await authClient.auth.getUser()
 
     if (!user || user.email !== process.env.NEXT_PUBLIC_ADMIN_EMAIL) {
-      return NextResponse.json({ error: 'Unauthorized: Admins Only' }, { status: 403 })
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
     }
 
-    // 3. FETCH EVERYTHING
-    
-    // A. Get App Settings
-    const { data: config } = await supabaseAdmin
-      .from('app_config')
-      .select('*')
-      .single()
+    // 3. FETCH DATA (Parallel for speed)
+    const [configRes, usersRes, accessRes, paymentsRes, couponsRes, settingsRes] = await Promise.all([
+      // A. App Config
+      supabaseAdmin.from('app_config').select('*').single(),
+      // B. Auth Users
+      supabaseAdmin.auth.admin.listUsers(),
+      // C. User Access (Premium Status)
+      supabaseAdmin.from('user_access').select('user_id, is_premium, trial_starts_at'),
+      // D. Payment History (New)
+      supabaseAdmin.from('payment_history').select('*').order('created_at', { ascending: false }),
+      // E. Coupons (New)
+      supabaseAdmin.from('coupons').select('*').order('created_at', { ascending: false }),
+      // F. Store Settings (New)
+      supabaseAdmin.from('store_settings').select('*').single()
+    ])
 
-    // B. Get All Users (from Auth System)
-    // Note: listUsers defaults to 50 users. For more, we need pagination (kept simple for now)
-    const { data: { users }, error: usersError } = await supabaseAdmin.auth.admin.listUsers()
-    
-    if (usersError) throw usersError
-
-    // C. Get Access Status (Premium vs Free) for everyone
-    const { data: accessData } = await supabaseAdmin
-      .from('user_access')
-      .select('user_id, is_premium, trial_starts_at')
-
-    // 4. COMBINE DATA
-    // We merge the Auth User (Email) with the Access Data (Premium Status)
-    const combinedUsers = users.map(u => {
-      const access = accessData?.find(a => a.user_id === u.id)
+    // 4. COMBINE USERS
+    const combinedUsers = usersRes.data.users.map(u => {
+      const access = accessRes.data?.find(a => a.user_id === u.id)
       return {
         id: u.id,
         email: u.email,
@@ -51,8 +47,11 @@ export async function POST(req: Request) {
     })
 
     return NextResponse.json({
-      config: config || { signup_active: true, max_users: 100 },
-      users: combinedUsers
+      config: configRes.data || { signup_active: true, max_users: 100 },
+      users: combinedUsers,
+      payments: paymentsRes.data || [],
+      coupons: couponsRes.data || [],
+      storeSettings: settingsRes.data || { base_price: 299 }
     })
 
   } catch (error) {

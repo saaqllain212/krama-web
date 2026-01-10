@@ -20,9 +20,11 @@ import MocksModal from '@/components/mocks/MocksModal'
 import StudyHeatmap from '@/components/dashboard/StudyHeatmap'
 import SettingsModal from '@/components/dashboard/SettingsModal'
 import OnboardingModal from '@/components/dashboard/OnboardingModal'
+import CheckoutModal from '@/components/dashboard/CheckoutModal' // <--- 1. IMPORT CHECKOUT
 
 export default function DashboardPage() {
   const [userName, setUserName] = useState('Student')
+  const [userEmail, setUserEmail] = useState('') // <--- 2. STORE EMAIL FOR PAYMENT
   const [focusMinutes, setFocusMinutes] = useState(0)
   const [dueReviews, setDueReviews] = useState(0)
   const [mocksCount, setMocksCount] = useState(0)
@@ -30,6 +32,7 @@ export default function DashboardPage() {
   // MODAL STATES
   const [isMocksModalOpen, setIsMocksModalOpen] = useState(false)
   const [isSettingsOpen, setIsSettingsOpen] = useState(false) 
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false) // <--- 3. CHECKOUT STATE
   
   // MEMBERSHIP STATE
   const [isPremium, setIsPremium] = useState(false)
@@ -46,8 +49,12 @@ export default function DashboardPage() {
       const { data: { user } } = await supabase.auth.getUser()
       
       if (user) {
+        // Capture Name & Email
         if (user.user_metadata?.full_name) {
           setUserName(user.user_metadata.full_name.split(' ')[0])
+        }
+        if (user.email) {
+            setUserEmail(user.email) // <--- Capture Email
         }
 
         // --- 1. FETCH MEMBERSHIP STATUS ---
@@ -115,7 +122,7 @@ export default function DashboardPage() {
   return (
     <div className="space-y-12 pb-20 relative">
       
-      {/* 2. INSERT ONBOARDING WIZARD HERE */}
+      {/* ONBOARDING WIZARD */}
       <OnboardingModal />
 
       {/* HEADER */}
@@ -125,7 +132,7 @@ export default function DashboardPage() {
           {/* TOP ROW: Badge (Left) + Settings (Right) */}
           <div className="mb-4 flex items-center justify-between pr-2">
             
-            {/* STATUS BADGE */}
+            {/* STATUS BADGE (CLICKABLE IF FREE) */}
             <div className="inline-flex">
               {isPremium ? (
                 <div className="flex items-center gap-2 rounded-full border border-black bg-yellow-400 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-black shadow-[2px_2px_0_0_#000]">
@@ -133,20 +140,23 @@ export default function DashboardPage() {
                   Pro Member
                 </div>
               ) : (
-                <div className={`flex items-center gap-2 rounded-full border border-black px-3 py-1 text-[10px] font-black uppercase tracking-widest shadow-[2px_2px_0_0_#000]
-                  ${(trialDaysLeft !== null && trialDaysLeft <= 3) ? 'bg-red-500 text-white' : 'bg-stone-200 text-stone-600'}`}>
+                <button 
+                  onClick={() => setIsCheckoutOpen(true)} // <--- CLICK TO OPEN CHECKOUT
+                  className={`group flex items-center gap-2 rounded-full border border-black px-3 py-1 text-[10px] font-black uppercase tracking-widest shadow-[2px_2px_0_0_#000] transition-transform active:scale-95 cursor-pointer
+                    ${(trialDaysLeft !== null && trialDaysLeft <= 3) ? 'bg-red-500 text-white hover:bg-red-600' : 'bg-stone-200 text-stone-600 hover:bg-stone-300'}`}
+                >
                   {trialDaysLeft !== null && trialDaysLeft > 0 ? (
                     <>
                       <Clock size={12} />
-                      Trial: {trialDaysLeft} Days Left
+                      Trial: {trialDaysLeft} Days Left (Upgrade)
                     </>
                   ) : (
                     <>
                       <AlertTriangle size={12} />
-                      Trial Expired
+                      Trial Expired (Upgrade)
                     </>
                   )}
-                </div>
+                </button>
               )}
             </div>
 
@@ -281,6 +291,14 @@ export default function DashboardPage() {
       <SettingsModal 
         open={isSettingsOpen} 
         onClose={() => setIsSettingsOpen(false)} 
+      />
+
+      {/* CHECKOUT MODAL (For Payments) */}
+      <CheckoutModal 
+        isOpen={isCheckoutOpen}
+        onClose={() => setIsCheckoutOpen(false)}
+        userName={userName}
+        userEmail={userEmail}
       />
     </div>
   )
