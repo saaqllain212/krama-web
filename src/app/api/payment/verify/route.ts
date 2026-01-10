@@ -5,9 +5,10 @@ import { createClient as createAuthClient } from '@/lib/supabase/server'
 
 export async function POST(req: Request) {
   try {
-    const { orderCreationId, razorpayPaymentId, razorpaySignature, couponCode } = await req.json()
+    // ✅ 1. Receive 'amount' from frontend
+    const { orderCreationId, razorpayPaymentId, razorpaySignature, couponCode, amount } = await req.json()
 
-    // 1. VERIFY SIGNATURE
+    // 2. VERIFY SIGNATURE
     const shasum = crypto.createHmac('sha256', process.env.RAZORPAY_KEY_SECRET!)
     shasum.update(`${orderCreationId}|${razorpayPaymentId}`)
     const digest = shasum.digest('hex')
@@ -16,7 +17,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Transaction not legit!' }, { status: 400 })
     }
 
-    // 2. GET USER ID
+    // 3. GET USER ID
     const authSupabase = await createAuthClient()
     const { data: { user } } = await authSupabase.auth.getUser()
 
@@ -24,14 +25,13 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: 'User not found' }, { status: 401 })
     }
 
-    // 3. CONNECT AS ADMIN
+    // 4. CONNECT AS ADMIN
     const supabaseAdmin = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     )
 
-    // 4. EXECUTE UPDATES
-    // FIX: Use 'any[]' to allow both Supabase Builders and normal Promises
+    // 5. EXECUTE UPDATES
     const updates: any[] = [
         // A. Flip user to Premium
         supabaseAdmin
@@ -44,7 +44,7 @@ export async function POST(req: Request) {
           .from('payment_history')
           .insert({
             user_id: user.id,
-            amount_paid: 0, // You can update this later if needed
+            amount_paid: amount || 0, // ✅ SAVE ACTUAL AMOUNT (in Paise)
             status: 'success',
             order_id: orderCreationId,
             payment_id: razorpayPaymentId,
@@ -71,7 +71,6 @@ export async function POST(req: Request) {
         )
     }
 
-    // Wait for all DB operations to finish
     await Promise.all(updates)
 
     return NextResponse.json({ 

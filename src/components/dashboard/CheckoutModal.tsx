@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { X, Loader2, Tag } from 'lucide-react' // removed CheckCircle2 as it wasn't used
+import { X, Loader2, Tag } from 'lucide-react' 
 import Script from 'next/script'
 
 interface CheckoutModalProps {
@@ -54,12 +54,13 @@ export default function CheckoutModal({ isOpen, onClose, userEmail, userName }: 
               orderCreationId: data.orderId,
               razorpayPaymentId: response.razorpay_payment_id,
               razorpaySignature: response.razorpay_signature,
-              couponCode: data.couponApplied // Send this so we can count usage
+              couponCode: data.couponApplied, // Send this so we can count usage
+              amount: data.amount // ✅ CRITICAL FIX: Send amount so DB records revenue correctly
             }),
           })
           
           if (verifyRes.ok) {
-             // ✅ NEW LOGIC: Redirect to trigger the Initiation Ceremony
+             // ✅ TRIGGER CEREMONY: Redirect to dashboard with special flag
              window.location.href = '/dashboard?initiation=true'
           } else {
              alert('Payment verification failed. Contact support.')
