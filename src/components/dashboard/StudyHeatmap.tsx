@@ -8,27 +8,17 @@ import { Zap, Info } from 'lucide-react'
 const getYearData = () => {
   const dates = []
   const today = new Date()
-  
-  // 1. Calculate Start Date (365 days ago)
   const startDate = new Date(today)
   startDate.setDate(today.getDate() - 365)
-  
-  // 2. Calculate Offset (If start date is Wed, we need 3 empty slots for Sun/Mon/Tue)
-  const startDay = startDate.getDay() // 0 = Sunday, 1 = Monday...
-  
-  // 3. Generate the array
-  // Add spacers first
+  const startDay = startDate.getDay()
   for (let i = 0; i < startDay; i++) {
     dates.push(null)
   }
-  
-  // Add real dates
   for (let i = 0; i <= 365; i++) {
     const d = new Date(startDate)
     d.setDate(startDate.getDate() + i)
     dates.push(d.toISOString().split('T')[0])
   }
-  
   return dates
 }
 
@@ -36,12 +26,25 @@ export default function StudyHeatmap() {
   const supabase = createClient()
   const [data, setData] = useState<Record<string, number>>({})
   const [loading, setLoading] = useState(true)
+  const [dailyGoalMinutes, setDailyGoalMinutes] = useState(240) // Default 4 hours (240m)
 
   useEffect(() => {
     const fetchData = async () => {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
 
+      // 1. FETCH USER GOAL (The "Honest" Logic)
+      const { data: settings } = await supabase
+        .from('syllabus_settings')
+        .select('daily_goal_hours')
+        .eq('user_id', user.id)
+        .single()
+      
+      if (settings?.daily_goal_hours) {
+         setDailyGoalMinutes(settings.daily_goal_hours * 60)
+      }
+
+      // 2. FETCH LOGS
       const today = new Date()
       const pastDate = new Date()
       pastDate.setDate(today.getDate() - 366) 
@@ -66,13 +69,17 @@ export default function StudyHeatmap() {
 
   const yearGrid = useMemo(() => getYearData(), [])
 
-  // COLOR LOGIC: "Fire Theme" (Amber Gradient)
+  // DYNAMIC COLOR LOGIC (Based on User Goal)
   const getColor = (minutes: number) => {
     if (minutes === 0) return 'bg-stone-100'        // Empty
-    if (minutes < 30) return 'bg-amber-200'         // Warm
-    if (minutes < 60) return 'bg-amber-400'         // Hot
-    if (minutes < 120) return 'bg-amber-600'        // Burning
-    return 'bg-amber-800'                           // Inferno (2h+)
+    
+    const percentage = minutes / dailyGoalMinutes
+
+    if (percentage < 0.25) return 'bg-amber-200'    // Warm up
+    if (percentage < 0.50) return 'bg-amber-300'    // Getting there
+    if (percentage < 0.75) return 'bg-amber-400'    // Solid
+    if (percentage < 1.0)  return 'bg-amber-500'    // Almost
+    return 'bg-amber-700'                           // GOAL HIT (Inferno)
   }
 
   return (
@@ -86,22 +93,22 @@ export default function StudyHeatmap() {
             Consistency Grid
           </h3>
           <p className="text-xs font-bold text-stone-400 uppercase tracking-widest mt-1">
-            365-Day Performance Architecture
+            Target: {dailyGoalMinutes / 60} Hrs/Day
           </p>
         </div>
 
-        {/* LEGEND (Updated to Fire Colors) */}
+        {/* LEGEND */}
         <div className="flex items-center gap-2 text-[10px] font-bold uppercase text-stone-400">
           <span>Less</span>
           <div className="w-3 h-3 bg-stone-100 border border-stone-200" />
           <div className="w-3 h-3 bg-amber-200 border border-black/10" />
           <div className="w-3 h-3 bg-amber-400 border border-black/10" />
-          <div className="w-3 h-3 bg-amber-800 border border-black/10" />
-          <span>More</span>
+          <div className="w-3 h-3 bg-amber-700 border border-black/10" />
+          <span>Goal</span>
         </div>
       </div>
 
-      {/* THE GRID (GitHub Style) */}
+      {/* THE GRID */}
       {loading ? (
         <div className="h-32 flex items-center justify-center animate-pulse text-xs font-bold uppercase text-stone-300">
           Loading Data...
@@ -120,7 +127,6 @@ export default function StudyHeatmap() {
                 <div 
                   key={date}
                   title={`${date}: ${minutes}m Focused`}
-                  // Using 'hover:border-black' adds a crisp interaction without changing size
                   className={`w-3 h-3 transition-all hover:scale-125 border border-transparent hover:border-black ${getColor(minutes)}`}
                 />
               )
@@ -129,7 +135,6 @@ export default function StudyHeatmap() {
         </div>
       )}
       
-      {/* FOOTER */}
       <div className="mt-2 flex items-center justify-between text-[10px] font-bold uppercase text-stone-400">
         <div className="flex gap-2 items-center">
             <Info size={12} />

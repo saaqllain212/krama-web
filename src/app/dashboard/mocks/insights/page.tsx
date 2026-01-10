@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo, Suspense } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useSyllabus } from '@/context/SyllabusContext'
 import { MockLogEntry, calculatePhase, calculateRecovery, calculateConsistency, calculateBestTime, getChartData } from '@/lib/analytics'
-import { ArrowLeft, TrendingUp, Activity, Zap, Brain, AlertTriangle, Search, X, Info, Sun } from 'lucide-react'
+import { ArrowLeft, TrendingUp, Activity, Zap, Brain, AlertTriangle, Search, X, Info, Sun, AlertCircle, PieChart } from 'lucide-react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 
@@ -87,12 +87,37 @@ function InsightsContent() {
 
   const analytics = useMemo(() => {
     if (logs.length === 0) return null
+
+    // --- NEW: MISTAKE CALCULATION ---
+    let totalSilly = 0, totalConcept = 0, totalUnattempted = 0
+    let logsWithMistakes = 0
+
+    logs.forEach(log => {
+       // Check if this log has any autopsy data
+       if (log.si !== undefined || log.co !== undefined || log.ua !== undefined) {
+           totalSilly += (log.si || 0)
+           totalConcept += (log.co || 0)
+           totalUnattempted += (log.ua || 0)
+           logsWithMistakes++
+       }
+    })
+
+    const totalLost = totalSilly + totalConcept + totalUnattempted
+    const mistakes = logsWithMistakes > 0 && totalLost > 0 ? {
+        hasData: true,
+        silly: Math.round((totalSilly / totalLost) * 100),
+        concept: Math.round((totalConcept / totalLost) * 100),
+        unattempted: Math.round((totalUnattempted / totalLost) * 100),
+        totalLost
+    } : { hasData: false, silly: 0, concept: 0, unattempted: 0, totalLost: 0 }
+
     return {
        phase: calculatePhase(logs),
        recovery: calculateRecovery(logs),
        consistency: calculateConsistency(logs),
-       bestTime: calculateBestTime(logs), // <--- NEW METRIC
-       chartData: getChartData(logs)
+       bestTime: calculateBestTime(logs),
+       chartData: getChartData(logs),
+       mistakes // <--- ADDED TO ANALYTICS OBJECT
     }
   }, [logs])
 
@@ -104,6 +129,14 @@ function InsightsContent() {
         case 'Peak': return "Excellent performance. You are ready. Focus on maintenance and mental calmness."
         default: return "Insufficient data."
      }
+  }
+
+  // Helper for Mistake Advice
+  const getMistakeAdvice = (m: { silly: number, concept: number, unattempted: number }) => {
+      const max = Math.max(m.silly, m.concept, m.unattempted)
+      if (max === m.silly) return "Your main enemy is Carelessness. You know the answers but lose focus. Solution: Read questions twice."
+      if (max === m.concept) return "Your main enemy is Knowledge Gaps. You simply don't know enough yet. Solution: Stop testing, go back to books."
+      return "Your main enemy is Speed. You are running out of time. Solution: Practice timed sectional tests."
   }
 
   if (loading) return <div className="min-h-screen bg-[#FDFBF7] p-12 flex items-center justify-center font-bold animate-pulse">ANALYZING PATTERNS...</div>
@@ -206,10 +239,70 @@ function InsightsContent() {
                     </div>
                 </div>
 
+                {/* --- NEW SECTION: THE LEAKY BUCKET (Mistake Autopsy) --- */}
+                {analytics.mistakes.hasData && (
+                    <div className="bg-white border-2 border-red-100 p-8 shadow-[8px_8px_0_0_#ffe4e6] mb-12 relative overflow-hidden">
+                        <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
+                            <AlertCircle size={100} className="text-red-500"/>
+                        </div>
+                        
+                        <div className="flex flex-col md:flex-row gap-8 relative z-10">
+                            {/* Left: Text Insight */}
+                            <div className="flex-1">
+                                <div className="flex items-center gap-2 mb-2 text-red-600">
+                                   <PieChart size={18} />
+                                   <span className="text-xs font-black uppercase tracking-widest">The Leaky Bucket</span>
+                                </div>
+                                <h3 className="text-2xl font-black uppercase mb-4 leading-none">
+                                    Where are you losing marks?
+                                </h3>
+                                <p className="text-sm font-medium text-stone-600 leading-relaxed mb-6">
+                                    Based on your logs, here is the breakdown of your lost marks. <br/>
+                                    <span className="font-bold text-black bg-yellow-100 px-1">
+                                        {getMistakeAdvice(analytics.mistakes)}
+                                    </span>
+                                </p>
+                            </div>
+
+                            {/* Right: The Stacked Bar */}
+                            <div className="flex-1 flex flex-col justify-center">
+                                {/* The Bar */}
+                                <div className="h-12 w-full bg-stone-100 flex rounded-md overflow-hidden border-2 border-black/5 mb-4">
+                                    {analytics.mistakes.silly > 0 && (
+                                        <div style={{ width: `${analytics.mistakes.silly}%` }} className="bg-red-500 h-full flex items-center justify-center text-white font-bold text-xs relative group cursor-help">
+                                            {analytics.mistakes.silly}%
+                                            <span className="absolute -top-8 bg-black text-white text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Silly Mistakes</span>
+                                        </div>
+                                    )}
+                                    {analytics.mistakes.concept > 0 && (
+                                        <div style={{ width: `${analytics.mistakes.concept}%` }} className="bg-amber-400 h-full flex items-center justify-center text-black font-bold text-xs relative group cursor-help">
+                                            {analytics.mistakes.concept}%
+                                            <span className="absolute -top-8 bg-black text-white text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Conceptual Errors</span>
+                                        </div>
+                                    )}
+                                    {analytics.mistakes.unattempted > 0 && (
+                                        <div style={{ width: `${analytics.mistakes.unattempted}%` }} className="bg-stone-300 h-full flex items-center justify-center text-stone-600 font-bold text-xs relative group cursor-help">
+                                            {analytics.mistakes.unattempted}%
+                                            <span className="absolute -top-8 bg-black text-white text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Unattempted</span>
+                                        </div>
+                                    )}
+                                </div>
+                                
+                                {/* Legend */}
+                                <div className="flex justify-between text-xs font-bold uppercase text-stone-400">
+                                    <div className="flex items-center gap-1"><div className="w-2 h-2 bg-red-500 rounded-full"></div> Silly</div>
+                                    <div className="flex items-center gap-1"><div className="w-2 h-2 bg-amber-400 rounded-full"></div> Conceptual</div>
+                                    <div className="flex items-center gap-1"><div className="w-2 h-2 bg-stone-300 rounded-full"></div> Unattempted</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+
                 {/* METRICS GRID - NOW WITH GOLDEN HOUR */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
                     
-                    {/* NEW GOLDEN HOUR CARD */}
                     <div className="bg-white border-2 border-stone-200 p-6 hover:border-black transition-colors">
                         <div className="flex items-center gap-3 mb-4">
                             <div className="bg-yellow-100 text-yellow-700 p-2 rounded-md"><Sun size={20} /></div>

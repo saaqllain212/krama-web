@@ -11,14 +11,15 @@ import {
   Crown, 
   Clock, 
   AlertTriangle, 
-  Settings // <--- 1. Import Settings Icon
+  Settings 
 } from 'lucide-react'
 import Link from 'next/link'
 import Countdown from '@/components/dashboard/Countdown'
 import { useSyllabus } from '@/context/SyllabusContext'
 import MocksModal from '@/components/mocks/MocksModal'
 import StudyHeatmap from '@/components/dashboard/StudyHeatmap'
-import SettingsModal from '@/components/dashboard/SettingsModal' // <--- 2. Import Modal
+import SettingsModal from '@/components/dashboard/SettingsModal'
+import OnboardingModal from '@/components/dashboard/OnboardingModal' // <--- 1. NEW IMPORT
 
 export default function DashboardPage() {
   const [userName, setUserName] = useState('Student')
@@ -28,7 +29,7 @@ export default function DashboardPage() {
   
   // MODAL STATES
   const [isMocksModalOpen, setIsMocksModalOpen] = useState(false)
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false) // <--- 3. Settings State
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false) 
   
   // MEMBERSHIP STATE
   const [isPremium, setIsPremium] = useState(false)
@@ -111,6 +112,9 @@ export default function DashboardPage() {
   return (
     <div className="space-y-12 pb-20 relative">
       
+      {/* 2. INSERT ONBOARDING WIZARD HERE */}
+      <OnboardingModal />
+
       {/* HEADER */}
       <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
         <div className="w-full md:w-auto md:flex-1">
@@ -143,7 +147,7 @@ export default function DashboardPage() {
               )}
             </div>
 
-            {/* NEW: SETTINGS BUTTON */}
+            {/* SETTINGS BUTTON */}
             <button 
               onClick={() => setIsSettingsOpen(true)}
               className="rounded-full bg-white p-2 text-stone-400 hover:bg-black hover:text-white transition-all shadow-sm border border-stone-200"

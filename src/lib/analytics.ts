@@ -11,7 +11,12 @@ export type MockLogEntry = {
   st?: number    // Stress
   fa?: number    // Fatigue
   nt?: string    // Note
-  t?: string     // Time of Day ('morning', 'afternoon', 'evening', 'night') <-- ADDED
+  t?: string     // Time of Day ('morning', 'afternoon', 'evening', 'night')
+  
+  // --- MISTAKE AUTOPSY (New Fields) ---
+  si?: number    // Silly Mistakes (Marks Lost)
+  co?: number    // Conceptual Errors (Marks Lost)
+  ua?: number    // Unattempted (Marks Lost)
 }
 
 export type PhaseType = 'Instability' | 'Stability' | 'Growth' | 'Peak'

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { Play, Pause, Save, RotateCcw, ArrowLeft, Pencil, Check, Zap } from 'lucide-react'
+import { Play, Pause, Save, RotateCcw, ArrowLeft, Pencil, Check } from 'lucide-react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 // 1. Import the Global Alert Hook
@@ -37,10 +37,9 @@ export default function FocusPage() {
 
   // --- ACTIONS ---
   const toggleTimer = () => {
+    // FIX: Removed prompt() popup. Auto-set default if empty.
     if (!isActive && !topic.trim()) {
-      // Safety net: If no topic, ask for one
-      const t = prompt("What is your main focus right now?", "Deep Work")
-      if (t) setTopic(t)
+      setTopic("DEEP WORK") 
     }
     setIsActive(!isActive)
   }

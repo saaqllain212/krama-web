@@ -18,7 +18,7 @@ export default function PricingCard() {
               ₹199
             </div>
             <div className="mt-2 font-mono text-sm text-black/60">
-              One payment. Forever.
+              One payment. Forever. Price may go up soon.
             </div>
           </div>
           <Infinity className="h-12 w-12 stroke-[2.5px]" />
@@ -52,7 +52,7 @@ export default function PricingCard() {
         </Link>
         
         <p className="mt-4 text-center font-mono text-xs text-black/40">
-          No credit card required. Cancel anytime.
+          No credit card required.
         </p>
       </div>
     </section>

@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { X, Save, Clock } from 'lucide-react'
+import { X, Save, Clock, AlertCircle } from 'lucide-react'
 import { MockLogEntry } from '@/lib/analytics'
 
 type Props = {
@@ -25,11 +25,16 @@ export default function MocksModal({ open, onClose, examId, onSuccess }: Props) 
   const [stress, setStress] = useState('5')
   const [fatigue, setFatigue] = useState('5')
   
-  // NEW: Time of Day
+  // TIME STATE
   const [timeOfDay, setTimeOfDay] = useState('morning')
   
-  // NEW: Word Limited Note
+  // NOTE STATE
   const [note, setNote] = useState('')
+
+  // NEW: AUTOPSY STATE
+  const [silly, setSilly] = useState('')
+  const [conceptual, setConceptual] = useState('')
+  const [unattempted, setUnattempted] = useState('')
 
   if (!open) return null
 
@@ -63,7 +68,11 @@ export default function MocksModal({ open, onClose, examId, onSuccess }: Props) 
         st: Number(stress),
         fa: Number(fatigue),
         nt: note,
-        t: timeOfDay // Saving the Time!
+        t: timeOfDay,
+        // New Autopsy Fields
+        si: silly ? Number(silly) : undefined,
+        co: conceptual ? Number(conceptual) : undefined,
+        ua: unattempted ? Number(unattempted) : undefined,
       }
 
       // 2. Fetch existing logs
@@ -90,8 +99,15 @@ export default function MocksModal({ open, onClose, examId, onSuccess }: Props) 
 
       onSuccess()
       onClose()
+      
       // Reset Form
-      setName(''); setScore(''); setNote(''); setAccuracy('')
+      setName('')
+      setScore('')
+      setNote('')
+      setAccuracy('')
+      setSilly('')
+      setConceptual('')
+      setUnattempted('')
 
     } catch (err: any) {
       setError(err.message || "Failed to save log")
@@ -145,6 +161,28 @@ export default function MocksModal({ open, onClose, examId, onSuccess }: Props) 
                  onChange={e => setMaxScore(e.target.value)}
                  className="w-full border-2 border-black p-3 font-bold text-lg outline-none bg-stone-100"
                />
+             </div>
+          </div>
+
+          {/* MISTAKE AUTOPSY (NEW SECTION) */}
+          <div className="bg-red-50 p-4 border-2 border-red-100 rounded-sm">
+             <div className="flex items-center gap-2 mb-3">
+                <AlertCircle size={14} className="text-red-500" />
+                <label className="text-xs font-black uppercase text-red-900">Mistake Autopsy (Marks Lost)</label>
+             </div>
+             <div className="grid grid-cols-3 gap-2">
+                <div>
+                  <label className="block text-[10px] font-bold uppercase mb-1 text-stone-500">Silly</label>
+                  <input type="number" placeholder="0" value={silly} onChange={e => setSilly(e.target.value)} className="w-full border-2 border-stone-200 p-2 font-bold text-sm outline-none focus:border-red-400"/>
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold uppercase mb-1 text-stone-500">Concept</label>
+                  <input type="number" placeholder="0" value={conceptual} onChange={e => setConceptual(e.target.value)} className="w-full border-2 border-stone-200 p-2 font-bold text-sm outline-none focus:border-red-400"/>
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold uppercase mb-1 text-stone-500">Unattempted</label>
+                  <input type="number" placeholder="0" value={unattempted} onChange={e => setUnattempted(e.target.value)} className="w-full border-2 border-stone-200 p-2 font-bold text-sm outline-none focus:border-red-400"/>
+                </div>
              </div>
           </div>
 
