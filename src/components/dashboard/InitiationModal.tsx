@@ -1,0 +1,106 @@
+'use client'
+
+import { useEffect, useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import confetti from 'canvas-confetti'
+import { Shield, Zap } from 'lucide-react'
+import { motion } from 'framer-motion'
+
+export default function InitiationModal() {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const [show, setShow] = useState(false)
+
+  useEffect(() => {
+    // Check if the URL has ?initiation=true
+    if (searchParams.get('initiation') === 'true') {
+      setShow(true)
+      triggerCelebration()
+    }
+  }, [searchParams])
+
+  const triggerCelebration = () => {
+    // Fire cinematic confetti for 3 seconds
+    const duration = 3 * 1000
+    const end = Date.now() + duration
+
+    const frame = () => {
+      // Launch from Left
+      confetti({
+        particleCount: 2,
+        angle: 60,
+        spread: 55,
+        origin: { x: 0 },
+        colors: ['#ccff00', '#000000', '#ffffff'] // Krama Brand Colors
+      })
+      // Launch from Right
+      confetti({
+        particleCount: 2,
+        angle: 120,
+        spread: 55,
+        origin: { x: 1 },
+        colors: ['#ccff00', '#000000', '#ffffff']
+      })
+
+      if (Date.now() < end) {
+        requestAnimationFrame(frame)
+      }
+    }
+    frame()
+  }
+
+  const handleEnter = () => {
+    // Clear the URL param without reloading the page
+    router.replace('/dashboard')
+    setShow(false)
+  }
+
+  if (!show) return null
+
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 text-white backdrop-blur-md animate-in fade-in duration-500">
+      <div className="max-w-lg w-full p-8 text-center relative overflow-hidden">
+        
+        {/* Background Glow Effect */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-[#ccff00] blur-[120px] opacity-20 pointer-events-none" />
+
+        <motion.div 
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="relative z-10 space-y-8"
+        >
+          {/* Badge Icon */}
+          <div className="w-24 h-24 mx-auto bg-[#ccff00] text-black rounded-full flex items-center justify-center border-4 border-white shadow-[0_0_40px_rgba(204,255,0,0.5)]">
+            <Shield size={48} strokeWidth={3} />
+          </div>
+
+          {/* Main Text */}
+          <div className="space-y-4">
+            <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tighter italic leading-none">
+              Protocol <br/> <span className="text-[#ccff00]">Unlocked</span>
+            </h1>
+            <p className="text-lg font-medium text-white/60 tracking-widest uppercase">
+              Welcome to the 1% Club
+            </p>
+          </div>
+
+          {/* Status Chip */}
+          <div className="inline-flex items-center gap-2 border border-white/20 bg-white/5 px-4 py-2 rounded-full backdrop-blur-sm">
+             <Zap size={16} className="text-[#ccff00]" />
+             <span className="text-xs font-bold uppercase tracking-widest">Lifetime Access Granted</span>
+          </div>
+
+          {/* Action Button */}
+          <button 
+            onClick={handleEnter}
+            className="w-full bg-white text-black py-4 font-black uppercase tracking-widest hover:bg-[#ccff00] transition-colors shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:shadow-[0_0_30px_rgba(204,255,0,0.6)]"
+          >
+            Enter War Room
+          </button>
+        </motion.div>
+
+      </div>
+    </div>
+  )
+}

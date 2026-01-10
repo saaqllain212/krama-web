@@ -12,7 +12,7 @@ import {
   Clock, 
   AlertTriangle, 
   Settings,
-  BarChart2 // Added for the stats icon
+  BarChart2
 } from 'lucide-react'
 import Link from 'next/link'
 import Countdown from '@/components/dashboard/Countdown'
@@ -22,6 +22,7 @@ import StudyHeatmap from '@/components/dashboard/StudyHeatmap'
 import SettingsModal from '@/components/dashboard/SettingsModal'
 import OnboardingModal from '@/components/dashboard/OnboardingModal'
 import CheckoutModal from '@/components/dashboard/CheckoutModal'
+import InitiationModal from '@/components/dashboard/InitiationModal' // ✅ 1. IMPORT THIS
 
 export default function DashboardPage() {
   const [userName, setUserName] = useState('Student')
@@ -123,6 +124,9 @@ export default function DashboardPage() {
   return (
     <div className="space-y-12 pb-20 relative">
       
+      {/* ✅ 2. INITIATION CEREMONY (Triggers on Payment Success) */}
+      <InitiationModal />
+      
       {/* ONBOARDING WIZARD */}
       <OnboardingModal />
 
@@ -223,7 +227,7 @@ export default function DashboardPage() {
           </div>
           <Link href="/dashboard/focus" className="absolute inset-0" />
           
-          {/* ✅ NEW: FOCUS ANALYTICS BUTTON */}
+          {/* FOCUS ANALYTICS BUTTON */}
           <Link 
              href="/dashboard/focus/insights" 
              className="absolute bottom-4 right-4 z-20 rounded-full bg-white/20 p-2 text-white hover:bg-white hover:text-black transition-colors"

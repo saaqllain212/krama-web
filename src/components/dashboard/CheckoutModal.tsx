@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { X, Loader2, Tag, CheckCircle2 } from 'lucide-react'
+import { X, Loader2, Tag } from 'lucide-react' // removed CheckCircle2 as it wasn't used
 import Script from 'next/script'
 
 interface CheckoutModalProps {
@@ -59,7 +59,8 @@ export default function CheckoutModal({ isOpen, onClose, userEmail, userName }: 
           })
           
           if (verifyRes.ok) {
-             window.location.reload() // Refresh to unlock Pro features
+             // ✅ NEW LOGIC: Redirect to trigger the Initiation Ceremony
+             window.location.href = '/dashboard?initiation=true'
           } else {
              alert('Payment verification failed. Contact support.')
           }
