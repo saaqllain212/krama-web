@@ -24,7 +24,9 @@ type SyllabusContextType = {
 
 const SyllabusContext = createContext<SyllabusContextType | undefined>(undefined)
 
-// HELPER: Count leaf nodes (Recursively)
+// --- HELPERS FOR RECURSION ---
+
+// 1. Count leaf nodes
 const countLeaves = (nodes: SyllabusNode[]): number => {
   let count = 0
   for (const node of nodes) {
@@ -34,7 +36,26 @@ const countLeaves = (nodes: SyllabusNode[]): number => {
   return count
 }
 
-// HELPER: Filter the tree to only keep the selected optional
+// 2. Find a node by ID in the tree
+const findNodeById = (nodes: SyllabusNode[], id: string): SyllabusNode | null => {
+  for (const node of nodes) {
+    if (node.id === id) return node
+    if (node.children) {
+      const found = findNodeById(node.children, id)
+      if (found) return found
+    }
+  }
+  return null
+}
+
+// 3. Get all leaf IDs under a node (Cascade)
+const getAllLeafIds = (node: SyllabusNode): string[] => {
+  if (node.type === 'leaf') return [node.id]
+  if (!node.children) return []
+  return node.children.flatMap(getAllLeafIds)
+}
+
+// 4. Filter tree for optional subject
 const filterDataForOptional = (nodes: SyllabusNode[], optionalId: string): SyllabusNode[] => {
   return nodes.map(node => {
     if (node.id === 'mains_opt_folder' && node.children) {
@@ -122,7 +143,22 @@ export function SyllabusProvider({ children }: { children: React.ReactNode }) {
            const mod = await import('@/data/exams/bank/banking-exam.json')
            loadedNodes = mod.default as SyllabusNode[]
         }
-        // E. Handle Custom JSON
+        // ✅ E. Handle JEE (New)
+        else if (activeExam === 'jee') {
+           const mod = await import('@/data/exams/jee')
+           loadedNodes = mod.default as SyllabusNode[]
+        }
+        // ✅ F. Handle NEET (New)
+        else if (activeExam === 'neet') {
+           const mod = await import('@/data/exams/neet')
+           loadedNodes = mod.default as SyllabusNode[]
+        }
+        // ✅ G. Handle RBI (New)
+        else if (activeExam === 'rbi') {
+           const mod = await import('@/data/exams/rbi')
+           loadedNodes = mod.default as SyllabusNode[]
+        }
+        // ✅ H. Handle Custom JSON (Reverted to LocalStorage Only)
         else if (activeExam === 'custom') {
            const saved = localStorage.getItem('krama_custom_syllabus_data')
            if (saved) {
@@ -137,7 +173,7 @@ export function SyllabusProvider({ children }: { children: React.ReactNode }) {
 
         setData(loadedNodes)
 
-        // F. Load Progress
+        // I. Load Progress
         const { data: { user } } = await supabase.auth.getUser()
         if (user) {
           const { data: progress } = await supabase
@@ -196,14 +232,35 @@ export function SyllabusProvider({ children }: { children: React.ReactNode }) {
     setOptionalSubjectState(null) 
   }
 
-  // 4. TOGGLE NODE
-  const toggleNode = useCallback(async (id: string) => {
+  // ✅ 4. CASCADE TOGGLE NODE (Recursive Logic)
+  const toggleNode = useCallback(async (targetId: string) => {
+    // A. Find the node in the current tree
+    const targetNode = findNodeById(data, targetId)
+    if (!targetNode) return
+
+    // B. Get ALL affected leaf IDs (Self + Descendants)
+    const affectedIds = getAllLeafIds(targetNode)
+    if (affectedIds.length === 0) return
+
     let newIds: string[] = []
+
     setCompletedIds(prev => {
-      newIds = prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+      // C. Logic: If ALL affected items are currently checked -> Uncheck them all.
+      //           Otherwise -> Check them all.
+      const allChecked = affectedIds.every(id => prev.includes(id))
+
+      if (allChecked) {
+         // UNCHECK: Remove affected IDs from the list
+         newIds = prev.filter(id => !affectedIds.includes(id))
+      } else {
+         // CHECK: Add affected IDs (Set prevents duplicates)
+         const uniqueSet = new Set([...prev, ...affectedIds])
+         newIds = Array.from(uniqueSet)
+      }
       return newIds
     })
 
+    // D. Sync with DB
     const { data: { user } } = await supabase.auth.getUser()
     if (user && activeExam) {
        await supabase.from('syllabus_progress').upsert(
@@ -211,7 +268,7 @@ export function SyllabusProvider({ children }: { children: React.ReactNode }) {
          { onConflict: 'user_id, exam_id' }
        )
     }
-  }, [activeExam])
+  }, [activeExam, data])
 
   // 5. STATS
   const stats = useMemo(() => {

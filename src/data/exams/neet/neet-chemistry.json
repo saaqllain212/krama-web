@@ -1,0 +1,1322 @@
+[
+  {
+    "id": "neet-chemistry",
+    "title": "Chemistry (NEET)",
+    "type": "branch",
+    "children": [
+      {
+        "id": "neet-chemistry_physical_chemistry",
+        "title": "PHYSICAL CHEMISTRY",
+        "type": "branch",
+        "children": [
+          {
+            "id": "neet-chemistry_unit_1_some_basic_concepts_in_chemistry",
+            "title": "UNIT 1: Some Basic Concepts in Chemistry",
+            "type": "branch",
+            "children": [
+              {
+                "id": "neet-chemistry_unit_1_some_basic_concepts_in_chemistry_nature_of_matter",
+                "title": "Nature of matter",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-chemistry_unit_1_some_basic_concepts_in_chemistry_daltons_atomic_theory",
+                "title": "Dalton\u2019s atomic theory",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-chemistry_unit_1_some_basic_concepts_in_chemistry_concept_of_atom_molecule_element_and_compound",
+                "title": "Concept of atom, molecule, element and compound",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-chemistry_unit_1_some_basic_concepts_in_chemistry_laws_of_chemical_combination",
+                "title": "Laws of chemical combination",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-chemistry_unit_1_some_basic_concepts_in_chemistry_atomic_and_molecular_masses",
+                "title": "Atomic and molecular masses",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-chemistry_unit_1_some_basic_concepts_in_chemistry_mole_concept_and_molar_mass",
+                "title": "Mole concept and molar mass",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-chemistry_unit_1_some_basic_concepts_in_chemistry_percentage_composition",
+                "title": "Percentage composition",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-chemistry_unit_1_some_basic_concepts_in_chemistry_empirical_and_molecular_formulae",
+                "title": "Empirical and molecular formulae",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-chemistry_unit_1_some_basic_concepts_in_chemistry_chemical_equations",
+                "title": "Chemical equations",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-chemistry_unit_1_some_basic_concepts_in_chemistry_stoichiometry",
+                "title": "Stoichiometry",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-chemistry_unit_2_atomic_structure",
+                "title": "UNIT 2: Atomic Structure",
+                "type": "branch",
+                "children": [
+                  {
+                    "id": "neet-chemistry_unit_2_atomic_structure_nature_of_electromagnetic_radiation",
+                    "title": "Nature of electromagnetic radiation",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_2_atomic_structure_photoelectric_effect",
+                    "title": "Photoelectric effect",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_2_atomic_structure_hydrogen_atom_spectrum",
+                    "title": "Hydrogen atom spectrum",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_2_atomic_structure_bohr_model_of_hydrogen_atom",
+                    "title": "Bohr model of hydrogen atom",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_2_atomic_structure_limitations_of_bohr_model",
+                    "title": "Limitations of Bohr model",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_2_atomic_structure_dual_nature_of_matter",
+                    "title": "Dual nature of matter",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_2_atomic_structure_de_broglie_relationship",
+                    "title": "de Broglie relationship",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_2_atomic_structure_heisenberg_uncertainty_principle",
+                    "title": "Heisenberg uncertainty principle",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_2_atomic_structure_quantum_mechanical_model_of_atom",
+                    "title": "Quantum mechanical model of atom",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_2_atomic_structure_atomic_orbitals",
+                    "title": "Atomic orbitals",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_2_atomic_structure_quantum_numbers",
+                    "title": "Quantum numbers",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_2_atomic_structure_shapes_of_s_p_and_d_orbitals",
+                    "title": "Shapes of s, p and d orbitals",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_2_atomic_structure_electron_spin",
+                    "title": "Electron spin",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_2_atomic_structure_aufbau_principle",
+                    "title": "Aufbau principle",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_2_atomic_structure_pauli_exclusion_principle",
+                    "title": "Pauli exclusion principle",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_2_atomic_structure_hunds_rule",
+                    "title": "Hund\u2019s rule",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_2_atomic_structure_electronic_configuration",
+                    "title": "Electronic configuration",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_2_atomic_structure_stability_of_half-filled_and_fully-filled_orbitals",
+                    "title": "Stability of half-filled and fully-filled orbitals",
+                    "type": "leaf",
+                    "status": "locked"
+                  }
+                ]
+              },
+              {
+                "id": "neet-chemistry_unit_3_chemical_bonding_and_molecular_structure",
+                "title": "UNIT 3: Chemical Bonding and Molecular Structure",
+                "type": "branch",
+                "children": [
+                  {
+                    "id": "neet-chemistry_unit_3_chemical_bonding_and_molecular_structure_kossellewis_approach",
+                    "title": "Kossel\u2013Lewis approach",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_3_chemical_bonding_and_molecular_structure_ionic_bonding_and_lattice_enthalpy",
+                    "title": "Ionic bonding and lattice enthalpy",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_3_chemical_bonding_and_molecular_structure_covalent_bonding",
+                    "title": "Covalent bonding",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_3_chemical_bonding_and_molecular_structure_electronegativity",
+                    "title": "Electronegativity",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_3_chemical_bonding_and_molecular_structure_fajans_rule",
+                    "title": "Fajan\u2019s rule",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_3_chemical_bonding_and_molecular_structure_dipole_moment",
+                    "title": "Dipole moment",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_3_chemical_bonding_and_molecular_structure_vsepr_theory",
+                    "title": "VSEPR theory",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_3_chemical_bonding_and_molecular_structure_shapes_of_molecules",
+                    "title": "Shapes of molecules",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_3_chemical_bonding_and_molecular_structure_valence_bond_theory",
+                    "title": "Valence bond theory",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_3_chemical_bonding_and_molecular_structure_hybridisation",
+                    "title": "Hybridisation",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_3_chemical_bonding_and_molecular_structure_resonance",
+                    "title": "Resonance",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_3_chemical_bonding_and_molecular_structure_molecular_orbital_theory",
+                    "title": "Molecular orbital theory",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_3_chemical_bonding_and_molecular_structure_bond_order_bond_length_and_bond_energy",
+                    "title": "Bond order, bond length and bond energy",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_3_chemical_bonding_and_molecular_structure_metallic_bonding",
+                    "title": "Metallic bonding",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_3_chemical_bonding_and_molecular_structure_hydrogen_bonding_and_applications",
+                    "title": "Hydrogen bonding and applications",
+                    "type": "leaf",
+                    "status": "locked"
+                  }
+                ]
+              },
+              {
+                "id": "neet-chemistry_unit_4_chemical_thermodynamics",
+                "title": "UNIT 4: Chemical Thermodynamics",
+                "type": "branch",
+                "children": [
+                  {
+                    "id": "neet-chemistry_unit_4_chemical_thermodynamics_system_and_surroundings",
+                    "title": "System and surroundings",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_4_chemical_thermodynamics_extensive_and_intensive_properties",
+                    "title": "Extensive and intensive properties",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_4_chemical_thermodynamics_state_functions",
+                    "title": "State functions",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_4_chemical_thermodynamics_types_of_thermodynamic_processes",
+                    "title": "Types of thermodynamic processes",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_4_chemical_thermodynamics_first_law_of_thermodynamics",
+                    "title": "First law of thermodynamics",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_4_chemical_thermodynamics_work_heat_internal_energy_and_enthalpy",
+                    "title": "Work, heat, internal energy and enthalpy",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_4_chemical_thermodynamics_heat_capacity",
+                    "title": "Heat capacity",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_4_chemical_thermodynamics_hesss_law",
+                    "title": "Hess\u2019s law",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_4_chemical_thermodynamics_enthalpy_changes",
+                    "title": "Enthalpy changes",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_4_chemical_thermodynamics_second_law_of_thermodynamics",
+                    "title": "Second law of thermodynamics",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_4_chemical_thermodynamics_entropy",
+                    "title": "Entropy",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_4_chemical_thermodynamics_gibbs_free_energy",
+                    "title": "Gibbs free energy",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_4_chemical_thermodynamics_spontaneity_of_reactions",
+                    "title": "Spontaneity of reactions",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_4_chemical_thermodynamics_equilibrium_constant_and_\u03b4g",
+                    "title": "Equilibrium constant and \u0394G\u00b0",
+                    "type": "leaf",
+                    "status": "locked"
+                  }
+                ]
+              },
+              {
+                "id": "neet-chemistry_unit_5_solutions",
+                "title": "UNIT 5: Solutions",
+                "type": "branch",
+                "children": [
+                  {
+                    "id": "neet-chemistry_unit_5_solutions_concentration_terms",
+                    "title": "Concentration terms",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_5_solutions_vapour_pressure_of_solutions",
+                    "title": "Vapour pressure of solutions",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_5_solutions_raoults_law",
+                    "title": "Raoult\u2019s law",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_5_solutions_ideal_and_non-ideal_solutions",
+                    "title": "Ideal and non-ideal solutions",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_5_solutions_colligative_properties",
+                    "title": "Colligative properties",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_5_solutions_relative_lowering_of_vapour_pressure",
+                    "title": "Relative lowering of vapour pressure",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_5_solutions_elevation_of_boiling_point",
+                    "title": "Elevation of boiling point",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_5_solutions_depression_of_freezing_point",
+                    "title": "Depression of freezing point",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_5_solutions_osmotic_pressure",
+                    "title": "Osmotic pressure",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_5_solutions_determination_of_molar_mass",
+                    "title": "Determination of molar mass",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_5_solutions_abnormal_molar_mass",
+                    "title": "Abnormal molar mass",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_5_solutions_vant_hoff_factor",
+                    "title": "van\u2019t Hoff factor",
+                    "type": "leaf",
+                    "status": "locked"
+                  }
+                ]
+              },
+              {
+                "id": "neet-chemistry_unit_6_equilibrium",
+                "title": "UNIT 6: Equilibrium",
+                "type": "branch",
+                "children": [
+                  {
+                    "id": "neet-chemistry_unit_6_equilibrium_dynamic_equilibrium",
+                    "title": "Dynamic equilibrium",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_6_equilibrium_physical_equilibrium",
+                    "title": "Physical equilibrium",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_6_equilibrium_chemical_equilibrium",
+                    "title": "Chemical equilibrium",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_6_equilibrium_law_of_mass_action",
+                    "title": "Law of mass action",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_6_equilibrium_equilibrium_constant",
+                    "title": "Equilibrium constant",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_6_equilibrium_le_chateliers_principle",
+                    "title": "Le Chatelier\u2019s principle",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_6_equilibrium_ionic_equilibrium",
+                    "title": "Ionic equilibrium",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_6_equilibrium_acids_and_bases",
+                    "title": "Acids and bases",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_6_equilibrium_arrhenius_bronstedlowry_and_lewis_concepts",
+                    "title": "Arrhenius, Bronsted\u2013Lowry and Lewis concepts",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_6_equilibrium_ph_scale",
+                    "title": "pH scale",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_6_equilibrium_common_ion_effect",
+                    "title": "Common ion effect",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_6_equilibrium_hydrolysis_of_salts",
+                    "title": "Hydrolysis of salts",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_6_equilibrium_buffer_solutions",
+                    "title": "Buffer solutions",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_6_equilibrium_solubility_product",
+                    "title": "Solubility product",
+                    "type": "leaf",
+                    "status": "locked"
+                  }
+                ]
+              },
+              {
+                "id": "neet-chemistry_unit_7_redox_reactions_and_electrochemistry",
+                "title": "UNIT 7: Redox Reactions and Electrochemistry",
+                "type": "branch",
+                "children": [
+                  {
+                    "id": "neet-chemistry_unit_7_redox_reactions_and_electrochemistry_oxidation_and_reduction_concepts",
+                    "title": "Oxidation and reduction concepts",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_7_redox_reactions_and_electrochemistry_oxidation_number",
+                    "title": "Oxidation number",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_7_redox_reactions_and_electrochemistry_balancing_redox_reactions",
+                    "title": "Balancing redox reactions",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_7_redox_reactions_and_electrochemistry_electrolytic_and_metallic_conduction",
+                    "title": "Electrolytic and metallic conduction",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_7_redox_reactions_and_electrochemistry_conductance_in_electrolytic_solutions",
+                    "title": "Conductance in electrolytic solutions",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_7_redox_reactions_and_electrochemistry_kohlrauschs_law",
+                    "title": "Kohlrausch\u2019s law",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_7_redox_reactions_and_electrochemistry_electrochemical_cells",
+                    "title": "Electrochemical cells",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_7_redox_reactions_and_electrochemistry_electrode_potential",
+                    "title": "Electrode potential",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_7_redox_reactions_and_electrochemistry_nernst_equation",
+                    "title": "Nernst equation",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_7_redox_reactions_and_electrochemistry_emf_of_galvanic_cells",
+                    "title": "EMF of galvanic cells",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_7_redox_reactions_and_electrochemistry_relationship_between_cell_potential_and_gibbs_energy",
+                    "title": "Relationship between cell potential and Gibbs energy",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_7_redox_reactions_and_electrochemistry_primary_and_secondary_cells",
+                    "title": "Primary and secondary cells",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_7_redox_reactions_and_electrochemistry_fuel_cells",
+                    "title": "Fuel cells",
+                    "type": "leaf",
+                    "status": "locked"
+                  }
+                ]
+              },
+              {
+                "id": "neet-chemistry_unit_8_chemical_kinetics",
+                "title": "UNIT 8: Chemical Kinetics",
+                "type": "branch",
+                "children": [
+                  {
+                    "id": "neet-chemistry_unit_8_chemical_kinetics_rate_of_chemical_reactions",
+                    "title": "Rate of chemical reactions",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_8_chemical_kinetics_factors_affecting_reaction_rate",
+                    "title": "Factors affecting reaction rate",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_8_chemical_kinetics_order_and_molecularity",
+                    "title": "Order and molecularity",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_8_chemical_kinetics_rate_law_and_rate_constant",
+                    "title": "Rate law and rate constant",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_8_chemical_kinetics_integrated_rate_equations",
+                    "title": "Integrated rate equations",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_8_chemical_kinetics_half-life_of_reactions",
+                    "title": "Half-life of reactions",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_8_chemical_kinetics_arrhenius_equation",
+                    "title": "Arrhenius equation",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_8_chemical_kinetics_activation_energy",
+                    "title": "Activation energy",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_8_chemical_kinetics_collision_theory",
+                    "title": "Collision theory",
+                    "type": "leaf",
+                    "status": "locked"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "neet-chemistry_inorganic_chemistry",
+            "title": "INORGANIC CHEMISTRY",
+            "type": "branch",
+            "children": [
+              {
+                "id": "neet-chemistry_unit_9_classification_of_elements_and_periodicity",
+                "title": "UNIT 9: Classification of Elements and Periodicity",
+                "type": "branch",
+                "children": [
+                  {
+                    "id": "neet-chemistry_unit_9_classification_of_elements_and_periodicity_modern_periodic_law",
+                    "title": "Modern periodic law",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_9_classification_of_elements_and_periodicity_long_form_of_periodic_table",
+                    "title": "Long form of periodic table",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_9_classification_of_elements_and_periodicity_periodic_trends",
+                    "title": "Periodic trends",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_9_classification_of_elements_and_periodicity_atomic_and_ionic_radii",
+                    "title": "Atomic and ionic radii",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_9_classification_of_elements_and_periodicity_ionization_enthalpy",
+                    "title": "Ionization enthalpy",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_9_classification_of_elements_and_periodicity_electron_gain_enthalpy",
+                    "title": "Electron gain enthalpy",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_9_classification_of_elements_and_periodicity_electronegativity",
+                    "title": "Electronegativity",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_9_classification_of_elements_and_periodicity_valence_and_oxidation_states",
+                    "title": "Valence and oxidation states",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_9_classification_of_elements_and_periodicity_chemical_reactivity_trends",
+                    "title": "Chemical reactivity trends",
+                    "type": "leaf",
+                    "status": "locked"
+                  }
+                ]
+              },
+              {
+                "id": "neet-chemistry_unit_10_p-block_elements",
+                "title": "UNIT 10: p-Block Elements",
+                "type": "branch",
+                "children": [
+                  {
+                    "id": "neet-chemistry_unit_10_p-block_elements_general_trends_in_groups_13_to_18",
+                    "title": "General trends in groups 13 to 18",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_10_p-block_elements_anomalous_behaviour_of_first_element",
+                    "title": "Anomalous behaviour of first element",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_10_p-block_elements_important_compounds_of_p-block_elements",
+                    "title": "Important compounds of p-block elements",
+                    "type": "leaf",
+                    "status": "locked"
+                  }
+                ]
+              },
+              {
+                "id": "neet-chemistry_unit_11_d-_and_f-block_elements",
+                "title": "UNIT 11: d- and f-Block Elements",
+                "type": "branch",
+                "children": [
+                  {
+                    "id": "neet-chemistry_unit_11_d-_and_f-block_elements_transition_elements",
+                    "title": "Transition elements",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_11_d-_and_f-block_elements_electronic_configuration",
+                    "title": "Electronic configuration",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_11_d-_and_f-block_elements_oxidation_states",
+                    "title": "Oxidation states",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_11_d-_and_f-block_elements_magnetic_properties",
+                    "title": "Magnetic properties",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_11_d-_and_f-block_elements_catalytic_behaviour",
+                    "title": "Catalytic behaviour",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_11_d-_and_f-block_elements_complex_formation",
+                    "title": "Complex formation",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_11_d-_and_f-block_elements_preparation_and_properties_of_kmno\u2084_and_k\u2082cr\u2082o\u2087",
+                    "title": "Preparation and properties of KMnO\u2084 and K\u2082Cr\u2082O\u2087",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_11_d-_and_f-block_elements_lanthanoids",
+                    "title": "Lanthanoids",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_11_d-_and_f-block_elements_actinoids",
+                    "title": "Actinoids",
+                    "type": "leaf",
+                    "status": "locked"
+                  }
+                ]
+              },
+              {
+                "id": "neet-chemistry_unit_12_coordination_compounds",
+                "title": "UNIT 12: Coordination Compounds",
+                "type": "branch",
+                "children": [
+                  {
+                    "id": "neet-chemistry_unit_12_coordination_compounds_introduction_to_coordination_compounds",
+                    "title": "Introduction to coordination compounds",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_12_coordination_compounds_werners_theory",
+                    "title": "Werner\u2019s theory",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_12_coordination_compounds_ligands_and_denticity",
+                    "title": "Ligands and denticity",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_12_coordination_compounds_coordination_number",
+                    "title": "Coordination number",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_12_coordination_compounds_nomenclature",
+                    "title": "Nomenclature",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_12_coordination_compounds_isomerism",
+                    "title": "Isomerism",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_12_coordination_compounds_bonding_theories",
+                    "title": "Bonding theories",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_12_coordination_compounds_colour_and_magnetic_properties",
+                    "title": "Colour and magnetic properties",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_12_coordination_compounds_importance_and_applications",
+                    "title": "Importance and applications",
+                    "type": "leaf",
+                    "status": "locked"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "neet-chemistry_organic_chemistry",
+            "title": "ORGANIC CHEMISTRY",
+            "type": "branch",
+            "children": [
+              {
+                "id": "neet-chemistry_unit_13_purification_and_characterisation_of_organic_compounds",
+                "title": "UNIT 13: Purification and Characterisation of Organic Compounds",
+                "type": "branch",
+                "children": [
+                  {
+                    "id": "neet-chemistry_unit_13_purification_and_characterisation_of_organic_compounds_crystallization",
+                    "title": "Crystallization",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_13_purification_and_characterisation_of_organic_compounds_sublimation",
+                    "title": "Sublimation",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_13_purification_and_characterisation_of_organic_compounds_distillation",
+                    "title": "Distillation",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_13_purification_and_characterisation_of_organic_compounds_differential_extraction",
+                    "title": "Differential extraction",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_13_purification_and_characterisation_of_organic_compounds_chromatography",
+                    "title": "Chromatography",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_13_purification_and_characterisation_of_organic_compounds_detection_of_elements",
+                    "title": "Detection of elements",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_13_purification_and_characterisation_of_organic_compounds_quantitative_analysis",
+                    "title": "Quantitative analysis",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_13_purification_and_characterisation_of_organic_compounds_empirical_and_molecular_formula_calculations",
+                    "title": "Empirical and molecular formula calculations",
+                    "type": "leaf",
+                    "status": "locked"
+                  }
+                ]
+              },
+              {
+                "id": "neet-chemistry_unit_14_some_basic_principles_of_organic_chemistry",
+                "title": "UNIT 14: Some Basic Principles of Organic Chemistry",
+                "type": "branch",
+                "children": [
+                  {
+                    "id": "neet-chemistry_unit_14_some_basic_principles_of_organic_chemistry_tetravalency_of_carbon",
+                    "title": "Tetravalency of carbon",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_14_some_basic_principles_of_organic_chemistry_hybridisation",
+                    "title": "Hybridisation",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_14_some_basic_principles_of_organic_chemistry_classification_of_organic_compounds",
+                    "title": "Classification of organic compounds",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_14_some_basic_principles_of_organic_chemistry_homologous_series",
+                    "title": "Homologous series",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_14_some_basic_principles_of_organic_chemistry_structural_and_stereoisomerism",
+                    "title": "Structural and stereoisomerism",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_14_some_basic_principles_of_organic_chemistry_iupac_nomenclature",
+                    "title": "IUPAC nomenclature",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_14_some_basic_principles_of_organic_chemistry_homolytic_and_heterolytic_bond_fission",
+                    "title": "Homolytic and heterolytic bond fission",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_14_some_basic_principles_of_organic_chemistry_carbocations_carbanions_and_free_radicals",
+                    "title": "Carbocations, carbanions and free radicals",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_14_some_basic_principles_of_organic_chemistry_electrophiles_and_nucleophiles",
+                    "title": "Electrophiles and nucleophiles",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_14_some_basic_principles_of_organic_chemistry_inductive_effect",
+                    "title": "Inductive effect",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_14_some_basic_principles_of_organic_chemistry_resonance",
+                    "title": "Resonance",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_14_some_basic_principles_of_organic_chemistry_hyperconjugation",
+                    "title": "Hyperconjugation",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_14_some_basic_principles_of_organic_chemistry_types_of_organic_reactions",
+                    "title": "Types of organic reactions",
+                    "type": "leaf",
+                    "status": "locked"
+                  }
+                ]
+              },
+              {
+                "id": "neet-chemistry_unit_15_hydrocarbons",
+                "title": "UNIT 15: Hydrocarbons",
+                "type": "branch",
+                "children": [
+                  {
+                    "id": "neet-chemistry_unit_15_hydrocarbons_alkanes",
+                    "title": "Alkanes",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_15_hydrocarbons_conformations_of_alkanes",
+                    "title": "Conformations of alkanes",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_15_hydrocarbons_alkenes",
+                    "title": "Alkenes",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_15_hydrocarbons_alkynes",
+                    "title": "Alkynes",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_15_hydrocarbons_aromatic_hydrocarbons",
+                    "title": "Aromatic hydrocarbons",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_15_hydrocarbons_benzene_structure_and_aromaticity",
+                    "title": "Benzene structure and aromaticity",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_15_hydrocarbons_electrophilic_substitution_reactions",
+                    "title": "Electrophilic substitution reactions",
+                    "type": "leaf",
+                    "status": "locked"
+                  }
+                ]
+              },
+              {
+                "id": "neet-chemistry_unit_16_organic_compounds_containing_halogens",
+                "title": "UNIT 16: Organic Compounds Containing Halogens",
+                "type": "branch",
+                "children": [
+                  {
+                    "id": "neet-chemistry_unit_16_organic_compounds_containing_halogens_preparation_and_properties",
+                    "title": "Preparation and properties",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_16_organic_compounds_containing_halogens_nature_of_cx_bond",
+                    "title": "Nature of C\u2013X bond",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_16_organic_compounds_containing_halogens_substitution_reactions",
+                    "title": "Substitution reactions",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_16_organic_compounds_containing_halogens_environmental_effects_of_halogen_compounds",
+                    "title": "Environmental effects of halogen compounds",
+                    "type": "leaf",
+                    "status": "locked"
+                  }
+                ]
+              },
+              {
+                "id": "neet-chemistry_unit_17_organic_compounds_containing_oxygen",
+                "title": "UNIT 17: Organic Compounds Containing Oxygen",
+                "type": "branch",
+                "children": [
+                  {
+                    "id": "neet-chemistry_unit_17_organic_compounds_containing_oxygen_alcohols",
+                    "title": "Alcohols",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_17_organic_compounds_containing_oxygen_phenols",
+                    "title": "Phenols",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_17_organic_compounds_containing_oxygen_ethers",
+                    "title": "Ethers",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_17_organic_compounds_containing_oxygen_aldehydes",
+                    "title": "Aldehydes",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_17_organic_compounds_containing_oxygen_ketones",
+                    "title": "Ketones",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_17_organic_compounds_containing_oxygen_carboxylic_acids",
+                    "title": "Carboxylic acids",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_17_organic_compounds_containing_oxygen_preparation_properties_and_reactions",
+                    "title": "Preparation, properties and reactions",
+                    "type": "leaf",
+                    "status": "locked"
+                  }
+                ]
+              },
+              {
+                "id": "neet-chemistry_unit_18_organic_compounds_containing_nitrogen",
+                "title": "UNIT 18: Organic Compounds Containing Nitrogen",
+                "type": "branch",
+                "children": [
+                  {
+                    "id": "neet-chemistry_unit_18_organic_compounds_containing_nitrogen_amines",
+                    "title": "Amines",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_18_organic_compounds_containing_nitrogen_classification_and_basicity",
+                    "title": "Classification and basicity",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_18_organic_compounds_containing_nitrogen_preparation_and_reactions",
+                    "title": "Preparation and reactions",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_18_organic_compounds_containing_nitrogen_diazonium_salts",
+                    "title": "Diazonium salts",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_18_organic_compounds_containing_nitrogen_synthetic_importance",
+                    "title": "Synthetic importance",
+                    "type": "leaf",
+                    "status": "locked"
+                  }
+                ]
+              },
+              {
+                "id": "neet-chemistry_unit_19_biomolecules",
+                "title": "UNIT 19: Biomolecules",
+                "type": "branch",
+                "children": [
+                  {
+                    "id": "neet-chemistry_unit_19_biomolecules_carbohydrates",
+                    "title": "Carbohydrates",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_19_biomolecules_proteins",
+                    "title": "Proteins",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_19_biomolecules_vitamins",
+                    "title": "Vitamins",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_19_biomolecules_nucleic_acids",
+                    "title": "Nucleic acids",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_19_biomolecules_hormones",
+                    "title": "Hormones",
+                    "type": "leaf",
+                    "status": "locked"
+                  }
+                ]
+              },
+              {
+                "id": "neet-chemistry_unit_20_principles_related_to_practical_chemistry",
+                "title": "UNIT 20: Principles Related to Practical Chemistry",
+                "type": "branch",
+                "children": [
+                  {
+                    "id": "neet-chemistry_unit_20_principles_related_to_practical_chemistry_detection_of_extra_elements",
+                    "title": "Detection of extra elements",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_20_principles_related_to_practical_chemistry_detection_of_functional_groups",
+                    "title": "Detection of functional groups",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_20_principles_related_to_practical_chemistry_preparation_of_inorganic_compounds",
+                    "title": "Preparation of inorganic compounds",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_20_principles_related_to_practical_chemistry_preparation_of_organic_compounds",
+                    "title": "Preparation of organic compounds",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_20_principles_related_to_practical_chemistry_titrimetric_analysis",
+                    "title": "Titrimetric analysis",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_20_principles_related_to_practical_chemistry_qualitative_salt_analysis",
+                    "title": "Qualitative salt analysis",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_20_principles_related_to_practical_chemistry_thermochemistry_experiments",
+                    "title": "Thermochemistry experiments",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "neet-chemistry_unit_20_principles_related_to_practical_chemistry_kinetics_experiment",
+                    "title": "Kinetics experiment",
+                    "type": "leaf",
+                    "status": "locked"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

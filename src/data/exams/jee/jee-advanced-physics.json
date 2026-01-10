@@ -1,0 +1,1041 @@
+[
+  {
+    "id": "jee-advanced-physics",
+    "title": "Physics (JEE Advanced)",
+    "type": "branch",
+    "children": [
+      {
+        "id": "jee-advanced-physics_general",
+        "title": "General",
+        "type": "branch",
+        "children": [
+          {
+            "id": "jee-advanced-physics_general_units_and_dimensions",
+            "title": "Units and dimensions",
+            "type": "leaf",
+            "status": "locked"
+          },
+          {
+            "id": "jee-advanced-physics_general_dimensional_analysis",
+            "title": "Dimensional analysis",
+            "type": "leaf",
+            "status": "locked"
+          },
+          {
+            "id": "jee-advanced-physics_general_least_count_and_significant_figures",
+            "title": "Least count and significant figures",
+            "type": "leaf",
+            "status": "locked"
+          },
+          {
+            "id": "jee-advanced-physics_general_measurement_and_error_analysis",
+            "title": "Measurement and error analysis",
+            "type": "leaf",
+            "status": "locked"
+          },
+          {
+            "id": "jee-advanced-physics_general_vernier_calipers_and_screw_gauge_experiments",
+            "title": "Vernier calipers and screw gauge experiments",
+            "type": "leaf",
+            "status": "locked"
+          },
+          {
+            "id": "jee-advanced-physics_general_determination_of_g_using_simple_pendulum",
+            "title": "Determination of g using simple pendulum",
+            "type": "leaf",
+            "status": "locked"
+          },
+          {
+            "id": "jee-advanced-physics_general_elasticity_and_youngs_modulus_experiment",
+            "title": "Elasticity and Young\u2019s modulus experiment",
+            "type": "leaf",
+            "status": "locked"
+          },
+          {
+            "id": "jee-advanced-physics_general_surface_tension_by_capillary_rise",
+            "title": "Surface tension by capillary rise",
+            "type": "leaf",
+            "status": "locked"
+          },
+          {
+            "id": "jee-advanced-physics_general_specific_heat_using_calorimeter",
+            "title": "Specific heat using calorimeter",
+            "type": "leaf",
+            "status": "locked"
+          },
+          {
+            "id": "jee-advanced-physics_general_focal_length_of_mirror_and_lens",
+            "title": "Focal length of mirror and lens",
+            "type": "leaf",
+            "status": "locked"
+          },
+          {
+            "id": "jee-advanced-physics_general_speed_of_sound_using_resonance_column",
+            "title": "Speed of sound using resonance column",
+            "type": "leaf",
+            "status": "locked"
+          },
+          {
+            "id": "jee-advanced-physics_general_verification_of_ohms_law",
+            "title": "Verification of Ohm\u2019s law",
+            "type": "leaf",
+            "status": "locked"
+          },
+          {
+            "id": "jee-advanced-physics_general_determination_of_resistivity_using_meter_bridge",
+            "title": "Determination of resistivity using meter bridge",
+            "type": "leaf",
+            "status": "locked"
+          },
+          {
+            "id": "jee-advanced-physics_mechanics_kinematics",
+            "title": "Mechanics \u2013 Kinematics",
+            "type": "branch",
+            "children": [
+              {
+                "id": "jee-advanced-physics_mechanics_kinematics_motion_in_one_dimension",
+                "title": "Motion in one dimension",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_mechanics_kinematics_motion_in_two_dimensions",
+                "title": "Motion in two dimensions",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_mechanics_kinematics_position_velocity_and_acceleration_vectors",
+                "title": "Position, velocity and acceleration vectors",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_mechanics_kinematics_projectile_motion",
+                "title": "Projectile motion",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_mechanics_kinematics_uniform_circular_motion",
+                "title": "Uniform circular motion",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_mechanics_kinematics_relative_velocity",
+                "title": "Relative velocity",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "jee-advanced-physics_mechanics_laws_of_motion",
+            "title": "Mechanics \u2013 Laws of Motion",
+            "type": "branch",
+            "children": [
+              {
+                "id": "jee-advanced-physics_mechanics_laws_of_motion_newtons_laws_of_motion",
+                "title": "Newton\u2019s laws of motion",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_mechanics_laws_of_motion_inertial_and_non-inertial_frames",
+                "title": "Inertial and non-inertial frames",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_mechanics_laws_of_motion_static_and_kinetic_friction",
+                "title": "Static and kinetic friction",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_mechanics_laws_of_motion_free_body_diagrams",
+                "title": "Free body diagrams",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_mechanics_laws_of_motion_applications_of_newtons_laws",
+                "title": "Applications of Newton\u2019s laws",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "jee-advanced-physics_mechanics_work_energy_and_power",
+            "title": "Mechanics \u2013 Work, Energy and Power",
+            "type": "branch",
+            "children": [
+              {
+                "id": "jee-advanced-physics_mechanics_work_energy_and_power_work_done_by_forces",
+                "title": "Work done by forces",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_mechanics_work_energy_and_power_kinetic_and_potential_energy",
+                "title": "Kinetic and potential energy",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_mechanics_work_energy_and_power_workenergy_theorem",
+                "title": "Work\u2013energy theorem",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_mechanics_work_energy_and_power_conservative_and_non-conservative_forces",
+                "title": "Conservative and non-conservative forces",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_mechanics_work_energy_and_power_power",
+                "title": "Power",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_mechanics_work_energy_and_power_conservation_of_mechanical_energy",
+                "title": "Conservation of mechanical energy",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "jee-advanced-physics_mechanics_system_of_particles_and_collisions",
+            "title": "Mechanics \u2013 System of Particles and Collisions",
+            "type": "branch",
+            "children": [
+              {
+                "id": "jee-advanced-physics_mechanics_system_of_particles_and_collisions_centre_of_mass_and_its_motion",
+                "title": "Centre of mass and its motion",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_mechanics_system_of_particles_and_collisions_linear_momentum",
+                "title": "Linear momentum",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_mechanics_system_of_particles_and_collisions_impulse",
+                "title": "Impulse",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_mechanics_system_of_particles_and_collisions_conservation_of_linear_momentum",
+                "title": "Conservation of linear momentum",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_mechanics_system_of_particles_and_collisions_elastic_and_inelastic_collisions",
+                "title": "Elastic and inelastic collisions",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "jee-advanced-physics_mechanics_rotational_motion",
+            "title": "Mechanics \u2013 Rotational Motion",
+            "type": "branch",
+            "children": [
+              {
+                "id": "jee-advanced-physics_mechanics_rotational_motion_rigid_body_and_rotational_motion",
+                "title": "Rigid body and rotational motion",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_mechanics_rotational_motion_moment_of_inertia",
+                "title": "Moment of inertia",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_mechanics_rotational_motion_parallel_and_perpendicular_axis_theorems",
+                "title": "Parallel and perpendicular axis theorems",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_mechanics_rotational_motion_torque_and_angular_momentum",
+                "title": "Torque and angular momentum",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_mechanics_rotational_motion_conservation_of_angular_momentum",
+                "title": "Conservation of angular momentum",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_mechanics_rotational_motion_rotational_kinetic_energy",
+                "title": "Rotational kinetic energy",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_mechanics_rotational_motion_dynamics_of_rigid_bodies",
+                "title": "Dynamics of rigid bodies",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_mechanics_rotational_motion_rolling_motion_without_slipping",
+                "title": "Rolling motion without slipping",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_mechanics_rotational_motion_equilibrium_of_rigid_bodies",
+                "title": "Equilibrium of rigid bodies",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "jee-advanced-physics_oscillations_and_waves",
+            "title": "Oscillations and Waves",
+            "type": "branch",
+            "children": [
+              {
+                "id": "jee-advanced-physics_oscillations_and_waves_simple_harmonic_motion",
+                "title": "Simple harmonic motion",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_oscillations_and_waves_linear_and_angular_shm",
+                "title": "Linear and angular SHM",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_oscillations_and_waves_energy_in_shm",
+                "title": "Energy in SHM",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_oscillations_and_waves_forced_and_damped_oscillations",
+                "title": "Forced and damped oscillations",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_oscillations_and_waves_resonance",
+                "title": "Resonance",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_oscillations_and_waves_wave_motion",
+                "title": "Wave motion",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_oscillations_and_waves_longitudinal_and_transverse_waves",
+                "title": "Longitudinal and transverse waves",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_oscillations_and_waves_superposition_of_waves",
+                "title": "Superposition of waves",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_oscillations_and_waves_progressive_and_stationary_waves",
+                "title": "Progressive and stationary waves",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_oscillations_and_waves_vibrations_of_strings_and_air_columns",
+                "title": "Vibrations of strings and air columns",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_oscillations_and_waves_beats",
+                "title": "Beats",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_oscillations_and_waves_speed_of_sound",
+                "title": "Speed of sound",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_oscillations_and_waves_doppler_effect",
+                "title": "Doppler effect",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "jee-advanced-physics_gravitation",
+            "title": "Gravitation",
+            "type": "branch",
+            "children": [
+              {
+                "id": "jee-advanced-physics_gravitation_law_of_gravitation",
+                "title": "Law of gravitation",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_gravitation_gravitational_field_and_potential",
+                "title": "Gravitational field and potential",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_gravitation_acceleration_due_to_gravity",
+                "title": "Acceleration due to gravity",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_gravitation_motion_of_planets_and_satellites",
+                "title": "Motion of planets and satellites",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_gravitation_keplers_laws",
+                "title": "Kepler\u2019s laws",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_gravitation_geostationary_satellites",
+                "title": "Geostationary satellites",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_gravitation_escape_velocity",
+                "title": "Escape velocity",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "jee-advanced-physics_properties_of_matter_and_fluid_mechanics",
+            "title": "Properties of Matter and Fluid Mechanics",
+            "type": "branch",
+            "children": [
+              {
+                "id": "jee-advanced-physics_properties_of_matter_and_fluid_mechanics_pressure_in_fluids",
+                "title": "Pressure in fluids",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_properties_of_matter_and_fluid_mechanics_pascals_law",
+                "title": "Pascal\u2019s law",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_properties_of_matter_and_fluid_mechanics_buoyancy",
+                "title": "Buoyancy",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_properties_of_matter_and_fluid_mechanics_surface_tension_and_surface_energy",
+                "title": "Surface tension and surface energy",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_properties_of_matter_and_fluid_mechanics_capillary_rise",
+                "title": "Capillary rise",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_properties_of_matter_and_fluid_mechanics_viscosity",
+                "title": "Viscosity",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_properties_of_matter_and_fluid_mechanics_stokes_law",
+                "title": "Stoke\u2019s law",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_properties_of_matter_and_fluid_mechanics_terminal_velocity",
+                "title": "Terminal velocity",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_properties_of_matter_and_fluid_mechanics_streamline_flow",
+                "title": "Streamline flow",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_properties_of_matter_and_fluid_mechanics_equation_of_continuity",
+                "title": "Equation of continuity",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_properties_of_matter_and_fluid_mechanics_bernoullis_theorem_and_applications",
+                "title": "Bernoulli\u2019s theorem and applications",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_properties_of_matter_and_fluid_mechanics_elastic_moduli",
+                "title": "Elastic moduli",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_properties_of_matter_and_fluid_mechanics_bulk_modulus",
+                "title": "Bulk modulus",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_properties_of_matter_and_fluid_mechanics_modulus_of_rigidity",
+                "title": "Modulus of rigidity",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "jee-advanced-physics_thermal_physics",
+            "title": "Thermal Physics",
+            "type": "branch",
+            "children": [
+              {
+                "id": "jee-advanced-physics_thermal_physics_thermal_expansion_of_solids_liquids_and_gases",
+                "title": "Thermal expansion of solids, liquids and gases",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_thermal_physics_calorimetry_and_latent_heat",
+                "title": "Calorimetry and latent heat",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_thermal_physics_heat_conduction",
+                "title": "Heat conduction",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_thermal_physics_convection_and_radiation",
+                "title": "Convection and radiation",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_thermal_physics_newtons_law_of_cooling",
+                "title": "Newton\u2019s law of cooling",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_thermal_physics_ideal_gas_laws",
+                "title": "Ideal gas laws",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_thermal_physics_specific_heats_of_gases",
+                "title": "Specific heats of gases",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_thermal_physics_isothermal_and_adiabatic_processes",
+                "title": "Isothermal and adiabatic processes",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_thermal_physics_first_law_of_thermodynamics",
+                "title": "First law of thermodynamics",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_thermal_physics_second_law_of_thermodynamics",
+                "title": "Second law of thermodynamics",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_thermal_physics_carnot_engine_and_efficiency",
+                "title": "Carnot engine and efficiency",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_thermal_physics_blackbody_radiation",
+                "title": "Blackbody radiation",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_thermal_physics_kirchhoffs_law",
+                "title": "Kirchhoff\u2019s law",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_thermal_physics_wiens_displacement_law",
+                "title": "Wien\u2019s displacement law",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_thermal_physics_stefanboltzmann_law",
+                "title": "Stefan\u2013Boltzmann law",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "jee-advanced-physics_electrostatics",
+            "title": "Electrostatics",
+            "type": "branch",
+            "children": [
+              {
+                "id": "jee-advanced-physics_electrostatics_coulombs_law",
+                "title": "Coulomb\u2019s law",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_electrostatics_electric_field_and_electric_field_lines",
+                "title": "Electric field and electric field lines",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_electrostatics_electric_flux",
+                "title": "Electric flux",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_electrostatics_gausss_law_and_applications",
+                "title": "Gauss\u2019s law and applications",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_electrostatics_electric_potential_and_potential_energy",
+                "title": "Electric potential and potential energy",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_electrostatics_dipoles_in_uniform_electric_field",
+                "title": "Dipoles in uniform electric field",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "jee-advanced-physics_capacitance",
+            "title": "Capacitance",
+            "type": "branch",
+            "children": [
+              {
+                "id": "jee-advanced-physics_capacitance_capacitance_of_conductors",
+                "title": "Capacitance of conductors",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_capacitance_parallel_plate_capacitor",
+                "title": "Parallel plate capacitor",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_capacitance_effect_of_dielectrics",
+                "title": "Effect of dielectrics",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_capacitance_capacitors_in_series_and_parallel",
+                "title": "Capacitors in series and parallel",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_capacitance_energy_stored_in_a_capacitor",
+                "title": "Energy stored in a capacitor",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "jee-advanced-physics_current_electricity",
+            "title": "Current Electricity",
+            "type": "branch",
+            "children": [
+              {
+                "id": "jee-advanced-physics_current_electricity_electric_current_and_drift_velocity",
+                "title": "Electric current and drift velocity",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_current_electricity_ohms_law",
+                "title": "Ohm\u2019s law",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_current_electricity_resistance_and_resistivity",
+                "title": "Resistance and resistivity",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_current_electricity_combination_of_resistors",
+                "title": "Combination of resistors",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_current_electricity_kirchhoffs_laws",
+                "title": "Kirchhoff\u2019s laws",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_current_electricity_heating_effect_of_electric_current",
+                "title": "Heating effect of electric current",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "jee-advanced-physics_magnetism",
+            "title": "Magnetism",
+            "type": "branch",
+            "children": [
+              {
+                "id": "jee-advanced-physics_magnetism_biotsavart_law",
+                "title": "Biot\u2013Savart law",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_magnetism_amperes_circuital_law",
+                "title": "Ampere\u2019s circuital law",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_magnetism_magnetic_field_due_to_current-carrying_conductors",
+                "title": "Magnetic field due to current-carrying conductors",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_magnetism_lorentz_force",
+                "title": "Lorentz force",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_magnetism_force_on_current-carrying_conductor",
+                "title": "Force on current-carrying conductor",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_magnetism_motion_of_charged_particle_in_magnetic_field",
+                "title": "Motion of charged particle in magnetic field",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_magnetism_magnetic_dipole",
+                "title": "Magnetic dipole",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_magnetism_earths_magnetic_field",
+                "title": "Earth\u2019s magnetic field",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "jee-advanced-physics_electromagnetic_induction_and_ac",
+            "title": "Electromagnetic Induction and AC",
+            "type": "branch",
+            "children": [
+              {
+                "id": "jee-advanced-physics_electromagnetic_induction_and_ac_faradays_laws_of_electromagnetic_induction",
+                "title": "Faraday\u2019s laws of electromagnetic induction",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_electromagnetic_induction_and_ac_lenzs_law",
+                "title": "Lenz\u2019s law",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_electromagnetic_induction_and_ac_induced_emf",
+                "title": "Induced emf",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_electromagnetic_induction_and_ac_self_and_mutual_inductance",
+                "title": "Self and mutual inductance",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_electromagnetic_induction_and_ac_rc_lr_lc_and_lcr_circuits",
+                "title": "RC, LR, LC and LCR circuits",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_electromagnetic_induction_and_ac_alternating_current_and_ac_circuits",
+                "title": "Alternating current and AC circuits",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "jee-advanced-physics_electromagnetic_waves",
+            "title": "Electromagnetic Waves",
+            "type": "branch",
+            "children": [
+              {
+                "id": "jee-advanced-physics_electromagnetic_waves_nature_of_electromagnetic_waves",
+                "title": "Nature of electromagnetic waves",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_electromagnetic_waves_electromagnetic_spectrum",
+                "title": "Electromagnetic spectrum",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_electromagnetic_waves_uses_of_electromagnetic_waves",
+                "title": "Uses of electromagnetic waves",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "jee-advanced-physics_optics",
+            "title": "Optics",
+            "type": "branch",
+            "children": [
+              {
+                "id": "jee-advanced-physics_optics_rectilinear_propagation_of_light",
+                "title": "Rectilinear propagation of light",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_optics_reflection_at_plane_and_spherical_surfaces",
+                "title": "Reflection at plane and spherical surfaces",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_optics_refraction_and_snells_law",
+                "title": "Refraction and Snell\u2019s law",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_optics_total_internal_reflection",
+                "title": "Total internal reflection",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_optics_dispersion_by_prism",
+                "title": "Dispersion by prism",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_optics_thin_lenses_and_mirrors",
+                "title": "Thin lenses and mirrors",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_optics_combination_of_lenses_and_mirrors",
+                "title": "Combination of lenses and mirrors",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_optics_magnification",
+                "title": "Magnification",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_optics_huygens_principle",
+                "title": "Huygens\u2019 principle",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_optics_youngs_double_slit_experiment",
+                "title": "Young\u2019s double slit experiment",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_optics_single_slit_diffraction",
+                "title": "Single slit diffraction",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_optics_polarisation",
+                "title": "Polarisation",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_optics_brewsters_law",
+                "title": "Brewster\u2019s law",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_optics_polaroids",
+                "title": "Polaroids",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "jee-advanced-physics_modern_physics",
+            "title": "Modern Physics",
+            "type": "branch",
+            "children": [
+              {
+                "id": "jee-advanced-physics_modern_physics_atomic_nucleus",
+                "title": "Atomic nucleus",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_modern_physics_radioactive_decay_laws",
+                "title": "Radioactive decay laws",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_modern_physics_alpha_beta_and_gamma_radiation",
+                "title": "Alpha, beta and gamma radiation",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_modern_physics_half-life_and_mean_life",
+                "title": "Half-life and mean life",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_modern_physics_binding_energy",
+                "title": "Binding energy",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_modern_physics_nuclear_fission_and_fusion",
+                "title": "Nuclear fission and fusion",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_modern_physics_photoelectric_effect",
+                "title": "Photoelectric effect",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_modern_physics_bohr_model_of_hydrogen_atom",
+                "title": "Bohr model of hydrogen atom",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_modern_physics_x-rays_and_moseleys_law",
+                "title": "X-rays and Moseley\u2019s law",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-physics_modern_physics_de_broglie_wavelength",
+                "title": "de Broglie wavelength",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

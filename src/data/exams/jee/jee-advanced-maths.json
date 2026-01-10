@@ -1,0 +1,991 @@
+[
+  {
+    "id": "jee-advanced-maths",
+    "title": "Mathematics (JEE Advanced)",
+    "type": "branch",
+    "children": [
+      {
+        "id": "jee-advanced-maths_sets_relations_and_functions",
+        "title": "Sets, Relations and Functions",
+        "type": "branch",
+        "children": [
+          {
+            "id": "jee-advanced-maths_sets_relations_and_functions_representation_of_sets",
+            "title": "Representation of sets",
+            "type": "leaf",
+            "status": "locked"
+          },
+          {
+            "id": "jee-advanced-maths_sets_relations_and_functions_types_of_sets",
+            "title": "Types of sets",
+            "type": "leaf",
+            "status": "locked"
+          },
+          {
+            "id": "jee-advanced-maths_sets_relations_and_functions_algebra_of_sets",
+            "title": "Algebra of sets",
+            "type": "leaf",
+            "status": "locked"
+          },
+          {
+            "id": "jee-advanced-maths_sets_relations_and_functions_union_intersection_complement_and_difference_of_sets",
+            "title": "Union, intersection, complement and difference of sets",
+            "type": "leaf",
+            "status": "locked"
+          },
+          {
+            "id": "jee-advanced-maths_sets_relations_and_functions_de_morgans_laws",
+            "title": "De Morgan\u2019s laws",
+            "type": "leaf",
+            "status": "locked"
+          },
+          {
+            "id": "jee-advanced-maths_sets_relations_and_functions_cartesian_product_of_sets",
+            "title": "Cartesian product of sets",
+            "type": "leaf",
+            "status": "locked"
+          },
+          {
+            "id": "jee-advanced-maths_sets_relations_and_functions_ordered_pairs",
+            "title": "Ordered pairs",
+            "type": "leaf",
+            "status": "locked"
+          },
+          {
+            "id": "jee-advanced-maths_sets_relations_and_functions_relations_and_their_properties",
+            "title": "Relations and their properties",
+            "type": "leaf",
+            "status": "locked"
+          },
+          {
+            "id": "jee-advanced-maths_sets_relations_and_functions_equivalence_relations",
+            "title": "Equivalence relations",
+            "type": "leaf",
+            "status": "locked"
+          },
+          {
+            "id": "jee-advanced-maths_sets_relations_and_functions_functions_as_mappings",
+            "title": "Functions as mappings",
+            "type": "leaf",
+            "status": "locked"
+          },
+          {
+            "id": "jee-advanced-maths_sets_relations_and_functions_domain_codomain_and_range",
+            "title": "Domain, codomain and range",
+            "type": "leaf",
+            "status": "locked"
+          },
+          {
+            "id": "jee-advanced-maths_sets_relations_and_functions_one-one_onto_and_invertible_functions",
+            "title": "One-one, onto and invertible functions",
+            "type": "leaf",
+            "status": "locked"
+          },
+          {
+            "id": "jee-advanced-maths_sets_relations_and_functions_even_and_odd_functions",
+            "title": "Even and odd functions",
+            "type": "leaf",
+            "status": "locked"
+          },
+          {
+            "id": "jee-advanced-maths_sets_relations_and_functions_special_functions",
+            "title": "Special functions",
+            "type": "leaf",
+            "status": "locked"
+          },
+          {
+            "id": "jee-advanced-maths_sets_relations_and_functions_algebra_of_functions",
+            "title": "Algebra of functions",
+            "type": "leaf",
+            "status": "locked"
+          },
+          {
+            "id": "jee-advanced-maths_sets_relations_and_functions_composition_of_functions",
+            "title": "Composition of functions",
+            "type": "leaf",
+            "status": "locked"
+          },
+          {
+            "id": "jee-advanced-maths_algebra_of_complex_numbers",
+            "title": "Algebra of Complex Numbers",
+            "type": "branch",
+            "children": [
+              {
+                "id": "jee-advanced-maths_algebra_of_complex_numbers_complex_numbers_and_their_representation",
+                "title": "Complex numbers and their representation",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_algebra_of_complex_numbers_algebra_of_complex_numbers",
+                "title": "Algebra of complex numbers",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_algebra_of_complex_numbers_conjugate_of_a_complex_number",
+                "title": "Conjugate of a complex number",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_algebra_of_complex_numbers_modulus_and_argument",
+                "title": "Modulus and argument",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_algebra_of_complex_numbers_polar_representation",
+                "title": "Polar representation",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_algebra_of_complex_numbers_triangle_inequality",
+                "title": "Triangle inequality",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_algebra_of_complex_numbers_cube_roots_of_unity",
+                "title": "Cube roots of unity",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_algebra_of_complex_numbers_geometrical_interpretation_of_complex_numbers",
+                "title": "Geometrical interpretation of complex numbers",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "jee-advanced-maths_quadratic_equations_and_theory_of_equations",
+            "title": "Quadratic Equations and Theory of Equations",
+            "type": "branch",
+            "children": [
+              {
+                "id": "jee-advanced-maths_quadratic_equations_and_theory_of_equations_quadratic_equations_with_real_coefficients",
+                "title": "Quadratic equations with real coefficients",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_quadratic_equations_and_theory_of_equations_nature_of_roots",
+                "title": "Nature of roots",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_quadratic_equations_and_theory_of_equations_relations_between_roots_and_coefficients",
+                "title": "Relations between roots and coefficients",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_quadratic_equations_and_theory_of_equations_formation_of_quadratic_equations",
+                "title": "Formation of quadratic equations",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_quadratic_equations_and_theory_of_equations_symmetric_functions_of_roots",
+                "title": "Symmetric functions of roots",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_quadratic_equations_and_theory_of_equations_fundamental_theorem_of_algebra_statement",
+                "title": "Fundamental theorem of algebra (statement)",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "jee-advanced-maths_sequences_and_series",
+            "title": "Sequences and Series",
+            "type": "branch",
+            "children": [
+              {
+                "id": "jee-advanced-maths_sequences_and_series_arithmetic_progression",
+                "title": "Arithmetic progression",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_sequences_and_series_geometric_progression",
+                "title": "Geometric progression",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_sequences_and_series_arithmetic_and_geometric_means",
+                "title": "Arithmetic and geometric means",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_sequences_and_series_sum_of_finite_arithmetic_and_geometric_series",
+                "title": "Sum of finite arithmetic and geometric series",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_sequences_and_series_infinite_geometric_series",
+                "title": "Infinite geometric series",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_sequences_and_series_sum_of_first_n_natural_numbers",
+                "title": "Sum of first n natural numbers",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_sequences_and_series_sum_of_squares_and_cubes_of_natural_numbers",
+                "title": "Sum of squares and cubes of natural numbers",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "jee-advanced-maths_logarithms",
+            "title": "Logarithms",
+            "type": "branch",
+            "children": [
+              {
+                "id": "jee-advanced-maths_logarithms_logarithms_and_their_properties",
+                "title": "Logarithms and their properties",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_logarithms_change_of_base",
+                "title": "Change of base",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_logarithms_applications_of_logarithms",
+                "title": "Applications of logarithms",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "jee-advanced-maths_permutations_and_combinations",
+            "title": "Permutations and Combinations",
+            "type": "branch",
+            "children": [
+              {
+                "id": "jee-advanced-maths_permutations_and_combinations_fundamental_principle_of_counting",
+                "title": "Fundamental principle of counting",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_permutations_and_combinations_permutations",
+                "title": "Permutations",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_permutations_and_combinations_combinations",
+                "title": "Combinations",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_permutations_and_combinations_properties_of_permutations_and_combinations",
+                "title": "Properties of permutations and combinations",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_permutations_and_combinations_applications_of_counting_techniques",
+                "title": "Applications of counting techniques",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "jee-advanced-maths_binomial_theorem",
+            "title": "Binomial Theorem",
+            "type": "branch",
+            "children": [
+              {
+                "id": "jee-advanced-maths_binomial_theorem_binomial_theorem_for_positive_integral_index",
+                "title": "Binomial theorem for positive integral index",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_binomial_theorem_general_term_of_binomial_expansion",
+                "title": "General term of binomial expansion",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_binomial_theorem_properties_of_binomial_coefficients",
+                "title": "Properties of binomial coefficients",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_binomial_theorem_applications_of_binomial_theorem",
+                "title": "Applications of binomial theorem",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "jee-advanced-maths_matrices_and_determinants",
+            "title": "Matrices and Determinants",
+            "type": "branch",
+            "children": [
+              {
+                "id": "jee-advanced-maths_matrices_and_determinants_matrices_and_their_types",
+                "title": "Matrices and their types",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_matrices_and_determinants_algebra_of_matrices",
+                "title": "Algebra of matrices",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_matrices_and_determinants_transpose_of_a_matrix",
+                "title": "Transpose of a matrix",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_matrices_and_determinants_elementary_row_and_column_operations",
+                "title": "Elementary row and column operations",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_matrices_and_determinants_determinants_up_to_order_three",
+                "title": "Determinants up to order three",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_matrices_and_determinants_properties_of_determinants",
+                "title": "Properties of determinants",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_matrices_and_determinants_adjoint_and_inverse_of_matrices",
+                "title": "Adjoint and inverse of matrices",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_matrices_and_determinants_solution_of_linear_equations_using_matrices",
+                "title": "Solution of linear equations using matrices",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "jee-advanced-maths_probability",
+            "title": "Probability",
+            "type": "branch",
+            "children": [
+              {
+                "id": "jee-advanced-maths_probability_random_experiment_and_sample_space",
+                "title": "Random experiment and sample space",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_probability_types_of_events",
+                "title": "Types of events",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_probability_addition_rule_of_probability",
+                "title": "Addition rule of probability",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_probability_multiplication_rule_of_probability",
+                "title": "Multiplication rule of probability",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_probability_conditional_probability",
+                "title": "Conditional probability",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_probability_independence_of_events",
+                "title": "Independence of events",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_probability_total_probability_theorem",
+                "title": "Total probability theorem",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_probability_bayes_theorem",
+                "title": "Bayes\u2019 theorem",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_probability_probability_using_permutations_and_combinations",
+                "title": "Probability using permutations and combinations",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "jee-advanced-maths_statistics",
+            "title": "Statistics",
+            "type": "branch",
+            "children": [
+              {
+                "id": "jee-advanced-maths_statistics_measures_of_central_tendency",
+                "title": "Measures of central tendency",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_statistics_mean_median_and_mode",
+                "title": "Mean, median and mode",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_statistics_measures_of_dispersion",
+                "title": "Measures of dispersion",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_statistics_mean_deviation",
+                "title": "Mean deviation",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_statistics_standard_deviation",
+                "title": "Standard deviation",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_statistics_variance",
+                "title": "Variance",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_statistics_frequency_distribution_analysis",
+                "title": "Frequency distribution analysis",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_statistics_random_variables",
+                "title": "Random variables",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_statistics_mean_and_variance_of_random_variables",
+                "title": "Mean and variance of random variables",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "jee-advanced-maths_trigonometry",
+            "title": "Trigonometry",
+            "type": "branch",
+            "children": [
+              {
+                "id": "jee-advanced-maths_trigonometry_trigonometric_functions_and_identities",
+                "title": "Trigonometric functions and identities",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_trigonometry_graphs_and_periodicity_of_trigonometric_functions",
+                "title": "Graphs and periodicity of trigonometric functions",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_trigonometry_trigonometric_equations",
+                "title": "Trigonometric equations",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_trigonometry_general_solution_of_trigonometric_equations",
+                "title": "General solution of trigonometric equations",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_trigonometry_inverse_trigonometric_functions",
+                "title": "Inverse trigonometric functions",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_trigonometry_properties_of_inverse_trigonometric_functions",
+                "title": "Properties of inverse trigonometric functions",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "jee-advanced-maths_analytical_geometry_two_dimensions",
+            "title": "Analytical Geometry \u2013 Two Dimensions",
+            "type": "branch",
+            "children": [
+              {
+                "id": "jee-advanced-maths_analytical_geometry_two_dimensions_cartesian_coordinate_system",
+                "title": "Cartesian coordinate system",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_analytical_geometry_two_dimensions_distance_between_two_points",
+                "title": "Distance between two points",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_analytical_geometry_two_dimensions_section_formula",
+                "title": "Section formula",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_analytical_geometry_two_dimensions_shift_of_origin",
+                "title": "Shift of origin",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_analytical_geometry_two_dimensions_equation_of_straight_line_in_various_forms",
+                "title": "Equation of straight line in various forms",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_analytical_geometry_two_dimensions_angle_between_two_lines",
+                "title": "Angle between two lines",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_analytical_geometry_two_dimensions_distance_of_a_point_from_a_line",
+                "title": "Distance of a point from a line",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_analytical_geometry_two_dimensions_concurrency_of_lines",
+                "title": "Concurrency of lines",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_analytical_geometry_two_dimensions_centroid_orthocentre_incentre_and_circumcentre_of_a_triangle",
+                "title": "Centroid, orthocentre, incentre and circumcentre of a triangle",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_analytical_geometry_two_dimensions_equation_of_circle_in_various_forms",
+                "title": "Equation of circle in various forms",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_analytical_geometry_two_dimensions_tangents_normals_and_chords",
+                "title": "Tangents, normals and chords",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_analytical_geometry_two_dimensions_parametric_equations_of_circle",
+                "title": "Parametric equations of circle",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_analytical_geometry_two_dimensions_intersection_of_curves",
+                "title": "Intersection of curves",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_analytical_geometry_two_dimensions_equation_of_conic_sections",
+                "title": "Equation of conic sections",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_analytical_geometry_two_dimensions_parabola_ellipse_and_hyperbola",
+                "title": "Parabola, ellipse and hyperbola",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_analytical_geometry_two_dimensions_tangents_and_normals_to_conics",
+                "title": "Tangents and normals to conics",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_analytical_geometry_two_dimensions_locus_problems",
+                "title": "Locus problems",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "jee-advanced-maths_analytical_geometry_three_dimensions",
+            "title": "Analytical Geometry \u2013 Three Dimensions",
+            "type": "branch",
+            "children": [
+              {
+                "id": "jee-advanced-maths_analytical_geometry_three_dimensions_coordinates_of_a_point_in_space",
+                "title": "Coordinates of a point in space",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_analytical_geometry_three_dimensions_distance_between_two_points",
+                "title": "Distance between two points",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_analytical_geometry_three_dimensions_direction_ratios_and_direction_cosines",
+                "title": "Direction ratios and direction cosines",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_analytical_geometry_three_dimensions_equation_of_a_line_in_space",
+                "title": "Equation of a line in space",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_analytical_geometry_three_dimensions_skew_lines",
+                "title": "Skew lines",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_analytical_geometry_three_dimensions_shortest_distance_between_two_lines",
+                "title": "Shortest distance between two lines",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_analytical_geometry_three_dimensions_equation_of_a_plane",
+                "title": "Equation of a plane",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_analytical_geometry_three_dimensions_distance_of_a_point_from_a_plane",
+                "title": "Distance of a point from a plane",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_analytical_geometry_three_dimensions_angle_between_lines_and_planes",
+                "title": "Angle between lines and planes",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_analytical_geometry_three_dimensions_coplanar_lines",
+                "title": "Coplanar lines",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "jee-advanced-maths_differential_calculus",
+            "title": "Differential Calculus",
+            "type": "branch",
+            "children": [
+              {
+                "id": "jee-advanced-maths_differential_calculus_limit_of_a_function",
+                "title": "Limit of a function",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_differential_calculus_continuity_of_functions",
+                "title": "Continuity of functions",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_differential_calculus_properties_of_limits_and_continuity",
+                "title": "Properties of limits and continuity",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_differential_calculus_lhospitals_rule",
+                "title": "L\u2019Hospital\u2019s rule",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_differential_calculus_differentiation_from_first_principles",
+                "title": "Differentiation from first principles",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_differential_calculus_derivatives_of_standard_functions",
+                "title": "Derivatives of standard functions",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_differential_calculus_chain_rule",
+                "title": "Chain rule",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_differential_calculus_implicit_differentiation",
+                "title": "Implicit differentiation",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_differential_calculus_second_order_derivatives",
+                "title": "Second order derivatives",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_differential_calculus_tangents_and_normals",
+                "title": "Tangents and normals",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_differential_calculus_increasing_and_decreasing_functions",
+                "title": "Increasing and decreasing functions",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_differential_calculus_maxima_and_minima",
+                "title": "Maxima and minima",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_differential_calculus_rolles_theorem",
+                "title": "Rolle\u2019s theorem",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_differential_calculus_lagranges_mean_value_theorem",
+                "title": "Lagrange\u2019s mean value theorem",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_differential_calculus_geometric_interpretation_of_derivatives",
+                "title": "Geometric interpretation of derivatives",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "jee-advanced-maths_integral_calculus",
+            "title": "Integral Calculus",
+            "type": "branch",
+            "children": [
+              {
+                "id": "jee-advanced-maths_integral_calculus_indefinite_integrals",
+                "title": "Indefinite integrals",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_integral_calculus_standard_integrals",
+                "title": "Standard integrals",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_integral_calculus_definite_integrals",
+                "title": "Definite integrals",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_integral_calculus_properties_of_definite_integrals",
+                "title": "Properties of definite integrals",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_integral_calculus_fundamental_theorem_of_calculus",
+                "title": "Fundamental theorem of calculus",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_integral_calculus_integration_by_substitution",
+                "title": "Integration by substitution",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_integral_calculus_integration_by_parts",
+                "title": "Integration by parts",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_integral_calculus_integration_by_partial_fractions",
+                "title": "Integration by partial fractions",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_integral_calculus_area_under_curves",
+                "title": "Area under curves",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_integral_calculus_area_between_curves",
+                "title": "Area between curves",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_integral_calculus_formation_of_differential_equations",
+                "title": "Formation of differential equations",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_integral_calculus_solution_of_first_order_differential_equations",
+                "title": "Solution of first order differential equations",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_integral_calculus_homogeneous_differential_equations",
+                "title": "Homogeneous differential equations",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_integral_calculus_linear_differential_equations",
+                "title": "Linear differential equations",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "jee-advanced-maths_vector_algebra",
+            "title": "Vector Algebra",
+            "type": "branch",
+            "children": [
+              {
+                "id": "jee-advanced-maths_vector_algebra_vectors_and_scalars",
+                "title": "Vectors and scalars",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_vector_algebra_addition_and_subtraction_of_vectors",
+                "title": "Addition and subtraction of vectors",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_vector_algebra_scalar_multiplication",
+                "title": "Scalar multiplication",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_vector_algebra_dot_product",
+                "title": "Dot product",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_vector_algebra_cross_product",
+                "title": "Cross product",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_vector_algebra_scalar_triple_product",
+                "title": "Scalar triple product",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_vector_algebra_vector_triple_product",
+                "title": "Vector triple product",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-advanced-maths_vector_algebra_geometrical_interpretation_of_vectors",
+                "title": "Geometrical interpretation of vectors",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

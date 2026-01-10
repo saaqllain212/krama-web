@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Check, Upload, Zap, BookOpen, Calendar, Loader2, FileJson, ExternalLink, Terminal } from 'lucide-react'
+import { Check, Upload, Zap, BookOpen, Calendar, Loader2, FileJson, ExternalLink, Terminal, AlertCircle } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useSyllabus } from '@/context/SyllabusContext'
 
@@ -16,6 +16,9 @@ export default function OnboardingModal() {
   const [step, setStep] = useState(1)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  
+  // ✅ NEW: Error State (Replaces Browser Alerts)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
   // DATA STATE
   const [selectedExam, setSelectedExam] = useState<string | null>(null)
@@ -31,8 +34,6 @@ export default function OnboardingModal() {
           .eq('user_id', userId)
           .maybeSingle()
 
-        // ✅ CRITICAL FIX: Only open if database is completely empty. 
-        // We removed the 'localStorage' check so it doesn't pop up when you switch tabs.
         if (!settings?.active_exam_id) {
           setIsOpen(true)
         }
@@ -53,7 +54,6 @@ export default function OnboardingModal() {
     }
     init()
     
-    // We keep the auth listener to ensure it runs on login
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_IN' && session?.user) {
         checkDatabase(session.user.id)
@@ -63,11 +63,8 @@ export default function OnboardingModal() {
     return () => subscription.unsubscribe()
   }, [])
 
-  // ... (REST OF THE FILE REMAINS EXACTLY THE SAME)
-  // Just copy the rest of your handleExamSelect, handleFileUpload, handleFinish, and the return JSX from your previous file.
-  // If you want me to paste the full file again to be safe, let me know, but this useEffect is the only logic change needed.
-
   const handleExamSelect = (examId: string) => {
+    setErrorMessage(null) // Clear errors
     setSelectedExam(examId)
     if (examId === 'focus') {
       setStep(3)
@@ -79,11 +76,13 @@ export default function OnboardingModal() {
   }
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    setErrorMessage(null)
     const file = e.target.files?.[0]
     if (!file) return
 
+    // ✅ UI Validation
     if (file.type !== "application/json") {
-      alert("Please upload a .json file") 
+      setErrorMessage("Invalid file type. Please upload a .json file.")
       return
     }
 
@@ -96,16 +95,28 @@ export default function OnboardingModal() {
       setSelectedExam('custom')
       setStep(2)
     } catch (err) {
-      alert("Invalid JSON format. Must be an array of topics.")
+      // ✅ UI Validation
+      setErrorMessage("Invalid JSON format. File must contain an array of topics.")
     }
+  }
+
+  const validateDateStep = () => {
+    if (!examDate) {
+        setErrorMessage("Please select a valid target date.")
+        return
+    }
+    setErrorMessage(null)
+    setStep(3)
   }
 
   const handleFinish = async () => {
     setSaving(true)
+    setErrorMessage(null)
     try {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) throw new Error("No User")
 
+      // ✅ STANDARD SAVE (Only Metadata)
       await supabase.from('syllabus_settings').upsert({
         user_id: user.id,
         active_exam_id: selectedExam,
@@ -127,7 +138,7 @@ export default function OnboardingModal() {
 
     } catch (e) {
       console.error(e)
-      alert("Setup failed. Please try again.")
+      setErrorMessage("Setup failed. Please check your connection.")
     } finally {
       setSaving(false)
     }
@@ -139,6 +150,7 @@ export default function OnboardingModal() {
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-stone-900/95 backdrop-blur-md p-4">
       <div className="w-full max-w-2xl bg-[#FBF9F6] border-4 border-black shadow-[12px_12px_0_0_#ccff00] overflow-hidden flex flex-col max-h-[90vh]">
         
+        {/* HEADER */}
         <div className="bg-black text-white p-6 flex justify-between items-center shrink-0">
           <h2 className="text-xl font-black uppercase tracking-widest flex items-center gap-2">
              <Zap size={20} className="text-[#ccff00]" /> System Setup
@@ -148,9 +160,11 @@ export default function OnboardingModal() {
           </div>
         </div>
 
+        {/* BODY */}
         <div className="p-8 md:p-12 overflow-y-auto">
           <AnimatePresence mode="wait">
             
+            {/* STEP 1: TARGET */}
             {step === 1 && (
               <motion.div 
                 key="step1"
@@ -162,38 +176,43 @@ export default function OnboardingModal() {
                   <p className="text-stone-500 font-medium">Select the protocol you wish to load.</p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {['upsc', 'ssc', 'bank'].map(id => (
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                  {['upsc', 'ssc', 'bank', 'rbi', 'jee', 'neet'].map(id => (
                     <button 
                       key={id}
                       onClick={() => handleExamSelect(id)}
-                      className="group p-6 border-2 border-black/10 hover:border-black hover:bg-white hover:shadow-[4px_4px_0_0_#000] transition-all text-left"
+                      className="group p-4 border-2 border-black/10 hover:border-black hover:bg-white hover:shadow-[4px_4px_0_0_#000] transition-all text-left"
                     >
-                      <BookOpen className="mb-4 text-black/40 group-hover:text-black" />
-                      <div className="font-black uppercase text-xl">{id}</div>
-                      <div className="text-xs font-bold text-stone-400 uppercase">Standard Syllabus</div>
+                      <BookOpen className="mb-2 text-black/40 group-hover:text-black" />
+                      <div className="font-black uppercase text-lg">{id}</div>
+                      <div className="text-[10px] font-bold text-stone-400 uppercase">Standard Syllabus</div>
                     </button>
                   ))}
-
-                  <div className="group relative p-6 border-2 border-black/10 hover:border-black hover:bg-white hover:shadow-[4px_4px_0_0_#000] transition-all text-left">
-                     
-                     <input type="file" accept=".json" onChange={handleFileUpload} className="absolute inset-0 opacity-0 cursor-pointer z-10" />
-
-                     <div className="mb-4 text-black/40 group-hover:text-black flex justify-between items-start">
-                        <div>
-                           <Upload size={24} className={selectedExam === 'custom' ? 'hidden' : 'block'} />
-                           <FileJson size={24} className={selectedExam === 'custom' ? 'block text-green-600' : 'hidden'} />
-                        </div>
-                     </div>
-                     
-                     <div className="font-black uppercase text-xl">Custom JSON</div>
-                     <div className="text-xs font-bold text-stone-400 uppercase">
-                       {selectedExam === 'custom' ? 'File Loaded' : 'Upload File'}
-                     </div>
-
-                  </div>
                 </div>
 
+                {/* CUSTOM UPLOAD CARD */}
+                <div className="group relative p-6 border-2 border-black/10 hover:border-black hover:bg-white hover:shadow-[4px_4px_0_0_#000] transition-all text-left">
+                    <input type="file" accept=".json" onChange={handleFileUpload} className="absolute inset-0 opacity-0 cursor-pointer z-10" />
+                    <div className="mb-4 text-black/40 group-hover:text-black flex justify-between items-start">
+                      <div>
+                          <Upload size={24} className={selectedExam === 'custom' ? 'hidden' : 'block'} />
+                          <FileJson size={24} className={selectedExam === 'custom' ? 'block text-green-600' : 'hidden'} />
+                      </div>
+                    </div>
+                    <div className="font-black uppercase text-xl">Custom JSON</div>
+                    <div className="text-xs font-bold text-stone-400 uppercase">
+                      {selectedExam === 'custom' ? 'File Loaded' : 'Upload File'}
+                    </div>
+                </div>
+
+                {/* ✅ ERROR DISPLAY AREA */}
+                {errorMessage && (
+                    <div className="flex items-center gap-2 p-3 bg-red-100 border border-red-200 text-red-700 text-xs font-bold uppercase tracking-wide">
+                        <AlertCircle size={16} /> {errorMessage}
+                    </div>
+                )}
+
+                {/* PROTOCOL ARCHITECT BANNER */}
                 <div className="mt-6 bg-amber-50 border border-amber-200 p-4 flex items-start gap-3">
                    <div className="bg-amber-100 p-2 rounded-full shrink-0">
                       <Terminal size={16} className="text-amber-700" />
@@ -220,6 +239,7 @@ export default function OnboardingModal() {
               </motion.div>
             )}
 
+            {/* STEP 2: TIMELINE */}
             {step === 2 && (
               <motion.div 
                 key="step2"
@@ -234,11 +254,21 @@ export default function OnboardingModal() {
                    <Calendar className="absolute top-4 left-4 text-black/30 pointer-events-none" />
                    <input type="date" required value={examDate} onChange={(e) => setExamDate(e.target.value)} className="w-full bg-white border-4 border-black p-4 pl-12 text-xl font-bold uppercase outline-none focus:shadow-[4px_4px_0_0_#000] transition-all" />
                 </div>
-                <button onClick={() => examDate ? setStep(3) : alert('Date Required')} className="bg-black text-white px-8 py-3 font-bold uppercase hover:bg-stone-800 transition-all">Confirm Date</button>
+                
+                {/* ✅ ERROR DISPLAY AREA */}
+                {errorMessage && (
+                    <div className="max-w-xs mx-auto flex items-center justify-center gap-2 p-3 bg-red-100 border border-red-200 text-red-700 text-xs font-bold uppercase tracking-wide">
+                        <AlertCircle size={16} /> {errorMessage}
+                    </div>
+                )}
+
+                {/* ✅ REPLACED ALERT WITH VALIDATION FUNCTION */}
+                <button onClick={validateDateStep} className="bg-black text-white px-8 py-3 font-bold uppercase hover:bg-stone-800 transition-all">Confirm Date</button>
                 <button onClick={() => setStep(1)} className="block mx-auto text-xs font-bold text-stone-400 uppercase hover:text-black mt-4">Back</button>
               </motion.div>
             )}
 
+            {/* STEP 3: COMMITMENT */}
             {step === 3 && (
               <motion.div 
                 key="step3"
@@ -260,6 +290,14 @@ export default function OnboardingModal() {
                       <span>14 Hrs</span>
                    </div>
                 </div>
+                
+                {/* ✅ ERROR DISPLAY AREA */}
+                {errorMessage && (
+                    <div className="flex items-center justify-center gap-2 p-3 bg-red-100 border border-red-200 text-red-700 text-xs font-bold uppercase tracking-wide">
+                        <AlertCircle size={16} /> {errorMessage}
+                    </div>
+                )}
+
                 <button onClick={handleFinish} disabled={saving} className="w-full max-w-md bg-[#ccff00] text-black border-2 border-black px-8 py-4 font-black uppercase hover:bg-black hover:text-[#ccff00] transition-all flex items-center justify-center gap-2 shadow-[4px_4px_0_0_#000]">
                   {saving ? <Loader2 className="animate-spin"/> : <><Check size={20} /> Initialize System</>}
                 </button>

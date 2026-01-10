@@ -1,0 +1,1000 @@
+[
+  {
+    "id": "jee-chemistry",
+    "title": "Chemistry",
+    "type": "branch",
+    "children": [
+      {
+        "id": "jee-chemistry_unit_1_some_basic_concepts_in_chemistry",
+        "title": "UNIT 1: Some Basic Concepts in Chemistry",
+        "type": "branch",
+        "children": [
+          {
+            "id": "jee-chemistry_unit_1_some_basic_concepts_in_chemistry_importance_and_scope_of_chemistry",
+            "title": "Importance and scope of chemistry",
+            "type": "leaf",
+            "status": "locked"
+          },
+          {
+            "id": "jee-chemistry_unit_1_some_basic_concepts_in_chemistry_laws_of_chemical_combination",
+            "title": "Laws of chemical combination",
+            "type": "leaf",
+            "status": "locked"
+          },
+          {
+            "id": "jee-chemistry_unit_1_some_basic_concepts_in_chemistry_daltons_atomic_theory",
+            "title": "Dalton\u2019s atomic theory",
+            "type": "leaf",
+            "status": "locked"
+          },
+          {
+            "id": "jee-chemistry_unit_1_some_basic_concepts_in_chemistry_atomic_and_molecular_masses",
+            "title": "Atomic and molecular masses",
+            "type": "leaf",
+            "status": "locked"
+          },
+          {
+            "id": "jee-chemistry_unit_1_some_basic_concepts_in_chemistry_mole_concept_and_molar_mass",
+            "title": "Mole concept and molar mass",
+            "type": "leaf",
+            "status": "locked"
+          },
+          {
+            "id": "jee-chemistry_unit_1_some_basic_concepts_in_chemistry_percentage_composition",
+            "title": "Percentage composition",
+            "type": "leaf",
+            "status": "locked"
+          },
+          {
+            "id": "jee-chemistry_unit_1_some_basic_concepts_in_chemistry_empirical_and_molecular_formulae",
+            "title": "Empirical and molecular formulae",
+            "type": "leaf",
+            "status": "locked"
+          },
+          {
+            "id": "jee-chemistry_unit_1_some_basic_concepts_in_chemistry_chemical_equations_and_stoichiometry",
+            "title": "Chemical equations and stoichiometry",
+            "type": "leaf",
+            "status": "locked"
+          },
+          {
+            "id": "jee-chemistry_unit_2_states_of_matter",
+            "title": "UNIT 2: States of Matter",
+            "type": "branch",
+            "children": [
+              {
+                "id": "jee-chemistry_unit_2_states_of_matter_classification_of_matter",
+                "title": "Classification of matter",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_2_states_of_matter_gaseous_state_and_gas_laws",
+                "title": "Gaseous state and gas laws",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_2_states_of_matter_ideal_gas_equation",
+                "title": "Ideal gas equation",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_2_states_of_matter_kinetic_theory_of_gases",
+                "title": "Kinetic theory of gases",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_2_states_of_matter_behaviour_of_real_gases",
+                "title": "Behaviour of real gases",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_2_states_of_matter_liquefaction_of_gases",
+                "title": "Liquefaction of gases",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_2_states_of_matter_liquid_state_and_its_properties",
+                "title": "Liquid state and its properties",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "jee-chemistry_unit_3_atomic_structure",
+            "title": "UNIT 3: Atomic Structure",
+            "type": "branch",
+            "children": [
+              {
+                "id": "jee-chemistry_unit_3_atomic_structure_discovery_of_subatomic_particles",
+                "title": "Discovery of subatomic particles",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_3_atomic_structure_thomson_and_rutherford_atomic_models",
+                "title": "Thomson and Rutherford atomic models",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_3_atomic_structure_bohrs_atomic_model",
+                "title": "Bohr\u2019s atomic model",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_3_atomic_structure_hydrogen_atom_spectrum",
+                "title": "Hydrogen atom spectrum",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_3_atomic_structure_quantum_mechanical_model_of_atom",
+                "title": "Quantum mechanical model of atom",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_3_atomic_structure_atomic_orbitals_and_quantum_numbers",
+                "title": "Atomic orbitals and quantum numbers",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_3_atomic_structure_electronic_configuration_of_atoms",
+                "title": "Electronic configuration of atoms",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "jee-chemistry_unit_4_chemical_bonding_and_molecular_structure",
+            "title": "UNIT 4: Chemical Bonding and Molecular Structure",
+            "type": "branch",
+            "children": [
+              {
+                "id": "jee-chemistry_unit_4_chemical_bonding_and_molecular_structure_ionic_bond_and_its_formation",
+                "title": "Ionic bond and its formation",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_4_chemical_bonding_and_molecular_structure_covalent_bond_and_its_characteristics",
+                "title": "Covalent bond and its characteristics",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_4_chemical_bonding_and_molecular_structure_lewis_structures",
+                "title": "Lewis structures",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_4_chemical_bonding_and_molecular_structure_valence_bond_theory",
+                "title": "Valence bond theory",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_4_chemical_bonding_and_molecular_structure_hybridisation_and_its_types",
+                "title": "Hybridisation and its types",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_4_chemical_bonding_and_molecular_structure_molecular_orbital_theory",
+                "title": "Molecular orbital theory",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_4_chemical_bonding_and_molecular_structure_shapes_of_molecules",
+                "title": "Shapes of molecules",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_4_chemical_bonding_and_molecular_structure_vsepr_theory",
+                "title": "VSEPR theory",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_4_chemical_bonding_and_molecular_structure_hydrogen_bonding",
+                "title": "Hydrogen bonding",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "jee-chemistry_unit_5_chemical_thermodynamics",
+            "title": "UNIT 5: Chemical Thermodynamics",
+            "type": "branch",
+            "children": [
+              {
+                "id": "jee-chemistry_unit_5_chemical_thermodynamics_system_and_surroundings",
+                "title": "System and surroundings",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_5_chemical_thermodynamics_types_of_systems",
+                "title": "Types of systems",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_5_chemical_thermodynamics_state_functions",
+                "title": "State functions",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_5_chemical_thermodynamics_internal_energy",
+                "title": "Internal energy",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_5_chemical_thermodynamics_first_law_of_thermodynamics",
+                "title": "First law of thermodynamics",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_5_chemical_thermodynamics_enthalpy_and_enthalpy_changes",
+                "title": "Enthalpy and enthalpy changes",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_5_chemical_thermodynamics_hesss_law",
+                "title": "Hess\u2019s law",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_5_chemical_thermodynamics_entropy",
+                "title": "Entropy",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_5_chemical_thermodynamics_gibbs_free_energy",
+                "title": "Gibbs free energy",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_5_chemical_thermodynamics_spontaneity_of_reactions",
+                "title": "Spontaneity of reactions",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "jee-chemistry_unit_6_solutions",
+            "title": "UNIT 6: Solutions",
+            "type": "branch",
+            "children": [
+              {
+                "id": "jee-chemistry_unit_6_solutions_types_of_solutions",
+                "title": "Types of solutions",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_6_solutions_concentration_terms",
+                "title": "Concentration terms",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_6_solutions_solubility",
+                "title": "Solubility",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_6_solutions_vapour_pressure_of_solutions",
+                "title": "Vapour pressure of solutions",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_6_solutions_raoults_law",
+                "title": "Raoult\u2019s law",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_6_solutions_colligative_properties",
+                "title": "Colligative properties",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_6_solutions_abnormal_molar_mass",
+                "title": "Abnormal molar mass",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_6_solutions_vant_hoff_factor",
+                "title": "Van\u2019t Hoff factor",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "jee-chemistry_unit_7_equilibrium",
+            "title": "UNIT 7: Equilibrium",
+            "type": "branch",
+            "children": [
+              {
+                "id": "jee-chemistry_unit_7_equilibrium_dynamic_nature_of_equilibrium",
+                "title": "Dynamic nature of equilibrium",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_7_equilibrium_law_of_mass_action",
+                "title": "Law of mass action",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_7_equilibrium_equilibrium_constant",
+                "title": "Equilibrium constant",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_7_equilibrium_factors_affecting_equilibrium",
+                "title": "Factors affecting equilibrium",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_7_equilibrium_ionic_equilibrium",
+                "title": "Ionic equilibrium",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_7_equilibrium_acids_bases_and_salts",
+                "title": "Acids, bases and salts",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_7_equilibrium_ph_and_buffer_solutions",
+                "title": "pH and buffer solutions",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_7_equilibrium_solubility_product",
+                "title": "Solubility product",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "jee-chemistry_unit_8_redox_reactions_and_electrochemistry",
+            "title": "UNIT 8: Redox Reactions and Electrochemistry",
+            "type": "branch",
+            "children": [
+              {
+                "id": "jee-chemistry_unit_8_redox_reactions_and_electrochemistry_oxidation_and_reduction_concepts",
+                "title": "Oxidation and reduction concepts",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_8_redox_reactions_and_electrochemistry_redox_reactions",
+                "title": "Redox reactions",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_8_redox_reactions_and_electrochemistry_balancing_redox_equations",
+                "title": "Balancing redox equations",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_8_redox_reactions_and_electrochemistry_electrochemical_cells",
+                "title": "Electrochemical cells",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_8_redox_reactions_and_electrochemistry_electrode_potential",
+                "title": "Electrode potential",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_8_redox_reactions_and_electrochemistry_nernst_equation",
+                "title": "Nernst equation",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_8_redox_reactions_and_electrochemistry_conductance_of_electrolytic_solutions",
+                "title": "Conductance of electrolytic solutions",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_8_redox_reactions_and_electrochemistry_electrolysis",
+                "title": "Electrolysis",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_8_redox_reactions_and_electrochemistry_corrosion",
+                "title": "Corrosion",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "jee-chemistry_unit_9_chemical_kinetics",
+            "title": "UNIT 9: Chemical Kinetics",
+            "type": "branch",
+            "children": [
+              {
+                "id": "jee-chemistry_unit_9_chemical_kinetics_rate_of_chemical_reactions",
+                "title": "Rate of chemical reactions",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_9_chemical_kinetics_factors_affecting_reaction_rate",
+                "title": "Factors affecting reaction rate",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_9_chemical_kinetics_rate_law_and_rate_constant",
+                "title": "Rate law and rate constant",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_9_chemical_kinetics_order_and_molecularity_of_reactions",
+                "title": "Order and molecularity of reactions",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_9_chemical_kinetics_integrated_rate_equations",
+                "title": "Integrated rate equations",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_9_chemical_kinetics_half-life_of_reactions",
+                "title": "Half-life of reactions",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_9_chemical_kinetics_arrhenius_equation",
+                "title": "Arrhenius equation",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_9_chemical_kinetics_activation_energy",
+                "title": "Activation energy",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "jee-chemistry_unit_10_classification_of_elements_and_periodicity",
+            "title": "UNIT 10: Classification of Elements and Periodicity",
+            "type": "branch",
+            "children": [
+              {
+                "id": "jee-chemistry_unit_10_classification_of_elements_and_periodicity_modern_periodic_law",
+                "title": "Modern periodic law",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_10_classification_of_elements_and_periodicity_long_form_of_periodic_table",
+                "title": "Long form of periodic table",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_10_classification_of_elements_and_periodicity_periodic_trends_in_properties",
+                "title": "Periodic trends in properties",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_10_classification_of_elements_and_periodicity_atomic_and_ionic_radii",
+                "title": "Atomic and ionic radii",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_10_classification_of_elements_and_periodicity_ionization_enthalpy",
+                "title": "Ionization enthalpy",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_10_classification_of_elements_and_periodicity_electron_gain_enthalpy",
+                "title": "Electron gain enthalpy",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_10_classification_of_elements_and_periodicity_electronegativity",
+                "title": "Electronegativity",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_10_classification_of_elements_and_periodicity_chemical_reactivity_trends",
+                "title": "Chemical reactivity trends",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "jee-chemistry_unit_11_hydrogen",
+            "title": "UNIT 11: Hydrogen",
+            "type": "branch",
+            "children": [
+              {
+                "id": "jee-chemistry_unit_11_hydrogen_position_of_hydrogen_in_periodic_table",
+                "title": "Position of hydrogen in periodic table",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_11_hydrogen_isotopes_of_hydrogen",
+                "title": "Isotopes of hydrogen",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_11_hydrogen_preparation_and_properties_of_hydrogen",
+                "title": "Preparation and properties of hydrogen",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_11_hydrogen_hydrides",
+                "title": "Hydrides",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_11_hydrogen_water_and_its_properties",
+                "title": "Water and its properties",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_11_hydrogen_hydrogen_peroxide",
+                "title": "Hydrogen peroxide",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "jee-chemistry_unit_12_s-block_elements",
+            "title": "UNIT 12: s-Block Elements",
+            "type": "branch",
+            "children": [
+              {
+                "id": "jee-chemistry_unit_12_s-block_elements_general_characteristics_of_s-block_elements",
+                "title": "General characteristics of s-block elements",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_12_s-block_elements_alkali_metals",
+                "title": "Alkali metals",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_12_s-block_elements_alkaline_earth_metals",
+                "title": "Alkaline earth metals",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_12_s-block_elements_compounds_of_alkali_metals",
+                "title": "Compounds of alkali metals",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_12_s-block_elements_compounds_of_alkaline_earth_metals",
+                "title": "Compounds of alkaline earth metals",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_12_s-block_elements_biological_importance_of_s-block_elements",
+                "title": "Biological importance of s-block elements",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "jee-chemistry_unit_13_p-block_elements",
+            "title": "UNIT 13: p-Block Elements",
+            "type": "branch",
+            "children": [
+              {
+                "id": "jee-chemistry_unit_13_p-block_elements_general_characteristics_of_p-block_elements",
+                "title": "General characteristics of p-block elements",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_13_p-block_elements_group_13_elements",
+                "title": "Group 13 elements",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_13_p-block_elements_group_14_elements",
+                "title": "Group 14 elements",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_13_p-block_elements_group_15_elements",
+                "title": "Group 15 elements",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_13_p-block_elements_group_16_elements",
+                "title": "Group 16 elements",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_13_p-block_elements_group_17_elements",
+                "title": "Group 17 elements",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_13_p-block_elements_group_18_elements",
+                "title": "Group 18 elements",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_13_p-block_elements_important_compounds_of_p-block_elements",
+                "title": "Important compounds of p-block elements",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "jee-chemistry_unit_14_d-_and_f-block_elements",
+            "title": "UNIT 14: d- and f-Block Elements",
+            "type": "branch",
+            "children": [
+              {
+                "id": "jee-chemistry_unit_14_d-_and_f-block_elements_general_characteristics_of_transition_elements",
+                "title": "General characteristics of transition elements",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_14_d-_and_f-block_elements_electronic_configuration_of_d-block_elements",
+                "title": "Electronic configuration of d-block elements",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_14_d-_and_f-block_elements_oxidation_states_of_transition_elements",
+                "title": "Oxidation states of transition elements",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_14_d-_and_f-block_elements_coordination_compounds_of_transition_elements",
+                "title": "Coordination compounds of transition elements",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_14_d-_and_f-block_elements_lanthanides",
+                "title": "Lanthanides",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_14_d-_and_f-block_elements_actinides",
+                "title": "Actinides",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "jee-chemistry_unit_15_coordination_compounds",
+            "title": "UNIT 15: Coordination Compounds",
+            "type": "branch",
+            "children": [
+              {
+                "id": "jee-chemistry_unit_15_coordination_compounds_werners_theory",
+                "title": "Werner\u2019s theory",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_15_coordination_compounds_coordination_number",
+                "title": "Coordination number",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_15_coordination_compounds_nomenclature_of_coordination_compounds",
+                "title": "Nomenclature of coordination compounds",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_15_coordination_compounds_isomerism_in_coordination_compounds",
+                "title": "Isomerism in coordination compounds",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_15_coordination_compounds_bonding_theories",
+                "title": "Bonding theories",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_15_coordination_compounds_applications_of_coordination_compounds",
+                "title": "Applications of coordination compounds",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "jee-chemistry_unit_16_environmental_chemistry",
+            "title": "UNIT 16: Environmental Chemistry",
+            "type": "branch",
+            "children": [
+              {
+                "id": "jee-chemistry_unit_16_environmental_chemistry_environmental_pollution",
+                "title": "Environmental pollution",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_16_environmental_chemistry_atmospheric_pollution",
+                "title": "Atmospheric pollution",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_16_environmental_chemistry_water_pollution",
+                "title": "Water pollution",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_16_environmental_chemistry_soil_pollution",
+                "title": "Soil pollution",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_16_environmental_chemistry_greenhouse_effect",
+                "title": "Greenhouse effect",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_16_environmental_chemistry_ozone_depletion",
+                "title": "Ozone depletion",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_16_environmental_chemistry_green_chemistry_principles",
+                "title": "Green chemistry principles",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "jee-chemistry_unit_17_organic_chemistry_basic_principles",
+            "title": "UNIT 17: Organic Chemistry \u2013 Basic Principles",
+            "type": "branch",
+            "children": [
+              {
+                "id": "jee-chemistry_unit_17_organic_chemistry_basic_principles_general_introduction_to_organic_chemistry",
+                "title": "General introduction to organic chemistry",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_17_organic_chemistry_basic_principles_hybridisation_of_carbon",
+                "title": "Hybridisation of carbon",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_17_organic_chemistry_basic_principles_classification_of_organic_compounds",
+                "title": "Classification of organic compounds",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_17_organic_chemistry_basic_principles_nomenclature_of_organic_compounds",
+                "title": "Nomenclature of organic compounds",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_17_organic_chemistry_basic_principles_isomerism",
+                "title": "Isomerism",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_17_organic_chemistry_basic_principles_electronic_effects",
+                "title": "Electronic effects",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_17_organic_chemistry_basic_principles_reaction_intermediates",
+                "title": "Reaction intermediates",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_17_organic_chemistry_basic_principles_types_of_organic_reactions",
+                "title": "Types of organic reactions",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "jee-chemistry_unit_18_hydrocarbons",
+            "title": "UNIT 18: Hydrocarbons",
+            "type": "branch",
+            "children": [
+              {
+                "id": "jee-chemistry_unit_18_hydrocarbons_alkanes_and_their_properties",
+                "title": "Alkanes and their properties",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_18_hydrocarbons_alkenes_and_their_properties",
+                "title": "Alkenes and their properties",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_18_hydrocarbons_alkynes_and_their_properties",
+                "title": "Alkynes and their properties",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_18_hydrocarbons_aromatic_hydrocarbons",
+                "title": "Aromatic hydrocarbons",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_18_hydrocarbons_benzene_and_its_properties",
+                "title": "Benzene and its properties",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_18_hydrocarbons_preparation_and_reactions_of_hydrocarbons",
+                "title": "Preparation and reactions of hydrocarbons",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "jee-chemistry_unit_19_organic_compounds_with_functional_groups",
+            "title": "UNIT 19: Organic Compounds with Functional Groups",
+            "type": "branch",
+            "children": [
+              {
+                "id": "jee-chemistry_unit_19_organic_compounds_with_functional_groups_haloalkanes_and_haloarenes",
+                "title": "Haloalkanes and haloarenes",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_19_organic_compounds_with_functional_groups_alcohols_phenols_and_ethers",
+                "title": "Alcohols, phenols and ethers",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_19_organic_compounds_with_functional_groups_aldehydes_and_ketones",
+                "title": "Aldehydes and ketones",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_19_organic_compounds_with_functional_groups_carboxylic_acids",
+                "title": "Carboxylic acids",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_19_organic_compounds_with_functional_groups_amines",
+                "title": "Amines",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_19_organic_compounds_with_functional_groups_biomolecules",
+                "title": "Biomolecules",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_19_organic_compounds_with_functional_groups_polymers",
+                "title": "Polymers",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "jee-chemistry_unit_19_organic_compounds_with_functional_groups_chemistry_in_everyday_life",
+                "title": "Chemistry in everyday life",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

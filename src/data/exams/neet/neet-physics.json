@@ -1,0 +1,1775 @@
+[
+  {
+    "id": "neet-physics",
+    "title": "Physics (NEET)",
+    "type": "branch",
+    "children": [
+      {
+        "id": "neet-physics_unit_1_physics_and_measurement",
+        "title": "UNIT 1: Physics and Measurement",
+        "type": "branch",
+        "children": [
+          {
+            "id": "neet-physics_unit_1_physics_and_measurement_physical_quantities_and_units",
+            "title": "Physical quantities and units",
+            "type": "leaf",
+            "status": "locked"
+          },
+          {
+            "id": "neet-physics_unit_1_physics_and_measurement_system_of_units_and_si_units",
+            "title": "System of units and SI units",
+            "type": "leaf",
+            "status": "locked"
+          },
+          {
+            "id": "neet-physics_unit_1_physics_and_measurement_fundamental_and_derived_units",
+            "title": "Fundamental and derived units",
+            "type": "leaf",
+            "status": "locked"
+          },
+          {
+            "id": "neet-physics_unit_1_physics_and_measurement_least_count_of_measuring_instruments",
+            "title": "Least count of measuring instruments",
+            "type": "leaf",
+            "status": "locked"
+          },
+          {
+            "id": "neet-physics_unit_1_physics_and_measurement_significant_figures",
+            "title": "Significant figures",
+            "type": "leaf",
+            "status": "locked"
+          },
+          {
+            "id": "neet-physics_unit_1_physics_and_measurement_errors_in_measurement",
+            "title": "Errors in measurement",
+            "type": "leaf",
+            "status": "locked"
+          },
+          {
+            "id": "neet-physics_unit_1_physics_and_measurement_dimensions_of_physical_quantities",
+            "title": "Dimensions of physical quantities",
+            "type": "leaf",
+            "status": "locked"
+          },
+          {
+            "id": "neet-physics_unit_1_physics_and_measurement_dimensional_analysis_and_applications",
+            "title": "Dimensional analysis and applications",
+            "type": "leaf",
+            "status": "locked"
+          },
+          {
+            "id": "neet-physics_unit_2_kinematics",
+            "title": "UNIT 2: Kinematics",
+            "type": "branch",
+            "children": [
+              {
+                "id": "neet-physics_unit_2_kinematics_frame_of_reference",
+                "title": "Frame of reference",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_2_kinematics_motion_in_a_straight_line",
+                "title": "Motion in a straight line",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_2_kinematics_positiontime_and_velocitytime_graphs",
+                "title": "Position\u2013time and velocity\u2013time graphs",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_2_kinematics_speed_and_velocity",
+                "title": "Speed and velocity",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_2_kinematics_uniform_and_non-uniform_motion",
+                "title": "Uniform and non-uniform motion",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_2_kinematics_acceleration",
+                "title": "Acceleration",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_2_kinematics_equations_of_uniformly_accelerated_motion",
+                "title": "Equations of uniformly accelerated motion",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_2_kinematics_scalars_and_vectors",
+                "title": "Scalars and vectors",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_2_kinematics_vector_addition_and_subtraction",
+                "title": "Vector addition and subtraction",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_2_kinematics_unit_vectors",
+                "title": "Unit vectors",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_2_kinematics_resolution_of_vectors",
+                "title": "Resolution of vectors",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_2_kinematics_relative_velocity",
+                "title": "Relative velocity",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_2_kinematics_motion_in_a_plane",
+                "title": "Motion in a plane",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_2_kinematics_projectile_motion",
+                "title": "Projectile motion",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_2_kinematics_uniform_circular_motion",
+                "title": "Uniform circular motion",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "neet-physics_unit_3_laws_of_motion",
+            "title": "UNIT 3: Laws of Motion",
+            "type": "branch",
+            "children": [
+              {
+                "id": "neet-physics_unit_3_laws_of_motion_force_and_inertia",
+                "title": "Force and inertia",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_3_laws_of_motion_newtons_first_law_of_motion",
+                "title": "Newton\u2019s first law of motion",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_3_laws_of_motion_momentum",
+                "title": "Momentum",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_3_laws_of_motion_newtons_second_law_of_motion",
+                "title": "Newton\u2019s second law of motion",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_3_laws_of_motion_impulse",
+                "title": "Impulse",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_3_laws_of_motion_newtons_third_law_of_motion",
+                "title": "Newton\u2019s third law of motion",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_3_laws_of_motion_conservation_of_linear_momentum",
+                "title": "Conservation of linear momentum",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_3_laws_of_motion_equilibrium_of_concurrent_forces",
+                "title": "Equilibrium of concurrent forces",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_3_laws_of_motion_static_friction",
+                "title": "Static friction",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_3_laws_of_motion_kinetic_friction",
+                "title": "Kinetic friction",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_3_laws_of_motion_laws_of_friction",
+                "title": "Laws of friction",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_3_laws_of_motion_rolling_friction",
+                "title": "Rolling friction",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_3_laws_of_motion_centripetal_force",
+                "title": "Centripetal force",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_3_laws_of_motion_motion_of_vehicles_on_level_and_banked_roads",
+                "title": "Motion of vehicles on level and banked roads",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "neet-physics_unit_4_work_energy_and_power",
+            "title": "UNIT 4: Work, Energy and Power",
+            "type": "branch",
+            "children": [
+              {
+                "id": "neet-physics_unit_4_work_energy_and_power_work_done_by_a_constant_force",
+                "title": "Work done by a constant force",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_4_work_energy_and_power_work_done_by_a_variable_force",
+                "title": "Work done by a variable force",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_4_work_energy_and_power_kinetic_energy",
+                "title": "Kinetic energy",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_4_work_energy_and_power_potential_energy",
+                "title": "Potential energy",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_4_work_energy_and_power_workenergy_theorem",
+                "title": "Work\u2013energy theorem",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_4_work_energy_and_power_power",
+                "title": "Power",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_4_work_energy_and_power_potential_energy_of_a_spring",
+                "title": "Potential energy of a spring",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_4_work_energy_and_power_conservative_and_non-conservative_forces",
+                "title": "Conservative and non-conservative forces",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_4_work_energy_and_power_conservation_of_mechanical_energy",
+                "title": "Conservation of mechanical energy",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_4_work_energy_and_power_motion_in_a_vertical_circle",
+                "title": "Motion in a vertical circle",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_4_work_energy_and_power_elastic_and_inelastic_collisions_in_one_and_two_dimensions",
+                "title": "Elastic and inelastic collisions in one and two dimensions",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "neet-physics_unit_5_rotational_motion",
+            "title": "UNIT 5: Rotational Motion",
+            "type": "branch",
+            "children": [
+              {
+                "id": "neet-physics_unit_5_rotational_motion_centre_of_mass_of_a_two-particle_system",
+                "title": "Centre of mass of a two-particle system",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_5_rotational_motion_centre_of_mass_of_a_rigid_body",
+                "title": "Centre of mass of a rigid body",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_5_rotational_motion_rotational_motion_concepts",
+                "title": "Rotational motion concepts",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_5_rotational_motion_torque_and_moment_of_force",
+                "title": "Torque and moment of force",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_5_rotational_motion_angular_momentum",
+                "title": "Angular momentum",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_5_rotational_motion_conservation_of_angular_momentum",
+                "title": "Conservation of angular momentum",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_5_rotational_motion_moment_of_inertia",
+                "title": "Moment of inertia",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_5_rotational_motion_radius_of_gyration",
+                "title": "Radius of gyration",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_5_rotational_motion_moments_of_inertia_of_simple_bodies",
+                "title": "Moments of inertia of simple bodies",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_5_rotational_motion_parallel_axis_theorem",
+                "title": "Parallel axis theorem",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_5_rotational_motion_perpendicular_axis_theorem",
+                "title": "Perpendicular axis theorem",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_5_rotational_motion_rotational_equilibrium",
+                "title": "Rotational equilibrium",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_5_rotational_motion_rotational_equations_of_motion",
+                "title": "Rotational equations of motion",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_5_rotational_motion_comparison_of_linear_and_rotational_motion",
+                "title": "Comparison of linear and rotational motion",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "neet-physics_unit_6_gravitation",
+            "title": "UNIT 6: Gravitation",
+            "type": "branch",
+            "children": [
+              {
+                "id": "neet-physics_unit_6_gravitation_universal_law_of_gravitation",
+                "title": "Universal law of gravitation",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_6_gravitation_acceleration_due_to_gravity",
+                "title": "Acceleration due to gravity",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_6_gravitation_variation_of_g_with_altitude_and_depth",
+                "title": "Variation of g with altitude and depth",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_6_gravitation_keplers_laws_of_planetary_motion",
+                "title": "Kepler\u2019s laws of planetary motion",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_6_gravitation_gravitational_potential_energy",
+                "title": "Gravitational potential energy",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_6_gravitation_gravitational_potential",
+                "title": "Gravitational potential",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_6_gravitation_escape_velocity",
+                "title": "Escape velocity",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_6_gravitation_motion_of_satellites",
+                "title": "Motion of satellites",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_6_gravitation_orbital_velocity",
+                "title": "Orbital velocity",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_6_gravitation_time_period_and_energy_of_satellites",
+                "title": "Time period and energy of satellites",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "neet-physics_unit_7_properties_of_solids_and_liquids",
+            "title": "UNIT 7: Properties of Solids and Liquids",
+            "type": "branch",
+            "children": [
+              {
+                "id": "neet-physics_unit_7_properties_of_solids_and_liquids_elastic_behaviour_of_solids",
+                "title": "Elastic behaviour of solids",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_7_properties_of_solids_and_liquids_stress_and_strain",
+                "title": "Stress and strain",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_7_properties_of_solids_and_liquids_hookes_law",
+                "title": "Hooke\u2019s law",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_7_properties_of_solids_and_liquids_youngs_modulus",
+                "title": "Young\u2019s modulus",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_7_properties_of_solids_and_liquids_bulk_modulus",
+                "title": "Bulk modulus",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_7_properties_of_solids_and_liquids_modulus_of_rigidity",
+                "title": "Modulus of rigidity",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_7_properties_of_solids_and_liquids_pressure_due_to_fluid_column",
+                "title": "Pressure due to fluid column",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_7_properties_of_solids_and_liquids_pascals_law_and_applications",
+                "title": "Pascal\u2019s law and applications",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_7_properties_of_solids_and_liquids_effect_of_gravity_on_fluid_pressure",
+                "title": "Effect of gravity on fluid pressure",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_7_properties_of_solids_and_liquids_viscosity",
+                "title": "Viscosity",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_7_properties_of_solids_and_liquids_stokes_law",
+                "title": "Stokes\u2019 law",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_7_properties_of_solids_and_liquids_terminal_velocity",
+                "title": "Terminal velocity",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_7_properties_of_solids_and_liquids_streamline_and_turbulent_flow",
+                "title": "Streamline and turbulent flow",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_7_properties_of_solids_and_liquids_critical_velocity",
+                "title": "Critical velocity",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_7_properties_of_solids_and_liquids_bernoullis_principle_and_applications",
+                "title": "Bernoulli\u2019s principle and applications",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_7_properties_of_solids_and_liquids_surface_energy",
+                "title": "Surface energy",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_7_properties_of_solids_and_liquids_surface_tension",
+                "title": "Surface tension",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_7_properties_of_solids_and_liquids_angle_of_contact",
+                "title": "Angle of contact",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_7_properties_of_solids_and_liquids_excess_pressure_across_curved_surfaces",
+                "title": "Excess pressure across curved surfaces",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_7_properties_of_solids_and_liquids_capillary_rise",
+                "title": "Capillary rise",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_7_properties_of_solids_and_liquids_thermal_expansion",
+                "title": "Thermal expansion",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_7_properties_of_solids_and_liquids_specific_heat_capacity",
+                "title": "Specific heat capacity",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_7_properties_of_solids_and_liquids_calorimetry",
+                "title": "Calorimetry",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_7_properties_of_solids_and_liquids_change_of_state_and_latent_heat",
+                "title": "Change of state and latent heat",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_7_properties_of_solids_and_liquids_heat_transfer_by_conduction",
+                "title": "Heat transfer by conduction",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_7_properties_of_solids_and_liquids_heat_transfer_by_convection",
+                "title": "Heat transfer by convection",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_7_properties_of_solids_and_liquids_heat_transfer_by_radiation",
+                "title": "Heat transfer by radiation",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "neet-physics_unit_8_thermodynamics",
+            "title": "UNIT 8: Thermodynamics",
+            "type": "branch",
+            "children": [
+              {
+                "id": "neet-physics_unit_8_thermodynamics_thermal_equilibrium",
+                "title": "Thermal equilibrium",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_8_thermodynamics_zeroth_law_of_thermodynamics",
+                "title": "Zeroth law of thermodynamics",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_8_thermodynamics_concept_of_temperature",
+                "title": "Concept of temperature",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_8_thermodynamics_heat_work_and_internal_energy",
+                "title": "Heat, work and internal energy",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_8_thermodynamics_first_law_of_thermodynamics",
+                "title": "First law of thermodynamics",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_8_thermodynamics_isothermal_processes",
+                "title": "Isothermal processes",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_8_thermodynamics_adiabatic_processes",
+                "title": "Adiabatic processes",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_8_thermodynamics_second_law_of_thermodynamics",
+                "title": "Second law of thermodynamics",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_8_thermodynamics_reversible_and_irreversible_processes",
+                "title": "Reversible and irreversible processes",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "neet-physics_unit_9_kinetic_theory_of_gases",
+            "title": "UNIT 9: Kinetic Theory of Gases",
+            "type": "branch",
+            "children": [
+              {
+                "id": "neet-physics_unit_9_kinetic_theory_of_gases_equation_of_state_of_a_perfect_gas",
+                "title": "Equation of state of a perfect gas",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_9_kinetic_theory_of_gases_work_done_in_compressing_a_gas",
+                "title": "Work done in compressing a gas",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_9_kinetic_theory_of_gases_assumptions_of_kinetic_theory",
+                "title": "Assumptions of kinetic theory",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_9_kinetic_theory_of_gases_pressure_of_a_gas",
+                "title": "Pressure of a gas",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_9_kinetic_theory_of_gases_kinetic_interpretation_of_temperature",
+                "title": "Kinetic interpretation of temperature",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_9_kinetic_theory_of_gases_rms_speed_of_gas_molecules",
+                "title": "RMS speed of gas molecules",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_9_kinetic_theory_of_gases_degrees_of_freedom",
+                "title": "Degrees of freedom",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_9_kinetic_theory_of_gases_law_of_equipartition_of_energy",
+                "title": "Law of equipartition of energy",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_9_kinetic_theory_of_gases_specific_heat_capacities_of_gases",
+                "title": "Specific heat capacities of gases",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_9_kinetic_theory_of_gases_mean_free_path",
+                "title": "Mean free path",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_9_kinetic_theory_of_gases_avogadros_number",
+                "title": "Avogadro\u2019s number",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "neet-physics_unit_10_oscillations_and_waves",
+            "title": "UNIT 10: Oscillations and Waves",
+            "type": "branch",
+            "children": [
+              {
+                "id": "neet-physics_unit_10_oscillations_and_waves_periodic_motion",
+                "title": "Periodic motion",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_10_oscillations_and_waves_time_period_and_frequency",
+                "title": "Time period and frequency",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_10_oscillations_and_waves_simple_harmonic_motion",
+                "title": "Simple harmonic motion",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_10_oscillations_and_waves_equation_of_shm",
+                "title": "Equation of SHM",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_10_oscillations_and_waves_phase",
+                "title": "Phase",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_10_oscillations_and_waves_oscillations_of_a_spring",
+                "title": "Oscillations of a spring",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_10_oscillations_and_waves_energy_in_shm",
+                "title": "Energy in SHM",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_10_oscillations_and_waves_simple_pendulum",
+                "title": "Simple pendulum",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_10_oscillations_and_waves_wave_motion",
+                "title": "Wave motion",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_10_oscillations_and_waves_longitudinal_and_transverse_waves",
+                "title": "Longitudinal and transverse waves",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_10_oscillations_and_waves_speed_of_travelling_waves",
+                "title": "Speed of travelling waves",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_10_oscillations_and_waves_progressive_waves",
+                "title": "Progressive waves",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_10_oscillations_and_waves_principle_of_superposition",
+                "title": "Principle of superposition",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_10_oscillations_and_waves_reflection_of_waves",
+                "title": "Reflection of waves",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_10_oscillations_and_waves_standing_waves",
+                "title": "Standing waves",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_10_oscillations_and_waves_waves_in_strings_and_organ_pipes",
+                "title": "Waves in strings and organ pipes",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_10_oscillations_and_waves_harmonics",
+                "title": "Harmonics",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_10_oscillations_and_waves_beats",
+                "title": "Beats",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "neet-physics_unit_11_electrostatics",
+            "title": "UNIT 11: Electrostatics",
+            "type": "branch",
+            "children": [
+              {
+                "id": "neet-physics_unit_11_electrostatics_electric_charge_and_conservation_of_charge",
+                "title": "Electric charge and conservation of charge",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_11_electrostatics_coulombs_law",
+                "title": "Coulomb\u2019s law",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_11_electrostatics_superposition_principle",
+                "title": "Superposition principle",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_11_electrostatics_continuous_charge_distribution",
+                "title": "Continuous charge distribution",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_11_electrostatics_electric_field",
+                "title": "Electric field",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_11_electrostatics_electric_field_lines",
+                "title": "Electric field lines",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_11_electrostatics_electric_dipole",
+                "title": "Electric dipole",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_11_electrostatics_electric_field_due_to_a_dipole",
+                "title": "Electric field due to a dipole",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_11_electrostatics_torque_on_an_electric_dipole",
+                "title": "Torque on an electric dipole",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_11_electrostatics_electric_flux",
+                "title": "Electric flux",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_11_electrostatics_gausss_law",
+                "title": "Gauss\u2019s law",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_11_electrostatics_applications_of_gausss_law",
+                "title": "Applications of Gauss\u2019s law",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_11_electrostatics_electric_potential",
+                "title": "Electric potential",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_11_electrostatics_electric_potential_energy",
+                "title": "Electric potential energy",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_11_electrostatics_equipotential_surfaces",
+                "title": "Equipotential surfaces",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_11_electrostatics_conductors_and_insulators",
+                "title": "Conductors and insulators",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_11_electrostatics_dielectrics_and_polarization",
+                "title": "Dielectrics and polarization",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_11_electrostatics_capacitance",
+                "title": "Capacitance",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_11_electrostatics_capacitors_in_series_and_parallel",
+                "title": "Capacitors in series and parallel",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_11_electrostatics_parallel_plate_capacitor",
+                "title": "Parallel plate capacitor",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_11_electrostatics_energy_stored_in_a_capacitor",
+                "title": "Energy stored in a capacitor",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "neet-physics_unit_12_current_electricity",
+            "title": "UNIT 12: Current Electricity",
+            "type": "branch",
+            "children": [
+              {
+                "id": "neet-physics_unit_12_current_electricity_electric_current",
+                "title": "Electric current",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_12_current_electricity_drift_velocity_and_mobility",
+                "title": "Drift velocity and mobility",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_12_current_electricity_ohms_law",
+                "title": "Ohm\u2019s law",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_12_current_electricity_electrical_resistance",
+                "title": "Electrical resistance",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_12_current_electricity_vi_characteristics",
+                "title": "V\u2013I characteristics",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_12_current_electricity_electrical_energy_and_power",
+                "title": "Electrical energy and power",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_12_current_electricity_resistivity_and_conductivity",
+                "title": "Resistivity and conductivity",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_12_current_electricity_combination_of_resistors",
+                "title": "Combination of resistors",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_12_current_electricity_temperature_dependence_of_resistance",
+                "title": "Temperature dependence of resistance",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_12_current_electricity_emf_and_internal_resistance_of_a_cell",
+                "title": "EMF and internal resistance of a cell",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_12_current_electricity_combination_of_cells",
+                "title": "Combination of cells",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_12_current_electricity_kirchhoffs_laws",
+                "title": "Kirchhoff\u2019s laws",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_12_current_electricity_wheatstone_bridge",
+                "title": "Wheatstone bridge",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_12_current_electricity_metre_bridge",
+                "title": "Metre bridge",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "neet-physics_unit_13_magnetic_effects_of_current_and_magnetism",
+            "title": "UNIT 13: Magnetic Effects of Current and Magnetism",
+            "type": "branch",
+            "children": [
+              {
+                "id": "neet-physics_unit_13_magnetic_effects_of_current_and_magnetism_biotsavart_law",
+                "title": "Biot\u2013Savart law",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_13_magnetic_effects_of_current_and_magnetism_magnetic_field_due_to_a_current_loop",
+                "title": "Magnetic field due to a current loop",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_13_magnetic_effects_of_current_and_magnetism_amperes_circuital_law",
+                "title": "Ampere\u2019s circuital law",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_13_magnetic_effects_of_current_and_magnetism_magnetic_field_due_to_straight_wire_and_solenoid",
+                "title": "Magnetic field due to straight wire and solenoid",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_13_magnetic_effects_of_current_and_magnetism_force_on_a_moving_charge",
+                "title": "Force on a moving charge",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_13_magnetic_effects_of_current_and_magnetism_force_on_a_current-carrying_conductor",
+                "title": "Force on a current-carrying conductor",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_13_magnetic_effects_of_current_and_magnetism_torque_on_a_current_loop",
+                "title": "Torque on a current loop",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_13_magnetic_effects_of_current_and_magnetism_moving_coil_galvanometer",
+                "title": "Moving coil galvanometer",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_13_magnetic_effects_of_current_and_magnetism_conversion_to_ammeter_and_voltmeter",
+                "title": "Conversion to ammeter and voltmeter",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_13_magnetic_effects_of_current_and_magnetism_magnetic_dipole",
+                "title": "Magnetic dipole",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_13_magnetic_effects_of_current_and_magnetism_bar_magnet_as_equivalent_solenoid",
+                "title": "Bar magnet as equivalent solenoid",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_13_magnetic_effects_of_current_and_magnetism_magnetic_field_due_to_dipole",
+                "title": "Magnetic field due to dipole",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_13_magnetic_effects_of_current_and_magnetism_para-_diaand_ferromagnetism",
+                "title": "Para-, diaand ferromagnetism",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_13_magnetic_effects_of_current_and_magnetism_effect_of_temperature_on_magnetic_properties",
+                "title": "Effect of temperature on magnetic properties",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "neet-physics_unit_14_electromagnetic_induction_and_alternating_currents",
+            "title": "UNIT 14: Electromagnetic Induction and Alternating Currents",
+            "type": "branch",
+            "children": [
+              {
+                "id": "neet-physics_unit_14_electromagnetic_induction_and_alternating_currents_faradays_laws_of_electromagnetic_induction",
+                "title": "Faraday\u2019s laws of electromagnetic induction",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_14_electromagnetic_induction_and_alternating_currents_induced_emf_and_current",
+                "title": "Induced emf and current",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_14_electromagnetic_induction_and_alternating_currents_lenzs_law",
+                "title": "Lenz\u2019s law",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_14_electromagnetic_induction_and_alternating_currents_eddy_currents",
+                "title": "Eddy currents",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_14_electromagnetic_induction_and_alternating_currents_self_inductance",
+                "title": "Self inductance",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_14_electromagnetic_induction_and_alternating_currents_mutual_inductance",
+                "title": "Mutual inductance",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_14_electromagnetic_induction_and_alternating_currents_alternating_current",
+                "title": "Alternating current",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_14_electromagnetic_induction_and_alternating_currents_rms_and_peak_values",
+                "title": "RMS and peak values",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_14_electromagnetic_induction_and_alternating_currents_reactance_and_impedance",
+                "title": "Reactance and impedance",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_14_electromagnetic_induction_and_alternating_currents_lcr_series_circuit",
+                "title": "LCR series circuit",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_14_electromagnetic_induction_and_alternating_currents_resonance",
+                "title": "Resonance",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_14_electromagnetic_induction_and_alternating_currents_power_in_ac_circuits",
+                "title": "Power in AC circuits",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_14_electromagnetic_induction_and_alternating_currents_ac_generator",
+                "title": "AC generator",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_14_electromagnetic_induction_and_alternating_currents_transformer",
+                "title": "Transformer",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "neet-physics_unit_15_electromagnetic_waves",
+            "title": "UNIT 15: Electromagnetic Waves",
+            "type": "branch",
+            "children": [
+              {
+                "id": "neet-physics_unit_15_electromagnetic_waves_displacement_current",
+                "title": "Displacement current",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_15_electromagnetic_waves_nature_of_electromagnetic_waves",
+                "title": "Nature of electromagnetic waves",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_15_electromagnetic_waves_transverse_nature_of_em_waves",
+                "title": "Transverse nature of EM waves",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_15_electromagnetic_waves_electromagnetic_spectrum",
+                "title": "Electromagnetic spectrum",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_15_electromagnetic_waves_applications_of_electromagnetic_waves",
+                "title": "Applications of electromagnetic waves",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "neet-physics_unit_16_optics",
+            "title": "UNIT 16: Optics",
+            "type": "branch",
+            "children": [
+              {
+                "id": "neet-physics_unit_16_optics_reflection_of_light",
+                "title": "Reflection of light",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_16_optics_spherical_mirrors",
+                "title": "Spherical mirrors",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_16_optics_mirror_formula",
+                "title": "Mirror formula",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_16_optics_refraction_of_light",
+                "title": "Refraction of light",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_16_optics_refraction_at_plane_and_spherical_surfaces",
+                "title": "Refraction at plane and spherical surfaces",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_16_optics_thin_lens_formula",
+                "title": "Thin lens formula",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_16_optics_lens_makers_formula",
+                "title": "Lens maker\u2019s formula",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_16_optics_total_internal_reflection",
+                "title": "Total internal reflection",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_16_optics_magnification",
+                "title": "Magnification",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_16_optics_power_of_a_lens",
+                "title": "Power of a lens",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_16_optics_combination_of_thin_lenses",
+                "title": "Combination of thin lenses",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_16_optics_refraction_through_a_prism",
+                "title": "Refraction through a prism",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_16_optics_microscope",
+                "title": "Microscope",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_16_optics_astronomical_telescope",
+                "title": "Astronomical telescope",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_16_optics_wave_optics",
+                "title": "Wave optics",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_16_optics_wavefront_and_huygens_principle",
+                "title": "Wavefront and Huygens\u2019 principle",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_16_optics_interference_of_light",
+                "title": "Interference of light",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_16_optics_youngs_double_slit_experiment",
+                "title": "Young\u2019s double slit experiment",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_16_optics_diffraction_due_to_single_slit",
+                "title": "Diffraction due to single slit",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_16_optics_polarization",
+                "title": "Polarization",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_16_optics_brewsters_law",
+                "title": "Brewster\u2019s law",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_16_optics_polaroids",
+                "title": "Polaroids",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "neet-physics_unit_17_dual_nature_of_matter_and_radiation",
+            "title": "UNIT 17: Dual Nature of Matter and Radiation",
+            "type": "branch",
+            "children": [
+              {
+                "id": "neet-physics_unit_17_dual_nature_of_matter_and_radiation_dual_nature_of_radiation",
+                "title": "Dual nature of radiation",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_17_dual_nature_of_matter_and_radiation_photoelectric_effect",
+                "title": "Photoelectric effect",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_17_dual_nature_of_matter_and_radiation_hertz_and_lenard_observations",
+                "title": "Hertz and Lenard observations",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_17_dual_nature_of_matter_and_radiation_einsteins_photoelectric_equation",
+                "title": "Einstein\u2019s photoelectric equation",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_17_dual_nature_of_matter_and_radiation_matter_waves",
+                "title": "Matter waves",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_17_dual_nature_of_matter_and_radiation_de_broglie_wavelength",
+                "title": "de Broglie wavelength",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "neet-physics_unit_18_atoms_and_nuclei",
+            "title": "UNIT 18: Atoms and Nuclei",
+            "type": "branch",
+            "children": [
+              {
+                "id": "neet-physics_unit_18_atoms_and_nuclei_alpha_particle_scattering_experiment",
+                "title": "Alpha particle scattering experiment",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_18_atoms_and_nuclei_rutherford_atomic_model",
+                "title": "Rutherford atomic model",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_18_atoms_and_nuclei_bohr_atomic_model",
+                "title": "Bohr atomic model",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_18_atoms_and_nuclei_energy_levels_of_hydrogen_atom",
+                "title": "Energy levels of hydrogen atom",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_18_atoms_and_nuclei_hydrogen_spectrum",
+                "title": "Hydrogen spectrum",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_18_atoms_and_nuclei_composition_and_size_of_nucleus",
+                "title": "Composition and size of nucleus",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_18_atoms_and_nuclei_massenergy_relation",
+                "title": "Mass\u2013energy relation",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_18_atoms_and_nuclei_mass_defect",
+                "title": "Mass defect",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_18_atoms_and_nuclei_binding_energy_per_nucleon",
+                "title": "Binding energy per nucleon",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_18_atoms_and_nuclei_nuclear_fission",
+                "title": "Nuclear fission",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_18_atoms_and_nuclei_nuclear_fusion",
+                "title": "Nuclear fusion",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "neet-physics_unit_19_electronic_devices",
+            "title": "UNIT 19: Electronic Devices",
+            "type": "branch",
+            "children": [
+              {
+                "id": "neet-physics_unit_19_electronic_devices_semiconductors",
+                "title": "Semiconductors",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_19_electronic_devices_pn_junction_diode",
+                "title": "p\u2013n junction diode",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_19_electronic_devices_diode_characteristics",
+                "title": "Diode characteristics",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_19_electronic_devices_rectifier",
+                "title": "Rectifier",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_19_electronic_devices_led",
+                "title": "LED",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_19_electronic_devices_photodiode",
+                "title": "Photodiode",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_19_electronic_devices_solar_cell",
+                "title": "Solar cell",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_19_electronic_devices_zener_diode",
+                "title": "Zener diode",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_19_electronic_devices_zener_diode_as_voltage_regulator",
+                "title": "Zener diode as voltage regulator",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_19_electronic_devices_logic_gates_or_and_not_nand_nor",
+                "title": "Logic gates (OR, AND, NOT, NAND, NOR)",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "neet-physics_unit_20_experimental_skills",
+            "title": "UNIT 20: Experimental Skills",
+            "type": "branch",
+            "children": [
+              {
+                "id": "neet-physics_unit_20_experimental_skills_vernier_calipers_measurements",
+                "title": "Vernier calipers measurements",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_20_experimental_skills_screw_gauge_measurements",
+                "title": "Screw gauge measurements",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_20_experimental_skills_simple_pendulum_experiment",
+                "title": "Simple pendulum experiment",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_20_experimental_skills_metre_scale_and_principle_of_moments",
+                "title": "Metre scale and principle of moments",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_20_experimental_skills_youngs_modulus_experiment",
+                "title": "Young\u2019s modulus experiment",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_20_experimental_skills_surface_tension_by_capillary_rise",
+                "title": "Surface tension by capillary rise",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_20_experimental_skills_viscosity_by_terminal_velocity",
+                "title": "Viscosity by terminal velocity",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_20_experimental_skills_speed_of_sound_using_resonance_tube",
+                "title": "Speed of sound using resonance tube",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_20_experimental_skills_specific_heat_by_method_of_mixtures",
+                "title": "Specific heat by method of mixtures",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_20_experimental_skills_resistivity_using_metre_bridge",
+                "title": "Resistivity using metre bridge",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_20_experimental_skills_ohms_law_experiment",
+                "title": "Ohm\u2019s law experiment",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_20_experimental_skills_galvanometer_characteristics",
+                "title": "Galvanometer characteristics",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_20_experimental_skills_focal_length_of_mirrors_and_lenses",
+                "title": "Focal length of mirrors and lenses",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_20_experimental_skills_prism_deviation_experiment",
+                "title": "Prism deviation experiment",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_20_experimental_skills_refractive_index_using_travelling_microscope",
+                "title": "Refractive index using travelling microscope",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_20_experimental_skills_diode_and_zener_diode_characteristics",
+                "title": "Diode and Zener diode characteristics",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "neet-physics_unit_20_experimental_skills_identification_of_basic_electronic_components",
+                "title": "Identification of basic electronic components",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

@@ -1,0 +1,1310 @@
+[
+  {
+    "id": "rbi_phase2",
+    "title": "RBI Grade B \u2013 Phase II Syllabus",
+    "type": "branch",
+    "children": [
+      {
+        "id": "rbi_phase2_paper_i_economic_and_social_issues_esi",
+        "title": "Paper I: Economic and Social Issues (ESI)",
+        "type": "branch",
+        "children": [
+          {
+            "id": "rbi_phase2_growth_and_development",
+            "title": "Growth and Development",
+            "type": "branch",
+            "children": [
+              {
+                "id": "rbi_phase2_growth_and_development_measurement_of_economic_growth",
+                "title": "Measurement of economic growth",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "rbi_phase2_growth_and_development_national_income",
+                "title": "National income",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "rbi_phase2_growth_and_development_per_capita_income",
+                "title": "Per capita income",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "rbi_phase2_growth_and_development_poverty_alleviation_in_india",
+                "title": "Poverty alleviation in India",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "rbi_phase2_growth_and_development_employment_generation_in_india",
+                "title": "Employment generation in India",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "rbi_phase2_growth_and_development_sustainable_development",
+                "title": "Sustainable development",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "rbi_phase2_growth_and_development_environmental_issues_and_challenges",
+                "title": "Environmental issues and challenges",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "rbi_phase2_indian_economy",
+            "title": "Indian Economy",
+            "type": "branch",
+            "children": [
+              {
+                "id": "rbi_phase2_indian_economy_economic_history_of_india",
+                "title": "Economic history of India",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "rbi_phase2_indian_economy_industrial_policy_in_india",
+                "title": "Industrial policy in India",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "rbi_phase2_indian_economy_labour_policy_in_india",
+                "title": "Labour policy in India",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "rbi_phase2_indian_economy_monetary_policy_since_1991_reforms",
+                "title": "Monetary policy since 1991 reforms",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "rbi_phase2_indian_economy_fiscal_policy_since_1991_reforms",
+                "title": "Fiscal policy since 1991 reforms",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "rbi_phase2_indian_economy_economic_survey_priorities_and_recommendations",
+                "title": "Economic Survey: priorities and recommendations",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "rbi_phase2_indian_economy_union_budget_priorities_and_analysis",
+                "title": "Union Budget: priorities and analysis",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "rbi_phase2_indian_economy_indian_money_market",
+                "title": "Indian money market",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "rbi_phase2_indian_economy_indian_financial_market",
+                "title": "Indian financial market",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "rbi_phase2_indian_economy_linkages_between_financial_markets_and_economy",
+                "title": "Linkages between financial markets and economy",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "rbi_phase2_indian_economy_role_of_indian_banks_in_economic_development",
+                "title": "Role of Indian banks in economic development",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "rbi_phase2_indian_economy_role_of_rbi_in_development_process",
+                "title": "Role of RBI in development process",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "rbi_phase2_indian_economy_public_finance_in_india",
+                "title": "Public finance in India",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "rbi_phase2_indian_economy_political_economy",
+                "title": "Political economy",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "rbi_phase2_indian_economy_industrial_development_in_india",
+                "title": "Industrial development in India",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "rbi_phase2_indian_economy_indian_agriculture",
+                "title": "Indian agriculture",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "rbi_phase2_indian_economy_services_sector_in_india",
+                "title": "Services sector in India",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "rbi_phase2_globalisation_and_international_economics",
+            "title": "Globalisation and International Economics",
+            "type": "branch",
+            "children": [
+              {
+                "id": "rbi_phase2_globalisation_and_international_economics_globalisation_and_indian_economy",
+                "title": "Globalisation and Indian economy",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "rbi_phase2_globalisation_and_international_economics_liberalisation_and_opening_up_of_indian_economy",
+                "title": "Liberalisation and opening up of Indian economy",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "rbi_phase2_globalisation_and_international_economics_balance_of_payments",
+                "title": "Balance of payments",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "rbi_phase2_globalisation_and_international_economics_exportimport_policy_of_india",
+                "title": "Export\u2013Import policy of India",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "rbi_phase2_globalisation_and_international_economics_international_economic_institutions",
+                "title": "International economic institutions",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "rbi_phase2_globalisation_and_international_economics_international_monetary_fund_imf",
+                "title": "International Monetary Fund (IMF)",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "rbi_phase2_globalisation_and_international_economics_world_bank",
+                "title": "World Bank",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "rbi_phase2_globalisation_and_international_economics_world_trade_organization_wto",
+                "title": "World Trade Organization (WTO)",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "rbi_phase2_globalisation_and_international_economics_regional_economic_cooperation",
+                "title": "Regional economic cooperation",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "rbi_phase2_globalisation_and_international_economics_contemporary_international_economic_issues",
+                "title": "Contemporary international economic issues",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          },
+          {
+            "id": "rbi_phase2_social_structure_in_india",
+            "title": "Social Structure in India",
+            "type": "branch",
+            "children": [
+              {
+                "id": "rbi_phase2_social_structure_in_india_social_structure_of_indian_society",
+                "title": "Social structure of Indian society",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "rbi_phase2_social_structure_in_india_multiculturalism",
+                "title": "Multiculturalism",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "rbi_phase2_social_structure_in_india_demographic_trends_in_india",
+                "title": "Demographic trends in India",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "rbi_phase2_social_structure_in_india_urbanisation",
+                "title": "Urbanisation",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "rbi_phase2_social_structure_in_india_migration",
+                "title": "Migration",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "rbi_phase2_social_structure_in_india_gender_issues",
+                "title": "Gender issues",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "rbi_phase2_social_structure_in_india_social_justice",
+                "title": "Social justice",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "rbi_phase2_paper_ii_english_writing_skills",
+        "title": "Paper II: English (Writing Skills)",
+        "type": "branch",
+        "children": [
+          {
+            "id": "rbi_phase2_writing_skills_assessment",
+            "title": "Writing Skills Assessment",
+            "type": "branch",
+            "children": [
+              {
+                "id": "rbi_phase2_writing_skills_assessment_essay_writing",
+                "title": "Essay writing",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "rbi_phase2_writing_skills_assessment_precis_writing",
+                "title": "Precis writing",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "rbi_phase2_writing_skills_assessment_reading_comprehension",
+                "title": "Reading comprehension",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "rbi_phase2_writing_skills_assessment_business_and_official_correspondence",
+                "title": "Business and official correspondence",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "rbi_phase2_writing_skills_assessment_report_writing",
+                "title": "Report writing",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "rbi_phase2_writing_skills_assessment_clarity_of_expression",
+                "title": "Clarity of expression",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "rbi_phase2_writing_skills_assessment_logical_organisation_of_ideas",
+                "title": "Logical organisation of ideas",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "rbi_phase2_writing_skills_assessment_grammatical_accuracy",
+                "title": "Grammatical accuracy",
+                "type": "leaf",
+                "status": "locked"
+              },
+              {
+                "id": "rbi_phase2_writing_skills_assessment_vocabulary_usage",
+                "title": "Vocabulary usage",
+                "type": "leaf",
+                "status": "locked"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "rbi_phase2_paper_iii_general_finance_and_management_gfm",
+        "title": "Paper III: General Finance and Management (GFM)",
+        "type": "branch",
+        "children": [
+          {
+            "id": "rbi_phase2_part_a_finance",
+            "title": "Part A: Finance",
+            "type": "branch",
+            "children": [
+              {
+                "id": "rbi_phase2_financial_system",
+                "title": "#Financial System",
+                "type": "branch",
+                "children": [
+                  {
+                    "id": "rbi_phase2_financial_system_structure_of_indian_financial_system",
+                    "title": "Structure of Indian financial system",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_financial_system_functions_of_financial_institutions",
+                    "title": "Functions of financial institutions",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_financial_system_functions_of_reserve_bank_of_india",
+                    "title": "Functions of Reserve Bank of India",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_financial_system_banking_system_in_india",
+                    "title": "Banking system in India",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_financial_system_scheduled_and_non-scheduled_banks",
+                    "title": "Scheduled and non-scheduled banks",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_financial_system_development_financial_institutions",
+                    "title": "Development financial institutions",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_financial_system_role_of_sidbi",
+                    "title": "Role of SIDBI",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_financial_system_role_of_exim_bank",
+                    "title": "Role of EXIM Bank",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_financial_system_role_of_nabard",
+                    "title": "Role of NABARD",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_financial_system_role_of_nhb",
+                    "title": "Role of NHB",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_financial_system_role_of_nabfid",
+                    "title": "Role of NaBFID",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_financial_system_global_financial_system_developments",
+                    "title": "Global financial system developments",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_financial_system_impact_of_global_finance_on_indian_financial_system",
+                    "title": "Impact of global finance on Indian financial system",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_financial_system_information_technology_in_banking",
+                    "title": "Information technology in banking",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_financial_system_non-banking_financial_system",
+                    "title": "Non-banking financial system",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_financial_system_nbfcs_and_their_role",
+                    "title": "NBFCs and their role",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_financial_system_digital_payments_ecosystem",
+                    "title": "Digital payments ecosystem",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_financial_system_recent_developments_in_digital_payments",
+                    "title": "Recent developments in digital payments",
+                    "type": "leaf",
+                    "status": "locked"
+                  }
+                ]
+              },
+              {
+                "id": "rbi_phase2_financial_markets",
+                "title": "#Financial Markets",
+                "type": "branch",
+                "children": [
+                  {
+                    "id": "rbi_phase2_financial_markets_primary_markets",
+                    "title": "Primary markets",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_financial_markets_secondary_markets",
+                    "title": "Secondary markets",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_financial_markets_money_market",
+                    "title": "Money market",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_financial_markets_capital_market",
+                    "title": "Capital market",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_financial_markets_bond_market",
+                    "title": "Bond market",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_financial_markets_equity_market",
+                    "title": "Equity market",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_financial_markets_foreign_exchange_market",
+                    "title": "Foreign exchange market",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_financial_markets_financial_instruments",
+                    "title": "Financial instruments",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_financial_markets_recent_developments_in_financial_markets",
+                    "title": "Recent developments in financial markets",
+                    "type": "leaf",
+                    "status": "locked"
+                  }
+                ]
+              },
+              {
+                "id": "rbi_phase2_general_finance_topics",
+                "title": "#General Finance Topics",
+                "type": "branch",
+                "children": [
+                  {
+                    "id": "rbi_phase2_general_finance_topics_financial_risk_management",
+                    "title": "Financial risk management",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_general_finance_topics_credit_risk",
+                    "title": "Credit risk",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_general_finance_topics_market_risk",
+                    "title": "Market risk",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_general_finance_topics_operational_risk",
+                    "title": "Operational risk",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_general_finance_topics_basics_of_derivatives",
+                    "title": "Basics of derivatives",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_general_finance_topics_futures",
+                    "title": "Futures",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_general_finance_topics_options",
+                    "title": "Options",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_general_finance_topics_swaps",
+                    "title": "Swaps",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_general_finance_topics_global_financial_markets",
+                    "title": "Global financial markets",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_general_finance_topics_international_banking",
+                    "title": "International banking",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_general_finance_topics_financial_inclusion",
+                    "title": "Financial inclusion",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_general_finance_topics_alternate_sources_of_finance",
+                    "title": "Alternate sources of finance",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_general_finance_topics_publicprivate_partnership_ppp",
+                    "title": "Public\u2013Private Partnership (PPP)",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_general_finance_topics_social_costbenefit_analysis",
+                    "title": "Social cost\u2013benefit analysis",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_general_finance_topics_corporate_governance_in_banking_sector",
+                    "title": "Corporate governance in banking sector",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_general_finance_topics_union_budget_concepts",
+                    "title": "Union Budget concepts",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_general_finance_topics_union_budget_approach",
+                    "title": "Union Budget approach",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_general_finance_topics_budget_trends",
+                    "title": "Budget trends",
+                    "type": "leaf",
+                    "status": "locked"
+                  }
+                ]
+              },
+              {
+                "id": "rbi_phase2_accounting_and_financial_statements",
+                "title": "#Accounting and Financial Statements",
+                "type": "branch",
+                "children": [
+                  {
+                    "id": "rbi_phase2_accounting_and_financial_statements_basics_of_accounting",
+                    "title": "Basics of accounting",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_accounting_and_financial_statements_balance_sheet",
+                    "title": "Balance sheet",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_accounting_and_financial_statements_profit_and_loss_statement",
+                    "title": "Profit and loss statement",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_accounting_and_financial_statements_cash_flow_statement",
+                    "title": "Cash flow statement",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_accounting_and_financial_statements_ratio_analysis",
+                    "title": "Ratio analysis",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_accounting_and_financial_statements_liquidity_ratios",
+                    "title": "Liquidity ratios",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_accounting_and_financial_statements_profitability_ratios",
+                    "title": "Profitability ratios",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_accounting_and_financial_statements_solvency_ratios",
+                    "title": "Solvency ratios",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_accounting_and_financial_statements_efficiency_ratios",
+                    "title": "Efficiency ratios",
+                    "type": "leaf",
+                    "status": "locked"
+                  }
+                ]
+              },
+              {
+                "id": "rbi_phase2_inflation_and_monetary_economics",
+                "title": "#Inflation and Monetary Economics",
+                "type": "branch",
+                "children": [
+                  {
+                    "id": "rbi_phase2_inflation_and_monetary_economics_inflation_concepts",
+                    "title": "Inflation concepts",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_inflation_and_monetary_economics_types_of_inflation",
+                    "title": "Types of inflation",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_inflation_and_monetary_economics_inflation_measurement",
+                    "title": "Inflation measurement",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_inflation_and_monetary_economics_wholesale_price_index_wpi",
+                    "title": "Wholesale Price Index (WPI)",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_inflation_and_monetary_economics_consumer_price_index_cpi",
+                    "title": "Consumer Price Index (CPI)",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_inflation_and_monetary_economics_components_of_wpi_and_cpi",
+                    "title": "Components of WPI and CPI",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_inflation_and_monetary_economics_inflation_trends_in_india",
+                    "title": "Inflation trends in India",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_inflation_and_monetary_economics_impact_of_inflation",
+                    "title": "Impact of inflation",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_inflation_and_monetary_economics_inflation_control_measures",
+                    "title": "Inflation control measures",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_inflation_and_monetary_economics_monetary_policy_and_inflation",
+                    "title": "Monetary policy and inflation",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_inflation_and_monetary_economics_fiscal_policy_and_inflation",
+                    "title": "Fiscal policy and inflation",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_inflation_and_monetary_economics_growthinflation_trade-off",
+                    "title": "Growth\u2013inflation trade-off",
+                    "type": "leaf",
+                    "status": "locked"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "rbi_phase2_part_b_management",
+            "title": "Part B: Management",
+            "type": "branch",
+            "children": [
+              {
+                "id": "rbi_phase2_fundamentals_of_management",
+                "title": "#Fundamentals of Management",
+                "type": "branch",
+                "children": [
+                  {
+                    "id": "rbi_phase2_fundamentals_of_management_concept_of_management",
+                    "title": "Concept of management",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_fundamentals_of_management_evolution_of_management_thought",
+                    "title": "Evolution of management thought",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_fundamentals_of_management_scientific_management",
+                    "title": "Scientific management",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_fundamentals_of_management_administrative_management",
+                    "title": "Administrative management",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_fundamentals_of_management_human_relations_approach",
+                    "title": "Human relations approach",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_fundamentals_of_management_systems_approach",
+                    "title": "Systems approach",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_fundamentals_of_management_management_functions",
+                    "title": "Management functions",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_fundamentals_of_management_managerial_roles",
+                    "title": "Managerial roles",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_fundamentals_of_management_nudge_theory",
+                    "title": "Nudge theory",
+                    "type": "leaf",
+                    "status": "locked"
+                  }
+                ]
+              },
+              {
+                "id": "rbi_phase2_organisational_behaviour",
+                "title": "#Organisational Behaviour",
+                "type": "branch",
+                "children": [
+                  {
+                    "id": "rbi_phase2_organisational_behaviour_meaning_of_organisational_behaviour",
+                    "title": "Meaning of organisational behaviour",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_organisational_behaviour_personality_and_determinants",
+                    "title": "Personality and determinants",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_organisational_behaviour_big_five_personality_model",
+                    "title": "Big Five personality model",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_organisational_behaviour_reinforcement_theory",
+                    "title": "Reinforcement theory",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_organisational_behaviour_perception",
+                    "title": "Perception",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_organisational_behaviour_perceptual_errors",
+                    "title": "Perceptual errors",
+                    "type": "leaf",
+                    "status": "locked"
+                  }
+                ]
+              },
+              {
+                "id": "rbi_phase2_motivation",
+                "title": "#Motivation",
+                "type": "branch",
+                "children": [
+                  {
+                    "id": "rbi_phase2_motivation_concept_of_motivation",
+                    "title": "Concept of motivation",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_motivation_importance_of_motivation",
+                    "title": "Importance of motivation",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_motivation_maslows_need_hierarchy_theory",
+                    "title": "Maslow\u2019s need hierarchy theory",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_motivation_alderfers_erg_theory",
+                    "title": "Alderfer\u2019s ERG theory",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_motivation_mcclellands_need_theory",
+                    "title": "McClelland\u2019s need theory",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_motivation_herzbergs_two-factor_theory",
+                    "title": "Herzberg\u2019s two-factor theory",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_motivation_adams_equity_theory",
+                    "title": "Adams\u2019 equity theory",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_motivation_vrooms_expectancy_theory",
+                    "title": "Vroom\u2019s expectancy theory",
+                    "type": "leaf",
+                    "status": "locked"
+                  }
+                ]
+              },
+              {
+                "id": "rbi_phase2_leadership_and_interpersonal_behaviour",
+                "title": "#Leadership and Interpersonal Behaviour",
+                "type": "branch",
+                "children": [
+                  {
+                    "id": "rbi_phase2_leadership_and_interpersonal_behaviour_leadership_concept",
+                    "title": "Leadership concept",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_leadership_and_interpersonal_behaviour_trait_theory",
+                    "title": "Trait theory",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_leadership_and_interpersonal_behaviour_behavioural_theories",
+                    "title": "Behavioural theories",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_leadership_and_interpersonal_behaviour_contingency_theory",
+                    "title": "Contingency theory",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_leadership_and_interpersonal_behaviour_charismatic_leadership",
+                    "title": "Charismatic leadership",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_leadership_and_interpersonal_behaviour_transactional_leadership",
+                    "title": "Transactional leadership",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_leadership_and_interpersonal_behaviour_transformational_leadership",
+                    "title": "Transformational leadership",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_leadership_and_interpersonal_behaviour_emotional_intelligence",
+                    "title": "Emotional intelligence",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_leadership_and_interpersonal_behaviour_interpersonal_relationships",
+                    "title": "Interpersonal relationships",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_leadership_and_interpersonal_behaviour_transactional_analysis",
+                    "title": "Transactional analysis",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_leadership_and_interpersonal_behaviour_johari_window",
+                    "title": "Johari window",
+                    "type": "leaf",
+                    "status": "locked"
+                  }
+                ]
+              },
+              {
+                "id": "rbi_phase2_conflict_and_organisational_change",
+                "title": "#Conflict and Organisational Change",
+                "type": "branch",
+                "children": [
+                  {
+                    "id": "rbi_phase2_conflict_and_organisational_change_conflict_concept",
+                    "title": "Conflict concept",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_conflict_and_organisational_change_sources_of_conflict",
+                    "title": "Sources of conflict",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_conflict_and_organisational_change_types_of_conflict",
+                    "title": "Types of conflict",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_conflict_and_organisational_change_conflict_management",
+                    "title": "Conflict management",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_conflict_and_organisational_change_organisational_change",
+                    "title": "Organisational change",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_conflict_and_organisational_change_lewins_change_theory",
+                    "title": "Lewin\u2019s change theory",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_conflict_and_organisational_change_organisational_development",
+                    "title": "Organisational development",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_conflict_and_organisational_change_planned_change_models",
+                    "title": "Planned change models",
+                    "type": "leaf",
+                    "status": "locked"
+                  }
+                ]
+              },
+              {
+                "id": "rbi_phase2_ethics_and_corporate_governance",
+                "title": "#Ethics and Corporate Governance",
+                "type": "branch",
+                "children": [
+                  {
+                    "id": "rbi_phase2_ethics_and_corporate_governance_meaning_of_ethics",
+                    "title": "Meaning of ethics",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_ethics_and_corporate_governance_ethical_issues_in_business",
+                    "title": "Ethical issues in business",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_ethics_and_corporate_governance_utilitarian_ethics",
+                    "title": "Utilitarian ethics",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_ethics_and_corporate_governance_rights_and_duties_approach",
+                    "title": "Rights and duties approach",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_ethics_and_corporate_governance_justice_and_fairness",
+                    "title": "Justice and fairness",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_ethics_and_corporate_governance_ethics_of_care",
+                    "title": "Ethics of care",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_ethics_and_corporate_governance_virtue_ethics",
+                    "title": "Virtue ethics",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_ethics_and_corporate_governance_teleological_theories",
+                    "title": "Teleological theories",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_ethics_and_corporate_governance_egoism_theory",
+                    "title": "Egoism theory",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_ethics_and_corporate_governance_relativism_theory",
+                    "title": "Relativism theory",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_ethics_and_corporate_governance_ethics_in_finance",
+                    "title": "Ethics in finance",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_ethics_and_corporate_governance_ethics_in_hr",
+                    "title": "Ethics in HR",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_ethics_and_corporate_governance_ethics_in_marketing",
+                    "title": "Ethics in marketing",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_ethics_and_corporate_governance_ethical_decision_making",
+                    "title": "Ethical decision making",
+                    "type": "leaf",
+                    "status": "locked"
+                  }
+                ]
+              },
+              {
+                "id": "rbi_phase2_corporate_governance",
+                "title": "#Corporate Governance",
+                "type": "branch",
+                "children": [
+                  {
+                    "id": "rbi_phase2_corporate_governance_concept_of_corporate_governance",
+                    "title": "Concept of corporate governance",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_corporate_governance_factors_affecting_corporate_governance",
+                    "title": "Factors affecting corporate governance",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_corporate_governance_corporate_governance_mechanisms",
+                    "title": "Corporate governance mechanisms",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_corporate_governance_role_of_board_of_directors",
+                    "title": "Role of board of directors",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_corporate_governance_ethics_programs",
+                    "title": "Ethics programs",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_corporate_governance_code_of_ethics",
+                    "title": "Code of ethics",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_corporate_governance_code_of_conduct",
+                    "title": "Code of conduct",
+                    "type": "leaf",
+                    "status": "locked"
+                  }
+                ]
+              },
+              {
+                "id": "rbi_phase2_communication",
+                "title": "#Communication",
+                "type": "branch",
+                "children": [
+                  {
+                    "id": "rbi_phase2_communication_communication_process",
+                    "title": "Communication process",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_communication_communication_channels",
+                    "title": "Communication channels",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_communication_oral_communication",
+                    "title": "Oral communication",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_communication_written_communication",
+                    "title": "Written communication",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_communication_verbal_communication",
+                    "title": "Verbal communication",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_communication_non-verbal_communication",
+                    "title": "Non-verbal communication",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_communication_upward_communication",
+                    "title": "Upward communication",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_communication_downward_communication",
+                    "title": "Downward communication",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_communication_lateral_communication",
+                    "title": "Lateral communication",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_communication_barriers_to_communication",
+                    "title": "Barriers to communication",
+                    "type": "leaf",
+                    "status": "locked"
+                  },
+                  {
+                    "id": "rbi_phase2_communication_role_of_information_technology_in_communication",
+                    "title": "Role of information technology in communication",
+                    "type": "leaf",
+                    "status": "locked"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]
