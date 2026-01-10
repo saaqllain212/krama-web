@@ -12,7 +12,8 @@ import {
   Clock, 
   AlertTriangle, 
   Settings,
-  BarChart2
+  BarChart2,
+  Settings2
 } from 'lucide-react'
 import Link from 'next/link'
 import Countdown from '@/components/dashboard/Countdown'
@@ -22,11 +23,13 @@ import StudyHeatmap from '@/components/dashboard/StudyHeatmap'
 import SettingsModal from '@/components/dashboard/SettingsModal'
 import OnboardingModal from '@/components/dashboard/OnboardingModal'
 import CheckoutModal from '@/components/dashboard/CheckoutModal'
-import InitiationModal from '@/components/dashboard/InitiationModal' // ✅ 1. IMPORT THIS
+import InitiationModal from '@/components/dashboard/InitiationModal'
+import ProtocolManagerModal from '@/components/dashboard/ProtocolManagerModal'
 
 export default function DashboardPage() {
   const [userName, setUserName] = useState('Student')
   const [userEmail, setUserEmail] = useState('')
+  const [userId, setUserId] = useState('')
   const [focusMinutes, setFocusMinutes] = useState(0)
   const [dueReviews, setDueReviews] = useState(0)
   const [mocksCount, setMocksCount] = useState(0)
@@ -35,6 +38,7 @@ export default function DashboardPage() {
   const [isMocksModalOpen, setIsMocksModalOpen] = useState(false)
   const [isSettingsOpen, setIsSettingsOpen] = useState(false) 
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false)
+  const [isProtocolManagerOpen, setIsProtocolManagerOpen] = useState(false)
   
   // MEMBERSHIP STATE
   const [isPremium, setIsPremium] = useState(false)
@@ -51,6 +55,8 @@ export default function DashboardPage() {
       const { data: { user } } = await supabase.auth.getUser()
       
       if (user) {
+        setUserId(user.id)
+
         // Capture Name & Email
         if (user.user_metadata?.full_name) {
           setUserName(user.user_metadata.full_name.split(' ')[0])
@@ -124,7 +130,7 @@ export default function DashboardPage() {
   return (
     <div className="space-y-12 pb-20 relative">
       
-      {/* ✅ 2. INITIATION CEREMONY (Triggers on Payment Success) */}
+      {/* INITIATION CEREMONY (Triggers on Payment Success) */}
       <InitiationModal />
       
       {/* ONBOARDING WIZARD */}
@@ -269,6 +275,20 @@ export default function DashboardPage() {
                     <div className="h-full bg-black transition-all duration-1000 ease-out" style={{ width: `${stats.percentage}%` }} />
                   </div>
                   <Link href="/dashboard/syllabus" className="absolute inset-0" />
+                  
+                  {/* ✅ NEW: RADIOACTIVE PROTOCOL MANAGER BUTTON (Only for Custom) */}
+                  {activeExam === 'custom' && (
+                     <button 
+                        onClick={(e) => {
+                            e.preventDefault(); 
+                            setIsProtocolManagerOpen(true);
+                        }}
+                        className="absolute bottom-4 right-4 z-20 rounded-full bg-black p-3 text-[#ccff00] shadow-[0_0_20px_#ccff00] border-2 border-[#ccff00] hover:scale-110 transition-all"
+                        title="Manage Custom Protocol"
+                     >
+                        <Settings2 size={20} />
+                     </button>
+                  )}
                 </div>
 
                 {/* CARD 4: MOCKS */}
@@ -313,6 +333,13 @@ export default function DashboardPage() {
         onClose={() => setIsCheckoutOpen(false)}
         userName={userName}
         userEmail={userEmail}
+      />
+      
+      {/* PROTOCOL MANAGER (Custom Only) */}
+      <ProtocolManagerModal 
+        isOpen={isProtocolManagerOpen}
+        onClose={() => setIsProtocolManagerOpen(false)}
+        userId={userId}
       />
     </div>
   )

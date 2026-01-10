@@ -12,7 +12,7 @@ import { useAlert } from '@/context/AlertContext'
 const SCHEDULE_PRESETS = [
   { name: "Standard", val: "0, 1, 3, 7, 14, 30" },
   { name: "Aggressive", val: "0, 1, 2, 3, 4, 5" },
-  { name: "One-Off", val: "0, 0" },
+  { name: "One-Off", val: "0" },
 ]
 
 export default function ReviewPage() {

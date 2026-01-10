@@ -25,7 +25,7 @@ export default function AuthLayout({ children, title, subtitle }: AuthLayoutProp
 
         {/* Quote */}
         <div className="max-w-md text-xl font-bold leading-tight tracking-tight">
-          "The syllabus is finite. Your time is not. Manage it."
+          "Time is your only currency. Stop spending it on chaos."
         </div>
       </div>
 
