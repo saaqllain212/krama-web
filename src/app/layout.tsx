@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { Space_Grotesk } from "next/font/google"; 
 import "./globals.css";
+import Script from 'next/script'; // <--- 1. NEW IMPORT
 
-// 1. Import BOTH Providers
+// 2. Context Providers
 import { AlertProvider } from '@/context/AlertContext'; 
 import { SyllabusProvider } from '@/context/SyllabusContext'; 
 
@@ -25,14 +26,22 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${spaceGrotesk.className} antialiased bg-[#FBF9F6] text-[#1A1A1A]`}>
-        {/* 2. Nest the Providers. 
-            AlertProvider is outer (UI), SyllabusProvider is inner (Data). 
-        */}
+        
+        {/* PROVIDERS WRAPPER */}
         <AlertProvider>
           <SyllabusProvider>
             {children}
           </SyllabusProvider>
         </AlertProvider>
+
+        {/* 3. RAZORPAY SCRIPT */}
+        {/* This loads the payment checkout window in the background */}
+        <Script 
+          id="razorpay-checkout-js"
+          src="https://checkout.razorpay.com/v1/checkout.js"
+          strategy="lazyOnload"
+        />
+        
       </body>
     </html>
   );

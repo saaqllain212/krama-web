@@ -4,16 +4,40 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Lock, Loader2, CheckCircle } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { useAlert } from '@/context/AlertContext' // <--- 1. Import Context
 
 // CONFIGURATION
 const TRIAL_DAYS = 14
-const PRICE = 499
+const PRICE = 199
+
+// Helper Type for Razorpay
+interface RazorpayOptions {
+  key: string
+  amount: number
+  currency: string
+  name: string
+  description: string
+  order_id: string
+  handler: (response: any) => void
+  theme: {
+    color: string
+  }
+}
+
+// Extend Window interface so TS doesn't complain
+declare global {
+  interface Window {
+    Razorpay: new (options: RazorpayOptions) => any
+  }
+}
 
 export default function TrialGuard({ children }: { children: React.ReactNode }) {
   const supabase = createClient()
   const router = useRouter()
+  const { showAlert } = useAlert() // <--- 2. Use Alert Hook
   
   const [loading, setLoading] = useState(true)
+  const [paymentProcessing, setPaymentProcessing] = useState(false)
   const [isLocked, setIsLocked] = useState(false)
   const [daysLeft, setDaysLeft] = useState(0)
 
@@ -32,7 +56,6 @@ export default function TrialGuard({ children }: { children: React.ReactNode }) 
       .eq('user_id', user.id)
       .single()
 
-    // If something went wrong and no row exists (rare), we assume trial based on signup
     if (!access) {
        setLoading(false)
        return
@@ -45,7 +68,6 @@ export default function TrialGuard({ children }: { children: React.ReactNode }) 
     }
 
     // 3. Trial Timer Check
-    // We use 'trial_starts_at' from the table, so you can manually reset trials for users
     const startDate = new Date(access.trial_starts_at)
     const today = new Date()
     const diffTime = Math.abs(today.getTime() - startDate.getTime())
@@ -59,6 +81,64 @@ export default function TrialGuard({ children }: { children: React.ReactNode }) 
     }
     
     setLoading(false)
+  }
+
+  // --- HANDLE PAYMENT LOGIC (Updated with Custom Alerts) ---
+  const handlePayment = async () => {
+    setPaymentProcessing(true)
+    
+    try {
+      // 1. Create Order
+      const res = await fetch('/api/payment/create-order', { method: 'POST' })
+      const data = await res.json()
+
+      if (!res.ok) throw new Error(data.error || 'Could not create order')
+
+      // 2. Initialize Razorpay
+      const options: RazorpayOptions = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!,
+        amount: data.amount,
+        currency: 'INR',
+        name: 'Krama App',
+        description: 'Lifetime Membership',
+        order_id: data.orderId,
+        handler: async function (response: any) {
+          
+          // 3. Verify Payment on Backend
+          const verifyRes = await fetch('/api/payment/verify', {
+            method: 'POST',
+            body: JSON.stringify({
+              orderCreationId: data.orderId,
+              razorpayPaymentId: response.razorpay_payment_id,
+              razorpaySignature: response.razorpay_signature,
+            }),
+          })
+
+          const verifyData = await verifyRes.json()
+
+          if (verifyData.success) {
+            showAlert('Payment Successful! Welcome to Pro.', 'success') // <--- Nice Alert
+            setTimeout(() => {
+                window.location.reload() // Reload to unlock the screen
+            }, 1500)
+          } else {
+            showAlert('Payment Verification Failed.', 'error')
+          }
+        },
+        theme: {
+          color: '#000000', // Black Theme
+        },
+      }
+
+      const paymentObject = new window.Razorpay(options)
+      paymentObject.open()
+
+    } catch (error) {
+      console.error(error)
+      showAlert('Something went wrong. Please try again.', 'error')
+    } finally {
+      setPaymentProcessing(false)
+    }
   }
 
   // --- RENDER 1: LOADING ---
@@ -100,10 +180,11 @@ export default function TrialGuard({ children }: { children: React.ReactNode }) 
           </div>
 
           <button 
-            onClick={() => alert("Integrating Razorpay Backend Next...")}
-            className="w-full bg-black text-white py-4 font-black uppercase tracking-widest hover:bg-stone-800 hover:-translate-y-1 transition-all shadow-lg"
+            onClick={handlePayment}
+            disabled={paymentProcessing}
+            className="w-full bg-black text-white py-4 font-black uppercase tracking-widest hover:bg-stone-800 hover:-translate-y-1 transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
-            Unlock Now • ₹{PRICE}
+            {paymentProcessing ? <Loader2 className="animate-spin" size={20}/> : `Unlock Now • ₹${PRICE}`}
           </button>
           
           <button 
