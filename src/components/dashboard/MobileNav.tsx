@@ -15,6 +15,7 @@ import {
   X 
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
+import { useSyllabus } from '@/context/SyllabusContext'
 
 const NAV_ITEMS = [
   { label: 'Overview', href: '/dashboard', icon: LayoutDashboard },
@@ -30,10 +31,24 @@ export default function MobileNav() {
   const router = useRouter()
   const supabase = createClient()
 
+  // 1. Get Active Protocol
+  const { activeExam } = useSyllabus()
+
   const handleLogout = async () => {
     await supabase.auth.signOut()
     router.replace('/login')
   }
+
+  // 2. Filter Items Logic (Same as Sidebar)
+  const visibleItems = NAV_ITEMS.filter(item => {
+    // If in Focus Mode, show Overview, Focus, AND Review.
+    // Hide Syllabus and Mocks.
+    if (activeExam === 'focus') {
+       return ['Overview', 'Focus Mode', 'Spaced Review'].includes(item.label)
+    }
+    // Otherwise show everything
+    return true
+  })
 
   return (
     <>
@@ -49,7 +64,7 @@ export default function MobileNav() {
       <AnimatePresence>
         {isOpen && (
           <>
-            {/* BACKDROP (Darkens the background) */}
+            {/* BACKDROP */}
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -58,7 +73,7 @@ export default function MobileNav() {
               className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm lg:hidden"
             />
 
-            {/* DRAWER (The actual menu) */}
+            {/* DRAWER */}
             <motion.div
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
@@ -76,7 +91,7 @@ export default function MobileNav() {
 
               {/* Navigation Items */}
               <nav className="flex-1 space-y-2 p-4">
-                {NAV_ITEMS.map((item) => {
+                {visibleItems.map((item) => {
                   const isActive = pathname === item.href
                   const Icon = item.icon
 

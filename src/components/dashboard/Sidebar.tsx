@@ -2,9 +2,10 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, Timer, RotateCw, Map, LineChart, Settings, LogOut } from 'lucide-react'
+import { LayoutDashboard, Timer, RotateCw, Map, LineChart, LogOut } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
+import { useSyllabus } from '@/context/SyllabusContext'
 
 const NAV_ITEMS = [
   { label: 'Overview', href: '/dashboard', icon: LayoutDashboard },
@@ -18,11 +19,25 @@ export default function Sidebar() {
   const pathname = usePathname()
   const router = useRouter()
   const supabase = createClient()
+  
+  // 1. Get Active Protocol
+  const { activeExam } = useSyllabus()
 
   const handleLogout = async () => {
     await supabase.auth.signOut()
     router.replace('/login')
   }
+
+  // 2. Filter Items Logic
+  const visibleItems = NAV_ITEMS.filter(item => {
+    // If in Focus Mode, show Overview, Focus, AND Review.
+    // Hide only Syllabus and Mocks.
+    if (activeExam === 'focus') {
+       return ['Overview', 'Focus Mode', 'Spaced Review'].includes(item.label)
+    }
+    // Otherwise show everything
+    return true
+  })
 
   return (
     <aside className="fixed inset-y-0 left-0 hidden w-64 flex-col border-r-2 border-black bg-white lg:flex">
@@ -33,7 +48,7 @@ export default function Sidebar() {
 
       {/* Navigation Links */}
       <nav className="flex-1 space-y-2 p-4">
-        {NAV_ITEMS.map((item) => {
+        {visibleItems.map((item) => {
           const isActive = pathname === item.href
           const Icon = item.icon
 

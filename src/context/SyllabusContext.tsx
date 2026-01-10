@@ -9,7 +9,7 @@ type SyllabusContextType = {
   setActiveExam: (id: string) => void
   optionalSubject: string | null
   setOptionalSubject: (id: string) => void
-  resetOptionalSelection: () => void // <--- NEW FUNCTION
+  resetOptionalSelection: () => void
   data: SyllabusNode[]
   setData: (nodes: SyllabusNode[]) => void
   completedIds: string[]
@@ -99,32 +99,45 @@ export function SyllabusProvider({ children }: { children: React.ReactNode }) {
       try {
         let loadedNodes: SyllabusNode[] = []
 
-        // A. Load The Raw JSON
-        if (activeExam === 'upsc') {
+        // A. Handle Focus Mode (No Syllabus)
+        if (activeExam === 'focus') {
+           loadedNodes = []
+        }
+        // B. Handle UPSC
+        else if (activeExam === 'upsc') {
           const mod = await import('@/data/exams/upsc')
           loadedNodes = mod.default as SyllabusNode[]
           
-          // B. Apply Optional Filter
           if (optionalSubject) {
             loadedNodes = filterDataForOptional(loadedNodes, optionalSubject)
           }
         } 
+        // C. Handle SSC
         else if (activeExam === 'ssc') {
           const mod = await import('@/data/exams/ssc/ssc-syllabus.json')
           loadedNodes = mod.default as SyllabusNode[]
         }
+        // D. Handle Bank
         else if (activeExam === 'bank') {
            const mod = await import('@/data/exams/bank/banking-exam.json')
            loadedNodes = mod.default as SyllabusNode[]
         }
+        // E. Handle Custom JSON
         else if (activeExam === 'custom') {
            const saved = localStorage.getItem('krama_custom_syllabus_data')
-           if (saved) loadedNodes = JSON.parse(saved)
+           if (saved) {
+             try {
+               loadedNodes = JSON.parse(saved)
+             } catch (err) {
+               console.error("Custom JSON Corrupt", err)
+               loadedNodes = []
+             }
+           }
         }
 
         setData(loadedNodes)
 
-        // C. Load Progress
+        // F. Load Progress
         const { data: { user } } = await supabase.auth.getUser()
         if (user) {
           const { data: progress } = await supabase
@@ -178,11 +191,9 @@ export function SyllabusProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-  // --- NEW: RESET OPTIONAL (UI ONLY) ---
+  // RESET OPTIONAL
   const resetOptionalSelection = () => {
     setOptionalSubjectState(null) 
-    // We intentionally do NOT clear the DB here. 
-    // We only clear DB when they select a NEW one.
   }
 
   // 4. TOGGLE NODE

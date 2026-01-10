@@ -19,7 +19,7 @@ import { useSyllabus } from '@/context/SyllabusContext'
 import MocksModal from '@/components/mocks/MocksModal'
 import StudyHeatmap from '@/components/dashboard/StudyHeatmap'
 import SettingsModal from '@/components/dashboard/SettingsModal'
-import OnboardingModal from '@/components/dashboard/OnboardingModal' // <--- 1. NEW IMPORT
+import OnboardingModal from '@/components/dashboard/OnboardingModal'
 
 export default function DashboardPage() {
   const [userName, setUserName] = useState('Student')
@@ -37,6 +37,9 @@ export default function DashboardPage() {
 
   const { stats, activeExam } = useSyllabus() 
   const supabase = createClient()
+  
+  // CHECK IF FOCUS MODE
+  const isFocusMode = activeExam === 'focus'
 
   useEffect(() => {
     const getData = async () => {
@@ -164,7 +167,10 @@ export default function DashboardPage() {
             You have <span className="font-bold text-black">{dueReviews} items</span> to review right now.
           </p>
           
+          {/* ACTION BUTTONS */}
           <div className="mt-6 flex gap-2">
+            
+            {/* INSIGHTS: ALWAYS VISIBLE */}
             <Link 
               href="/dashboard/mocks/insights" 
               className="rounded-full border border-black/10 bg-white px-5 py-2 text-xs font-bold uppercase tracking-widest text-black/60 hover:bg-black hover:text-white transition-colors flex items-center gap-2"
@@ -172,13 +178,17 @@ export default function DashboardPage() {
               <Activity size={14} /> Insights
             </Link>
 
-            <button 
-              onClick={() => setIsMocksModalOpen(true)}
-              className="rounded-full border border-black/10 bg-black px-5 py-2 text-xs font-bold uppercase tracking-widest text-white hover:bg-stone-800 transition-colors flex items-center gap-2 shadow-lg shadow-black/20"
-            >
-              <Plus size={14} /> Log Mock
-            </button>
+            {/* LOG MOCK: HIDDEN IN FOCUS MODE */}
+            {!isFocusMode && (
+                <button 
+                  onClick={() => setIsMocksModalOpen(true)}
+                  className="rounded-full border border-black/10 bg-black px-5 py-2 text-xs font-bold uppercase tracking-widest text-white hover:bg-stone-800 transition-colors flex items-center gap-2 shadow-lg shadow-black/20"
+                >
+                  <Plus size={14} /> Log Mock
+                </button>
+            )}
           </div>
+
         </div>
 
         <div className="w-full md:w-auto">
@@ -186,9 +196,10 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* STATS GRID */}
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-        {/* CARD 1: DEEP WORK */}
+      {/* STATS GRID - ADAPTIVE COLUMNS */}
+      <div className={`grid grid-cols-1 gap-6 md:grid-cols-2 ${isFocusMode ? 'lg:grid-cols-2' : 'lg:grid-cols-4'}`}>
+        
+        {/* CARD 1: DEEP WORK (Always Visible) */}
         <div className="group relative border-neo bg-black p-6 text-white shadow-neo transition-all hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(245,158,11,1)]">
           <div className="flex items-start justify-between">
             <div>
@@ -202,7 +213,7 @@ export default function DashboardPage() {
           <Link href="/dashboard/focus" className="absolute inset-0" />
         </div>
 
-        {/* CARD 2: REVIEWS */}
+        {/* CARD 2: REVIEWS (Always Visible) */}
         <div className="group relative border-neo bg-brand p-6 text-black shadow-neo transition-all hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
           <div className="flex items-start justify-between">
             <div>
@@ -216,36 +227,41 @@ export default function DashboardPage() {
           <Link href="/dashboard/review" className="absolute inset-0" />
         </div>
 
-        {/* CARD 3: SYLLABUS */}
-        <div className="group relative border-neo bg-white p-6 shadow-neo transition-all hover:-translate-y-1">
-          <div className="flex items-start justify-between">
-            <div>
-              <div className="text-sm font-bold uppercase tracking-widest text-black/40">Syllabus</div>
-              <div className="mt-2 text-4xl font-bold tracking-tighter">{stats.percentage}%</div>
-            </div>
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-black/5">
-              <CheckSquare className="h-5 w-5 stroke-[2.5px]" />
-            </div>
-          </div>
-          <div className="mt-4 h-2 w-full overflow-hidden bg-black/10">
-            <div className="h-full bg-black transition-all duration-1000 ease-out" style={{ width: `${stats.percentage}%` }} />
-          </div>
-          <Link href="/dashboard/syllabus" className="absolute inset-0" />
-        </div>
+        {/* CARD 3 & 4: SYLLABUS & MOCKS (Hidden in Focus Mode) */}
+        {!isFocusMode && (
+            <>
+                {/* CARD 3: SYLLABUS */}
+                <div className="group relative border-neo bg-white p-6 shadow-neo transition-all hover:-translate-y-1">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <div className="text-sm font-bold uppercase tracking-widest text-black/40">Syllabus</div>
+                      <div className="mt-2 text-4xl font-bold tracking-tighter">{stats.percentage}%</div>
+                    </div>
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-black/5">
+                      <CheckSquare className="h-5 w-5 stroke-[2.5px]" />
+                    </div>
+                  </div>
+                  <div className="mt-4 h-2 w-full overflow-hidden bg-black/10">
+                    <div className="h-full bg-black transition-all duration-1000 ease-out" style={{ width: `${stats.percentage}%` }} />
+                  </div>
+                  <Link href="/dashboard/syllabus" className="absolute inset-0" />
+                </div>
 
-        {/* CARD 4: MOCKS */}
-        <div className="group relative border-neo bg-white p-6 shadow-neo transition-all hover:-translate-y-1">
-          <div className="flex items-start justify-between">
-            <div>
-              <div className="text-sm font-bold uppercase tracking-widest text-black/40">Tests Taken</div>
-              <div className="mt-2 text-4xl font-bold tracking-tighter">{mocksCount}</div>
-            </div>
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-black/5">
-              <Activity className="h-5 w-5 stroke-[2.5px]" />
-            </div>
-          </div>
-          <Link href="/dashboard/mocks" className="absolute inset-0" />
-        </div>
+                {/* CARD 4: MOCKS */}
+                <div className="group relative border-neo bg-white p-6 shadow-neo transition-all hover:-translate-y-1">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <div className="text-sm font-bold uppercase tracking-widest text-black/40">Tests Taken</div>
+                      <div className="mt-2 text-4xl font-bold tracking-tighter">{mocksCount}</div>
+                    </div>
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-black/5">
+                      <Activity className="h-5 w-5 stroke-[2.5px]" />
+                    </div>
+                  </div>
+                  <Link href="/dashboard/mocks" className="absolute inset-0" />
+                </div>
+            </>
+        )}
       </div>
 
       {/* HEATMAP */}
@@ -255,10 +271,10 @@ export default function DashboardPage() {
 
       {/* MOCKS MODAL */}
       <MocksModal 
-         open={isMocksModalOpen} 
-         onClose={() => setIsMocksModalOpen(false)} 
-         examId={activeExam || 'upsc'} 
-         onSuccess={() => window.location.reload()} 
+          open={isMocksModalOpen} 
+          onClose={() => setIsMocksModalOpen(false)} 
+          examId={activeExam || 'upsc'} 
+          onSuccess={() => window.location.reload()} 
       />
 
       {/* SETTINGS MODAL */}
