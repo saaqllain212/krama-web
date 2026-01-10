@@ -6,11 +6,16 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Check, Upload, Zap, BookOpen, Calendar, Loader2, FileJson } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useSyllabus } from '@/context/SyllabusContext'
+// ✅ 1. Import the Alert Hook
+import { useAlert } from '@/context/AlertContext'
 
 export default function OnboardingModal() {
   const supabase = createClient()
   const router = useRouter()
   const { setActiveExam } = useSyllabus()
+  
+  // ✅ 2. Initialize the Hook
+  const { showAlert } = useAlert()
 
   const [isOpen, setIsOpen] = useState(false)
   const [step, setStep] = useState(1)
@@ -23,7 +28,6 @@ export default function OnboardingModal() {
   const [dailyHours, setDailyHours] = useState(6)
 
   useEffect(() => {
-    // Logic to check the database
     const checkDatabase = async (userId: string) => {
       try {
         const { data: settings } = await supabase
@@ -32,10 +36,6 @@ export default function OnboardingModal() {
           .eq('user_id', userId)
           .maybeSingle()
 
-        // --- THE AGGRESSIVE TRIGGER ---
-        // Open if:
-        // 1. DB says active_exam_id is null
-        // 2. OR Browser says "I don't have an exam name" (happens after nuclear reset)
         const isMemoryWiped = typeof window !== 'undefined' && !localStorage.getItem('krama-exam-name')
 
         if (!settings?.active_exam_id || isMemoryWiped) {
@@ -48,7 +48,6 @@ export default function OnboardingModal() {
       }
     }
 
-    // A. Check immediately
     const init = async () => {
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
@@ -59,7 +58,6 @@ export default function OnboardingModal() {
     }
     init()
 
-    // B. Also listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (session?.user) {
         checkDatabase(session.user.id)
@@ -69,7 +67,7 @@ export default function OnboardingModal() {
     return () => subscription.unsubscribe()
   }, [])
 
-  // 2. HANDLERS
+  // HANDLERS
   const handleExamSelect = (examId: string) => {
     setSelectedExam(examId)
     if (examId === 'focus') {
@@ -81,12 +79,21 @@ export default function OnboardingModal() {
     }
   }
 
+  // ✅ 3. New Handler to replace the inline check
+  const handleDateConfirm = () => {
+    if (!examDate) {
+      showAlert('Date is required to proceed.', 'error')
+      return
+    }
+    setStep(3)
+  }
+
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
 
     if (file.type !== "application/json") {
-      alert("Please upload a .json file")
+      showAlert("Please upload a .json file", "error") // Replaced native alert here too
       return
     }
 
@@ -99,7 +106,7 @@ export default function OnboardingModal() {
       setSelectedExam('custom')
       setStep(2)
     } catch (err) {
-      alert("Invalid JSON format. Must be an array of topics.")
+      showAlert("Invalid JSON. Must be an array.", "error") // Replaced native alert
     }
   }
 
@@ -132,7 +139,7 @@ export default function OnboardingModal() {
 
     } catch (e) {
       console.error(e)
-      alert("Setup failed. Please try again.")
+      showAlert("Setup failed. Please try again.", "error") // Replaced native alert
     } finally {
       setSaving(false)
     }
@@ -217,7 +224,12 @@ export default function OnboardingModal() {
                    <Calendar className="absolute top-4 left-4 text-black/30 pointer-events-none" />
                    <input type="date" required value={examDate} onChange={(e) => setExamDate(e.target.value)} className="w-full bg-white border-4 border-black p-4 pl-12 text-xl font-bold uppercase outline-none focus:shadow-[4px_4px_0_0_#000] transition-all" />
                 </div>
-                <button onClick={() => examDate ? setStep(3) : alert('Date Required')} className="bg-black text-white px-8 py-3 font-bold uppercase hover:bg-stone-800 transition-all">Confirm Date</button>
+                
+                {/* ✅ 4. Updated Button with new Handler */}
+                <button onClick={handleDateConfirm} className="bg-black text-white px-8 py-3 font-bold uppercase hover:bg-stone-800 transition-all">
+                  Confirm Date
+                </button>
+                
                 <button onClick={() => setStep(1)} className="block mx-auto text-xs font-bold text-stone-400 uppercase hover:text-black mt-4">Back</button>
               </motion.div>
             )}

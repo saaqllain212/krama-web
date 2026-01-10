@@ -5,14 +5,13 @@ import { createClient } from '@/lib/supabase/client'
 import { Play, Pause, Save, RotateCcw, ArrowLeft, Pencil, Check } from 'lucide-react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-// 1. Import the Global Alert Hook
 import { useAlert } from '@/context/AlertContext'
 
 const PRESETS = [15, 25, 45, 60]
 
 export default function FocusPage() {
   const supabase = createClient()
-  const { showAlert } = useAlert() // 2. Use the hook
+  const { showAlert } = useAlert()
 
   // --- STATE ---
   const [targetMinutes, setTargetMinutes] = useState(25)
@@ -37,7 +36,6 @@ export default function FocusPage() {
 
   // --- ACTIONS ---
   const toggleTimer = () => {
-    // FIX: Removed prompt() popup. Auto-set default if empty.
     if (!isActive && !topic.trim()) {
       setTopic("DEEP WORK") 
     }
@@ -49,7 +47,6 @@ export default function FocusPage() {
     setSecondsLeft(targetMinutes * 60)
   }
 
-  // Handle manual input edit
   const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let val = parseInt(e.target.value) || 0
     if (val > 180) val = 180 // Cap at 3 hours
@@ -57,18 +54,15 @@ export default function FocusPage() {
     setSecondsLeft(val * 60)
   }
 
-  // Handle Preset Click
   const handlePreset = (min: number) => {
-    if (isActive) return // Don't change while running
+    if (isActive) return
     setTargetMinutes(min)
     setSecondsLeft(min * 60)
   }
 
   const handleSave = async () => {
-    // Calculate actual time spent
     const duration = Math.floor((targetMinutes * 60 - secondsLeft) / 60)
     
-    // Don't log if less than 1 minute
     if (duration < 1) {
       if (!isActive) showAlert("Session too short to record.", "neutral")
       return
@@ -84,8 +78,10 @@ export default function FocusPage() {
           topic: topic || 'Unlabeled Session'
         })
         
-        // 3. Use Premium Alert
         showAlert(`Log Saved: ${duration}m on ${topic || 'Task'}`, 'success')
+        
+        // ✅ FIX 1: Burn the Tape (Reset immediately so they can't save twice)
+        resetTimer()
       }
     } catch (e) {
       console.error(e)
@@ -106,9 +102,13 @@ export default function FocusPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FBF9F6] text-black flex flex-col items-center justify-center relative overflow-hidden">
+    // ✅ FIX 2: Zen Mode (Fixed Position covers everything when active)
+    <div 
+      className={`min-h-screen bg-[#FBF9F6] text-black flex flex-col items-center justify-center overflow-hidden transition-all duration-500
+      ${isActive ? 'fixed inset-0 z-50' : 'relative'}`}
+    >
       
-      {/* Background Pulse: Amber-100 */}
+      {/* Background Pulse */}
       <motion.div 
         animate={{ opacity: isActive ? 0.4 : 0 }}
         transition={{ duration: 2, repeat: Infinity, repeatType: "reverse" }}
@@ -116,14 +116,11 @@ export default function FocusPage() {
       />
 
       <Link href="/dashboard" className="absolute top-8 left-8 flex items-center gap-2 font-bold uppercase tracking-widest text-xs text-black/40 hover:text-black transition-colors z-20">
-        <ArrowLeft size={16} /> Dashboard
+        <ArrowLeft size={16} /> {isActive ? 'Exit Zen Mode' : 'Dashboard'}
       </Link>
 
-      {/* --- Main Container with Hydration Fix --- */}
-      <div 
-        className="z-10 flex flex-col items-center w-full max-w-xl"
-        suppressHydrationWarning
-      >
+      {/* Main Container */}
+      <div className="z-10 flex flex-col items-center w-full max-w-xl" suppressHydrationWarning>
         
         {/* TOPIC HEADER */}
         <div className="mb-10 w-full text-center relative group">
@@ -134,9 +131,10 @@ export default function FocusPage() {
             value={topic}
             onChange={(e) => setTopic(e.target.value)}
             placeholder="NAME YOUR TASK..."
-            className="w-full bg-transparent text-center text-3xl md:text-4xl font-black text-black placeholder:text-black/10 outline-none border-b-4 border-transparent focus:border-amber-500 transition-all uppercase"
+            disabled={isActive}
+            className="w-full bg-transparent text-center text-3xl md:text-4xl font-black text-black placeholder:text-black/10 outline-none border-b-4 border-transparent focus:border-amber-500 transition-all uppercase disabled:opacity-80"
           />
-          <Pencil size={14} className="absolute right-0 top-1/2 -translate-y-1/2 text-black/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+          {!isActive && <Pencil size={14} className="absolute right-0 top-1/2 -translate-y-1/2 text-black/10 opacity-0 group-hover:opacity-100 transition-opacity" />}
         </div>
 
         {/* THE TIMER RING */}
@@ -148,7 +146,7 @@ export default function FocusPage() {
               <motion.circle
                 cx="50%" cy="50%" r="48%"
                 fill="none"
-                stroke="#F59E0B" // Amber-500
+                stroke="#F59E0B"
                 strokeWidth="24"
                 strokeLinecap="butt"
                 initial={{ pathLength: 0 }}
@@ -197,7 +195,8 @@ export default function FocusPage() {
         <div className="flex items-center gap-6 mb-8">
           <button 
             onClick={resetTimer}
-            className="w-14 h-14 flex items-center justify-center border-2 border-black/10 text-black/40 hover:border-black hover:text-black hover:bg-white rounded-full transition-all"
+            disabled={isActive}
+            className="w-14 h-14 flex items-center justify-center border-2 border-black/10 text-black/40 hover:border-black hover:text-black hover:bg-white rounded-full transition-all disabled:opacity-0"
             title="Reset"
           >
             <RotateCcw size={20} strokeWidth={2.5} />
@@ -225,7 +224,7 @@ export default function FocusPage() {
           </button>
         </div>
 
-        {/* PRESETS (Added Back) */}
+        {/* PRESETS */}
         {!isActive && (
           <div className="flex gap-3 animate-in fade-in slide-in-from-bottom-4">
              {PRESETS.map(min => (
