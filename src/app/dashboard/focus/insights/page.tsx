@@ -223,7 +223,7 @@ export default function FocusInsightsPage() {
          {/* 5. DISTRACTION RADAR */}
          <div className="bg-white border-2 border-black p-6">
             <h2 className="text-sm font-black uppercase tracking-widest text-black/40 mb-6 flex items-center gap-2">
-               <AlertTriangle size={16} /> Distraction Radar
+               <AlertTriangle size={16} /> Topic breakdown
             </h2>
             <div className="space-y-4">
                {stats.sortedTopics.map(([topic, mins], i) => {

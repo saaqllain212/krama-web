@@ -1,10 +1,13 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-// FIX: Added 'Zap' to the import list
-import { Clock, Edit2, Save, X, Infinity, Loader2, Zap } from 'lucide-react'
+import { createClient } from '@/lib/supabase/client' 
+// ✅ REMOVED: 'Zap' and 'Infinity' are no longer needed
+import { Clock, Edit2, Save, X, Loader2 } from 'lucide-react'
 
 export default function Countdown() {
+  const supabase = createClient() 
+
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 })
   const [isEditing, setIsEditing] = useState(false)
   
@@ -12,20 +15,38 @@ export default function Countdown() {
   const [targetDate, setTargetDate] = useState('')
   const [loading, setLoading] = useState(true)
 
+  // 1. FETCH FROM DB
   useEffect(() => {
-    const savedName = localStorage.getItem('krama-exam-name')
-    const savedDate = localStorage.getItem('krama-exam-date')
-    
-    if (savedName) setExamName(savedName)
-    if (savedDate) setTargetDate(savedDate)
-    
-    setLoading(false)
+    const fetchSettings = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) return
+
+        const { data } = await supabase
+          .from('syllabus_settings')
+          .select('target_date, custom_title')
+          .eq('user_id', user.id)
+          .single()
+        
+        if (data) {
+          if (data.custom_title) setExamName(data.custom_title)
+          if (data.target_date) setTargetDate(data.target_date)
+        }
+      } catch (error) {
+        console.error("Failed to sync timer:", error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchSettings()
   }, [])
 
+  // 2. TIMER LOGIC
   useEffect(() => {
-    // If Focus Mode, don't run timer
-    if (examName?.includes('FOCUS')) return
-
+    // ✅ REMOVED: The check "if (examName?.includes('FOCUS')) return" is gone.
+    // Now the timer runs for everyone.
+    
     if (!targetDate) return
 
     const timer = setInterval(() => {
@@ -48,10 +69,17 @@ export default function Countdown() {
     return () => clearInterval(timer)
   }, [targetDate, examName])
 
-  const handleSave = () => {
-    localStorage.setItem('krama-exam-name', examName)
-    localStorage.setItem('krama-exam-date', targetDate)
-    setIsEditing(false)
+  // 3. SAVE TO DB
+  const handleSave = async () => {
+    setIsEditing(false) 
+    
+    const { data: { user } } = await supabase.auth.getUser()
+    if (user) {
+        await supabase.from('syllabus_settings').update({
+            target_date: targetDate,
+            custom_title: examName
+        }).eq('user_id', user.id)
+    }
   }
 
   // --- LOADING STATE ---
@@ -63,32 +91,14 @@ export default function Countdown() {
         <div className="group relative w-full border-neo bg-stone-100 p-4 text-stone-400 shadow-neo md:w-auto min-w-[300px] flex items-center justify-center h-[108px]">
            <div className="flex flex-col items-center animate-pulse">
               <Loader2 className="animate-spin mb-2" />
-              <div className="text-xs font-black uppercase tracking-widest">Waiting for Protocol...</div>
+              <div className="text-xs font-black uppercase tracking-widest">Loading Protocol...</div>
            </div>
         </div>
      )
   }
 
-  // --- FOCUS MODE (No Timer) ---
-  if (examName?.includes('FOCUS')) {
-    return (
-      <div className="group relative w-full border-neo bg-black p-4 text-white shadow-neo md:w-auto min-w-[300px]">
-         <div className="flex items-center justify-between gap-8 mb-4">
-            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-brand">
-               <Zap className="h-4 w-4" />
-               {examName}
-            </div>
-         </div>
-         <div className="flex items-center gap-4">
-             <Infinity size={48} className="text-stone-600" />
-             <div className="text-xs font-bold text-stone-500 uppercase tracking-widest leading-relaxed">
-                No Deadline.<br/>
-                Just Work.
-             </div>
-         </div>
-      </div>
-    )
-  }
+  // ✅ REMOVED: The entire "FOCUS MODE" block (20 lines) was deleted here.
+  // This allows the code to flow directly into the "Standard Timer" below.
 
   // --- EDIT MODE ---
   if (isEditing) {

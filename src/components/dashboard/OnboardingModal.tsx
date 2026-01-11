@@ -121,6 +121,8 @@ export default function OnboardingModal() {
         user_id: user.id,
         active_exam_id: selectedExam,
         daily_goal_hours: dailyHours,
+        target_date: examDate, 
+        custom_title: selectedExam === 'focus' ? 'FOCUS PROTOCOL' : selectedExam?.toUpperCase()
       }, { onConflict: 'user_id' })
 
       if (selectedExam === 'focus') {

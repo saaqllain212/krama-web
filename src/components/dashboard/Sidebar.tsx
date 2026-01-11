@@ -30,10 +30,10 @@ export default function Sidebar() {
 
   // 2. Filter Items Logic
   const visibleItems = NAV_ITEMS.filter(item => {
-    // If in Focus Mode, show Overview, Focus, AND Review.
-    // Hide only Syllabus and Mocks.
+    // If in Focus Mode, show Overview, Focus, Review, AND MOCKS.
     if (activeExam === 'focus') {
-       return ['Overview', 'Focus Mode', 'Spaced Review'].includes(item.label)
+       // ✅ CHANGED: Added 'Mock Scores' to this list so it appears in Focus Mode
+       return ['Overview', 'Focus Mode', 'Spaced Review', 'Mock Scores'].includes(item.label)
     }
     // Otherwise show everything
     return true

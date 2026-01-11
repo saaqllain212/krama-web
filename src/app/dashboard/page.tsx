@@ -182,7 +182,7 @@ export default function DashboardPage() {
           </div>
 
           <h1 className="text-4xl font-bold tracking-tighter md:text-5xl">
-            Good afternoon, {userName}.
+            Hello, {userName}.
           </h1>
           <p className="mt-2 text-lg text-black/60">
             You have <span className="font-bold text-black">{dueReviews} items</span> to review right now.
@@ -199,15 +199,13 @@ export default function DashboardPage() {
               <Activity size={14} /> Insights
             </Link>
 
-            {/* LOG MOCK: HIDDEN IN FOCUS MODE */}
-            {!isFocusMode && (
-                <button 
-                  onClick={() => setIsMocksModalOpen(true)}
-                  className="rounded-full border border-black/10 bg-black px-5 py-2 text-xs font-bold uppercase tracking-widest text-white hover:bg-stone-800 transition-colors flex items-center gap-2 shadow-lg shadow-black/20"
-                >
-                  <Plus size={14} /> Log Mock
-                </button>
-            )}
+            {/* LOG MOCK: VISIBLE FOR EVERYONE (Even Focus Mode) */}
+            <button 
+              onClick={() => setIsMocksModalOpen(true)}
+              className="rounded-full border border-black/10 bg-black px-5 py-2 text-xs font-bold uppercase tracking-widest text-white hover:bg-stone-800 transition-colors flex items-center gap-2 shadow-lg shadow-black/20"
+            >
+              <Plus size={14} /> Log Mock
+            </button>
           </div>
 
         </div>
@@ -218,7 +216,9 @@ export default function DashboardPage() {
       </div>
 
       {/* STATS GRID - ADAPTIVE COLUMNS */}
-      <div className={`grid grid-cols-1 gap-6 md:grid-cols-2 ${isFocusMode ? 'lg:grid-cols-2' : 'lg:grid-cols-4'}`}>
+      {/* Focus Mode = 3 Columns (Deep Work, Reviews, Mocks) */}
+      {/* Standard Mode = 4 Columns (Deep Work, Reviews, Syllabus, Mocks) */}
+      <div className={`grid grid-cols-1 gap-6 md:grid-cols-2 ${isFocusMode ? 'lg:grid-cols-3' : 'lg:grid-cols-4'}`}>
         
         {/* CARD 1: DEEP WORK (Always Visible) */}
         <div className="group relative border-neo bg-black p-6 text-white shadow-neo transition-all hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(245,158,11,1)]">
@@ -257,55 +257,53 @@ export default function DashboardPage() {
           <Link href="/dashboard/review" className="absolute inset-0" />
         </div>
 
-        {/* CARD 3 & 4: SYLLABUS & MOCKS (Hidden in Focus Mode) */}
+        {/* CARD 3: SYLLABUS (HIDDEN in Focus Mode) */}
         {!isFocusMode && (
-            <>
-                {/* CARD 3: SYLLABUS */}
-                <div className="group relative border-neo bg-white p-6 shadow-neo transition-all hover:-translate-y-1">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <div className="text-sm font-bold uppercase tracking-widest text-black/40">Syllabus</div>
-                      <div className="mt-2 text-4xl font-bold tracking-tighter">{stats.percentage}%</div>
-                    </div>
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-black/5">
-                      <CheckSquare className="h-5 w-5 stroke-[2.5px]" />
-                    </div>
-                  </div>
-                  <div className="mt-4 h-2 w-full overflow-hidden bg-black/10">
-                    <div className="h-full bg-black transition-all duration-1000 ease-out" style={{ width: `${stats.percentage}%` }} />
-                  </div>
-                  <Link href="/dashboard/syllabus" className="absolute inset-0" />
-                  
-                  {/* ✅ NEW: RADIOACTIVE PROTOCOL MANAGER BUTTON (Only for Custom) */}
-                  {activeExam === 'custom' && (
-                     <button 
-                        onClick={(e) => {
-                            e.preventDefault(); 
-                            setIsProtocolManagerOpen(true);
-                        }}
-                        className="absolute bottom-4 right-4 z-20 rounded-full bg-black p-3 text-[#ccff00] shadow-[0_0_20px_#ccff00] border-2 border-[#ccff00] hover:scale-110 transition-all"
-                        title="Manage Custom Protocol"
-                     >
-                        <Settings2 size={20} />
-                     </button>
-                  )}
+            <div className="group relative border-neo bg-white p-6 shadow-neo transition-all hover:-translate-y-1">
+              <div className="flex items-start justify-between">
+                <div>
+                  <div className="text-sm font-bold uppercase tracking-widest text-black/40">Syllabus</div>
+                  <div className="mt-2 text-4xl font-bold tracking-tighter">{stats.percentage}%</div>
                 </div>
-
-                {/* CARD 4: MOCKS */}
-                <div className="group relative border-neo bg-white p-6 shadow-neo transition-all hover:-translate-y-1">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <div className="text-sm font-bold uppercase tracking-widest text-black/40">Tests Taken</div>
-                      <div className="mt-2 text-4xl font-bold tracking-tighter">{mocksCount}</div>
-                    </div>
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-black/5">
-                      <Activity className="h-5 w-5 stroke-[2.5px]" />
-                    </div>
-                  </div>
-                  <Link href="/dashboard/mocks" className="absolute inset-0" />
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-black/5">
+                  <CheckSquare className="h-5 w-5 stroke-[2.5px]" />
                 </div>
-            </>
+              </div>
+              <div className="mt-4 h-2 w-full overflow-hidden bg-black/10">
+                <div className="h-full bg-black transition-all duration-1000 ease-out" style={{ width: `${stats.percentage}%` }} />
+              </div>
+              <Link href="/dashboard/syllabus" className="absolute inset-0" />
+              
+              {/* RADIOACTIVE PROTOCOL MANAGER BUTTON (Only for Custom) */}
+              {activeExam === 'custom' && (
+                  <button 
+                    onClick={(e) => {
+                        e.preventDefault(); 
+                        setIsProtocolManagerOpen(true);
+                    }}
+                    className="absolute bottom-4 right-4 z-20 rounded-full bg-black p-3 text-[#ccff00] shadow-[0_0_20px_#ccff00] border-2 border-[#ccff00] hover:scale-110 transition-all"
+                    title="Manage Custom Protocol"
+                  >
+                    <Settings2 size={20} />
+                  </button>
+              )}
+            </div>
         )}
+
+        {/* CARD 4: MOCKS (ALWAYS VISIBLE - Even in Focus Mode) */}
+        <div className="group relative border-neo bg-white p-6 shadow-neo transition-all hover:-translate-y-1">
+          <div className="flex items-start justify-between">
+            <div>
+              <div className="text-sm font-bold uppercase tracking-widest text-black/40">Tests Taken</div>
+              <div className="mt-2 text-4xl font-bold tracking-tighter">{mocksCount}</div>
+            </div>
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-black/5">
+              <Activity className="h-5 w-5 stroke-[2.5px]" />
+            </div>
+          </div>
+          <Link href="/dashboard/mocks" className="absolute inset-0" />
+        </div>
+
       </div>
 
       {/* HEATMAP */}
