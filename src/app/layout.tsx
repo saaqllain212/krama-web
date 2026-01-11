@@ -6,6 +6,8 @@ import Script from 'next/script';
 // Context Providers
 import { AlertProvider } from '@/context/AlertContext'; 
 import { SyllabusProvider } from '@/context/SyllabusContext'; 
+// 1. NEW IMPORT: PostHog Analytics
+import { PostHogProvider } from '@/components/providers/PostHogProvider';
 
 const spaceGrotesk = Space_Grotesk({ 
   subsets: ["latin"],
@@ -17,7 +19,7 @@ const spaceGrotesk = Space_Grotesk({
 export const metadata: Metadata = {
   title: {
     default: "Krama | Strategic Study Tracker",
-    template: "%s | Krama" // This makes other pages look like "Dashboard | Krama"
+    template: "%s | Krama"
   },
   description: "Don't just study harder, study smarter. Krama is the tactical operating system for JEE, NEET, UPSC & SSC aspirants to track progress, automate spaced repetition, and analyze mock tests.",
   keywords: [
@@ -43,7 +45,7 @@ export const metadata: Metadata = {
     description: "The syllabus-first operating system for serious aspirants.",
   },
   icons: {
-    icon: "/favicon.ico", // Ensure you have a favicon in /public folder
+    icon: "/favicon.ico", 
   }
 };
 
@@ -56,12 +58,17 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${spaceGrotesk.className} antialiased bg-[#FBF9F6] text-[#1A1A1A]`}>
         
-        {/* PROVIDERS WRAPPER */}
-        <AlertProvider>
-          <SyllabusProvider>
-            {children}
-          </SyllabusProvider>
-        </AlertProvider>
+        {/* 2. WRAP EVERYTHING WITH POSTHOG */}
+        <PostHogProvider>
+          
+          {/* EXISTING PROVIDERS */}
+          <AlertProvider>
+            <SyllabusProvider>
+              {children}
+            </SyllabusProvider>
+          </AlertProvider>
+
+        </PostHogProvider>
 
         {/* RAZORPAY SCRIPT */}
         <Script 
