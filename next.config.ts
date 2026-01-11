@@ -14,7 +14,7 @@ const withPWA = withPWAInit({
 });
 
 const nextConfig: NextConfig = {
-  reactCompiler: true,
+  reactCompiler: false,
   // Corrected experimental block for Next.js 15/16 types
   experimental: {
     // If you aren't using specific turbo rules, you can also just remove this block
