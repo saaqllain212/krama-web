@@ -3,16 +3,24 @@ import { SyllabusNode } from '@/types/syllabus'
 // 1. IMPORT DATA
 // UPSC
 import upscMaster from '@/data/exams/upsc' 
-// JEE
+// JEE Mains
 import jeePhysics from '@/data/exams/jee/jee-physics.json'
 import jeeChem from '@/data/exams/jee/jee-chemistry.json'
 import jeeMaths from '@/data/exams/jee/jee-maths.json'
+// JEE Advanced (NEW)
+import jeeAdvPhysics from '@/data/exams/jee/jee-advanced-physics.json'
+import jeeAdvChem from '@/data/exams/jee/jee-advanced-chemistry.json'
+import jeeAdvMaths from '@/data/exams/jee/jee-advanced-maths.json'
 // NEET
 import neetPhysics from '@/data/exams/neet/neet-physics.json'
 import neetChem from '@/data/exams/neet/neet-chemistry.json'
 import neetBio from '@/data/exams/neet/neet-biology.json'
 // SSC
 import sscData from '@/data/exams/ssc/ssc-syllabus.json'
+// RBI (NEW)
+import rbiData from '@/data/exams/rbi/rbi_phase2.json'
+// Bank (NEW)
+import bankData from '@/data/exams/bank/banking-exam.json'
 
 // 2. DEFINE THE PUBLIC PATHS
 export const PUBLIC_SYLLABUS_MAP: Record<string, Record<string, { title: string, data: any[] }>> = {
@@ -28,9 +36,14 @@ export const PUBLIC_SYLLABUS_MAP: Record<string, Record<string, { title: string,
     'gs4': { title: 'UPSC GS Paper 4', data: findUpscNode('mains_gs4') },
   },
   'jee': {
-    'physics': { title: 'JEE Physics', data: jeePhysics },
-    'chemistry': { title: 'JEE Chemistry', data: jeeChem },
-    'maths': { title: 'JEE Maths', data: jeeMaths },
+    'physics': { title: 'JEE Mains Physics', data: jeePhysics },
+    'chemistry': { title: 'JEE Mains Chemistry', data: jeeChem },
+    'maths': { title: 'JEE Mains Maths', data: jeeMaths },
+  },
+  'jee-advanced': {
+    'physics': { title: 'JEE Advanced Physics', data: jeeAdvPhysics },
+    'chemistry': { title: 'JEE Advanced Chemistry', data: jeeAdvChem },
+    'maths': { title: 'JEE Advanced Maths', data: jeeAdvMaths },
   },
   'neet': {
     'physics': { title: 'NEET Physics', data: neetPhysics },
@@ -38,23 +51,23 @@ export const PUBLIC_SYLLABUS_MAP: Record<string, Record<string, { title: string,
     'biology': { title: 'NEET Biology', data: neetBio },
   },
   'ssc': {
-    'cgl': { title: 'SSC CGL Complete', data: sscData },
+    'cgl': { title: 'SSC CGL', data: sscData },
+  },
+  'rbi': {
+    'phase2': { title: 'RBI Grade B Phase 2', data: rbiData },
+  },
+  'bank': {
+    'po': { title: 'Bank PO & Clerk', data: bankData },
   }
 }
 
-// 3. THE FIX: helper to extract specific branches
+// 3. HELPER (Stack Fix Included)
 function findUpscNode(id: string): any[] {
-  // CRITICAL FIX: We explicitly tell TS that this stack can hold 'any' object
-  // (both Branches with children AND Leaves without children)
   const stack: any[] = [...upscMaster]
   
   while (stack.length > 0) {
     const node = stack.pop()
-    
-    // If we found the folder, return its children
     if (node?.id === id) return node.children || []
-    
-    // If it's a folder, add its children to the stack to keep searching
     if (node?.children) {
        stack.push(...node.children)
     }
@@ -62,7 +75,6 @@ function findUpscNode(id: string): any[] {
   return []
 }
 
-// 4. EXPORT HELPERS FOR NEXT.JS
 export function getAllSyllabusPaths() {
   const paths: { exam: string, subject: string }[] = []
   
