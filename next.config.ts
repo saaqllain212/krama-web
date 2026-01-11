@@ -6,7 +6,6 @@ const withPWA = withPWAInit({
   cacheOnFrontEndNav: true,
   aggressiveFrontEndNavCaching: true,
   reloadOnOnline: true,
-  // swcMinify was removed because it's now the default in Next.js 15+
   disable: process.env.NODE_ENV === "development",
   workboxOptions: {
     disableDevLogs: true,
@@ -14,11 +13,11 @@ const withPWA = withPWAInit({
 });
 
 const nextConfig: NextConfig = {
-  reactCompiler: false,
-  // Corrected experimental block for Next.js 15/16 types
-  experimental: {
-    // If you aren't using specific turbo rules, you can also just remove this block
-  },
+  // 1. Temporarily disable the compiler to save memory during build
+  reactCompiler: false, 
+  
+  // 2. Suppress the Turbopack warning by using an empty object if needed
+  // experimental: { turbo: {} }, 
 };
 
 export default withPWA(nextConfig);
