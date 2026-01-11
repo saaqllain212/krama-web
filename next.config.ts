@@ -1,23 +1,8 @@
 import type { NextConfig } from "next";
-import withPWAInit from "@ducanh2912/next-pwa";
-
-const withPWA = withPWAInit({
-  dest: "public",
-  cacheOnFrontEndNav: true,
-  aggressiveFrontEndNavCaching: true,
-  reloadOnOnline: true,
-  disable: process.env.NODE_ENV === "development",
-  workboxOptions: {
-    disableDevLogs: true,
-  },
-});
 
 const nextConfig: NextConfig = {
-  // 1. Temporarily disable the compiler to save memory during build
-  reactCompiler: false, 
-  
-  // 2. Suppress the Turbopack warning by using an empty object if needed
-  // experimental: { turbo: {} }, 
+  // We are removing the PWA wrapper for now
+  reactCompiler: false, // Keep this false for now to save memory
 };
 
-export default withPWA(nextConfig);
+export default nextConfig;
