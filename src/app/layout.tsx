@@ -20,7 +20,8 @@ export const metadata: Metadata = {
     template: "%s | Krama" 
   },
   description: "Don't just study harder, study smarter. Krama is the tactical operating system for JEE, NEET, UPSC & SSC aspirants.",
-  icons: { icon: "/favicon.ico" }
+  icons: { icon: "/favicon.ico" },
+  manifest: "/manifest.json", // ✅ NEW: Links to the PWA Manifest
 };
 
 export default function RootLayout({
