@@ -24,9 +24,7 @@ type SyllabusContextType = {
 
 const SyllabusContext = createContext<SyllabusContextType | undefined>(undefined)
 
-// --- HELPERS FOR RECURSION ---
-
-// 1. Count leaf nodes
+// --- HELPERS ---
 const countLeaves = (nodes: SyllabusNode[]): number => {
   let count = 0
   for (const node of nodes) {
@@ -36,7 +34,6 @@ const countLeaves = (nodes: SyllabusNode[]): number => {
   return count
 }
 
-// 2. Find a node by ID in the tree
 const findNodeById = (nodes: SyllabusNode[], id: string): SyllabusNode | null => {
   for (const node of nodes) {
     if (node.id === id) return node
@@ -48,27 +45,19 @@ const findNodeById = (nodes: SyllabusNode[], id: string): SyllabusNode | null =>
   return null
 }
 
-// 3. Get all leaf IDs under a node (Cascade)
 const getAllLeafIds = (node: SyllabusNode): string[] => {
   if (node.type === 'leaf') return [node.id]
   if (!node.children) return []
   return node.children.flatMap(getAllLeafIds)
 }
 
-// 4. Filter tree for optional subject
 const filterDataForOptional = (nodes: SyllabusNode[], optionalId: string): SyllabusNode[] => {
   return nodes.map(node => {
     if (node.id === 'mains_opt_folder' && node.children) {
-      return {
-        ...node,
-        children: node.children.filter(child => child.id === optionalId)
-      }
+      return { ...node, children: node.children.filter(child => child.id === optionalId) }
     }
     if (node.children) {
-      return {
-        ...node,
-        children: filterDataForOptional(node.children, optionalId)
-      }
+      return { ...node, children: filterDataForOptional(node.children, optionalId) }
     }
     return node
   })
@@ -77,7 +66,6 @@ const filterDataForOptional = (nodes: SyllabusNode[], optionalId: string): Sylla
 export function SyllabusProvider({ children }: { children: React.ReactNode }) {
   const supabase = createClient()
   
-  // --- STATE ---
   const [activeExam, setActiveExamState] = useState<string | null>(null)
   const [optionalSubject, setOptionalSubjectState] = useState<string | null>(null)
   const [data, setData] = useState<SyllabusNode[]>([]) 
@@ -88,10 +76,7 @@ export function SyllabusProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const init = async () => {
       const { data: { user } } = await supabase.auth.getUser()
-      if (!user) {
-        setLoading(false)
-        return
-      }
+      if (!user) { setLoading(false); return }
 
       const { data: settings } = await supabase
         .from('syllabus_settings')
@@ -99,19 +84,14 @@ export function SyllabusProvider({ children }: { children: React.ReactNode }) {
         .eq('user_id', user.id)
         .single()
       
-      if (settings?.active_exam_id) {
-        setActiveExamState(settings.active_exam_id)
-      }
-      if (settings?.optional_subject_id) {
-        setOptionalSubjectState(settings.optional_subject_id)
-      }
+      if (settings?.active_exam_id) setActiveExamState(settings.active_exam_id)
+      if (settings?.optional_subject_id) setOptionalSubjectState(settings.optional_subject_id)
       setLoading(false)
     }
     init()
   }, [])
 
-
-  // 2. DATA LOADER & FILTERING
+  // 2. DATA LOADER
   useEffect(() => {
     if (!activeExam) return
 
@@ -119,61 +99,43 @@ export function SyllabusProvider({ children }: { children: React.ReactNode }) {
       setLoading(true)
       try {
         let loadedNodes: SyllabusNode[] = []
-
-        // A. Handle Focus Mode (No Syllabus)
-        if (activeExam === 'focus') {
-           loadedNodes = []
-        }
-        // B. Handle UPSC
+        
+        if (activeExam === 'focus') loadedNodes = []
         else if (activeExam === 'upsc') {
           const mod = await import('@/data/exams/upsc')
           loadedNodes = mod.default as SyllabusNode[]
-          
-          if (optionalSubject) {
-            loadedNodes = filterDataForOptional(loadedNodes, optionalSubject)
-          }
+          if (optionalSubject) loadedNodes = filterDataForOptional(loadedNodes, optionalSubject)
         } 
-        // C. Handle SSC
         else if (activeExam === 'ssc') {
           const mod = await import('@/data/exams/ssc/ssc-syllabus.json')
           loadedNodes = mod.default as SyllabusNode[]
         }
-        // D. Handle Bank
         else if (activeExam === 'bank') {
            const mod = await import('@/data/exams/bank/banking-exam.json')
            loadedNodes = mod.default as SyllabusNode[]
         }
-        // ✅ E. Handle JEE (New)
         else if (activeExam === 'jee') {
            const mod = await import('@/data/exams/jee')
            loadedNodes = mod.default as SyllabusNode[]
         }
-        // ✅ F. Handle NEET (New)
         else if (activeExam === 'neet') {
            const mod = await import('@/data/exams/neet')
            loadedNodes = mod.default as SyllabusNode[]
         }
-        // ✅ G. Handle RBI (New)
         else if (activeExam === 'rbi') {
            const mod = await import('@/data/exams/rbi')
            loadedNodes = mod.default as SyllabusNode[]
         }
-        // ✅ H. Handle Custom JSON (Reverted to LocalStorage Only)
         else if (activeExam === 'custom') {
            const saved = localStorage.getItem('krama_custom_syllabus_data')
            if (saved) {
-             try {
-               loadedNodes = JSON.parse(saved)
-             } catch (err) {
-               console.error("Custom JSON Corrupt", err)
-               loadedNodes = []
-             }
+             try { loadedNodes = JSON.parse(saved) } catch (err) { loadedNodes = [] }
            }
         }
 
         setData(loadedNodes)
 
-        // I. Load Progress
+        // Load Progress
         const { data: { user } } = await supabase.auth.getUser()
         if (user) {
           const { data: progress } = await supabase
@@ -184,25 +146,20 @@ export function SyllabusProvider({ children }: { children: React.ReactNode }) {
             .maybeSingle()
 
           if (progress?.completed_ids) {
-            const ids = typeof progress.completed_ids === 'string' 
-              ? JSON.parse(progress.completed_ids) 
-              : progress.completed_ids
+            const ids = typeof progress.completed_ids === 'string' ? JSON.parse(progress.completed_ids) : progress.completed_ids
             setCompletedIds(ids)
           } else {
             setCompletedIds([])
           }
         }
-
       } catch (e) {
         console.error("Failed to load syllabus data", e)
       } finally {
         setLoading(false)
       }
     }
-
     loadData()
   }, [activeExam, optionalSubject]) 
-
 
   // 3. SETTERS
   const setActiveExam = async (examId: string) => {
@@ -220,47 +177,35 @@ export function SyllabusProvider({ children }: { children: React.ReactNode }) {
     setOptionalSubjectState(optId)
     const { data: { user } } = await supabase.auth.getUser()
     if (user) {
-      // We update the existing settings row
       await supabase.from('syllabus_settings').update({
         optional_subject_id: optId
       }).eq('user_id', user.id)
     }
   }
 
-  // RESET OPTIONAL
-  const resetOptionalSelection = () => {
-    setOptionalSubjectState(null) 
-  }
+  const resetOptionalSelection = () => { setOptionalSubjectState(null) }
 
-  // ✅ 4. CASCADE TOGGLE NODE (Recursive Logic)
+  // 4. TOGGLE NODE
   const toggleNode = useCallback(async (targetId: string) => {
-    // A. Find the node in the current tree
     const targetNode = findNodeById(data, targetId)
     if (!targetNode) return
 
-    // B. Get ALL affected leaf IDs (Self + Descendants)
     const affectedIds = getAllLeafIds(targetNode)
     if (affectedIds.length === 0) return
 
     let newIds: string[] = []
 
     setCompletedIds(prev => {
-      // C. Logic: If ALL affected items are currently checked -> Uncheck them all.
-      //           Otherwise -> Check them all.
       const allChecked = affectedIds.every(id => prev.includes(id))
-
       if (allChecked) {
-         // UNCHECK: Remove affected IDs from the list
          newIds = prev.filter(id => !affectedIds.includes(id))
       } else {
-         // CHECK: Add affected IDs (Set prevents duplicates)
          const uniqueSet = new Set([...prev, ...affectedIds])
          newIds = Array.from(uniqueSet)
       }
       return newIds
     })
 
-    // D. Sync with DB
     const { data: { user } } = await supabase.auth.getUser()
     if (user && activeExam) {
        await supabase.from('syllabus_progress').upsert(
@@ -270,12 +215,10 @@ export function SyllabusProvider({ children }: { children: React.ReactNode }) {
     }
   }, [activeExam, data])
 
-  // 5. STATS
   const stats = useMemo(() => {
     const totalLeaves = countLeaves(data)
     const completedLeaves = completedIds.length 
     if (totalLeaves === 0) return { totalLeaves, completedLeaves, percentage: 0 }
-    
     const percentage = Math.round((completedLeaves / totalLeaves) * 100)
     return { totalLeaves, completedLeaves, percentage: Math.min(percentage, 100) }
   }, [data, completedIds])
