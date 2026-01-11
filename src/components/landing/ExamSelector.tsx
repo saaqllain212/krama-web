@@ -13,8 +13,8 @@ export default function ExamSelector() {
             Select Your Battleground
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Krama is pre-loaded with the official syllabus for India's toughest exams. 
-            Choose yours to start tracking.
+            Krama provides structured syllabus trackers for India's toughest exams. 
+            Choose yours to start tracking or build your own.
           </p>
         </div>
 
@@ -91,14 +91,34 @@ export default function ExamSelector() {
             </p>
           </Link>
 
-          {/* COMING SOON CARD */}
-          <div className="group bg-white p-8 rounded-2xl border border-dashed border-gray-300 flex flex-col justify-center items-center text-center opacity-75">
-            <span className="text-4xl mb-4 grayscale">🚀</span>
-            <h3 className="text-lg font-bold text-gray-400 mb-1">More Coming Soon</h3>
-            <p className="text-gray-400 text-xs">GATE, CAT, and State PSCs</p>
+          {/* CUSTOM SYLLABUS CARD (Updated) */}
+          <div className="group bg-white p-8 rounded-2xl border border-dashed border-gray-300 hover:border-gray-800 hover:bg-gray-50 transition-all cursor-pointer flex flex-col justify-between">
+            <div>
+              <div className="flex justify-between items-start mb-6">
+                <span className="text-4xl grayscale opacity-70">🛠️</span>
+                <span className="px-3 py-1 bg-gray-100 text-gray-500 text-xs font-bold rounded-full uppercase tracking-wider">
+                  Custom
+                </span>
+              </div>
+              <h3 className="text-2xl font-bold text-gray-700 mb-2 group-hover:text-black transition-colors">Bring Your Own</h3>
+              <p className="text-gray-500 text-sm leading-relaxed">
+                Don't see your exam? You can add your own syllabus structure using simple JSON files.
+              </p>
+            </div>
           </div>
 
         </div>
+
+        {/* DISCLAIMER / WARNING (New) */}
+        <div className="mt-16 mx-auto max-w-4xl p-4 bg-gray-50 border border-gray-100 rounded-xl text-center">
+            <p className="text-xs text-gray-400 leading-relaxed">
+                <span className="font-bold text-gray-500">⚠️ Important Note:</span> The syllabus data provided here is structured for tracking and productivity purposes only. 
+                While we strive for accuracy, the syllabus is "trickled down" into actionable topics. 
+                <br className="hidden md:block"/>
+                Always refer to the official notifications from the conducting bodies (UPSC, NTA, SSC, etc.) for the legally accurate syllabus.
+            </p>
+        </div>
+
       </div>
     </section>
   )

@@ -40,7 +40,7 @@ export default function ProblemSection() {
                 <h3 className="font-bold uppercase tracking-wider">The Krama Way</h3>
               </div>
               <p className="mt-2 text-white/80">
-                Study 25 minutes. Rest. Review only what you're about to forget. Retain 90% with half the effort.
+                Study. Rest. Review only what you're about to forget. Retain 90% with half the effort.
               </p>
             </div>
           </div>
