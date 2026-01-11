@@ -1,12 +1,13 @@
 import { createServerClient } from '@supabase/ssr'
-import { createClient } from '@supabase/supabase-js' // You might need to install this if not present
+import { createClient } from '@supabase/supabase-js'
 import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
 
 export async function DELETE(request: Request) {
-  const cookieStore = await cookies() // ✅ New way (Asynchronous)
+  const cookieStore = await cookies() 
 
-  // 1. Verify the User (Are they really logged in?)
+  // 1. Verify the User (Standard Client)
+  // We use the standard client to verify the session cookie
   const supabaseUser = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -14,7 +15,7 @@ export async function DELETE(request: Request) {
       cookies: {
         getAll() { return cookieStore.getAll() },
         setAll(cookiesToSet) {
-             // We don't need to set cookies for a delete request
+             // No need to set cookies for a delete request
         },
       },
     }
@@ -26,11 +27,11 @@ export async function DELETE(request: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  // 2. The "Grim Reaper" (Admin Client)
-  // This client uses the SERVICE_ROLE_KEY to bypass all rules
+  // 2. SECURE INITIALIZATION (The Fix)
+  // Only create the "Grim Reaper" client AFTER auth check passes
   const supabaseAdmin = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY! // Make sure this is in your .env.local
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
   )
 
   // 3. Delete the User from Auth

@@ -2,11 +2,6 @@ import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { createClient as createAuthClient } from '@/lib/supabase/server'
 
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
-
 export async function POST(req: Request) {
   try {
     const { action, payload } = await req.json()
@@ -14,9 +9,17 @@ export async function POST(req: Request) {
     // 1. SECURITY CHECK
     const authClient = await createAuthClient()
     const { data: { user } } = await authClient.auth.getUser()
-    if (!user || user.email !== process.env.NEXT_PUBLIC_ADMIN_EMAIL) {
+    
+    // SECURITY FIX: Using ADMIN_EMAIL (Server-side only) instead of NEXT_PUBLIC_...
+    if (!user || user.email !== process.env.ADMIN_EMAIL) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
     }
+
+    // SECURITY FIX: Initialize "God Mode" client ONLY after authorization passes
+    const supabaseAdmin = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    )
 
     // 2. HANDLE ACTIONS
     switch (action) {
@@ -34,7 +37,7 @@ export async function POST(req: Request) {
         await supabaseAdmin.auth.admin.deleteUser(payload.userId)
         break
 
-      // --- STORE ACTIONS (NEW) ---
+      // --- STORE ACTIONS ---
       case 'UPDATE_PRICE':
         await supabaseAdmin.from('store_settings').update({ base_price: payload.price }).eq('id', 'global')
         break
