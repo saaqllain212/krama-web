@@ -1,9 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowRight, Loader2, Lock, AlertTriangle, Mail } from 'lucide-react' // Added 'Mail' icon
+import { ArrowRight, Loader2, Lock, AlertTriangle, Mail } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 
 export default function SignupForm() {
@@ -14,19 +14,48 @@ export default function SignupForm() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
+  
+  // ERROR & STATUS STATES
   const [error, setError] = useState<string | null>(null)
-  
-  // New State: To distinguish between a "Glitch" and a "Hard Block"
   const [isCapacityError, setIsCapacityError] = useState(false)
+  const [checkingStatus, setCheckingStatus] = useState(true) // New loading state for the check
   
-  // ✅ NEW: Success State
+  // SUCCESS STATE
   const [success, setSuccess] = useState(false)
+
+  // 1. THE RECEPTIONIST CHECK (Run on Load)
+  useEffect(() => {
+    const checkGatekeeper = async () => {
+      try {
+        // We ask the database configuration directly
+        const { data, error } = await supabase
+          .from('app_config')
+          .select('signup_active')
+          .single()
+        
+        // If config exists AND signup is set to false
+        if (data && data.signup_active === false) {
+           setIsCapacityError(true)
+           setError('We have reached maximum capacity for this cohort. Registrations are currently paused.')
+        }
+      } catch (err) {
+        // Silent fail: If check fails, we assume open (or let the submit fail later)
+        console.error('Gatekeeper check failed', err)
+      } finally {
+        setCheckingStatus(false)
+      }
+    }
+    checkGatekeeper()
+  }, [])
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    // Double protection: Don't submit if we already know it's closed
+    if (isCapacityError) return
+
     setLoading(true)
     setError(null)
-    setIsCapacityError(false)
 
     try {
       const { data, error: authError } = await supabase.auth.signUp({
@@ -42,23 +71,24 @@ export default function SignupForm() {
       if (authError) throw authError
 
       if (data.user) {
-         // ✅ FIX: Don't redirect. Show success message instead.
-         // router.push('/dashboard') 
          setSuccess(true)
       }
     } catch (err: any) {
       const msg = err.message || 'Something went wrong'
-      setError(msg)
       
-      if (msg.toLowerCase().includes('capacity') || msg.toLowerCase().includes('closed')) {
-        setIsCapacityError(true)
+      // If we somehow missed the pre-check and hit the DB trigger
+      if (msg.toLowerCase().includes('database error') || msg.toLowerCase().includes('closed')) {
+         setIsCapacityError(true)
+         setError('Membership is currently closed. Please try again later.')
+      } else {
+         setError(msg)
       }
     } finally {
       setLoading(false)
     }
   }
 
-  // ✅ RENDER SUCCESS STATE
+  // RENDER SUCCESS
   if (success) {
     return (
       <div className="flex flex-col items-center justify-center text-center space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -88,16 +118,17 @@ export default function SignupForm() {
     )
   }
 
-  // ... (Keep the rest of the 'return' form code exactly as it was)
+  // RENDER FORM
   return (
     <form onSubmit={handleSignup} className="space-y-6">
-      {/* ... Error Display ... */}
+      
+      {/* 2. SHOW ERROR BANNER (If Closed or Failed) */}
       {error && (
         isCapacityError ? (
-          <div className="border-2 border-amber-600 bg-amber-50 p-4 flex gap-3 items-start">
+          <div className="border-2 border-amber-600 bg-amber-50 p-4 flex gap-3 items-start animate-in zoom-in-95 duration-200">
              <Lock className="text-amber-600 shrink-0" size={20} />
              <div>
-               <h3 className="font-black uppercase text-amber-900 text-sm">Membership Closed</h3>
+               <h3 className="font-black uppercase text-amber-900 text-sm">Access Denied</h3>
                <p className="text-xs font-bold text-amber-800 mt-1 leading-relaxed">
                  {error}
                </p>
@@ -111,55 +142,60 @@ export default function SignupForm() {
         )
       )}
 
-      {/* ... Inputs ... */}
-      <div className="space-y-2">
-        <label className="text-sm font-bold uppercase tracking-wide">Full Name</label>
-        <input 
-          type="text" 
-          required
-          value={fullName}
-          onChange={(e) => setFullName(e.target.value)}
-          placeholder="John Doe"
-          className="w-full border-neo bg-[#FBF9F6] px-4 py-3 font-medium placeholder:text-black/30 focus:border-brand focus:outline-none focus:ring-0"
-        />
-      </div>
+      {/* Inputs (Disabled if Closed) */}
+      <div className={`space-y-6 transition-opacity duration-500 ${isCapacityError ? 'opacity-50 pointer-events-none grayscale' : 'opacity-100'}`}>
+          <div className="space-y-2">
+            <label className="text-sm font-bold uppercase tracking-wide">Full Name</label>
+            <input 
+              type="text" 
+              required
+              disabled={isCapacityError || checkingStatus}
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              placeholder="John Doe"
+              className="w-full border-neo bg-[#FBF9F6] px-4 py-3 font-medium placeholder:text-black/30 focus:border-brand focus:outline-none focus:ring-0 disabled:cursor-not-allowed"
+            />
+          </div>
 
-      <div className="space-y-2">
-        <label className="text-sm font-bold uppercase tracking-wide">Email</label>
-        <input 
-          type="email" 
-          required
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="you@example.com"
-          className="w-full border-neo bg-[#FBF9F6] px-4 py-3 font-medium placeholder:text-black/30 focus:border-brand focus:outline-none focus:ring-0"
-        />
-      </div>
+          <div className="space-y-2">
+            <label className="text-sm font-bold uppercase tracking-wide">Email</label>
+            <input 
+              type="email" 
+              required
+              disabled={isCapacityError || checkingStatus}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@example.com"
+              className="w-full border-neo bg-[#FBF9F6] px-4 py-3 font-medium placeholder:text-black/30 focus:border-brand focus:outline-none focus:ring-0 disabled:cursor-not-allowed"
+            />
+          </div>
 
-      <div className="space-y-2">
-        <label className="text-sm font-bold uppercase tracking-wide">Password</label>
-        <input 
-          type="password" 
-          required
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="w-full border-neo bg-[#FBF9F6] px-4 py-3 font-medium focus:border-brand focus:outline-none focus:ring-0"
-        />
-      </div>
+          <div className="space-y-2">
+            <label className="text-sm font-bold uppercase tracking-wide">Password</label>
+            <input 
+              type="password" 
+              required
+              disabled={isCapacityError || checkingStatus}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full border-neo bg-[#FBF9F6] px-4 py-3 font-medium focus:border-brand focus:outline-none focus:ring-0 disabled:cursor-not-allowed"
+            />
+          </div>
 
-      <button 
-        disabled={loading || isCapacityError} 
-        className="group mt-8 flex w-full items-center justify-center gap-2 border-neo bg-black py-4 text-white shadow-neo transition-all hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(204,255,0,1)] active:translate-y-0 active:shadow-neo disabled:opacity-70 disabled:cursor-not-allowed"
-      >
-        {loading ? (
-          <Loader2 className="h-5 w-5 animate-spin" />
-        ) : (
-          <>
-            <span className="font-bold uppercase tracking-widest">{isCapacityError ? 'Sold Out' : 'Create Account'}</span>
-            {!isCapacityError && <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />}
-          </>
-        )}
-      </button>
+          <button 
+            disabled={loading || isCapacityError || checkingStatus} 
+            className="group mt-8 flex w-full items-center justify-center gap-2 border-neo bg-black py-4 text-white shadow-neo transition-all hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(204,255,0,1)] active:translate-y-0 active:shadow-neo disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-neo"
+          >
+            {loading || checkingStatus ? (
+              <Loader2 className="h-5 w-5 animate-spin" />
+            ) : (
+              <>
+                <span className="font-bold uppercase tracking-widest">{isCapacityError ? 'Sold Out' : 'Create Account'}</span>
+                {!isCapacityError && <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />}
+              </>
+            )}
+          </button>
+      </div>
 
       <p className="mt-8 text-center text-sm font-medium text-black/60">
         Already have an account?{' '}
