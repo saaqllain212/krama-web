@@ -1,9 +1,9 @@
 import { SupabaseClient } from '@supabase/supabase-js';
 
-// 1. Constants (Exported so UI can use them too)
+// 1. Constants
 export const DEFAULT_SCHEDULE = [0, 1, 3, 7, 14, 30, 60];
 
-// 2. Strict Types
+// 2. Types
 export type TopicStatus = 'active' | 'completed';
 
 export type Topic = {
@@ -25,79 +25,76 @@ export type ReviewResult = {
 };
 
 /**
- * Calculates the next interval based on the current gap and schedule.
+ * Calculates the next interval based on Combat Rating.
+ * Rating: 0 (Struggle), 1 (Good), 2 (Easy)
  */
-export function getNextGap(currentGap: number, scheduleStr?: string | null): number | null {
+export function getNextGap(currentGap: number, rating: 0 | 1 | 2, scheduleStr?: string | null): number | null {
   let schedule = DEFAULT_SCHEDULE;
   let isCustom = false;
 
-  // A. Parse Custom Schedule
+  // A. Parse Schedule
   if (scheduleStr) {
     const parsed = scheduleStr.split(',')
       .map(s => parseInt(s.trim()))
-      .filter(n => !isNaN(n)); // Remove garbage inputs
-    
+      .filter(n => !isNaN(n));
     if (parsed.length > 0) {
       schedule = parsed;
       isCustom = true;
     }
   }
 
-  // B. Find Position in Schedule
-  // We use the current gap to find where we are in the list.
+  // B. Find current position
   const currentIndex = schedule.indexOf(currentGap);
+  
+  // LOGIC: COMBAT RATINGS
+  let nextIndex = currentIndex + 1; // Default "Good"
 
-  // Scenario 1: Gap not in schedule (maybe user changed schedule mid-way)
-  // Logic: Find the next largest number in the new schedule
-  if (currentIndex === -1) {
-     const nextLargest = schedule.find(n => n > currentGap);
-     return nextLargest ?? schedule[schedule.length - 1];
+  if (rating === 0) {
+     // STRUGGLE: Fall to start
+     return schedule[0]; 
+  }
+  
+  if (rating === 2) {
+     // EASY: Double Jump
+     nextIndex = currentIndex + 2;
+  }
+  
+  // SAFETY: If we fell off the map (e.g. index -1), treat as new
+  if (currentIndex === -1) nextIndex = 1;
+
+  // C. End of List Check
+  if (nextIndex >= schedule.length) {
+    // If custom schedule ends in 0 (e.g. "0,0"), mark completed.
+    if (isCustom && schedule[schedule.length - 1] === 0) return null;
+    
+    // Default: Cap at max interval
+    return schedule[schedule.length - 1];
   }
 
-  // Scenario 2: End of Schedule
-  if (currentIndex >= schedule.length - 1) {
-    const lastValue = schedule[schedule.length - 1];
-    
-    // Feature: If custom schedule ends in 0 (e.g. "0,0"), mark completed.
-    if (isCustom && lastValue === 0) return null; 
-    
-    // Default: Maintenance Mode (Repeat last interval forever)
-    return lastValue; 
-  }
-
-  // Scenario 3: Next Step
-  return schedule[currentIndex + 1];
+  return schedule[nextIndex];
 }
 
 /**
- * Performs the review action: calculates math, updates DB, returns result.
+ * Performs the review action.
  */
-export async function reviewTopic(supabase: SupabaseClient, topic: Topic): Promise<ReviewResult> {
-  // 1. Calculate Math
-  const nextGap = getNextGap(topic.last_gap, topic.custom_intervals);
+export async function reviewTopic(supabase: SupabaseClient, topic: Topic, rating: 0 | 1 | 2): Promise<ReviewResult> {
+  const nextGap = getNextGap(topic.last_gap, rating, topic.custom_intervals);
   
-  // 2. Prepare Updates
   const updates: any = {
     updated_at: new Date().toISOString(),
   };
   
   let result: ReviewResult;
 
-  // CASE A: Topic Completed (End of Custom Chain)
   if (nextGap === null) {
     updates.status = 'completed';
     updates.next_review = null;
-    
     result = { completed: true, nextGap: 0, nextReview: null };
-  } 
-  // CASE B: Active Review
-  else {
+  } else {
     const nextDate = new Date();
-    
     if (nextGap === 0) {
-      // Gap 0 = Due Immediately (Keep 'now')
+      // Due immediately
     } else {
-      // Future: Add Days + Snap to 6 AM (Morning person logic)
       nextDate.setDate(nextDate.getDate() + nextGap);
       nextDate.setHours(6, 0, 0, 0); 
     }
@@ -109,7 +106,6 @@ export async function reviewTopic(supabase: SupabaseClient, topic: Topic): Promi
     result = { completed: false, nextGap, nextReview: nextDate };
   }
 
-  // 3. Database Write
   const { error } = await supabase
     .from('topics')
     .update(updates)
@@ -117,6 +113,5 @@ export async function reviewTopic(supabase: SupabaseClient, topic: Topic): Promi
 
   if (error) throw error;
 
-  // 4. Return Result (So UI can show "See you in X days" immediately)
   return result;
 }

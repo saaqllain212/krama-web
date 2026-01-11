@@ -3,14 +3,14 @@
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { reviewTopic, type Topic } from '@/lib/logic'
-import { ArrowLeft, Plus, Clock, CheckCircle2, AlertTriangle, Trash2, Search, RotateCw } from 'lucide-react'
+import { ArrowLeft, Plus, Clock, CheckCircle2, AlertTriangle, Trash2, Search, Zap, Check, RefreshCcw, CalendarDays } from 'lucide-react'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAlert } from '@/context/AlertContext'
 
-// PRESETS (Renamed for Tactical Vibe)
+// --- CONSTANTS ---
 const SCHEDULE_PRESETS = [
-  { name: "Standard", val: "0, 1, 3, 7, 14, 30" },
+  { name: "Standard", val: "0, 1, 3, 7, 14, 30, 60" },
   { name: "Aggressive", val: "0, 1, 2, 3, 4, 5" },
   { name: "One-Off", val: "0" },
 ]
@@ -19,12 +19,12 @@ export default function ReviewPage() {
   const supabase = createClient()
   const { showAlert, askConfirm } = useAlert()
   
-  // RAW DATA
   const [allTopics, setAllTopics] = useState<Topic[]>([])
   const [loading, setLoading] = useState(true)
-
-  // FILTERED STATE
   const [query, setQuery] = useState('')
+
+  // SELECTION STATE (For Carousel)
+  const [selectedTopicId, setSelectedTopicId] = useState<string | null>(null)
 
   // MODAL
   const [showAdd, setShowAdd] = useState(false)
@@ -51,17 +51,17 @@ export default function ReviewPage() {
     setLoading(false)
   }
 
-  // --- FILTER LOGIC (Global Search + Split) ---
+  // --- FILTER LOGIC (With Tactical Limits) ---
   const getLists = () => {
     const now = new Date()
     
-    // 1. Filter by Search Query
+    // 1. Search Filter
     let filtered = allTopics
     if (query.trim()) {
       filtered = allTopics.filter(t => t.title.toLowerCase().includes(query.toLowerCase()))
     }
 
-    // 2. Split into Buckets
+    // 2. Buckets
     const due: Topic[] = []
     const scheduled: Topic[] = []
     const archived: Topic[] = []
@@ -76,30 +76,29 @@ export default function ReviewPage() {
       }
     })
 
-    // 3. Apply Hard Lock (Top 8) ONLY if NOT searching
-    // If searching, user wants to see matches, so we show them all.
-    if (!query.trim()) {
-      return {
-        due: due.slice(0, 8), // Show max 8
-        scheduled: scheduled.slice(0, 8),
-        archived: archived.slice(0, 8),
-        counts: { due: due.length, scheduled: scheduled.length, archived: archived.length }
-      }
-    }
+    // 3. Apply Limits (Performance Optimization)
+    // If NOT searching, we cap the lists at 20 items to keep the DOM light.
+    const rawScheduledCount = scheduled.length
+    const rawArchivedCount = archived.length
 
-    return {
-      due, scheduled, archived,
-      counts: { due: due.length, scheduled: scheduled.length, archived: archived.length }
+    const displayScheduled = query ? scheduled : scheduled.slice(0, 20)
+    const displayArchived = query ? archived : archived.slice(0, 20)
+
+    return { 
+        due, 
+        scheduled: displayScheduled, 
+        archived: displayArchived,
+        rawScheduledCount,
+        rawArchivedCount
     }
   }
 
-  const { due, scheduled, archived, counts } = getLists()
+  const { due, scheduled, archived, rawScheduledCount, rawArchivedCount } = getLists()
+  const activeTopic = due.find(t => t.id === selectedTopicId) || due[0]
 
   // --- ACTIONS ---
-
   const handleAdd = async () => {
     if (!newTitle.trim()) return
-    
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
 
@@ -111,9 +110,8 @@ export default function ReviewPage() {
       next_review: new Date().toISOString()
     })
 
-    if (error) {
-      showAlert('System Error: Could not add topic.', 'error')
-    } else {
+    if (error) showAlert('Error adding topic.', 'error')
+    else {
       showAlert('Topic Initialized.', 'success')
       setNewTitle("")
       setShowAdd(false)
@@ -121,16 +119,18 @@ export default function ReviewPage() {
     }
   }
 
-  const handleReview = async (topic: Topic) => {
+  const handleReview = async (topic: Topic, rating: 0 | 1 | 2) => {
     try {
-      const result = await reviewTopic(supabase, topic)
+      const result = await reviewTopic(supabase, topic, rating)
       
       if (result.completed) {
         showAlert(`"${topic.title}" Archived.`, 'neutral')
       } else {
-        showAlert(`Reviewed. Next: ${result.nextGap} days.`, 'success')
+        const msgs = ["Reset to Day 0", "See you in a bit", "Easy win! Skipped ahead."]
+        showAlert(msgs[rating], 'success')
       }
       
+      if (selectedTopicId === topic.id) setSelectedTopicId(null)
       fetchTopics()
     } catch (e) {
       showAlert('Review failed.', 'error')
@@ -138,193 +138,287 @@ export default function ReviewPage() {
   }
 
   const handleDelete = (id: string) => {
-    askConfirm("Permanently delete this topic and its schedule?", async () => {
+    askConfirm("Permanently delete this topic?", async () => {
        await supabase.from('topics').delete().eq('id', id)
        fetchTopics()
-       showAlert("Topic Deleted.", 'neutral')
+       showAlert("Deleted.", 'neutral')
     })
   }
 
-  // --- VISUALS ---
-  const getProgressVisual = (t: Topic) => {
-    // Visualizer: [x] [x] [o] [ ]
-    const schedule = t.custom_intervals 
-      ? t.custom_intervals.split(',').map(Number)
-      : [0, 1, 3, 7, 14, 30] 
-    
-    return (
-      <div className="flex gap-1 mt-2">
-        {schedule.slice(0, 5).map((gap, i) => {
-           let color = 'bg-stone-200' // Future
-           if (gap < t.last_gap) color = 'bg-black' // Done
-           if (gap === t.last_gap) color = 'bg-amber-500' // Current
-           return <div key={i} className={`h-1.5 w-4 rounded-full ${color}`} />
-        })}
-      </div>
-    )
+  // --- HELPERS ---
+  const formatDate = (dateStr: string | null) => {
+     if(!dateStr) return '-'
+     const d = new Date(dateStr)
+     const today = new Date()
+     const diff = Math.floor((d.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
+     
+     if(diff === 0) return 'Tomorrow'
+     if(diff < 7) return d.toLocaleDateString(undefined, { weekday: 'long' })
+     return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
+  }
+
+  // LOGIC: Calculate Future Flight Path for Tooltip
+  const getFlightPath = (t: Topic) => {
+     const schedule = t.custom_intervals 
+        ? t.custom_intervals.split(',').map(Number) 
+        : [0, 1, 3, 7, 14, 30, 60]
+     
+     // Robust Index Finding
+     let currentIndex = schedule.indexOf(t.last_gap)
+     if (currentIndex === -1) {
+         currentIndex = schedule.findIndex(n => n > t.last_gap) - 1
+         if (currentIndex < 0) currentIndex = 0
+     }
+     
+     const futureGaps = schedule.slice(currentIndex + 1, currentIndex + 4)
+     
+     if (futureGaps.length === 0) return "Max Interval Reached"
+
+     return futureGaps.map(gap => {
+        const d = new Date()
+        d.setDate(d.getDate() + gap)
+        return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
+     }).join(' → ')
   }
 
   return (
-    <div className="min-h-screen bg-[#FBF9F6] p-6 md:p-12 text-black">
+    <div className="min-h-screen bg-[#FBF9F6] text-black pb-20 font-space">
       
-      {/* HEADER & SEARCH */}
-      <div className="max-w-7xl mx-auto mb-12">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
-          <div>
-            <Link href="/dashboard" className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-black/40 hover:text-black mb-4">
-              <ArrowLeft size={14} /> Dashboard
-            </Link>
-            <h1 className="text-4xl font-black tracking-tighter uppercase">
-              Review Command
-            </h1>
-          </div>
-          
-          <div className="flex gap-4 w-full md:w-auto">
-             {/* GLOBAL SEARCH */}
-             <div className="relative flex-1 md:w-64">
+      {/* HEADER */}
+      <div className="bg-white border-b-2 border-black sticky top-0 z-20 px-6 py-4 shadow-sm">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+           <div className="flex items-center gap-4 w-full md:w-auto">
+              <Link href="/dashboard">
+                 <ArrowLeft className="text-stone-400 hover:text-black transition-colors" />
+              </Link>
+              <h1 className="text-xl font-black uppercase tracking-tighter">Review Command</h1>
+           </div>
+
+           <div className="flex w-full md:w-auto gap-2">
+              <div className="relative flex-1 md:w-64">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-black/30" size={16} />
                 <input 
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  placeholder="SEARCH ALL ZONES..."
-                  className="w-full bg-white border-2 border-black/10 rounded-full py-3 pl-10 pr-4 text-xs font-bold uppercase tracking-wide focus:border-black focus:outline-none transition-colors"
+                  placeholder="SEARCH DATABASE..."
+                  className="w-full bg-stone-100 rounded-full py-2 pl-10 pr-4 text-xs font-bold uppercase tracking-wide focus:outline-none focus:ring-2 focus:ring-black"
                 />
-             </div>
-
-             <button 
-              onClick={() => setShowAdd(true)}
-              className="flex items-center gap-2 bg-black text-white px-6 py-3 font-bold uppercase tracking-widest hover:bg-stone-800 transition-all shadow-[4px_4px_0_0_#ca8a04] active:translate-y-1 active:shadow-none whitespace-nowrap"
-            >
-              <Plus size={18} /> Initialize
-            </button>
-          </div>
+              </div>
+              <button onClick={() => setShowAdd(true)} className="bg-black text-white px-4 py-2 rounded-full font-bold uppercase text-xs hover:bg-stone-800 flex items-center gap-2">
+                <Plus size={16} /> <span className="hidden sm:inline">Add Topic</span>
+              </button>
+           </div>
         </div>
       </div>
 
-      {/* THE THREE ZONES */}
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
-        
-        {/* 1. CRITICAL QUEUE (Due) */}
-        <div className="md:col-span-5 space-y-4">
-           <div className="flex items-center justify-between border-b-2 border-red-200 pb-2 mb-4">
-              <h2 className="text-sm font-black uppercase tracking-widest text-red-900 flex items-center gap-2">
-                <AlertTriangle size={16} /> Critical Queue
-              </h2>
-              <span className="bg-red-100 text-red-900 text-xs font-bold px-2 py-1">{counts.due}</span>
-           </div>
+      <div className="max-w-7xl mx-auto p-6 md:p-8 space-y-16">
 
-           {due.length === 0 ? (
-             <div className="p-8 border-2 border-dashed border-stone-200 text-center text-black/40 font-bold uppercase text-xs tracking-widest">
-               {query ? "No matches." : "All systems normal."}
-             </div>
-           ) : (
-             <AnimatePresence>
-               {due.map(topic => (
-                 <motion.div 
-                   key={topic.id}
-                   layout
-                   initial={{ opacity: 0, y: 10 }}
-                   animate={{ opacity: 1, y: 0 }}
-                   exit={{ opacity: 0, x: -50 }}
-                   className="bg-white border-2 border-black p-6 shadow-[6px_6px_0_0_#1c1917] relative group"
-                 >
-                    <div className="flex justify-between items-start mb-4">
-                      <span className="bg-stone-100 text-black/60 text-[10px] font-bold uppercase px-2 py-1 tracking-widest">
-                        Interval: {topic.last_gap}d
-                      </span>
-                      {/* Delete on Due Cards too */}
-                      <button onClick={() => handleDelete(topic.id)} className="text-stone-300 hover:text-red-500 transition-colors">
-                        <Trash2 size={16}/>
-                      </button>
-                    </div>
+        {/* ZONE 1: THE ARENA (Critical Queue) */}
+        {!query && (
+            <section>
+              <div className="flex items-center gap-3 mb-6">
+                 <div className="bg-red-100 p-2 rounded-full"><AlertTriangle size={20} className="text-red-600"/></div>
+                 <div>
+                    <h2 className="text-2xl font-black uppercase tracking-tight">Critical Queue</h2>
+                    <p className="text-xs font-bold text-stone-400 uppercase tracking-widest">{due.length} Missions Pending</p>
+                 </div>
+              </div>
+
+              {due.length === 0 ? (
+                 <div className="p-12 border-2 border-dashed border-stone-200 rounded-2xl flex flex-col items-center justify-center text-stone-400 bg-white/50">
+                    <CheckCircle2 size={48} className="mb-4 text-stone-200" />
+                    <span className="font-black uppercase tracking-widest">All Clear</span>
+                 </div>
+              ) : (
+                 <div className="flex flex-col gap-6">
                     
-                    <h3 className="text-xl font-black uppercase leading-tight mb-6 line-clamp-2">
-                      {topic.title}
-                    </h3>
+                    {/* A. MAIN STAGE (Focus Card) */}
+                    <AnimatePresence mode='wait'>
+                       <motion.div 
+                         key={activeTopic.id}
+                         initial={{ opacity: 0, x: 20 }}
+                         animate={{ opacity: 1, x: 0 }}
+                         exit={{ opacity: 0, x: -20 }}
+                         transition={{ duration: 0.2 }}
+                         className="bg-[#FFFDF5] border-4 border-black p-6 md:p-10 shadow-[8px_8px_0_0_#000] rounded-xl relative"
+                       >
+                          {/* Card Header */}
+                          <div className="flex justify-between items-start mb-8">
+                             <div className="bg-black text-white text-[10px] font-black uppercase px-3 py-1 rounded tracking-widest">
+                                Interval: {activeTopic.last_gap} days
+                             </div>
+                             <button onClick={() => handleDelete(activeTopic.id)} className="text-stone-300 hover:text-red-500 transition-colors">
+                                <Trash2 size={20} />
+                             </button>
+                          </div>
 
-                    <button 
-                      onClick={() => handleReview(topic)}
-                      className="w-full flex items-center justify-center gap-2 bg-amber-400 border-2 border-black py-3 font-bold uppercase text-xs tracking-widest hover:bg-amber-500 transition-colors"
-                    >
-                      <RotateCw size={16} /> Mark Reviewed
-                    </button>
-                 </motion.div>
-               ))}
-             </AnimatePresence>
-           )}
-           {/* Hint if hidden items */}
-           {!query && counts.due > 8 && (
-             <div className="text-center text-xs font-bold text-red-900/40 uppercase tracking-widest py-2">
-               + {counts.due - 8} more critical
-             </div>
-           )}
-        </div>
+                          {/* Big Title */}
+                          <h3 className="text-3xl md:text-5xl font-black uppercase leading-none mb-12 break-words text-black tracking-tight">
+                             {activeTopic.title}
+                          </h3>
 
-        {/* 2. SCHEDULED (Future) */}
-        <div className="md:col-span-4 space-y-4">
-           <div className="flex items-center justify-between border-b-2 border-emerald-200 pb-2 mb-4">
-              <h2 className="text-sm font-black uppercase tracking-widest text-emerald-900 flex items-center gap-2">
-                <Clock size={16} /> Scheduled
-              </h2>
-              <span className="bg-emerald-100 text-emerald-900 text-xs font-bold px-2 py-1">{counts.scheduled}</span>
-           </div>
+                          {/* Combat Actions */}
+                          <div className="grid grid-cols-3 gap-4">
+                             <button onClick={() => handleReview(activeTopic, 0)} className="group flex flex-col items-center gap-2 p-4 border-2 border-stone-200 bg-white hover:border-red-500 hover:bg-red-50 rounded-xl transition-all">
+                                <RefreshCcw className="text-stone-400 group-hover:text-red-500" />
+                                <span className="text-[10px] font-black uppercase tracking-widest text-stone-400 group-hover:text-red-600">Reset</span>
+                             </button>
+                             <button onClick={() => handleReview(activeTopic, 1)} className="group flex flex-col items-center gap-2 p-4 border-2 border-stone-200 bg-white hover:border-blue-500 hover:bg-blue-50 rounded-xl transition-all">
+                                <Check className="text-stone-400 group-hover:text-blue-500" />
+                                <span className="text-[10px] font-black uppercase tracking-widest text-stone-400 group-hover:text-blue-600">Good</span>
+                             </button>
+                             <button onClick={() => handleReview(activeTopic, 2)} className="group flex flex-col items-center gap-2 p-4 border-2 border-stone-200 bg-white hover:border-green-500 hover:bg-green-50 rounded-xl transition-all">
+                                <Zap className="text-stone-400 group-hover:text-green-500" />
+                                <span className="text-[10px] font-black uppercase tracking-widest text-stone-400 group-hover:text-green-600">Easy</span>
+                             </button>
+                          </div>
+                       </motion.div>
+                    </AnimatePresence>
 
-           <div className="space-y-3">
-             {scheduled.map(topic => (
-               <div key={topic.id} className="group bg-white border border-stone-200 p-4 opacity-70 hover:opacity-100 transition-all hover:border-black/20 hover:shadow-sm">
-                 <div className="flex justify-between items-start">
-                   <div className="text-sm font-bold text-black line-clamp-1">{topic.title}</div>
-                   {/* DELETE OPTION ADDED HERE */}
-                   <button 
-                     onClick={() => handleDelete(topic.id)} 
-                     className="text-stone-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all"
-                   >
-                     <Trash2 size={14} />
-                   </button>
+                    {/* B. SELECTOR STRIP (Carousel) */}
+                    {due.length > 1 && (
+                      <div className="overflow-x-auto pb-4 pt-2">
+                         <div className="flex gap-3 w-max">
+                            {due.map(t => (
+                               <button 
+                                 key={t.id}
+                                 onClick={() => setSelectedTopicId(t.id)}
+                                 className={`flex-shrink-0 px-4 py-3 rounded-lg border-2 text-left w-48 transition-all ${
+                                    activeTopic.id === t.id 
+                                    ? 'bg-black text-white border-black shadow-lg scale-105' 
+                                    : 'bg-white text-stone-500 border-stone-200 hover:border-black'
+                                 }`}
+                               >
+                                  <div className="text-[10px] font-black uppercase opacity-60 mb-1 tracking-widest">Priority Task</div>
+                                  <div className="font-bold text-sm truncate">{t.title}</div>
+                               </button>
+                            ))}
+                         </div>
+                      </div>
+                    )}
                  </div>
-                 
-                 <div className="flex justify-between items-end mt-2">
-                    {getProgressVisual(topic)}
-                    <span className="text-[10px] font-bold uppercase text-stone-400">
-                      {topic.next_review ? new Date(topic.next_review).toLocaleDateString(undefined, { month: 'short', day: 'numeric'}) : '-'}
-                    </span>
-                 </div>
-               </div>
-             ))}
-             {scheduled.length === 0 && (
-                <div className="text-xs font-bold text-stone-300 uppercase text-center py-4">No scheduled items</div>
-             )}
-             {!query && counts.scheduled > 8 && (
-               <div className="text-center text-xs font-bold text-emerald-900/40 uppercase tracking-widest py-2">
-                 + {counts.scheduled - 8} more
-               </div>
-             )}
-           </div>
-        </div>
+              )}
+            </section>
+        )}
 
-        {/* 3. ARCHIVED (Completed) */}
-        <div className="md:col-span-3 space-y-4">
-           <div className="flex items-center justify-between border-b-2 border-stone-200 pb-2 mb-4">
-              <h2 className="text-sm font-black uppercase tracking-widest text-stone-500 flex items-center gap-2">
-                <CheckCircle2 size={16} /> Archived
-              </h2>
-              <span className="bg-stone-100 text-stone-500 text-xs font-bold px-2 py-1">{counts.archived}</span>
+        {/* ZONE 2: TIMELINE (Scheduled) */}
+        {scheduled.length > 0 && (
+           <section>
+              <div className="flex items-center gap-3 mb-6 border-t-2 border-stone-100 pt-10">
+                 <div className="bg-emerald-100 p-2 rounded-full"><Clock size={20} className="text-emerald-600"/></div>
+                 <div>
+                    <h2 className="text-2xl font-black uppercase tracking-tight">Timeline</h2>
+                    <p className="text-xs font-bold text-stone-400 uppercase tracking-widest">Upcoming Missions</p>
+                 </div>
+              </div>
+
+              <div className="overflow-x-auto pb-6">
+                 <div className="flex gap-6 w-max">
+                    {scheduled.map(t => (
+                       <div key={t.id} className="w-64 flex-shrink-0 bg-white border border-stone-200 p-5 rounded-xl hover:shadow-lg hover:border-emerald-400 transition-all relative group cursor-help overflow-hidden">
+                          
+                          {/* DELETE BTN */}
+                          <div className="absolute top-4 right-4 z-20">
+                             <button onClick={() => handleDelete(t.id)} className="opacity-0 group-hover:opacity-100 transition-opacity text-stone-300 hover:text-red-500">
+                                <Trash2 size={16}/>
+                             </button>
+                          </div>
+
+                          {/* 1. DEFAULT CONTENT (Fades Out on Hover) */}
+                          <div className="group-hover:opacity-5 transition-opacity duration-300">
+                              <div className="text-emerald-600 text-xs font-black uppercase tracking-widest mb-3 flex items-center gap-2">
+                                 <CalendarDays size={12}/> {formatDate(t.next_review)}
+                              </div>
+
+                              <div className="font-black text-lg leading-tight text-black mb-4 line-clamp-2 h-12">
+                                 {t.title}
+                              </div>
+
+                              <div className="flex gap-1">
+                                 {(t.custom_intervals ? t.custom_intervals.split(',') : [0,1,3,7,14,30]).slice(0,6).map((g,i) => {
+                                    const val = Number(g)
+                                    return <div key={i} className={`h-1.5 w-1.5 rounded-full ${val < t.last_gap ? 'bg-black' : 'bg-stone-200'}`} />
+                                 })}
+                              </div>
+                          </div>
+
+                          {/* 2. HOVER OVERLAY (Fades In on Hover) */}
+                          <div className="absolute inset-0 flex flex-col justify-center items-center p-4 text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white/50 backdrop-blur-sm z-10">
+                             <div className="font-black uppercase tracking-widest mb-2 text-stone-400 text-[10px]">Projected Flight Path</div>
+                             <div className="font-mono text-xs font-bold text-emerald-700 leading-relaxed bg-emerald-50 p-2 rounded border border-emerald-100">
+                                {getFlightPath(t)}
+                             </div>
+                          </div>
+
+                       </div>
+                    ))}
+                    
+                    {/* LIMIT INDICATOR (Ghost Card) */}
+                    {!query && rawScheduledCount > 20 && (
+                        <div className="w-48 flex-shrink-0 border-2 border-dashed border-stone-200 rounded-xl flex flex-col items-center justify-center p-6 text-center">
+                            <span className="font-black text-stone-300 text-3xl mb-2">+{rawScheduledCount - 20}</span>
+                            <span className="text-[10px] font-bold uppercase text-stone-400 tracking-widest">More Missions<br/>Hidden</span>
+                            <span className="mt-4 bg-stone-100 text-stone-400 text-[10px] font-bold px-3 py-1 rounded-full uppercase">Use Search</span>
+                        </div>
+                    )}
+                 </div>
+              </div>
+           </section>
+        )}
+
+        {/* ZONE 3: ARCHIVE (Completed) */}
+        {archived.length > 0 && (
+           <section>
+              <div className="flex items-center gap-3 mb-6 border-t-2 border-stone-100 pt-10">
+                 <div className="bg-stone-200 p-2 rounded-full"><CheckCircle2 size={20} className="text-stone-600"/></div>
+                 <h2 className="text-2xl font-black uppercase tracking-tight text-stone-400">Archive</h2>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                 {archived.map(t => (
+                    <div key={t.id} className="flex justify-between items-center p-4 bg-stone-200 border-2 border-transparent hover:border-stone-300 rounded-lg group transition-colors">
+                       <span className="font-bold text-stone-600 line-through break-words text-sm pr-4 opacity-70 group-hover:opacity-100">
+                          {t.title}
+                       </span>
+                       <button onClick={() => handleDelete(t.id)} className="text-stone-400 hover:text-red-500 transition-colors">
+                          <Trash2 size={16}/>
+                       </button>
+                    </div>
+                 ))}
+              </div>
+              
+              {/* LIMIT INDICATOR (Footer) */}
+              {!query && rawArchivedCount > 20 && (
+                  <div className="text-center mt-6 p-4 border-t border-stone-100">
+                      <p className="text-xs font-bold uppercase text-stone-400 tracking-widest">
+                          + {rawArchivedCount - 20} Older items archived (Use Search to find)
+                      </p>
+                  </div>
+              )}
+           </section>
+        )}
+        
+        {/* SEARCH RESULTS OVERRIDE */}
+        {query && (
+           <div className="mt-8">
+              <h3 className="font-black uppercase mb-4">Search Results ({due.length + scheduled.length + archived.length})</h3>
+              <div className="space-y-2">
+                 {[...due, ...scheduled, ...archived].map(t => (
+                    <div key={t.id} className="bg-white p-4 border border-black flex justify-between items-center">
+                       <div>
+                          <div className="font-bold">{t.title}</div>
+                          <div className="text-xs uppercase text-stone-500">{t.status === 'completed' ? 'Archived' : `Next: ${formatDate(t.next_review)}`}</div>
+                       </div>
+                       <div className="flex gap-2">
+                          {t.status === 'active' && <button onClick={() => handleReview(t, 1)} className="px-3 py-1 bg-black text-white text-xs font-bold uppercase hover:bg-stone-800">Review</button>}
+                          <button onClick={() => handleDelete(t.id)} className="px-3 py-1 border border-stone-200 text-xs font-bold uppercase hover:bg-red-50 hover:text-red-600">Delete</button>
+                       </div>
+                    </div>
+                 ))}
+                 {[...due, ...scheduled, ...archived].length === 0 && <div className="text-stone-400 italic font-bold">No matches found.</div>}
+              </div>
            </div>
-           
-           <div className="space-y-2">
-             {archived.map(topic => (
-               <div key={topic.id} className="flex items-center justify-between text-stone-400 text-xs font-bold border-b border-stone-100 py-2 group">
-                  <span className="line-through truncate pr-2">{topic.title}</span>
-                  <button onClick={() => handleDelete(topic.id)} className="hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"><Trash2 size={12}/></button>
-               </div>
-             ))}
-             {!query && counts.archived > 8 && (
-               <div className="text-center text-xs font-bold text-stone-300 uppercase tracking-widest py-2">
-                 + {counts.archived - 8} more
-               </div>
-             )}
-           </div>
-        </div>
+        )}
 
       </div>
 
