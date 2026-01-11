@@ -2,6 +2,8 @@
 
 import Navbar from "./Navbar"
 import Hero from "./Hero"
+// 1. IMPORT THE NEW COMPONENT
+import ExamSelector from "./ExamSelector"
 import ProblemSection from "./ProblemSection"
 import InteractiveConsole from "./InteractiveConsole" 
 import Workflow from "./Workflow"
@@ -11,7 +13,6 @@ import MobileSection from "./MobileSection"
 import PricingCard from "./PricingCard"
 import Footer from "./Footer"
 import TopBanner from "./TopBanner"
-// ✅ IMPORT THE NEW ARCHITECT SECTION
 import SyllabusBuilderSection from "./SyllabusBuilderSection"
 
 export default function LandingPage() {
@@ -26,6 +27,10 @@ export default function LandingPage() {
       
       <main>
         <Hero />
+
+        {/* 3. ADD THE EXAM SELECTOR HERE */}
+        {/* This puts the exam buttons right below the main headline */}
+        <ExamSelector />
         
         {/* The "Why" */}
         <ProblemSection /> 
@@ -48,7 +53,7 @@ export default function LandingPage() {
         {/* Pricing */}
         <PricingCard />
 
-        {/* ✅ NEW: PROTOCOL ARCHITECT (Syllabus Helper) */}
+        {/* Protocol Architect (Syllabus Helper) */}
         <SyllabusBuilderSection />
 
       </main>
