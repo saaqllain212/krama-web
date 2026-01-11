@@ -8,6 +8,10 @@ import {
   Store, Users, Tag, CreditCard, DollarSign 
 } from 'lucide-react'
 import { useAlert } from '@/context/AlertContext'
+// ✅ IMPORT TIMEKEEPER & HARVESTER
+import Timekeeper from '@/components/admin/Timekeeper'
+import Harvester from '@/components/admin/Harvester'
+import BroadcastManager from '@/components/admin/BroadcastManager'
 
 const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL
 
@@ -137,6 +141,12 @@ export default function AdminDashboard() {
       {/* === TAB 1: USERS === */}
       {activeTab === 'users' && (
         <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in duration-300">
+           
+           {/* ✅ TOOLBAR: EXPORT BUTTON */}
+           <div className="flex justify-end">
+              <Harvester users={users} />
+           </div>
+
            {/* STATS */}
            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="bg-white p-6 border-l-4 border-black shadow-sm">
@@ -191,6 +201,10 @@ export default function AdminDashboard() {
             </div>
           </div>
 
+
+          {/* ✅ NEW: BROADCAST MANAGER */}
+          <BroadcastManager adminEmail={ADMIN_EMAIL!} />
+
           {/* USER TABLE */}
           <div className="bg-white shadow-sm border border-gray-200 overflow-hidden">
             <div className="p-4 border-b bg-gray-50 font-bold uppercase text-xs flex justify-between">
@@ -200,7 +214,7 @@ export default function AdminDashboard() {
               <thead>
                 <tr className="text-xs uppercase text-gray-400 border-b">
                   <th className="p-4 font-normal">User</th>
-                  <th className="p-4 font-normal">Joined</th>
+                  <th className="p-4 font-normal">Access Control</th>
                   <th className="p-4 font-normal">Status</th>
                   <th className="p-4 font-normal text-right">Actions</th>
                 </tr>
@@ -212,8 +226,15 @@ export default function AdminDashboard() {
                       <div className="font-bold">{u.email}</div>
                       <div className="text-[10px] text-gray-400 font-mono">{u.id}</div>
                     </td>
-                    <td className="p-4 text-gray-500">
-                      {new Date(u.created_at).toLocaleDateString()}
+                    {/* ✅ TIMEKEEPER COMPONENT - NOW PASSING isPremium */}
+                    <td className="p-4">
+                       <Timekeeper 
+                          userId={u.id} 
+                          currentTrialEnd={u.trial_ends_at} 
+                          onUpdate={() => setRefreshKey(k => k + 1)} 
+                          adminEmail={ADMIN_EMAIL!}
+                          isPremium={u.is_premium} 
+                       />
                     </td>
                     <td className="p-4">
                       {u.is_premium ? (
@@ -293,7 +314,6 @@ export default function AdminDashboard() {
                     <Tag size={18} /> Coupons
                  </h2>
                  
-                 {/* Create Form */}
                  <form onSubmit={handleCreateCoupon} className="mb-6 bg-gray-50 p-4 rounded flex gap-2 items-end">
                     <div>
                       <label className="text-[10px] uppercase font-bold text-gray-500">Code</label>
@@ -318,7 +338,6 @@ export default function AdminDashboard() {
                     </button>
                  </form>
 
-                 {/* List */}
                  <div className="space-y-2">
                     {coupons.map((c: any) => (
                        <div key={c.id} className={`flex items-center justify-between p-3 border ${!c.is_active ? 'opacity-50 bg-gray-100' : 'bg-white'}`}>

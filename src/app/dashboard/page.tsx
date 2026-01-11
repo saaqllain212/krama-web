@@ -25,6 +25,8 @@ import OnboardingModal from '@/components/dashboard/OnboardingModal'
 import CheckoutModal from '@/components/dashboard/CheckoutModal'
 import InitiationModal from '@/components/dashboard/InitiationModal'
 import ProtocolManagerModal from '@/components/dashboard/ProtocolManagerModal'
+// ✅ NEW IMPORT: Broadcast Banner
+import BroadcastBanner from '@/components/dashboard/BroadcastBanner'
 
 export default function DashboardPage() {
   const [userName, setUserName] = useState('Student')
@@ -66,9 +68,10 @@ export default function DashboardPage() {
         }
 
         // --- 1. FETCH MEMBERSHIP STATUS ---
+        // ✅ UPDATED: Added 'trial_ends_at' to the selection
         const { data: access } = await supabase
           .from('user_access')
-          .select('is_premium, trial_starts_at')
+          .select('is_premium, trial_starts_at, trial_ends_at')
           .eq('user_id', user.id)
           .single()
 
@@ -76,12 +79,25 @@ export default function DashboardPage() {
           setIsPremium(access.is_premium)
           
           if (!access.is_premium) {
-            // Calculate Trial Days
-            const start = new Date(access.trial_starts_at)
+            // ✅ NEW LOGIC: Use Admin Date if it exists
             const today = new Date()
-            const diffTime = Math.abs(today.getTime() - start.getTime())
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-            setTrialDaysLeft(14 - diffDays)
+            let endDate: Date
+
+            if (access.trial_ends_at) {
+               // Use the Admin-extended date
+               endDate = new Date(access.trial_ends_at)
+            } else {
+               // Fallback to standard 14 days
+               const start = new Date(access.trial_starts_at)
+               endDate = new Date(start)
+               endDate.setDate(endDate.getDate() + 14)
+            }
+            
+            // Calculate Days Remaining
+            const diffTime = endDate.getTime() - today.getTime()
+            const daysLeft = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+            
+            setTrialDaysLeft(daysLeft)
           }
         }
 
@@ -135,6 +151,9 @@ export default function DashboardPage() {
       
       {/* ONBOARDING WIZARD */}
       <OnboardingModal />
+
+      {/* ✅ NEW: BROADCAST BANNER (Appears at the very top) */}
+      <BroadcastBanner />
 
       {/* HEADER */}
       <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
@@ -235,11 +254,11 @@ export default function DashboardPage() {
           
           {/* FOCUS ANALYTICS BUTTON */}
           <Link 
-             href="/dashboard/focus/insights" 
-             className="absolute bottom-4 right-4 z-20 rounded-full bg-white/20 p-2 text-white hover:bg-white hover:text-black transition-colors"
-             title="View Focus Analytics"
+              href="/dashboard/focus/insights" 
+              className="absolute bottom-4 right-4 z-20 rounded-full bg-white/20 p-2 text-white hover:bg-white hover:text-black transition-colors"
+              title="View Focus Analytics"
           >
-             <BarChart2 size={16} /> 
+              <BarChart2 size={16} /> 
           </Link>
         </div>
 

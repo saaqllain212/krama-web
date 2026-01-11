@@ -4,11 +4,11 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Lock, Loader2, CheckCircle } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useAlert } from '@/context/AlertContext' // <--- 1. Import Context
+import { useAlert } from '@/context/AlertContext' 
 
 // CONFIGURATION
 const TRIAL_DAYS = 14
-const PRICE = 199
+const PRICE = 299
 
 // Helper Type for Razorpay
 interface RazorpayOptions {
@@ -34,7 +34,7 @@ declare global {
 export default function TrialGuard({ children }: { children: React.ReactNode }) {
   const supabase = createClient()
   const router = useRouter()
-  const { showAlert } = useAlert() // <--- 2. Use Alert Hook
+  const { showAlert } = useAlert()
   
   const [loading, setLoading] = useState(true)
   const [paymentProcessing, setPaymentProcessing] = useState(false)
@@ -50,9 +50,10 @@ export default function TrialGuard({ children }: { children: React.ReactNode }) 
     if (!user) return 
 
     // 1. Fetch from the NEW Table (user_access)
+    // ✅ CHANGED: We now fetch 'trial_ends_at' to support Admin extensions
     const { data: access } = await supabase
       .from('user_access')
-      .select('is_premium, trial_starts_at')
+      .select('is_premium, trial_starts_at, trial_ends_at')
       .eq('user_id', user.id)
       .single()
 
@@ -68,22 +69,34 @@ export default function TrialGuard({ children }: { children: React.ReactNode }) 
     }
 
     // 3. Trial Timer Check
-    const startDate = new Date(access.trial_starts_at)
     const today = new Date()
-    const diffTime = Math.abs(today.getTime() - startDate.getTime())
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-    
-    const remaining = TRIAL_DAYS - diffDays
-    setDaysLeft(remaining)
+    let endDate: Date
 
-    if (remaining <= 0) {
-      setIsLocked(true) // LOCK THE SCREEN
+    // ✅ LOGIC UPDATE: Prefer the database End Date (set by Admin)
+    if (access.trial_ends_at) {
+        endDate = new Date(access.trial_ends_at)
+    } else {
+        // Fallback to strict 14 days if no specific end date exists
+        const startDate = new Date(access.trial_starts_at)
+        endDate = new Date(startDate)
+        endDate.setDate(endDate.getDate() + TRIAL_DAYS)
+    }
+
+    // Calculate difference
+    const diffTime = endDate.getTime() - today.getTime()
+    const daysLeftCalc = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+    
+    setDaysLeft(daysLeftCalc)
+
+    // If time is up (and not premium), lock it.
+    if (daysLeftCalc <= 0) {
+      setIsLocked(true) 
     }
     
     setLoading(false)
   }
 
-  // --- HANDLE PAYMENT LOGIC (Updated with Custom Alerts) ---
+  // --- HANDLE PAYMENT LOGIC (Unchanged) ---
   const handlePayment = async () => {
     setPaymentProcessing(true)
     
@@ -117,7 +130,7 @@ export default function TrialGuard({ children }: { children: React.ReactNode }) 
           const verifyData = await verifyRes.json()
 
           if (verifyData.success) {
-            showAlert('Payment Successful! Welcome to Pro.', 'success') // <--- Nice Alert
+            showAlert('Payment Successful! Welcome to Pro.', 'success')
             setTimeout(() => {
                 window.location.reload() // Reload to unlock the screen
             }, 1500)
