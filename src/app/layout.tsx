@@ -15,11 +15,11 @@ const spaceGrotesk = Space_Grotesk({
   weight: ['300', '400', '500', '600', '700'] 
 });
 
-// --- SEO UPGRADE: THE IDENTITY CARD ---
+// --- SEO UPGRADE: THE IDENTITY CARD (KEPT INTACT) ---
 export const metadata: Metadata = {
   title: {
     default: "Krama | Strategic Study Tracker",
-    template: "%s | Krama"
+    template: "%s | Krama" 
   },
   description: "Don't just study harder, study smarter. Krama is the tactical operating system for JEE, NEET, UPSC & SSC aspirants to track progress, automate spaced repetition, and analyze mock tests.",
   keywords: [
@@ -59,6 +59,7 @@ export default function RootLayout({
       <body className={`${spaceGrotesk.className} antialiased bg-[#FBF9F6] text-[#1A1A1A]`}>
         
         {/* 2. WRAP EVERYTHING WITH POSTHOG */}
+        {/* We place this outside everything else so it can track the whole app */}
         <PostHogProvider>
           
           {/* EXISTING PROVIDERS */}
