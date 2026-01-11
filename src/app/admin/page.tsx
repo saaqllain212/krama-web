@@ -5,11 +5,9 @@ import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { 
   Loader2, Shield, Trash2, Crown, User, LogOut, ArrowLeft, 
-  Store, Users, Tag, CreditCard, DollarSign 
+  Store, Users, Tag, CreditCard
 } from 'lucide-react'
 import { useAlert } from '@/context/AlertContext'
-
-const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL
 
 export default function AdminDashboard() {
   const supabase = createClient()
@@ -28,8 +26,11 @@ export default function AdminDashboard() {
   // 1. INITIAL LOAD
   useEffect(() => {
     const init = async () => {
+      // SECURITY UPDATE: We removed the client-side check for ADMIN_EMAIL
+      // The Middleware now handles the security redirect.
+      // We just check if the user exists to be safe.
       const { data: { user } } = await supabase.auth.getUser()
-      if (!user || user.email !== ADMIN_EMAIL) {
+      if (!user) {
         router.push('/')
         return
       }
@@ -47,6 +48,8 @@ export default function AdminDashboard() {
       setNewPrice(json.storeSettings?.base_price || 299)
     } catch (e) {
       console.error(e)
+      // If the API kicks us out (403), we redirect
+      router.push('/dashboard')
     } finally {
       setLoading(false)
     }
@@ -98,7 +101,7 @@ export default function AdminDashboard() {
             <Shield size={20} /> Admin
             </h1>
             <span className="bg-gray-100 text-[10px] px-2 py-1 rounded text-gray-500 hidden sm:block">
-                {ADMIN_EMAIL}
+               COMMAND CENTER
             </span>
         </div>
 
@@ -286,36 +289,36 @@ export default function AdminDashboard() {
            </div>
 
            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              
-              {/* COUPONS MANAGER */}
-              <div className="bg-white p-6 shadow-sm border border-gray-200">
+             
+             {/* COUPONS MANAGER */}
+             <div className="bg-white p-6 shadow-sm border border-gray-200">
                  <h2 className="font-bold uppercase mb-4 flex items-center gap-2">
                     <Tag size={18} /> Coupons
                  </h2>
                  
                  {/* Create Form */}
                  <form onSubmit={handleCreateCoupon} className="mb-6 bg-gray-50 p-4 rounded flex gap-2 items-end">
-                    <div>
-                      <label className="text-[10px] uppercase font-bold text-gray-500">Code</label>
-                      <input required type="text" placeholder="LAUNCH50" className="w-full border p-2 text-sm uppercase" 
-                        value={newCoupon.code} onChange={e => setNewCoupon({...newCoupon, code: e.target.value})}
-                      />
-                    </div>
-                    <div>
-                      <label className="text-[10px] uppercase font-bold text-gray-500">Discount (₹)</label>
-                      <input required type="number" placeholder="50" className="w-24 border p-2 text-sm"
-                        value={newCoupon.discount} onChange={e => setNewCoupon({...newCoupon, discount: Number(e.target.value)})}
-                      />
-                    </div>
-                    <div>
-                      <label className="text-[10px] uppercase font-bold text-gray-500">Limit</label>
-                      <input required type="number" placeholder="100" className="w-20 border p-2 text-sm"
-                         value={newCoupon.maxUses} onChange={e => setNewCoupon({...newCoupon, maxUses: Number(e.target.value)})}
-                      />
-                    </div>
-                    <button type="submit" className="bg-blue-600 text-white px-4 py-2 text-sm font-bold uppercase hover:bg-blue-700">
-                      Add
-                    </button>
+                   <div>
+                     <label className="text-[10px] uppercase font-bold text-gray-500">Code</label>
+                     <input required type="text" placeholder="LAUNCH50" className="w-full border p-2 text-sm uppercase" 
+                       value={newCoupon.code} onChange={e => setNewCoupon({...newCoupon, code: e.target.value})}
+                     />
+                   </div>
+                   <div>
+                     <label className="text-[10px] uppercase font-bold text-gray-500">Discount (₹)</label>
+                     <input required type="number" placeholder="50" className="w-24 border p-2 text-sm"
+                       value={newCoupon.discount} onChange={e => setNewCoupon({...newCoupon, discount: Number(e.target.value)})}
+                     />
+                   </div>
+                   <div>
+                     <label className="text-[10px] uppercase font-bold text-gray-500">Limit</label>
+                     <input required type="number" placeholder="100" className="w-20 border p-2 text-sm"
+                          value={newCoupon.maxUses} onChange={e => setNewCoupon({...newCoupon, maxUses: Number(e.target.value)})}
+                     />
+                   </div>
+                   <button type="submit" className="bg-blue-600 text-white px-4 py-2 text-sm font-bold uppercase hover:bg-blue-700">
+                     Add
+                   </button>
                  </form>
 
                  {/* List */}
@@ -338,10 +341,10 @@ export default function AdminDashboard() {
                     ))}
                     {coupons.length === 0 && <p className="text-gray-400 italic text-sm">No coupons yet.</p>}
                  </div>
-              </div>
+             </div>
 
-              {/* RECENT PAYMENTS */}
-              <div className="bg-white p-6 shadow-sm border border-gray-200">
+             {/* RECENT PAYMENTS */}
+             <div className="bg-white p-6 shadow-sm border border-gray-200">
                  <h2 className="font-bold uppercase mb-4 flex items-center gap-2">
                     <CreditCard size={18} /> Recent Receipts
                  </h2>
@@ -370,7 +373,7 @@ export default function AdminDashboard() {
                     ))}
                     {payments.length === 0 && <p className="text-gray-400 italic text-sm">No payments yet.</p>}
                  </div>
-              </div>
+             </div>
 
            </div>
         </div>

@@ -43,6 +43,7 @@ export async function middleware(request: NextRequest) {
   // 4. Define Your Rules (The "List")
   const path = request.nextUrl.pathname
   const isDashboard = path.startsWith('/dashboard')
+  const isAdmin = path.startsWith('/admin')
   const isAuthPage = path === '/login' || path === '/signup'
 
   // SCENARIO A: The Intruder
@@ -53,7 +54,18 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
-  // SCENARIO B: The Confused Member
+  // SCENARIO B: The Imposter (Admin Protection) - NEW SECURITY FIX
+  // Only allow access if the email matches the secure server-side variable
+  if (isAdmin) {
+    if (!user || user.email !== process.env.ADMIN_EMAIL) {
+       const url = request.nextUrl.clone()
+       // If they are logged in but not admin, send to dashboard. Otherwise login.
+       url.pathname = user ? '/dashboard' : '/login'
+       return NextResponse.redirect(url)
+    }
+  }
+
+  // SCENARIO C: The Confused Member
   // Trying to login when already logged in
   if (isAuthPage && user) {
     const url = request.nextUrl.clone()
@@ -61,7 +73,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
-  // SCENARIO C: The Guest (Landing Page)
+  // SCENARIO D: The Guest (Landing Page)
   // Allow them to proceed
   return response
 }
