@@ -3,6 +3,10 @@ import { Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import Script from 'next/script'; 
 
+// 👇 1. ADD THIS LINE (The Manual Override)
+// This forces the Sentry Client Config to run immediately
+import "../sentry.client.config";
+
 // Context Providers
 import { AlertProvider } from '@/context/AlertContext'; 
 import { SyllabusProvider } from '@/context/SyllabusContext'; 
