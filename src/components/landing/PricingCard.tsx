@@ -1,7 +1,13 @@
+'use client' // 👈 Added this
+
 import Link from 'next/link'
 import { Infinity } from 'lucide-react'
+import { useTracker } from '@/analytics/useTracker' // 👈 Import Tracker
+import { EVENTS } from '@/analytics/events'         // 👈 Import Events
 
 export default function PricingCard() {
+  const { track } = useTracker() // 👈 Activate Tracker
+
   return (
     <section className="px-6 py-24 md:px-12">
       <h2 className="mb-12 text-center text-4xl font-bold uppercase tracking-tight md:text-5xl">
@@ -46,6 +52,8 @@ export default function PricingCard() {
 
         <Link 
           href="/signup"
+          // 👇 The "Smart" Click
+          onClick={() => track(EVENTS.AUTH_SIGNUP_CLICKED, { location: 'pricing_card' })}
           className="mt-10 block w-full border-neo bg-brand py-4 text-center text-sm font-bold uppercase tracking-wide shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-y-0 active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
         >
           Start 14-Day Free Trial

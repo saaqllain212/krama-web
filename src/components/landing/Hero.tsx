@@ -3,8 +3,11 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
+import { useTracker } from '@/analytics/useTracker' 
+import { EVENTS } from '@/analytics/events'
 
 export default function Hero() {
+  const { track } = useTracker() // 👈 ADD THIS LINE
   const [timeLeft, setTimeLeft] = useState(25 * 60)
   const [isRunning, setIsRunning] = useState(false)
 
@@ -41,6 +44,7 @@ export default function Hero() {
         {/* THICKER BORDER + SHARP SHADOW */}
         <Link 
           href="/signup" 
+          onClick={() => track(EVENTS.AUTH_SIGNUP_CLICKED, { location: 'hero_section' })}
           className="group mt-2 inline-flex items-center gap-3 border-neo bg-white px-8 py-5 text-lg font-bold shadow-neo transition-all hover:-translate-y-1 hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] active:translate-y-0 active:shadow-neo"
         >
           Start 14-Day Trial
