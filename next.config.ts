@@ -3,16 +3,15 @@ import { withSentryConfig } from "@sentry/nextjs";
 
 const nextConfig: NextConfig = {
   // We are removing the PWA wrapper for now
-  reactCompiler: false, // Keep this false for now to save memory
+  reactCompiler: false, 
 };
 
 export default withSentryConfig(nextConfig, {
-  // 1. Project Info (From Sentry Dashboard)
+  // 1. Project Info (Keep your real values here)
   org: "krama", 
-  project: "javascript-nextjs",
+  project: "javascript-nextjs", // Make sure this matches your Sentry project slug exactly!
 
-  // 2. Source Maps (The V8 Way)
-  // This replaces 'hideSourceMaps' and 'widenClientFileUpload'
+  // 2. Source Maps
   sourcemaps: {
     deleteSourcemapsAfterUpload: true,
   },
@@ -22,11 +21,10 @@ export default withSentryConfig(nextConfig, {
     enabled: true,
   },
 
-  // 4. Tunneling (Avoids Ad-Blockers)
-  tunnelRoute: "/monitoring",
+  // 4. Tunneling -> REMOVED FOR DIRECT CONNECTION
+  // tunnelRoute: "/monitoring",  <-- DELETED THIS LINE
 
   // 5. Build Logs
-  // Only print logs for uploading source maps in CI
   silent: !process.env.CI,
 
   // 6. Tree Shaking
