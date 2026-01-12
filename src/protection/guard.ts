@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ZodSchema } from "zod";
 import { checkRateLimit } from "./ratelimit";
+import * as Sentry from "@sentry/nextjs"; // 👈 NEW: Import Sentry
 
 type GuardOptions = {
   schema?: ZodSchema;      // Which rulebook to use (optional)
@@ -52,7 +53,10 @@ export function Guard(
       return await handler(req, validData);
 
     } catch (error: any) {
+      // 🚨 NEW: REPORT TO WATCHTOWER 🚨
       console.error("Guard Blocked Request:", error);
+      Sentry.captureException(error); // This sends the email to you
+
       return NextResponse.json(
         { error: "Internal Server Error" }, 
         { status: 500 }
