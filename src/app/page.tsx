@@ -1,7 +1,15 @@
-'use client'; // 👈 Add this line to make the button work
+'use client';
+
+import { useEffect } from 'react';
 import LandingPage from "@/components/landing/LandingPage";
 
 export default function Page() {
+  
+  // 🔍 DEBUGGER: Print the key when page loads
+  useEffect(() => {
+    console.log("🔍 DEBUG: Sentry DSN is:", process.env.NEXT_PUBLIC_SENTRY_DSN);
+  }, []);
+
   return (
     <>
       {/* 🔴 SENTRY TEST BUTTON */}
