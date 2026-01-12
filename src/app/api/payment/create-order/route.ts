@@ -1,15 +1,23 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import Razorpay from 'razorpay'
 import { createClient } from '@/lib/supabase/server'
+
+// --- 🛡️ SECURITY IMPORTS ---
+import { Guard } from '@/protection/guard'
+import { PaymentSchema } from '@/protection/rules'
 
 const razorpay = new Razorpay({
   key_id: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!,
   key_secret: process.env.RAZORPAY_KEY_SECRET!,
 })
 
-export async function POST(req: Request) {
+// --- THE LOGIC ---
+// Note: We now receive 'validData' as the second argument. 
+// We no longer need 'await req.json()' because the Guard did it for us.
+async function createOrderHandler(req: NextRequest, validData: any) {
   try {
-    const { couponCode } = await req.json() // Read coupon from frontend
+    const { couponCode } = validData // ✅ Safe & Validated
+
     const supabase = await createClient()
     
     // 1. Auth Check
@@ -64,3 +72,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Order creation failed' }, { status: 500 })
   }
 }
+
+// --- 🔒 THE GUARD EXPORT ---
+// This wraps your function with the Rate Limiter and Validator
+export const POST = Guard(createOrderHandler, { schema: PaymentSchema })

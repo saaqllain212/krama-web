@@ -1,19 +1,24 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import crypto from 'crypto'
 import Razorpay from 'razorpay'
 import { createClient } from '@supabase/supabase-js' 
 import { createClient as createAuthClient } from '@/lib/supabase/server' 
 
-// Initialize Razorpay to fetch true payment details
+// --- 🛡️ SECURITY IMPORTS ---
+import { Guard } from '@/protection/guard'
+import { PaymentSchema } from '@/protection/rules'
+
+// Initialize Razorpay
 const razorpay = new Razorpay({
   key_id: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!,
   key_secret: process.env.RAZORPAY_KEY_SECRET!,
 })
 
-export async function POST(req: Request) {
+// --- THE LOGIC ---
+async function verifyPaymentHandler(req: NextRequest, validData: any) {
   try {
-    // 1. Receive IDs (Ignore 'amount' from frontend, it's untrusted)
-    const { orderCreationId, razorpayPaymentId, razorpaySignature, couponCode } = await req.json()
+    // 1. Receive IDs (Already Validated by Guard)
+    const { orderCreationId, razorpayPaymentId, razorpaySignature, couponCode } = validData
 
     // 2. VERIFY SIGNATURE (Cryptographic Check)
     const shasum = crypto.createHmac('sha256', process.env.RAZORPAY_KEY_SECRET!)
@@ -24,15 +29,13 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Transaction not legit!' }, { status: 400 })
     }
 
-    // 3. FETCH REAL PAYMENT DATA (The Security Fix)
-    // We ask Razorpay: "How much was actually paid for this ID?"
+    // 3. FETCH REAL PAYMENT DATA (Double Check with Razorpay)
     const payment = await razorpay.payments.fetch(razorpayPaymentId)
 
     if (!payment || payment.status !== 'captured') {
         return NextResponse.json({ error: 'Payment not captured' }, { status: 400 })
     }
 
-    // This is the source of truth (in Paise)
     const actualAmountPaid = payment.amount 
 
     // 4. GET USER ID
@@ -43,8 +46,7 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: 'User not found' }, { status: 401 })
     }
 
-    // 5. CONNECT AS ADMIN (Safe here because we verified payment & user)
-    // Note: Initialize this inside the function scope for safety
+    // 5. CONNECT AS ADMIN
     const supabaseAdmin = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -63,7 +65,7 @@ export async function POST(req: Request) {
           .from('payment_history')
           .insert({
             user_id: user.id,
-            amount_paid: actualAmountPaid, // ✅ SECURED
+            amount_paid: actualAmountPaid,
             status: 'success',
             order_id: orderCreationId,
             payment_id: razorpayPaymentId,
@@ -102,3 +104,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Payment verification failed' }, { status: 500 })
   }
 }
+
+// --- 🔒 THE GUARD EXPORT ---
+// Protected by Rate Limiter & Validation
+export const POST = Guard(verifyPaymentHandler, { schema: PaymentSchema })
