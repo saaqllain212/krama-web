@@ -3,9 +3,9 @@ import { Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import Script from 'next/script'; 
 
-// 👇 1. ADD THIS LINE (The Manual Override)
-// This forces the Sentry Client Config to run immediately
-import "../sentry.client.config";
+// 👇 2. ADD this new import:
+import SentryWrapper from "@/components/SentryWrapper";
+
 
 // Context Providers
 import { AlertProvider } from '@/context/AlertContext'; 
@@ -39,6 +39,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${spaceGrotesk.className} antialiased bg-[#FBF9F6] text-[#1A1A1A]`}>
+
+        {/* 👇 3. ADD THE WRAPPER HERE INSIDE THE BODY */}
+        <SentryWrapper />
         
         <PostHogProvider>
             <AlertProvider>
