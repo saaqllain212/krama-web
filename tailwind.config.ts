@@ -1,23 +1,16 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
+  // We keep the content scanner so Tailwind knows where to look for class names
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
+  // We remove the specific 'brand' and 'neo' definitions here 
+  // because they are now handled by globals.css
   theme: {
-    extend: {
-      colors: {
-        brand: {
-          DEFAULT: '#CCFF00', // Electric Lime
-          hover: '#B3E600',
-        }
-      },
-      boxShadow: {
-        'neo': '5px 5px 0px 0px rgba(0,0,0,1)', // Hard shadow
-      }
-    },
+    extend: {},
   },
   plugins: [],
 };
