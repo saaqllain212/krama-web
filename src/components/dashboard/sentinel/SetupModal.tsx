@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { Loader2, ShieldAlert, CheckCircle2, AlertTriangle, ArrowRight, MessageSquare, Smartphone } from 'lucide-react'
+import { Loader2, ShieldAlert, CheckCircle2, AlertTriangle, ArrowRight, Smartphone, MessageSquare, X } from 'lucide-react'
 
 export default function SetupModal({ 
   onClose, 
@@ -13,7 +13,8 @@ export default function SetupModal({
 }) {
   const [loading, setLoading] = useState(false)
   const [step, setStep] = useState(1) // 1: Reality Check, 2: Connect Bot
-  const [userTarget, setUserTarget] = useState<number>(0) // Hours
+  const [userTarget, setUserTarget] = useState<number>(0)
+  const [error, setError] = useState('')
   
   const [formData, setFormData] = useState({
     guardianName: '',
@@ -27,9 +28,6 @@ export default function SetupModal({
     async function loadTarget() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
-
-      // We try to find the target in metadata (where Onboarding saves it)
-      // If not found, default to 4 hours
       const metaTarget = user.user_metadata?.target_hours || 4
       setUserTarget(Number(metaTarget))
     }
@@ -37,29 +35,16 @@ export default function SetupModal({
   }, [])
 
   const handleSave = async () => {
+    if (!formData.guardianId || !formData.guardianName) return
     setLoading(true)
+    setError('')
+
     try {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
 
-      // 1. Save to Database
-      const { error } = await supabase
-        .from('sentinel_settings')
-        .upsert({
-          user_id: user.id,
-          guardian_name: formData.guardianName,
-          guardian_chat_id: formData.guardianId,
-          is_active: true,
-          last_active_at: new Date().toISOString(),
-          // Initialize quota logic
-          offline_quota_used: 0,
-          last_quota_reset_at: new Date().toISOString()
-        })
-
-      if (error) throw error
-
-      // 2. ⚡ TRIGGER THE BOT MESSAGE (API Call)
-      await fetch('/api/sentinel/welcome', {
+      // 1. Verify Connection (Send Test Message)
+      const res = await fetch('/api/sentinel/welcome', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -68,13 +53,31 @@ export default function SetupModal({
         })
       })
 
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Connection Failed')
+
+      // 2. Save to Database
+      const { error: dbError } = await supabase
+        .from('sentinel_settings')
+        .upsert({
+          user_id: user.id,
+          guardian_name: formData.guardianName,
+          guardian_chat_id: formData.guardianId,
+          is_active: true,
+          last_active_at: new Date().toISOString(),
+          offline_quota_used: 0,
+          last_quota_reset_at: new Date().toISOString()
+        })
+
+      if (dbError) throw dbError
+
       // 3. Close & Refresh
       onClose()
       window.location.reload()
 
-    } catch (err) {
+    } catch (err: any) {
       console.error(err)
-      alert("Failed to activate. Check console.")
+      setError("Could not message Guardian. Did they START the bot?")
     } finally {
       setLoading(false)
     }
@@ -84,7 +87,7 @@ export default function SetupModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
       
       <div className="w-full max-w-md bg-white border-2 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-6 relative">
-        <button onClick={onClose} className="absolute top-2 right-2 p-1 hover:bg-gray-100">✕</button>
+        <button onClick={onClose} className="absolute top-2 right-2 p-1 hover:bg-gray-100"><X size={20}/></button>
 
         {/* Header */}
         <div className="flex items-center gap-3 mb-6">
@@ -97,12 +100,11 @@ export default function SetupModal({
           </div>
         </div>
 
-        {/* STEP 1: The Reality Check */}
+        {/* STEP 1: The Reality Check (KEPT INT ACT) */}
         {step === 1 && (
           <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2">
             <div className="bg-gray-100 p-4 border-2 border-black text-center">
               <p className="text-xs uppercase font-bold text-gray-500 mb-1">Current Target</p>
-              {/* Show decimals for test mode */}
               <p className="text-4xl font-black font-mono">{userTarget} HOURS</p>
             </div>
 
@@ -123,10 +125,7 @@ export default function SetupModal({
 
             <div className="grid grid-cols-2 gap-3 mt-4">
               <button 
-                onClick={() => {
-                  onClose();        // 1. Close this modal
-                  onOpenSettings(); // 2. Open the Settings modal
-                }} 
+                onClick={() => { onClose(); onOpenSettings(); }} 
                 className="py-3 text-xs font-bold uppercase border-2 border-black hover:bg-gray-100"
               >
                 Lower Target
@@ -141,59 +140,63 @@ export default function SetupModal({
           </div>
         )}
 
-        {/* STEP 2: The Bot Connection (IMPROVED INSTRUCTIONS) */}
+        {/* STEP 2: The Bot Connection (UPDATED INSTRUCTIONS) */}
         {step === 2 && (
           <div className="space-y-4 animate-in fade-in slide-in-from-right-4">
             
-            <div className="bg-yellow-50 border-2 border-yellow-400 p-3 text-sm">
-                <p className="font-bold flex items-center gap-2 text-yellow-800">
-                   <Smartphone size={16}/> REQUIRED STEP:
+            <div className="bg-yellow-50 border-2 border-yellow-400 p-3 text-xs space-y-2">
+                <p className="font-bold text-yellow-800 uppercase flex items-center gap-2">
+                    <Smartphone size={14}/> 1. Authorize The Channel
                 </p>
-                <ol className="list-decimal pl-4 space-y-1 mt-2 text-yellow-900 text-xs">
-                    <li>Open Telegram. Search for your bot name.</li>
-                    <li><strong>CLICK THE 'START' BUTTON</strong> inside the chat.</li>
-                    <li>If you skip this, the bot <u>cannot</u> message you.</li>
-                </ol>
+                <p className="text-yellow-900 leading-relaxed">
+                    Ask your Guardian to search for <span className="font-bold bg-white px-1 border border-yellow-200 select-all">@krama_guardianbot</span> on Telegram and click <span className="font-bold">START</span>.
+                </p>
             </div>
 
-            <div className="bg-blue-50 p-3 border-2 border-blue-900 text-xs font-mono">
-               <p className="font-bold flex items-center gap-2 text-blue-900 mb-2">
-                  <MessageSquare size={14}/> FIND YOUR ID:
-               </p>
-               <p>Search for <strong>@userinfobot</strong> on Telegram to get your numeric ID.</p>
+            <div className="bg-blue-50 border-2 border-blue-200 p-3 text-xs space-y-2">
+                <p className="font-bold text-blue-800 uppercase flex items-center gap-2">
+                    <MessageSquare size={14}/> 2. Get Their ID
+                </p>
+                <p className="text-blue-900 leading-relaxed">
+                    Ask them to search for <span className="font-bold bg-white px-1 border border-blue-200 select-all">@userinfobot</span>. It will reply with a number. Copy that number.
+                </p>
             </div>
 
             <div className="mt-4 space-y-3">
                 <div>
-                <label className="block text-xs font-bold uppercase mb-1">Guardian Name</label>
+                <label className="block text-[10px] font-bold uppercase text-stone-500 mb-1">Guardian Name</label>
                 <input 
-                    type="text"
-                    placeholder="e.g. Dad, Mentor, Self"
-                    className="w-full p-2 border-2 border-black font-mono text-sm"
                     value={formData.guardianName}
-                    onChange={e => setFormData({...formData, guardianName: e.target.value})}
+                    onChange={(e) => setFormData({...formData, guardianName: e.target.value})}
+                    placeholder="e.g. DAD, PARTNER, BROTHER"
+                    className="w-full border-2 border-black p-2 font-bold uppercase text-sm focus:bg-yellow-50 outline-none"
                 />
                 </div>
 
                 <div>
-                <label className="block text-xs font-bold uppercase mb-1">Telegram ID (Number)</label>
+                <label className="block text-[10px] font-bold uppercase text-stone-500 mb-1">Paste Their ID Number</label>
                 <input 
-                    type="text"
-                    placeholder="e.g. 123456789"
-                    className="w-full p-2 border-2 border-black font-mono text-sm"
                     value={formData.guardianId}
-                    onChange={e => setFormData({...formData, guardianId: e.target.value})}
+                    onChange={(e) => setFormData({...formData, guardianId: e.target.value})}
+                    placeholder="e.g. 123456789"
+                    className="w-full border-2 border-black p-2 font-mono font-bold text-sm focus:bg-yellow-50 outline-none"
                 />
                 </div>
             </div>
 
+            {error && (
+                <div className="bg-red-50 border border-red-100 p-2 text-xs text-red-600 font-bold text-center">
+                  ⚠️ {error}
+                </div>
+            )}
+
             <button
               onClick={handleSave}
-              disabled={loading}
-              className="w-full py-3 bg-red-600 text-white font-bold uppercase border-2 border-black hover:bg-red-500 transition-all flex items-center justify-center gap-2 mt-4"
+              disabled={loading || !formData.guardianId || !formData.guardianName}
+              className="w-full py-3 bg-red-600 text-white font-bold uppercase border-2 border-black hover:bg-red-500 transition-all flex items-center justify-center gap-2 mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? <Loader2 className="animate-spin" /> : <CheckCircle2 />}
-              Activate Protocol
+              {loading ? 'Verifying...' : 'Verify & Activate'}
             </button>
           </div>
         )}
