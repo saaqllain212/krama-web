@@ -1,35 +1,54 @@
-import { getAllSyllabusPaths, getSyllabusData } from '@/lib/syllabus-registry'
-import { Metadata } from 'next'
-import Link from 'next/link'
-import { CheckCircle2, Lock } from 'lucide-react'
 import { notFound } from 'next/navigation'
+import Link from 'next/link'
+import { Metadata } from 'next'
+import { Lock } from 'lucide-react'
+
+// 👇 We now import the metadata separately from the heavy data loader
+import { 
+  getAllSyllabusPaths, 
+  getSyllabusData, 
+  SYLLABUS_METADATA 
+} from '@/lib/syllabus-registry'
+
 import RevisionCalculator from '@/components/public/RevisionCalculator'
 
 type Props = {
   params: Promise<{ exam: string; subject: string }>
 }
 
+// 1. Static Params (Keeps build fast)
 export async function generateStaticParams() {
   return getAllSyllabusPaths()
 }
 
+// 2. Metadata (Uses lightweight SYLLABUS_METADATA to avoid loading JSON)
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { exam, subject } = await params
-  const data = getSyllabusData(exam, subject)
   
-  if (!data) return { title: 'Not Found' }
+  // Quick lookup without loading the heavy JSON
+  const meta = SYLLABUS_METADATA[exam]?.[subject]
+  
+  if (!meta) return { title: 'Not Found' }
 
   return {
-    title: `${data.title} Syllabus Checklist | Krama`,
-    description: `Complete syllabus checklist for ${data.title}. Track your coverage and revision progress with Krama.`,
+    title: `${meta.title} Syllabus Checklist | Krama`,
+    description: `Complete syllabus checklist for ${meta.title}. Track your coverage and revision progress with Krama.`,
   }
 }
 
+// 3. Main Page Component
 export default async function PublicSyllabusPage({ params }: Props) {
   const { exam, subject } = await params
-  const pageData = getSyllabusData(exam, subject)
 
-  if (!pageData) return notFound()
+  // A. Check Metadata first (Fast fail)
+  const meta = SYLLABUS_METADATA[exam]?.[subject]
+  if (!meta) return notFound()
+
+  // B. Load the Heavy JSON Data (Now using await)
+  const syllabusNodes = await getSyllabusData(exam, subject)
+  
+  // If JSON is empty/missing despite metadata existing
+  if (!syllabusNodes) return notFound()
 
   return (
     <div className="min-h-screen bg-[#FBF9F6] font-space text-[#1A1A1A]">
@@ -51,28 +70,28 @@ export default async function PublicSyllabusPage({ params }: Props) {
             Public Tracker
          </div>
          <h1 className="text-4xl md:text-6xl font-black uppercase leading-tight mb-6">
-            {pageData.title}
+            {meta.title}
          </h1>
-         {/* COPY CHANGE: "Official" removed. "Tactical" added. */}
+         {/* COPY: Preserved "Tactical" text */}
          <p className="text-lg md:text-xl text-stone-600 font-medium max-w-2xl mx-auto mb-8">
-            The tactical checklist for {pageData.title}. Stop using PDFs. Use a system that tracks your progress.
+            The tactical checklist for {meta.title}. Stop using PDFs. Use a system that tracks your progress.
          </p>
       </header>
 
       {/* CONTENT */}
       <main className="px-6 pb-20 max-w-3xl mx-auto">
          
-         {/* 1. THE LEAD MAGNET (AT THE TOP) */}
+         {/* 1. THE LEAD MAGNET (Preserved) */}
          <RevisionCalculator />
 
          {/* 2. SYLLABUS LIST */}
          <div className="bg-white border-4 border-black p-8 rounded-2xl shadow-[8px_8px_0_0_#000] mb-12">
             <div className="space-y-6">
-               {pageData.data.map((node: any) => (
+               {syllabusNodes.map((node: any) => (
                   <SyllabusItem key={node.id} node={node} />
                ))}
             </div>
-            {/* LOCKED NOTICE */}
+            {/* LOCKED NOTICE (Preserved) */}
             <div className="mt-12 bg-stone-50 border-2 border-stone-200 p-6 rounded-xl flex flex-col items-center text-center gap-4">
                <Lock className="text-stone-400" size={24} />
                <p className="text-sm text-stone-500 font-bold">Checkboxes are read-only in public mode.</p>
@@ -90,6 +109,7 @@ export default async function PublicSyllabusPage({ params }: Props) {
   )
 }
 
+// 4. Recursive Item Component (Preserved exactly as is)
 function SyllabusItem({ node }: { node: any }) {
   if (node.children && node.children.length > 0) {
     return (
