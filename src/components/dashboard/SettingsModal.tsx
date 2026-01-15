@@ -31,14 +31,23 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
       const fetchSettings = async () => {
         const { data: { user } } = await supabase.auth.getUser()
         if (user) {
+          // 1. Get from DB
           const { data } = await supabase
             .from('syllabus_settings')
             .select('daily_goal_hours')
             .eq('user_id', user.id)
             .single()
+            
           if (data?.daily_goal_hours) {
             setDailyHours(data.daily_goal_hours)
             setInitialHours(data.daily_goal_hours)
+          } else {
+             // Fallback: Check metadata if DB is empty
+             const metaTarget = user.user_metadata?.target_hours
+             if (metaTarget) {
+                 setDailyHours(Number(metaTarget))
+                 setInitialHours(Number(metaTarget))
+             }
           }
         }
       }
@@ -53,16 +62,28 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
     try {
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
+        
+        // 1. Update Database (For Consistency Grid)
         await supabase
           .from('syllabus_settings')
           .update({ daily_goal_hours: dailyHours })
           .eq('user_id', user.id)
         
+        // 2. ✅ FIXED: Update User Metadata (For Sentinel Sync)
+        const { error: metaError } = await supabase.auth.updateUser({
+           data: { target_hours: dailyHours }
+        })
+
+        if (metaError) throw metaError
+        
         setInitialHours(dailyHours)
-        alert("Daily Target Updated")
+        
+        // Force Reload to propagate changes to Sentinel
+        window.location.reload()
       }
     } catch (e) {
-      alert("Failed to save")
+      console.error(e)
+      alert("Failed to save settings.")
     } finally {
       setSavingGoal(false)
     }
@@ -85,7 +106,6 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
           .eq('user_id', user.id)
 
         // 2. NUKE BROWSER STORAGE (Delete Everything)
-        // This ensures the Onboarding Modal triggers because the browser is "empty"
         localStorage.clear() 
         
         // 3. Reload

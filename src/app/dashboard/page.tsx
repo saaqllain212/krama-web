@@ -25,8 +25,9 @@ import OnboardingModal from '@/components/dashboard/OnboardingModal'
 import CheckoutModal from '@/components/dashboard/CheckoutModal'
 import InitiationModal from '@/components/dashboard/InitiationModal'
 import ProtocolManagerModal from '@/components/dashboard/ProtocolManagerModal'
-// ✅ NEW IMPORT: Broadcast Banner
 import BroadcastBanner from '@/components/dashboard/BroadcastBanner'
+// ✅ NEW: Import the Sentinel Widget
+import ProctorWidget from '@/components/dashboard/sentinel/ProctorWidget'
 
 export default function DashboardPage() {
   const [userName, setUserName] = useState('Student')
@@ -68,7 +69,6 @@ export default function DashboardPage() {
         }
 
         // --- 1. FETCH MEMBERSHIP STATUS ---
-        // ✅ UPDATED: Added 'trial_ends_at' to the selection
         const { data: access } = await supabase
           .from('user_access')
           .select('is_premium, trial_starts_at, trial_ends_at')
@@ -79,7 +79,6 @@ export default function DashboardPage() {
           setIsPremium(access.is_premium)
           
           if (!access.is_premium) {
-            // ✅ NEW LOGIC: Use Admin Date if it exists
             const today = new Date()
             let endDate: Date
 
@@ -152,7 +151,7 @@ export default function DashboardPage() {
       {/* ONBOARDING WIZARD */}
       <OnboardingModal />
 
-      {/* ✅ NEW: BROADCAST BANNER (Appears at the very top) */}
+      {/* BROADCAST BANNER */}
       <BroadcastBanner />
 
       {/* HEADER */}
@@ -162,7 +161,7 @@ export default function DashboardPage() {
           {/* TOP ROW: Badge (Left) + Settings (Right) */}
           <div className="mb-4 flex items-center justify-between pr-2">
             
-            {/* STATUS BADGE (CLICKABLE IF FREE) */}
+            {/* STATUS BADGE */}
             <div className="inline-flex">
               {isPremium ? (
                 <div className="flex items-center gap-2 rounded-full border border-black bg-yellow-400 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-black shadow-[2px_2px_0_0_#000]">
@@ -218,7 +217,7 @@ export default function DashboardPage() {
               <Activity size={14} /> Insights
             </Link>
 
-            {/* LOG MOCK: VISIBLE FOR EVERYONE (Even Focus Mode) */}
+            {/* LOG MOCK */}
             <button 
               onClick={() => setIsMocksModalOpen(true)}
               className="rounded-full border border-black/10 bg-black px-5 py-2 text-xs font-bold uppercase tracking-widest text-white hover:bg-stone-800 transition-colors flex items-center gap-2 shadow-lg shadow-black/20"
@@ -234,12 +233,10 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* STATS GRID - ADAPTIVE COLUMNS */}
-      {/* Focus Mode = 3 Columns (Deep Work, Reviews, Mocks) */}
-      {/* Standard Mode = 4 Columns (Deep Work, Reviews, Syllabus, Mocks) */}
+      {/* STATS GRID */}
       <div className={`grid grid-cols-1 gap-6 md:grid-cols-2 ${isFocusMode ? 'lg:grid-cols-3' : 'lg:grid-cols-4'}`}>
         
-        {/* CARD 1: DEEP WORK (Always Visible) */}
+        {/* CARD 1: DEEP WORK */}
         <div className="group relative border-neo bg-black p-6 text-white shadow-neo transition-all hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(245,158,11,1)]">
           <div className="flex items-start justify-between">
             <div>
@@ -252,7 +249,6 @@ export default function DashboardPage() {
           </div>
           <Link href="/dashboard/focus" className="absolute inset-0" />
           
-          {/* FOCUS ANALYTICS BUTTON */}
           <Link 
               href="/dashboard/focus/insights" 
               className="absolute bottom-4 right-4 z-20 rounded-full bg-white/20 p-2 text-white hover:bg-white hover:text-black transition-colors"
@@ -262,7 +258,7 @@ export default function DashboardPage() {
           </Link>
         </div>
 
-        {/* CARD 2: REVIEWS (Always Visible) */}
+        {/* CARD 2: REVIEWS */}
         <div className="group relative border-neo bg-brand p-6 text-black shadow-neo transition-all hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
           <div className="flex items-start justify-between">
             <div>
@@ -293,7 +289,7 @@ export default function DashboardPage() {
               </div>
               <Link href="/dashboard/syllabus" className="absolute inset-0" />
               
-              {/* RADIOACTIVE PROTOCOL MANAGER BUTTON (Only for Custom) */}
+              {/* PROTOCOL MANAGER BUTTON (Custom Only) */}
               {activeExam === 'custom' && (
                   <button 
                     onClick={(e) => {
@@ -309,7 +305,7 @@ export default function DashboardPage() {
             </div>
         )}
 
-        {/* CARD 4: MOCKS (ALWAYS VISIBLE - Even in Focus Mode) */}
+        {/* CARD 4: MOCKS */}
         <div className="group relative border-neo bg-white p-6 shadow-neo transition-all hover:-translate-y-1">
           <div className="flex items-start justify-between">
             <div>
@@ -325,9 +321,19 @@ export default function DashboardPage() {
 
       </div>
 
-      {/* HEATMAP */}
-      <div className="mt-12">
-        <StudyHeatmap />
+      {/* HEATMAP & SENTINEL GRID */}
+      {/* 2 Columns for Heatmap, 1 Column for Sentinel */}
+      <div className="mt-12 grid grid-cols-1 gap-6 lg:grid-cols-3">
+         {/* HEATMAP (2/3 Width) */}
+         <div className="lg:col-span-2">
+            <StudyHeatmap />
+         </div>
+
+         {/* SENTINEL WIDGET (1/3 Width) */}
+         <div className="h-full min-h-[250px]">
+            {/* ✅ FIXED: Single instance with prop */}
+            <ProctorWidget onOpenSettings={() => setIsSettingsOpen(true)} />
+         </div>
       </div>
 
       {/* MOCKS MODAL */}
@@ -344,7 +350,7 @@ export default function DashboardPage() {
         onClose={() => setIsSettingsOpen(false)} 
       />
 
-      {/* CHECKOUT MODAL (For Payments) */}
+      {/* CHECKOUT MODAL */}
       <CheckoutModal 
         isOpen={isCheckoutOpen}
         onClose={() => setIsCheckoutOpen(false)}
@@ -352,7 +358,7 @@ export default function DashboardPage() {
         userEmail={userEmail}
       />
       
-      {/* PROTOCOL MANAGER (Custom Only) */}
+      {/* PROTOCOL MANAGER */}
       <ProtocolManagerModal 
         isOpen={isProtocolManagerOpen}
         onClose={() => setIsProtocolManagerOpen(false)}
