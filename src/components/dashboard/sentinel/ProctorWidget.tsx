@@ -3,18 +3,15 @@
 import { useEffect, useState, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Shield, ShieldAlert, Zap } from 'lucide-react'
-import Link from 'next/link' // 👈 IMPORTED LINK
+import Link from 'next/link'
 import SetupModal from './SetupModal'
 import OfflineEntryModal from './OfflineEntryModal'
 
 type SentinelSettings = {
   guardian_name: string
-  check_in_interval_hours: number
-  last_active_at: string
   is_active: boolean
-  offline_quota_used: number
-  last_quota_reset_at: string
   guardian_chat_id: string 
+  offline_quota_used: number
 }
 
 export default function ProctorWidget({ onOpenSettings }: { onOpenSettings: () => void }) {
@@ -49,19 +46,7 @@ export default function ProctorWidget({ onOpenSettings }: { onOpenSettings: () =
         .eq('user_id', user.id)
         .single()
       
-      if (sData) {
-        setSettings(sData)
-        // Check for Weekly Quota Reset
-        const lastReset = new Date(sData.last_quota_reset_at).getTime()
-        const now = new Date().getTime()
-        if (now - lastReset > (7 * 24 * 60 * 60 * 1000)) {
-           await supabase.from('sentinel_settings').update({
-             offline_quota_used: 0,
-             last_quota_reset_at: new Date().toISOString()
-           }).eq('user_id', user.id)
-           sData.offline_quota_used = 0
-        }
-      }
+      if (sData) setSettings(sData)
 
       // 2. Load Target
       const metaTarget = user.user_metadata?.target_hours
@@ -86,37 +71,52 @@ export default function ProctorWidget({ onOpenSettings }: { onOpenSettings: () =
     load()
   }, []) 
 
-  // Timer Logic
+  // --- 🧠 THE NEW "POINT OF NO RETURN" LOGIC ---
   useEffect(() => {
     if (!settings || !settings.is_active) return
 
     const timer = setInterval(() => {
-      const lastActive = new Date(settings.last_active_at).getTime()
-      const intervalMs = settings.check_in_interval_hours * 60 * 60 * 1000
-      const deadline = lastActive + intervalMs
-      const now = new Date().getTime()
-      const diff = deadline - now
+      const now = new Date()
+      
+      // 1. Calculate Midnight (The Hard Deadline)
+      const midnight = new Date()
+      midnight.setHours(24, 0, 0, 0)
+      
+      const msUntilMidnight = midnight.getTime() - now.getTime()
+      
+      // 2. Calculate Work Remaining
+      const hoursNeeded = Math.max(0, targetHours - hoursLogged)
+      const msNeeded = hoursNeeded * 60 * 60 * 1000
 
+      // 3. The Buffer (Time allowed to slack off)
+      // If Buffer < 0, it means we don't have enough time left in the day to finish.
+      const bufferMs = msUntilMidnight - msNeeded
+      
       const goalMet = hoursLogged >= targetHours
 
       if (goalMet) {
         setStatus('safe')
         setTimeLeft("GOAL MET")
-      } else if (diff <= 0) {
+      } 
+      else if (bufferMs <= 0) {
+        // 🚨 POINT OF NO RETURN CROSSED
         setStatus('danger')
         setTimeLeft("00:00:00")
         
         if (!hasAlertedRef.current) {
-             triggerFailure(settings, targetHours - hoursLogged)
+             triggerFailure(settings, hoursNeeded)
         }
-
-      } else {
-        const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
-        const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
-        const s = Math.floor((diff % (1000 * 60)) / 1000)
+      } 
+      else {
+        // Countdown matches the BUFFER, not just midnight.
+        // It tells you "You have X hours left TO START before you fail."
+        const h = Math.floor(bufferMs / (1000 * 60 * 60))
+        const m = Math.floor((bufferMs % (1000 * 60 * 60)) / (1000 * 60))
+        const s = Math.floor((bufferMs % (1000 * 60)) / 1000)
         setTimeLeft(`${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`)
 
-        if (diff < (3 * 60 * 60 * 1000)) setStatus('warning')
+        // Warn if buffer is low (less than 2 hours of "slack" time left)
+        if (bufferMs < (2 * 60 * 60 * 1000)) setStatus('warning')
         else setStatus('safe')
       }
     }, 1000)
@@ -188,7 +188,7 @@ export default function ProctorWidget({ onOpenSettings }: { onOpenSettings: () =
              </div>
              {status === 'danger' && (
                <div className="mt-2 text-xs bg-black/20 p-1 font-bold text-center animate-pulse">
-                 {hasAlerted ? "⚠️ ALERT SENT." : "⚠️ ALERTING GUARDIAN..."}
+                 {hasAlerted ? "⚠️ ALERT SENT." : "⚠️ POINT OF NO RETURN."}
                </div>
              )}
           </div>
@@ -204,7 +204,6 @@ export default function ProctorWidget({ onOpenSettings }: { onOpenSettings: () =
              </button>
           ) : (
              <>
-               {/* 👇 CHANGED TO LINK: Connects to your existing Focus Page */}
                <Link href="/dashboard/focus" className="flex-1 py-2 bg-black text-white font-bold uppercase text-[10px] flex items-center justify-center gap-1 hover:bg-gray-900">
                   <Zap size={12}/> Focus Mode
                </Link>

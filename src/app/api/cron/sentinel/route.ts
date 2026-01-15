@@ -2,14 +2,11 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { sendAlertMessage } from '@/sentinel/telegram';
 
-// CRON JOB: Runs every 15 minutes to check for dead sentinels
 export async function GET() {
   const supabase = createClient();
   
   try {
-    // 1. Get all ACTIVE Sentinels
-    // We also join with syllabus_settings to know their Daily Target
-    const { data: sentinels, error } = await (await supabase)
+    const { data: sentinels } = await (await supabase)
       .from('sentinel_settings')
       .select(`
         *,
@@ -18,71 +15,62 @@ export async function GET() {
       .eq('is_active', true)
       .not('guardian_chat_id', 'is', null);
 
-    if (error) throw error;
-    if (!sentinels || sentinels.length === 0) return NextResponse.json({ ok: true, scanned: 0 });
+    if (!sentinels || sentinels.length === 0) return NextResponse.json({ ok: true });
 
     let alertsSent = 0;
     const now = new Date();
 
-    // 2. Loop through every user
     for (const user of sentinels) {
-      
-      // A. Check if the "Dead Man's Switch" has expired
-      const lastActive = new Date(user.last_active_at).getTime();
-      const intervalMs = (user.check_in_interval_hours || 4) * 60 * 60 * 1000;
-      const deadline = lastActive + intervalMs;
-      
-      // If time is NOT up, skip them.
-      if (now.getTime() < deadline) continue;
-
-      // B. Check if we already yelled at them today (Anti-Spam)
-      // If last_alerted_at was less than 16 hours ago, skip.
+      // 1. Check Anti-Spam (Don't alert twice in 20 hours)
       if (user.last_alerted_at) {
         const lastAlert = new Date(user.last_alerted_at).getTime();
-        const hoursSinceAlert = (now.getTime() - lastAlert) / (1000 * 60 * 60);
-        if (hoursSinceAlert < 16) continue;
+        if ((now.getTime() - lastAlert) < (20 * 60 * 60 * 1000)) continue;
       }
 
-      // C. CRITICAL CHECK: Did they actually finish their work?
-      // Just because the timer expired doesn't mean they failed. They might be done for the day.
-      // We check their total logs for today.
-      const startOfDay = new Date();
-      startOfDay.setHours(0,0,0,0);
+      // 2. Check "Point of No Return"
+      const targetHours = user.syllabus_settings?.daily_goal_hours || 4;
       
+      // Calculate Hours Logged Today
+      const startOfDay = new Date(); startOfDay.setHours(0,0,0,0);
       const { data: logs } = await (await supabase)
         .from('focus_logs')
         .select('duration_minutes')
         .eq('user_id', user.user_id)
         .gte('started_at', startOfDay.toISOString());
 
-      const totalMinutes = logs?.reduce((acc, curr) => acc + (curr.duration_minutes || 0), 0) || 0;
-      const targetHours = user.syllabus_settings?.daily_goal_hours || 4; // Default to 4 if missing
-      
-      // If they met the goal, DO NOT ALERT.
-      if ((totalMinutes / 60) >= targetHours) continue;
+      const loggedHours = (logs?.reduce((acc, curr) => acc + (curr.duration_minutes || 0), 0) || 0) / 60;
+      const hoursRemaining = Math.max(0, targetHours - loggedHours);
 
-      // D. FIRE THE ALERT (They failed time, they failed goal, and we haven't yelled yet)
-      const hoursMissed = (targetHours - (totalMinutes / 60)).toFixed(1);
-      
-      await sendAlertMessage(
-        user.guardian_chat_id, 
-        user.guardian_name || 'Guardian', 
-        hoursMissed
-      );
+      // Time left in the day (until Midnight)
+      const midnight = new Date(); midnight.setHours(24,0,0,0);
+      const hoursLeftInDay = (midnight.getTime() - now.getTime()) / (1000 * 60 * 60);
 
-      // E. Update the Database (So we don't yell again today)
-      await (await supabase)
-        .from('sentinel_settings')
-        .update({ last_alerted_at: now.toISOString() })
-        .eq('id', user.id);
+      // If they have completed the goal, SKIP.
+      if (loggedHours >= targetHours) continue;
 
-      alertsSent++;
+      // 🚨 FAILURE CONDITION:
+      // If the hours they need is GREATER than the hours left in the day.
+      // Example: Need 4 hours, but only 3 hours left until midnight.
+      if (hoursRemaining > hoursLeftInDay) {
+         
+         await sendAlertMessage(
+            user.guardian_chat_id, 
+            user.guardian_name || 'Guardian', 
+            hoursRemaining.toFixed(1)
+         );
+
+         await (await supabase)
+            .from('sentinel_settings')
+            .update({ last_alerted_at: now.toISOString() })
+            .eq('id', user.id);
+
+         alertsSent++;
+      }
     }
 
-    return NextResponse.json({ ok: true, scanned: sentinels.length, alerts: alertsSent });
+    return NextResponse.json({ ok: true, alerts: alertsSent });
 
   } catch (err: any) {
-    console.error("Cron Error:", err);
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }

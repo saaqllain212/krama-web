@@ -63,7 +63,6 @@ export default function FocusPage() {
   const handleSave = async () => {
     const duration = Math.floor((targetMinutes * 60 - secondsLeft) / 60)
     
-    // Minimum 1 minute to save
     if (duration < 1) {
       if (!isActive) showAlert("Session too short to record.", "neutral")
       return
@@ -75,22 +74,19 @@ export default function FocusPage() {
       if (user) {
         const now = new Date().toISOString()
 
-        // 1. Log the Session (Your existing logic)
+        // 1. Log the Session
         const { error: logError } = await supabase.from('focus_logs').insert({
           user_id: user.id,
           duration_minutes: duration,
           topic: topic || 'Unlabeled Session',
-          started_at: now // Added for better data accuracy (optional but recommended)
+          started_at: now 
         })
         
         if (logError) throw logError
 
-        // 2. ⚡ RESET THE SENTINEL (The "Ping")
-        // This updates the 'last_active_at' timestamp, pushing the deadline forward.
-        await supabase
-            .from('sentinel_settings')
-            .update({ last_active_at: now })
-            .eq('user_id', user.id)
+        // ❌ REMOVED: The "Reset" Logic. 
+        // We no longer update 'last_active_at' here. 
+        // Logging time increases your Score, but implies no change to the Deadline.
         
         showAlert(`Log Saved: ${duration}m on ${topic || 'Task'}`, 'success')
         
@@ -119,8 +115,6 @@ export default function FocusPage() {
       className={`min-h-screen bg-[#FBF9F6] text-black flex flex-col items-center justify-center overflow-hidden transition-all duration-500
       ${isActive ? 'fixed inset-0 z-50' : 'relative'}`}
     >
-      
-      {/* Background Pulse */}
       <motion.div 
         animate={{ opacity: isActive ? 0.4 : 0 }}
         transition={{ duration: 2, repeat: Infinity, repeatType: "reverse" }}
@@ -131,10 +125,7 @@ export default function FocusPage() {
         <ArrowLeft size={16} /> {isActive ? 'Exit Zen Mode' : 'Dashboard'}
       </Link>
 
-      {/* Main Container */}
       <div className="z-10 flex flex-col items-center w-full max-w-xl" suppressHydrationWarning>
-        
-        {/* TOPIC HEADER */}
         <div className="mb-10 w-full text-center relative group">
           <label className="text-[10px] font-black uppercase tracking-[0.2em] text-black/30 mb-2 block">
             Current Objective
@@ -149,10 +140,8 @@ export default function FocusPage() {
           {!isActive && <Pencil size={14} className="absolute right-0 top-1/2 -translate-y-1/2 text-black/10 opacity-0 group-hover:opacity-100 transition-opacity" />}
         </div>
 
-        {/* THE TIMER RING */}
         <div className="relative mb-12 group">
           <div className="relative w-[300px] h-[300px] md:w-[380px] md:h-[380px] flex items-center justify-center">
-            
             <svg className="w-full h-full -rotate-90 drop-shadow-xl">
               <circle cx="50%" cy="50%" r="48%" fill="none" stroke="#E5E5E5" strokeWidth="12" />
               <motion.circle
@@ -166,7 +155,6 @@ export default function FocusPage() {
                 transition={{ duration: 1, ease: "linear" }}
               />
             </svg>
-
             <div className="absolute inset-0 flex flex-col items-center justify-center">
               {isEditing ? (
                 <div className="flex items-end gap-2 bg-white/90 p-6 border-4 border-black shadow-[8px_8px_0_0_rgba(0,0,0,1)] z-20">
@@ -203,7 +191,6 @@ export default function FocusPage() {
           </div>
         </div>
 
-        {/* CONTROLS */}
         <div className="flex items-center gap-6 mb-8">
           <button 
             onClick={resetTimer}
@@ -213,7 +200,6 @@ export default function FocusPage() {
           >
             <RotateCcw size={20} strokeWidth={2.5} />
           </button>
-
           <button 
             onClick={toggleTimer}
             className={`h-24 w-24 md:h-28 md:w-28 flex items-center justify-center rounded-full border-[6px] border-black shadow-[6px_6px_0_0_rgba(0,0,0,1)] transition-all active:translate-y-1 active:shadow-none
@@ -225,7 +211,6 @@ export default function FocusPage() {
               <Play size={40} className="fill-amber-500 text-amber-500 ml-2" />
             )}
           </button>
-
           <button 
             onClick={handleSave}
             disabled={isActive || secondsLeft === targetMinutes * 60}
@@ -236,7 +221,6 @@ export default function FocusPage() {
           </button>
         </div>
 
-        {/* PRESETS */}
         {!isActive && (
           <div className="flex gap-3 animate-in fade-in slide-in-from-bottom-4">
              {PRESETS.map(min => (
@@ -253,7 +237,6 @@ export default function FocusPage() {
              ))}
           </div>
         )}
-
       </div>
     </div>
   )
