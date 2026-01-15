@@ -63,6 +63,7 @@ export default function FocusPage() {
   const handleSave = async () => {
     const duration = Math.floor((targetMinutes * 60 - secondsLeft) / 60)
     
+    // Minimum 1 minute to save
     if (duration < 1) {
       if (!isActive) showAlert("Session too short to record.", "neutral")
       return
@@ -72,15 +73,27 @@ export default function FocusPage() {
     try {
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
-        await supabase.from('focus_logs').insert({
+        const now = new Date().toISOString()
+
+        // 1. Log the Session (Your existing logic)
+        const { error: logError } = await supabase.from('focus_logs').insert({
           user_id: user.id,
           duration_minutes: duration,
-          topic: topic || 'Unlabeled Session'
+          topic: topic || 'Unlabeled Session',
+          started_at: now // Added for better data accuracy (optional but recommended)
         })
+        
+        if (logError) throw logError
+
+        // 2. ⚡ RESET THE SENTINEL (The "Ping")
+        // This updates the 'last_active_at' timestamp, pushing the deadline forward.
+        await supabase
+            .from('sentinel_settings')
+            .update({ last_active_at: now })
+            .eq('user_id', user.id)
         
         showAlert(`Log Saved: ${duration}m on ${topic || 'Task'}`, 'success')
         
-        // ✅ FIX 1: Burn the Tape (Reset immediately so they can't save twice)
         resetTimer()
       }
     } catch (e) {
@@ -102,7 +115,6 @@ export default function FocusPage() {
   }
 
   return (
-    // ✅ FIX 2: Zen Mode (Fixed Position covers everything when active)
     <div 
       className={`min-h-screen bg-[#FBF9F6] text-black flex flex-col items-center justify-center overflow-hidden transition-all duration-500
       ${isActive ? 'fixed inset-0 z-50' : 'relative'}`}

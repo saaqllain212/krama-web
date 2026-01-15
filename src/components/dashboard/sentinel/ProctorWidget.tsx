@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Shield, ShieldAlert, Zap } from 'lucide-react'
+import Link from 'next/link' // 👈 IMPORTED LINK
 import SetupModal from './SetupModal'
 import OfflineEntryModal from './OfflineEntryModal'
 
@@ -13,7 +14,7 @@ type SentinelSettings = {
   is_active: boolean
   offline_quota_used: number
   last_quota_reset_at: string
-  guardian_chat_id: string // Needed for the alert
+  guardian_chat_id: string 
 }
 
 export default function ProctorWidget({ onOpenSettings }: { onOpenSettings: () => void }) {
@@ -26,9 +27,9 @@ export default function ProctorWidget({ onOpenSettings }: { onOpenSettings: () =
   const [hoursLogged, setHoursLogged] = useState(0)
   const [targetHours, setTargetHours] = useState(6) 
   
-  // Alert State (To prevent spamming the API)
+  // Alert State
   const [hasAlerted, setHasAlerted] = useState(false)
-  const hasAlertedRef = useRef(false) // Ref for immediate logic access
+  const hasAlertedRef = useRef(false) 
   
   // Modals
   const [showSetup, setShowSetup] = useState(false)
@@ -62,7 +63,7 @@ export default function ProctorWidget({ onOpenSettings }: { onOpenSettings: () =
         }
       }
 
-      // 2. Load Target (From Metadata)
+      // 2. Load Target
       const metaTarget = user.user_metadata?.target_hours
       if (metaTarget) setTargetHours(Number(metaTarget))
 
@@ -96,7 +97,6 @@ export default function ProctorWidget({ onOpenSettings }: { onOpenSettings: () =
       const now = new Date().getTime()
       const diff = deadline - now
 
-      // Logic: If goal met, SAFE.
       const goalMet = hoursLogged >= targetHours
 
       if (goalMet) {
@@ -106,7 +106,6 @@ export default function ProctorWidget({ onOpenSettings }: { onOpenSettings: () =
         setStatus('danger')
         setTimeLeft("00:00:00")
         
-        // 🚨 TRIGGER ALERT (ONCE ONLY)
         if (!hasAlertedRef.current) {
              triggerFailure(settings, targetHours - hoursLogged)
         }
@@ -127,9 +126,6 @@ export default function ProctorWidget({ onOpenSettings }: { onOpenSettings: () =
   const triggerFailure = async (s: SentinelSettings, missingHours: number) => {
       hasAlertedRef.current = true
       setHasAlerted(true)
-
-      console.log("🚨 SENTINEL TRIGGERED. ALERTING GUARDIAN.")
-
       try {
         await fetch('/api/sentinel/alert', {
             method: 'POST',
@@ -182,7 +178,6 @@ export default function ProctorWidget({ onOpenSettings }: { onOpenSettings: () =
           <div className="mb-4">
              <div className="flex justify-between text-xs font-bold uppercase mb-1">
                <span>Daily Progress</span>
-               {/* Show decimal if target is small (Test Mode support) */}
                <span>{hoursLogged.toFixed(2)} / {targetHours} Hrs</span>
              </div>
              <div className="w-full h-3 border-2 border-black bg-white/50 relative overflow-hidden">
@@ -209,9 +204,11 @@ export default function ProctorWidget({ onOpenSettings }: { onOpenSettings: () =
              </button>
           ) : (
              <>
-               <button className="flex-1 py-2 bg-black text-white font-bold uppercase text-[10px] flex items-center justify-center gap-1 hover:bg-gray-900">
+               {/* 👇 CHANGED TO LINK: Connects to your existing Focus Page */}
+               <Link href="/dashboard/focus" className="flex-1 py-2 bg-black text-white font-bold uppercase text-[10px] flex items-center justify-center gap-1 hover:bg-gray-900">
                   <Zap size={12}/> Focus Mode
-               </button>
+               </Link>
+               
                <button 
                   onClick={() => setShowOffline(true)}
                   className="flex-1 py-2 border-2 border-current font-bold uppercase text-[10px] hover:bg-black/10"
