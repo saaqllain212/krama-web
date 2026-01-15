@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Shield, ShieldAlert, Zap } from 'lucide-react'
 import SetupModal from './SetupModal'
@@ -13,6 +13,7 @@ type SentinelSettings = {
   is_active: boolean
   offline_quota_used: number
   last_quota_reset_at: string
+  guardian_chat_id: string // Needed for the alert
 }
 
 export default function ProctorWidget({ onOpenSettings }: { onOpenSettings: () => void }) {
@@ -24,6 +25,10 @@ export default function ProctorWidget({ onOpenSettings }: { onOpenSettings: () =
   const [status, setStatus] = useState<'safe' | 'warning' | 'danger' | 'inactive'>('inactive')
   const [hoursLogged, setHoursLogged] = useState(0)
   const [targetHours, setTargetHours] = useState(6) 
+  
+  // Alert State (To prevent spamming the API)
+  const [hasAlerted, setHasAlerted] = useState(false)
+  const hasAlertedRef = useRef(false) // Ref for immediate logic access
   
   // Modals
   const [showSetup, setShowSetup] = useState(false)
@@ -66,12 +71,11 @@ export default function ProctorWidget({ onOpenSettings }: { onOpenSettings: () =
       
       const { data: logs } = await supabase
         .from('focus_logs')
-        .select('duration_minutes') // ✅ FIXED: Read the correct column
+        .select('duration_minutes')
         .eq('user_id', user.id)
         .gte('started_at', startOfDay.toISOString())
 
       if (logs) {
-        // ✅ FIXED: Sum minutes, then convert to hours
         const totalMinutes = logs.reduce((acc, curr) => acc + (curr.duration_minutes || 0), 0)
         setHoursLogged(totalMinutes / 60)
       }
@@ -101,6 +105,12 @@ export default function ProctorWidget({ onOpenSettings }: { onOpenSettings: () =
       } else if (diff <= 0) {
         setStatus('danger')
         setTimeLeft("00:00:00")
+        
+        // 🚨 TRIGGER ALERT (ONCE ONLY)
+        if (!hasAlertedRef.current) {
+             triggerFailure(settings, targetHours - hoursLogged)
+        }
+
       } else {
         const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
         const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
@@ -113,6 +123,27 @@ export default function ProctorWidget({ onOpenSettings }: { onOpenSettings: () =
     }, 1000)
     return () => clearInterval(timer)
   }, [settings, hoursLogged, targetHours])
+
+  const triggerFailure = async (s: SentinelSettings, missingHours: number) => {
+      hasAlertedRef.current = true
+      setHasAlerted(true)
+
+      console.log("🚨 SENTINEL TRIGGERED. ALERTING GUARDIAN.")
+
+      try {
+        await fetch('/api/sentinel/alert', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                guardianId: s.guardian_chat_id,
+                guardianName: s.guardian_name,
+                hoursMissed: missingHours.toFixed(1)
+            })
+        })
+      } catch (err) {
+          console.error("Failed to fire alert", err)
+      }
+  }
 
   if (loading) return <div className="h-48 bg-gray-100 border-2 border-black animate-pulse" />
 
@@ -162,7 +193,7 @@ export default function ProctorWidget({ onOpenSettings }: { onOpenSettings: () =
              </div>
              {status === 'danger' && (
                <div className="mt-2 text-xs bg-black/20 p-1 font-bold text-center animate-pulse">
-                 ⚠️ ALERTING GUARDIAN...
+                 {hasAlerted ? "⚠️ ALERT SENT." : "⚠️ ALERTING GUARDIAN..."}
                </div>
              )}
           </div>

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
-import { X, Trash2, RotateCcw, Loader2, Zap, AlertCircle, Target } from 'lucide-react'
+import { X, Trash2, RotateCcw, Zap, AlertCircle, Target, Check, AlertTriangle } from 'lucide-react'
 import { useSyllabus } from '@/context/SyllabusContext'
 
 interface SettingsModalProps {
@@ -21,6 +21,9 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
   const [dailyHours, setDailyHours] = useState(6)
   const [initialHours, setInitialHours] = useState(6)
   const [savingGoal, setSavingGoal] = useState(false)
+  
+  // 🔔 NEW: Custom Notification State
+  const [statusMsg, setStatusMsg] = useState<{type: 'success' | 'error', text: string} | null>(null)
 
   const router = useRouter()
   const supabase = createClient()
@@ -31,7 +34,6 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
       const fetchSettings = async () => {
         const { data: { user } } = await supabase.auth.getUser()
         if (user) {
-          // 1. Get from DB
           const { data } = await supabase
             .from('syllabus_settings')
             .select('daily_goal_hours')
@@ -42,7 +44,6 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
             setDailyHours(data.daily_goal_hours)
             setInitialHours(data.daily_goal_hours)
           } else {
-             // Fallback: Check metadata if DB is empty
              const metaTarget = user.user_metadata?.target_hours
              if (metaTarget) {
                  setDailyHours(Number(metaTarget))
@@ -55,21 +56,29 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
     }
   }, [open])
 
+  // Clear status after 3 seconds
+  useEffect(() => {
+    if (statusMsg) {
+      const timer = setTimeout(() => setStatusMsg(null), 3000)
+      return () => clearTimeout(timer)
+    }
+  }, [statusMsg])
+
   if (!open) return null
 
   const handleSaveGoal = async () => {
     setSavingGoal(true)
+    setStatusMsg(null) // Clear previous
     try {
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
-        
-        // 1. Update Database (For Consistency Grid)
+        // 1. Update Database
         await supabase
           .from('syllabus_settings')
           .update({ daily_goal_hours: dailyHours })
           .eq('user_id', user.id)
         
-        // 2. ✅ FIXED: Update User Metadata (For Sentinel Sync)
+        // 2. Update Metadata
         const { error: metaError } = await supabase.auth.updateUser({
            data: { target_hours: dailyHours }
         })
@@ -78,44 +87,40 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
         
         setInitialHours(dailyHours)
         
-        // Force Reload to propagate changes to Sentinel
-        window.location.reload()
+        // ✅ SUCCESS FEEDBACK (No Alert)
+        setStatusMsg({ type: 'success', text: 'PROTOCOL CALIBRATED. TARGET UPDATED.' })
+        
+        // Reload after a brief delay so they see the message
+        setTimeout(() => window.location.reload(), 1500)
       }
     } catch (e) {
       console.error(e)
-      alert("Failed to save settings.")
+      setStatusMsg({ type: 'error', text: 'SAVE FAILED. CHECK CONSOLE.' })
     } finally {
       setSavingGoal(false)
     }
   }
 
-  // --- THE NUCLEAR OPTION ---
+  const closeAndReset = () => {
+    setActiveTab(null)
+    setConfirmText('')
+    setShowSwitchConfirm(false)
+    setStatusMsg(null)
+    onClose()
+  }
+
+  // ... (Keep existing handlers for Reset/Delete/Switch)
   const handleSwitchProtocol = async () => {
-    if (!showSwitchConfirm) {
-        setShowSwitchConfirm(true)
-        return
-    }
+    if (!showSwitchConfirm) { setShowSwitchConfirm(true); return }
     setLoading(true)
     try {
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
-        // 1. Reset Database
-        await supabase
-          .from('syllabus_settings')
-          .update({ active_exam_id: null })
-          .eq('user_id', user.id)
-
-        // 2. NUKE BROWSER STORAGE (Delete Everything)
+        await supabase.from('syllabus_settings').update({ active_exam_id: null }).eq('user_id', user.id)
         localStorage.clear() 
-        
-        // 3. Reload
         window.location.reload()
       }
-    } catch (err) {
-      setLoading(false)
-      setShowSwitchConfirm(false)
-      alert("Failed to switch.")
-    }
+    } catch (err) { setLoading(false); setShowSwitchConfirm(false); setStatusMsg({type: 'error', text: "Switch Failed"}); }
   }
 
   const handleReset = async () => {
@@ -125,10 +130,7 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
       const { error } = await supabase.rpc('reset_user_progress')
       if (error) throw error
       window.location.reload()
-    } catch (err) {
-      setLoading(false)
-      alert("Reset failed")
-    }
+    } catch (err) { setLoading(false); setStatusMsg({type: 'error', text: "Reset Failed"}); }
   }
 
   const handleDelete = async () => {
@@ -138,22 +140,21 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
       await fetch('/api/auth/delete-account', { method: 'DELETE' })
       await supabase.auth.signOut()
       router.replace('/')
-    } catch (err) {
-      setLoading(false)
-      alert("Delete failed")
-    }
-  }
-
-  const closeAndReset = () => {
-    setActiveTab(null)
-    setConfirmText('')
-    setShowSwitchConfirm(false)
-    onClose()
+    } catch (err) { setLoading(false); setStatusMsg({type: 'error', text: "Delete Failed"}); }
   }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-      <div className="w-full max-w-lg border-2 border-black bg-white shadow-[8px_8px_0_0_#000] max-h-[90vh] overflow-y-auto">
+      <div className="w-full max-w-lg border-2 border-black bg-white shadow-[8px_8px_0_0_#000] max-h-[90vh] overflow-y-auto relative">
+        
+        {/* 🔔 STATUS BANNER (Absolute Position) */}
+        {statusMsg && (
+          <div className={`absolute top-0 left-0 right-0 p-3 text-white font-bold text-xs uppercase flex items-center justify-center gap-2 z-20 animate-in slide-in-from-top-2 ${statusMsg.type === 'success' ? 'bg-black' : 'bg-red-600'}`}>
+            {statusMsg.type === 'success' ? <Check size={14} /> : <AlertTriangle size={14} />}
+            {statusMsg.text}
+          </div>
+        )}
+
         <div className="flex items-center justify-between border-b-2 border-black bg-stone-100 p-4 sticky top-0 z-10">
           <h2 className="text-lg font-black uppercase tracking-tight">System Configuration</h2>
           <button onClick={closeAndReset} className="hover:text-red-600 transition-colors">
@@ -176,7 +177,9 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
                    </div>
                    <input type="range" min="1" max="14" step="1" value={dailyHours} onChange={(e) => setDailyHours(parseInt(e.target.value))} className="w-full h-2 bg-stone-200 rounded-lg appearance-none cursor-pointer accent-black mb-4" />
                    {dailyHours !== initialHours && (
-                     <button onClick={handleSaveGoal} disabled={savingGoal} className="w-full bg-black text-white py-2 text-xs font-bold uppercase hover:bg-stone-800 transition-all">{savingGoal ? 'Calibrating...' : 'Update Target'}</button>
+                     <button onClick={handleSaveGoal} disabled={savingGoal} className="w-full bg-black text-white py-2 text-xs font-bold uppercase hover:bg-stone-800 transition-all">
+                        {savingGoal ? 'Calibrating...' : 'Update Target'}
+                     </button>
                    )}
                 </div>
              </div>
@@ -212,6 +215,7 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
           {/* DANGER ZONE */}
           <div className="border-t-2 border-stone-100 relative"><span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-white px-2 text-[10px] font-bold uppercase text-stone-300">Danger Zone</span></div>
 
+          {/* Reset Progress */}
           <div className="border-2 border-dashed border-stone-300 p-4 hover:border-black transition-colors group">
             <div className="flex items-start gap-4">
               <div className="bg-stone-100 p-3 rounded-full group-hover:bg-black group-hover:text-white transition-colors"><RotateCcw size={20} /></div>
@@ -230,6 +234,7 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
             </div>
           </div>
           
+           {/* Delete Account */}
            <div className="border-2 border-dashed border-red-200 bg-red-50/50 p-4 hover:border-red-600 transition-colors group">
             <div className="flex items-start gap-4">
               <div className="bg-white p-3 rounded-full text-red-600 border border-red-100 group-hover:bg-red-600 group-hover:text-white transition-colors"><Trash2 size={20} /></div>

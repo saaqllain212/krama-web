@@ -20,7 +20,7 @@ async function sendTelegramMessage(chatId: string, text: string) {
       body: JSON.stringify({
         chat_id: chatId,
         text: text,
-        parse_mode: 'Markdown' // Allows us to use **bold** text
+        parse_mode: 'Markdown' // Allows us to use *bold* text
       })
     });
 
@@ -28,7 +28,10 @@ async function sendTelegramMessage(chatId: string, text: string) {
     
     if (!data.ok) {
       console.error("⚠️ Telegram Error:", data.description);
+      throw new Error(data.description);
     }
+    
+    return data;
   } catch (error) {
     console.error("❌ Network Error sending Telegram message:", error);
   }
@@ -36,16 +39,23 @@ async function sendTelegramMessage(chatId: string, text: string) {
 
 /**
  * 2. Alert the Guardian (The "Trigger")
- * Runs when the timer hits 0.
+ * This is the SHAME message sent when the timer hits 0.
+ * Referenced by: /api/sentinel/alert/route.ts
  */
-export async function notifyGuardian(chatId: string, studentName: string, hoursInactive: number) {
-  const message = `🚨 *Krama Protocol Alert*
-  
-Student: _${studentName}_
-Status: ❌ **MIA (Missing In Action)**
-Inactive for: ${hoursInactive} hours.
+export async function sendAlertMessage(chatId: string, guardianName: string, hoursMissed: number | string) {
+  const message = `🚨 *SENTINEL PROTOCOL ALERT* 🚨
 
-Please check on them immediately. They have failed to check in.`;
+Hello *${guardianName}*,
+
+This is an automated notification from Krama.
+*The user has FAILED their daily Deep Work goal.*
+
+📉 *Missed by:* ${hoursMissed} Hours
+
+They promised to do the work, but they did not. 
+It is your duty to hold them accountable.
+
+_"Discipline is destiny."_`;
 
   await sendTelegramMessage(chatId, message);
 }
@@ -53,6 +63,7 @@ Please check on them immediately. They have failed to check in.`;
 /**
  * 3. Warn the Student (The "Nudge")
  * Runs when time is running low (e.g., 2 hours left).
+ * Feature preserved for future nudges.
  */
 export async function warnStudent(chatId: string, hoursLeft: number) {
   const message = `⚠️ *Proctor Warning*
