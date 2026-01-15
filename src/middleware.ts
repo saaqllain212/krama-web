@@ -9,7 +9,7 @@ export async function middleware(request: NextRequest) {
     },
   })
 
-  // 2. Create the Supabase client (The "Bouncer")
+  // 2. Create the Supabase client
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -19,7 +19,6 @@ export async function middleware(request: NextRequest) {
           return request.cookies.getAll()
         },
         setAll(cookiesToSet) {
-          // This updates the response with new cookies (e.g. refreshing session)
           cookiesToSet.forEach(({ name, value, options }) => {
             request.cookies.set(name, value)
           })
@@ -34,29 +33,34 @@ export async function middleware(request: NextRequest) {
     }
   )
 
-  // 3. Check the User ID (The "ID Check")
-  // malicious users can fake cookies, so we always call getUser() to verify on the server
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  // 4. Define Your Rules (The "List")
+  // 3. Analyze the Path FIRST (Moved up for performance)
   const path = request.nextUrl.pathname
   const isDashboard = path.startsWith('/dashboard')
   const isAdmin = path.startsWith('/admin')
   const isAuthPage = path === '/login' || path === '/signup'
 
-  // SCENARIO A: The Intruder
-  // Trying to access dashboard without a user session
+  // 4. Smart Auth Check (The Optimization)
+  // We only check the database if we actually need to know who the user is.
+  // This saves resources on the Landing Page and Public Syllabus.
+  let user = null
+  
+  if (isDashboard || isAdmin || isAuthPage) {
+    const { data } = await supabase.auth.getUser()
+    user = data.user
+  }
+
+  // 5. Apply Rules (Your Exact Logic Preserved)
+
+  // SCENARIO A: The Intruder (Dashboard Protection)
   if (isDashboard && !user) {
     const url = request.nextUrl.clone()
     url.pathname = '/login'
     return NextResponse.redirect(url)
   }
 
-  // SCENARIO B: The Imposter (Admin Protection) - NEW SECURITY FIX
-  // Only allow access if the email matches the secure server-side variable
+  // SCENARIO B: The Imposter (Admin Protection)
   if (isAdmin) {
+    // We use your secure environment variable check
     if (!user || user.email !== process.env.ADMIN_EMAIL) {
        const url = request.nextUrl.clone()
        // If they are logged in but not admin, send to dashboard. Otherwise login.
@@ -65,30 +69,29 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // SCENARIO C: The Confused Member
-  // Trying to login when already logged in
+  // SCENARIO C: The Confused Member (Already logged in)
   if (isAuthPage && user) {
     const url = request.nextUrl.clone()
     url.pathname = '/dashboard'
     return NextResponse.redirect(url)
   }
 
-  // SCENARIO D: The Guest (Landing Page)
-  // Allow them to proceed
+  // SCENARIO D: The Guest (Landing Page / Public Syllabus)
+  // We did not run getUser(), so this response is instant.
   return response
 }
 
-// 5. Configure the Matcher
-// This tells Next.js which pages to ignore (like images, static files, etc.)
+// 6. Configure the Matcher
 export const config = {
   matcher: [
     /*
-     * Match all request paths except for the ones starting with:
+     * Match all request paths except:
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
-     * - public (public folder)
+     * - images (svg, png, etc.)
+     * - robots.txt & sitemap.xml (SEO files - NEW EXCLUSION)
      */
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    '/((?!_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 }
