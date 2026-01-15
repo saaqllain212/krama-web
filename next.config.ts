@@ -1,32 +1,41 @@
 import type { NextConfig } from "next";
 import { withSentryConfig } from "@sentry/nextjs";
+import withPWAInit from "@ducanh2912/next-pwa";
 
+// 1. Configure the PWA Engine
+const withPWA = withPWAInit({
+  dest: "public",
+  cacheOnFrontEndNav: true,
+  aggressiveFrontEndNavCaching: true,
+  reloadOnOnline: true,
+  disable: process.env.NODE_ENV === "development", // Only run in production
+  workboxOptions: {
+    disableDevLogs: true,
+  },
+});
+
+// 2. Your Base Config (Kept exactly as is)
 const nextConfig: NextConfig = {
-  // We are removing the PWA wrapper for now
   reactCompiler: false, 
 };
 
-export default withSentryConfig(nextConfig, {
-  // 1. Project Info (Keep your real values here)
-  org: "krama", 
-  project: "javascript-nextjs", // Make sure this matches your Sentry project slug exactly!
+// 3. Wrap everything: Sentry protects the PWA, which wraps the Config
+export default withSentryConfig(
+  withPWA(nextConfig), 
+  {
+    // --- Sentry Settings (Preserved) ---
+    org: "krama", 
+    project: "javascript-nextjs", 
 
-  // 2. Source Maps
-  sourcemaps: {
-    deleteSourcemapsAfterUpload: true,
-  },
+    sourcemaps: {
+      deleteSourcemapsAfterUpload: true,
+    },
 
-  // 3. React Annotation
-  reactComponentAnnotation: {
-    enabled: true,
-  },
+    reactComponentAnnotation: {
+      enabled: true,
+    },
 
-  // 4. Tunneling -> REMOVED FOR DIRECT CONNECTION
-  // tunnelRoute: "/monitoring",  <-- DELETED THIS LINE
-
-  // 5. Build Logs
-  silent: !process.env.CI,
-
-  // 6. Tree Shaking
-  disableLogger: true,
-});
+    silent: !process.env.CI,
+    disableLogger: true,
+  }
+);
