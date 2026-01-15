@@ -84,12 +84,10 @@ export default function FocusPage() {
         
         if (logError) throw logError
 
-        // ❌ REMOVED: The "Reset" Logic. 
-        // We no longer update 'last_active_at' here. 
-        // Logging time increases your Score, but implies no change to the Deadline.
+        // Logic Note: We do NOT reset the Sentinel 'last_active_at' here.
+        // Completing work increases the score, it doesn't push back the deadline.
         
         showAlert(`Log Saved: ${duration}m on ${topic || 'Task'}`, 'success')
-        
         resetTimer()
       }
     } catch (e) {

@@ -50,7 +50,6 @@ export async function GET() {
 
       // 🚨 FAILURE CONDITION:
       // If the hours they need is GREATER than the hours left in the day.
-      // Example: Need 4 hours, but only 3 hours left until midnight.
       if (hoursRemaining > hoursLeftInDay) {
          
          await sendAlertMessage(

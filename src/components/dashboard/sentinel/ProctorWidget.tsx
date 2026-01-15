@@ -71,7 +71,7 @@ export default function ProctorWidget({ onOpenSettings }: { onOpenSettings: () =
     load()
   }, []) 
 
-  // --- 🧠 THE NEW "POINT OF NO RETURN" LOGIC ---
+  // --- TIMER LOGIC (Point of No Return) ---
   useEffect(() => {
     if (!settings || !settings.is_active) return
 
@@ -89,7 +89,6 @@ export default function ProctorWidget({ onOpenSettings }: { onOpenSettings: () =
       const msNeeded = hoursNeeded * 60 * 60 * 1000
 
       // 3. The Buffer (Time allowed to slack off)
-      // If Buffer < 0, it means we don't have enough time left in the day to finish.
       const bufferMs = msUntilMidnight - msNeeded
       
       const goalMet = hoursLogged >= targetHours
@@ -109,7 +108,6 @@ export default function ProctorWidget({ onOpenSettings }: { onOpenSettings: () =
       } 
       else {
         // Countdown matches the BUFFER, not just midnight.
-        // It tells you "You have X hours left TO START before you fail."
         const h = Math.floor(bufferMs / (1000 * 60 * 60))
         const m = Math.floor((bufferMs % (1000 * 60 * 60)) / (1000 * 60))
         const s = Math.floor((bufferMs % (1000 * 60)) / 1000)
