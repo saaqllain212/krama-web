@@ -2,58 +2,70 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
+import { Mail } from 'lucide-react'
 
 export default function Footer() {
   const [showContact, setShowContact] = useState(false)
 
   return (
-    <footer className="border-t-2 border-black bg-white px-6 py-12 md:px-12">
-      <div className="flex flex-col items-center justify-between gap-8 md:flex-row">
+    <footer className="border-t-2 border-black bg-white px-6 py-16 md:px-12">
+      <div className="max-w-6xl mx-auto flex flex-col items-center justify-between gap-8 md:flex-row">
         
         {/* BRAND & COPYRIGHT */}
-        <div className="flex flex-col items-center gap-1 md:items-start">
-          <div className="font-black uppercase tracking-tight">
+        <div className="flex flex-col items-center gap-2 md:items-start">
+          <div className="text-xl font-black uppercase tracking-tight">
             Krama
           </div>
-          <div className="font-mono text-[10px] text-black/40 uppercase">
-            &copy; {new Date().getFullYear()} Krama Systems.
+          <div className="text-[11px] text-black/40 font-medium">
+            &copy; {new Date().getFullYear()} Krama Systems. All rights reserved.
           </div>
         </div>
 
         {/* LEGAL & CONTACT */}
-        <div className="flex flex-col items-center md:items-end gap-2">
-           <div className="flex flex-wrap justify-center gap-6 font-mono text-xs font-bold uppercase tracking-wide text-black/60">
-              <Link href="/legal/terms" className="hover:text-black hover:underline decoration-2 underline-offset-4">
-                Terms
-              </Link>
-              <Link href="/legal/privacy" className="hover:text-black hover:underline decoration-2 underline-offset-4">
-                Privacy
-              </Link>
-              <Link href="/legal/refund" className="hover:text-black hover:underline decoration-2 underline-offset-4">
-                Refunds
-              </Link>
-           </div>
+        <div className="flex flex-col items-center md:items-end gap-4">
+          {/* Legal Links */}
+          <div className="flex flex-wrap justify-center gap-8 text-xs font-bold uppercase tracking-wider text-black/50">
+            <Link 
+              href="/legal/terms" 
+              className="hover:text-black border-b-2 border-transparent hover:border-brand pb-1 transition-all"
+            >
+              Terms
+            </Link>
+            <Link 
+              href="/legal/privacy" 
+              className="hover:text-black border-b-2 border-transparent hover:border-brand pb-1 transition-all"
+            >
+              Privacy
+            </Link>
+            <Link 
+              href="/legal/refund" 
+              className="hover:text-black border-b-2 border-transparent hover:border-brand pb-1 transition-all"
+            >
+              Refunds
+            </Link>
+          </div>
 
-           {/* CONTACT TOGGLE */}
-           <div className="mt-2 h-6">
-             {!showContact ? (
-                <button 
-                  onClick={() => setShowContact(true)}
-                  className="font-mono text-xs font-bold uppercase tracking-wide text-black/60 hover:text-black hover:underline decoration-2 underline-offset-4"
-                >
-                  Contact Support
-                </button>
-             ) : (
-                <div className="animate-in fade-in zoom-in duration-300 flex flex-col items-center md:items-end">
-                   <span className="font-mono text-xs font-black text-black selection:bg-yellow-300">
-                     usekrama.contact@gmail.com
-                   </span>
-                   <span className="text-[10px] font-bold text-black/40 uppercase tracking-wider">
-                     Replies within 48-72 Hours
-                   </span>
-                </div>
-             )}
-           </div>
+          {/* CONTACT TOGGLE */}
+          <div className="h-8 flex items-center">
+            {!showContact ? (
+              <button 
+                onClick={() => setShowContact(true)}
+                className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-black/50 hover:text-black border-b-2 border-transparent hover:border-brand pb-1 transition-all"
+              >
+                <Mail size={14} />
+                Contact Support
+              </button>
+            ) : (
+              <div className="animate-in fade-in zoom-in-95 duration-300 flex flex-col items-center md:items-end">
+                <span className="text-sm font-bold text-black selection:bg-brand">
+                  usekrama.contact@gmail.com
+                </span>
+                <span className="text-[10px] font-medium text-black/40 mt-1">
+                  Replies within 48-72 hours
+                </span>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </footer>

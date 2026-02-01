@@ -27,6 +27,22 @@
   *, ::before, ::after {
     border-color: #000;
   }
+
+  /* Smooth transitions for interactive elements */
+  a, button {
+    transition: all 0.2s ease;
+  }
+
+  /* Better focus states for accessibility */
+  :focus-visible {
+    outline: 3px solid #CCFF00;
+    outline-offset: 2px;
+  }
+
+  /* Smooth scroll behavior */
+  html {
+    scroll-behavior: smooth;
+  }
 }
 
 /* 3. CUSTOM UTILITIES 
@@ -35,5 +51,11 @@
 @layer utilities {
   .border-neo {
     border-width: 3px;
+  }
+
+  /* Utility for text stroke (optional) */
+  .text-stroke {
+    -webkit-text-stroke: 2px currentColor;
+    paint-order: stroke fill;
   }
 }

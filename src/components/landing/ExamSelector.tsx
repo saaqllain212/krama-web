@@ -1,122 +1,160 @@
 'use client'
 
 import Link from "next/link"
+import { ArrowUpRight } from "lucide-react"
+
+// Exam data - easy to modify in one place
+const EXAMS = [
+  {
+    id: 'upsc',
+    href: '/syllabus/upsc/history',
+    emoji: '🏛️',
+    tag: 'Union',
+    tagColor: 'bg-blue-100 text-blue-700 border-blue-200',
+    name: 'UPSC CSE',
+    description: 'Complete tracker for Prelims & Mains. Covers History, Polity, Geography, Ethics & Optionals.',
+    accentColor: 'group-hover:shadow-[8px_8px_0px_0px_rgba(59,130,246,1)]', // blue
+  },
+  {
+    id: 'jee',
+    href: '/syllabus/jee/physics',
+    emoji: '⚛️',
+    tag: 'Engineering',
+    tagColor: 'bg-red-100 text-red-700 border-red-200',
+    name: 'JEE Mains',
+    description: 'Chapter-wise tracker for Physics, Chemistry & Maths. Includes weightage analysis.',
+    accentColor: 'group-hover:shadow-[8px_8px_0px_0px_rgba(239,68,68,1)]', // red
+  },
+  {
+    id: 'neet',
+    href: '/syllabus/neet/biology',
+    emoji: '🧬',
+    tag: 'Medical',
+    tagColor: 'bg-green-100 text-green-700 border-green-200',
+    name: 'NEET UG',
+    description: 'NCERT-aligned syllabus tracker for Biology (Botany/Zoology), Physics & Chemistry.',
+    accentColor: 'group-hover:shadow-[8px_8px_0px_0px_rgba(34,197,94,1)]', // green
+  },
+  {
+    id: 'ssc',
+    href: '/syllabus/ssc/cgl',
+    emoji: '📊',
+    tag: 'Govt Jobs',
+    tagColor: 'bg-orange-100 text-orange-700 border-orange-200',
+    name: 'SSC CGL',
+    description: 'Strategic tracker for Quant, Reasoning, English & GA. Tier I & II coverage.',
+    accentColor: 'group-hover:shadow-[8px_8px_0px_0px_rgba(249,115,22,1)]', // orange
+  },
+  {
+    id: 'rbi',
+    href: '/syllabus/rbi/phase2',
+    emoji: '🏦',
+    tag: 'Banking',
+    tagColor: 'bg-purple-100 text-purple-700 border-purple-200',
+    name: 'RBI Grade B',
+    description: 'Specialized Phase-II tracker for ESI, FM & English Writing skills.',
+    accentColor: 'group-hover:shadow-[8px_8px_0px_0px_rgba(168,85,247,1)]', // purple
+  },
+]
 
 export default function ExamSelector() {
   return (
-    <section className="py-24 bg-white border-y border-gray-100">
-      <div className="max-w-7xl mx-auto px-6">
+    <section className="py-24 bg-white border-y-2 border-black">
+      <div className="max-w-6xl mx-auto px-6">
         
         {/* SECTION HEADER */}
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-[#1A1A1A] mb-4 tracking-tight">
+          {/* Small Tag */}
+          <div className="inline-block border-2 border-black bg-brand px-4 py-1 text-xs font-black uppercase tracking-widest mb-6 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+            Choose Your Path
+          </div>
+          
+          <h2 className="text-4xl md:text-5xl font-bold text-black mb-4 tracking-tight">
             Select Your Battleground
           </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="text-lg text-black/60 max-w-2xl mx-auto font-medium">
             Krama provides structured syllabus trackers for India's toughest exams. 
-            Choose yours to start tracking or build your own.
+            Choose yours to start tracking — or build your own.
           </p>
         </div>
 
         {/* THE GRID */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           
-          {/* UPSC CARD */}
-          <Link href="/syllabus/upsc/history" className="group bg-[#FBF9F6] p-8 rounded-2xl border border-gray-200 hover:border-blue-500 hover:shadow-xl transition-all duration-300">
-            <div className="flex justify-between items-start mb-6">
-              <span className="text-4xl">🏛️</span>
-              <span className="px-3 py-1 bg-white border border-gray-200 text-gray-600 text-xs font-bold rounded-full uppercase tracking-wider">
-                Union
-              </span>
-            </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">UPSC CSE</h3>
-            <p className="text-gray-500 text-sm leading-relaxed">
-              Complete tracker for Prelims & Mains. Covers History, Polity, Geography, Ethics & Optionals.
-            </p>
-          </Link>
-
-          {/* JEE CARD */}
-          <Link href="/syllabus/jee/physics" className="group bg-[#FBF9F6] p-8 rounded-2xl border border-gray-200 hover:border-red-500 hover:shadow-xl transition-all duration-300">
-            <div className="flex justify-between items-start mb-6">
-              <span className="text-4xl">⚛️</span>
-              <span className="px-3 py-1 bg-white border border-gray-200 text-gray-600 text-xs font-bold rounded-full uppercase tracking-wider">
-                Engineering
-              </span>
-            </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-2 group-hover:text-red-600 transition-colors">JEE Mains</h3>
-            <p className="text-gray-500 text-sm leading-relaxed">
-              Chapter-wise tracker for Physics, Chemistry & Maths. Includes weightage analysis.
-            </p>
-          </Link>
-
-          {/* NEET CARD */}
-          <Link href="/syllabus/neet/biology" className="group bg-[#FBF9F6] p-8 rounded-2xl border border-gray-200 hover:border-green-500 hover:shadow-xl transition-all duration-300">
-            <div className="flex justify-between items-start mb-6">
-              <span className="text-4xl">🧬</span>
-              <span className="px-3 py-1 bg-white border border-gray-200 text-gray-600 text-xs font-bold rounded-full uppercase tracking-wider">
-                Medical
-              </span>
-            </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-2 group-hover:text-green-600 transition-colors">NEET UG</h3>
-            <p className="text-gray-500 text-sm leading-relaxed">
-              NCERT-aligned syllabus tracker for Biology (Botany/Zoology), Physics & Chemistry.
-            </p>
-          </Link>
-
-          {/* SSC CARD */}
-          <Link href="/syllabus/ssc/cgl" className="group bg-[#FBF9F6] p-8 rounded-2xl border border-gray-200 hover:border-orange-500 hover:shadow-xl transition-all duration-300">
-            <div className="flex justify-between items-start mb-6">
-              <span className="text-4xl">📊</span>
-              <span className="px-3 py-1 bg-white border border-gray-200 text-gray-600 text-xs font-bold rounded-full uppercase tracking-wider">
-                Govt Jobs
-              </span>
-            </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-2 group-hover:text-orange-600 transition-colors">SSC CGL</h3>
-            <p className="text-gray-500 text-sm leading-relaxed">
-              Strategic tracker for Quant, Reasoning, English & GA. Tier I & II coverage.
-            </p>
-          </Link>
-
-          {/* RBI CARD */}
-          <Link href="/syllabus/rbi/phase2" className="group bg-[#FBF9F6] p-8 rounded-2xl border border-gray-200 hover:border-purple-500 hover:shadow-xl transition-all duration-300">
-            <div className="flex justify-between items-start mb-6">
-              <span className="text-4xl">🏦</span>
-              <span className="px-3 py-1 bg-white border border-gray-200 text-gray-600 text-xs font-bold rounded-full uppercase tracking-wider">
-                Banking
-              </span>
-            </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-2 group-hover:text-purple-600 transition-colors">RBI Grade B</h3>
-            <p className="text-gray-500 text-sm leading-relaxed">
-              Specialized Phase-II tracker for ESI, FM & English Writing skills.
-            </p>
-          </Link>
-
-          {/* CUSTOM SYLLABUS CARD (Updated) */}
-          <div className="group bg-white p-8 rounded-2xl border border-dashed border-gray-300 hover:border-gray-800 hover:bg-gray-50 transition-all cursor-pointer flex flex-col justify-between">
-            <div>
+          {/* EXAM CARDS */}
+          {EXAMS.map((exam) => (
+            <Link 
+              key={exam.id}
+              href={exam.href} 
+              className={`group relative bg-[#FBF9F6] p-8 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 transition-all duration-300 ${exam.accentColor}`}
+            >
+              {/* Top Row: Emoji + Tag */}
               <div className="flex justify-between items-start mb-6">
-                <span className="text-4xl grayscale opacity-70">🛠️</span>
-                <span className="px-3 py-1 bg-gray-100 text-gray-500 text-xs font-bold rounded-full uppercase tracking-wider">
+                <span className="text-4xl">{exam.emoji}</span>
+                <span className={`px-3 py-1 border text-[10px] font-bold uppercase tracking-wider ${exam.tagColor}`}>
+                  {exam.tag}
+                </span>
+              </div>
+              
+              {/* Title with Arrow */}
+              <div className="flex items-center gap-2 mb-3">
+                <h3 className="text-2xl font-bold text-black tracking-tight">{exam.name}</h3>
+                <ArrowUpRight 
+                  size={20} 
+                  className="opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" 
+                />
+              </div>
+              
+              {/* Description */}
+              <p className="text-black/60 text-sm leading-relaxed font-medium">
+                {exam.description}
+              </p>
+
+              {/* Bottom Hover Indicator */}
+              <div className="absolute bottom-0 left-0 right-0 h-1 bg-black scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
+            </Link>
+          ))}
+
+          {/* CUSTOM SYLLABUS CARD */}
+          <div className="group relative bg-white p-8 border-2 border-dashed border-black/30 hover:border-black hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col justify-between">
+            <div>
+              {/* Top Row */}
+              <div className="flex justify-between items-start mb-6">
+                <span className="text-4xl grayscale group-hover:grayscale-0 transition-all duration-300">🛠️</span>
+                <span className="px-3 py-1 bg-black/5 border border-black/10 text-black/40 text-[10px] font-bold uppercase tracking-wider group-hover:bg-brand group-hover:text-black group-hover:border-black transition-all duration-300">
                   Custom
                 </span>
               </div>
-              <h3 className="text-2xl font-bold text-gray-700 mb-2 group-hover:text-black transition-colors">Bring Your Own</h3>
-              <p className="text-gray-500 text-sm leading-relaxed">
-                Don't see your exam? You can add your own syllabus structure using simple JSON files.
+              
+              {/* Title */}
+              <div className="flex items-center gap-2 mb-3">
+                <h3 className="text-2xl font-bold text-black/50 group-hover:text-black tracking-tight transition-colors duration-300">
+                  Bring Your Own
+                </h3>
+                <ArrowUpRight 
+                  size={20} 
+                  className="opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 text-black" 
+                />
+              </div>
+              
+              {/* Description */}
+              <p className="text-black/40 group-hover:text-black/60 text-sm leading-relaxed font-medium transition-colors duration-300">
+                Don't see your exam? Build your own syllabus structure using our Protocol Architect tool below.
               </p>
             </div>
+
+            {/* Bottom Hover Indicator */}
+            <div className="absolute bottom-0 left-0 right-0 h-1 bg-brand scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
           </div>
 
         </div>
 
-        {/* DISCLAIMER / WARNING (New) */}
-        <div className="mt-16 mx-auto max-w-4xl p-4 bg-gray-50 border border-gray-100 rounded-xl text-center">
-            <p className="text-xs text-gray-400 leading-relaxed">
-                <span className="font-bold text-gray-500">⚠️ Important Note:</span> The syllabus data provided here is structured for tracking and productivity purposes only. 
-                While we strive for accuracy, the syllabus is "trickled down" into actionable topics. 
-                <br className="hidden md:block"/>
-                Always refer to the official notifications from the conducting bodies (UPSC, NTA, SSC, etc.) for the legally accurate syllabus.
-            </p>
+        {/* DISCLAIMER */}
+        <div className="mt-16 mx-auto max-w-4xl p-5 bg-[#FBF9F6] border-2 border-black/10 text-center">
+          <p className="text-xs text-black/50 leading-relaxed font-medium">
+            <span className="font-bold text-black/70">⚠️ Note:</span> The syllabus data is structured for tracking purposes. 
+            Always refer to official notifications from conducting bodies (UPSC, NTA, SSC, etc.) for the legally accurate syllabus.
+          </p>
         </div>
 
       </div>
