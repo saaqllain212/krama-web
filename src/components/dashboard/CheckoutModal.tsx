@@ -40,14 +40,15 @@ export default function CheckoutModal({ isOpen, onClose, userEmail, userName }: 
     setCouponStatus('checking')
     
     try {
-      // Validate coupon with backend
-      const res = await fetch('/api/payment/create-order', {
+      // Validate coupon by checking with API
+      const res = await fetch('/api/payment/validate-coupon', {
         method: 'POST',
-        body: JSON.stringify({ couponCode: coupon, validateOnly: true }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ couponCode: coupon }),
       })
       const data = await res.json()
 
-      if (res.ok && data.discount) {
+      if (res.ok && data.valid) {
         setDiscountAmount(data.discount)
         setCouponStatus('valid')
         showAlert(`Coupon applied! ₹${data.discount} off`, 'success')
@@ -69,11 +70,17 @@ export default function CheckoutModal({ isOpen, onClose, userEmail, userName }: 
       // Create Order
       const res = await fetch('/api/payment/create-order', {
         method: 'POST',
-        body: JSON.stringify({ couponCode: couponStatus === 'valid' ? coupon : '' }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ couponCode: couponStatus === 'valid' ? coupon : null }),
       })
       const data = await res.json()
 
       if (!res.ok) throw new Error(data.error || 'Failed to create order')
+
+      // Check if Razorpay key exists
+      if (!process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID) {
+        throw new Error('Payment not configured. Please contact support.')
+      }
 
       // Initialize Razorpay
       const options = {
@@ -92,6 +99,7 @@ export default function CheckoutModal({ isOpen, onClose, userEmail, userName }: 
           // Verify Payment
           const verifyRes = await fetch('/api/payment/verify', {
             method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               orderCreationId: data.orderId,
               razorpayPaymentId: response.razorpay_payment_id,
@@ -107,7 +115,7 @@ export default function CheckoutModal({ isOpen, onClose, userEmail, userName }: 
               window.location.href = '/dashboard?initiation=true'
             }, 1000)
           } else {
-            showAlert('Payment verification failed. Please contact support.', 'error')
+            showAlert('Payment verification failed. Contact support.', 'error')
           }
         },
         modal: {
@@ -119,12 +127,15 @@ export default function CheckoutModal({ isOpen, onClose, userEmail, userName }: 
 
       // @ts-ignore
       const rzp1 = new window.Razorpay(options)
+      rzp1.on('payment.failed', function() {
+        showAlert('Payment failed. Please try again.', 'error')
+        setLoading(false)
+      })
       rzp1.open()
 
     } catch (err: any) {
-      console.error(err)
-      showAlert(err.message || 'Payment failed', 'error')
-    } finally {
+      console.error('Payment error:', err)
+      showAlert(err.message || 'Something went wrong. Please try again.', 'error')
       setLoading(false)
     }
   }
