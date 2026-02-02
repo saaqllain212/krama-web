@@ -85,13 +85,17 @@ export default function Countdown() {
   // --- LOADING STATE ---
   if (loading) return <div className="h-[108px] w-full animate-pulse bg-stone-100 md:w-[320px]" />
 
-  // --- WAITING FOR PROTOCOL (Stuck State) ---
+  // --- NO TARGET SET (Setup State) ---
   if (!examName && !targetDate) {
      return (
-        <div className="group relative w-full border-neo bg-stone-100 p-4 text-stone-400 shadow-neo md:w-auto min-w-[300px] flex items-center justify-center h-[108px]">
-           <div className="flex flex-col items-center animate-pulse">
-              <Loader2 className="animate-spin mb-2" />
-              <div className="text-xs font-black uppercase tracking-widest">Loading Protocol...</div>
+        <div 
+          onClick={() => setIsEditing(true)}
+          className="group relative w-full border-neo bg-stone-100 p-4 text-stone-500 shadow-neo md:w-auto min-w-[300px] cursor-pointer hover:bg-stone-200 transition-colors"
+        >
+           <div className="flex flex-col items-center py-2">
+              <Clock className="mb-2 text-stone-400" size={24} />
+              <div className="text-sm font-black uppercase tracking-widest">Set Your Target</div>
+              <div className="text-xs text-stone-400 mt-1">Click to add exam date</div>
            </div>
         </div>
      )

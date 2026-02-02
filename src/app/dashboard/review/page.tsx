@@ -13,6 +13,7 @@ const SCHEDULE_PRESETS = [
   { name: "Standard", val: "0, 1, 3, 7, 14, 30, 60", desc: "Balanced retention" },
   { name: "Aggressive", val: "0, 1, 2, 4, 7, 14", desc: "Fast learning" },
   { name: "Relaxed", val: "0, 2, 7, 14, 30, 60, 90", desc: "Long-term memory" },
+  { name: "Custom", val: "custom", desc: "Set your own intervals" },
 ]
 
 export default function ReviewPage() {
@@ -31,6 +32,7 @@ export default function ReviewPage() {
   const [newTitle, setNewTitle] = useState("")
   const [newSchedule, setNewSchedule] = useState(SCHEDULE_PRESETS[0].val)
   const [selectedPreset, setSelectedPreset] = useState(0)
+  const [customIntervals, setCustomIntervals] = useState("0, 1, 3, 7, 14, 30")
 
   useEffect(() => {
     fetchTopics()
@@ -94,13 +96,26 @@ export default function ReviewPage() {
       return
     }
     
+    // Determine the intervals to use
+    const intervalsToUse = selectedPreset === 3 ? customIntervals : newSchedule
+    
+    // Validate custom intervals
+    if (selectedPreset === 3) {
+      const parts = customIntervals.split(',').map(s => s.trim())
+      const valid = parts.every(p => !isNaN(Number(p)) && Number(p) >= 0)
+      if (!valid || parts.length < 2) {
+        showAlert("Invalid intervals. Use comma-separated numbers (e.g., 0, 1, 3, 7)", "error")
+        return
+      }
+    }
+    
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
 
     const { error } = await supabase.from('topics').insert({
       user_id: user.id,
       title: newTitle.trim(),
-      custom_intervals: newSchedule,
+      custom_intervals: intervalsToUse,
       last_gap: 0,
       next_review: new Date().toISOString()
     })
@@ -459,7 +474,7 @@ export default function ReviewPage() {
                     {SCHEDULE_PRESETS.map((preset, i) => (
                       <button
                         key={preset.name}
-                        onClick={() => { setSelectedPreset(i); setNewSchedule(preset.val) }}
+                        onClick={() => { setSelectedPreset(i); if (preset.val !== 'custom') setNewSchedule(preset.val) }}
                         className={`w-full p-3 border-2 text-left transition-all ${
                           selectedPreset === i 
                             ? 'border-black bg-black text-white' 
@@ -473,6 +488,24 @@ export default function ReviewPage() {
                       </button>
                     ))}
                   </div>
+                  
+                  {/* Custom Interval Input */}
+                  {selectedPreset === 3 && (
+                    <div className="mt-4 p-4 bg-stone-50 border-2 border-black/10">
+                      <label className="block text-xs font-bold text-black/50 mb-2">
+                        Custom Intervals (days, comma-separated)
+                      </label>
+                      <input 
+                        value={customIntervals}
+                        onChange={(e) => setCustomIntervals(e.target.value)}
+                        placeholder="0, 1, 3, 7, 14, 30"
+                        className="w-full border-2 border-black p-2 font-mono text-sm focus:outline-none"
+                      />
+                      <p className="text-xs text-black/40 mt-2">
+                        Example: 0, 1, 3, 7, 14, 30 means review today, then after 1 day, 3 days, etc.
+                      </p>
+                    </div>
+                  )}
                 </div>
 
                 <button 
