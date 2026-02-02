@@ -6,6 +6,7 @@ import { X, Save, Clock, AlertCircle } from 'lucide-react'
 import { MockLogEntry } from '@/lib/analytics'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAlert } from '@/context/AlertContext'
+import { useXP } from '@/context/XPContext'
 
 type Props = {
   open: boolean
@@ -17,6 +18,7 @@ type Props = {
 export default function MocksModal({ open, onClose, examId, onSuccess }: Props) {
   const supabase = createClient()
   const { showAlert } = useAlert()
+  const { recordMock } = useXP()
   const [loading, setLoading] = useState(false)
 
   // FORM STATE
@@ -111,6 +113,9 @@ export default function MocksModal({ open, onClose, examId, onSuccess }: Props) 
         })
 
       if (saveError) throw saveError
+
+      // Award XP for logging a mock
+      await recordMock()
 
       showAlert(`Test "${name}" logged!`, 'success')
       onSuccess()

@@ -7,6 +7,7 @@ import { ArrowLeft, Plus, Clock, CheckCircle2, AlertTriangle, Trash2, Search, Za
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAlert } from '@/context/AlertContext'
+import { useXP } from '@/context/XPContext'
 
 // --- CONSTANTS ---
 const SCHEDULE_PRESETS = [
@@ -19,6 +20,7 @@ const SCHEDULE_PRESETS = [
 export default function ReviewPage() {
   const supabase = createClient()
   const { showAlert, askConfirm } = useAlert()
+  const { recordReview } = useXP()
   
   const [allTopics, setAllTopics] = useState<Topic[]>([])
   const [loading, setLoading] = useState(true)
@@ -133,6 +135,9 @@ export default function ReviewPage() {
   const handleReview = async (topic: Topic, rating: 0 | 1 | 2) => {
     try {
       const result = await reviewTopic(supabase, topic, rating)
+      
+      // Award XP for completing a review
+      await recordReview()
       
       if (result.completed) {
         showAlert(`"${topic.title}" completed & archived!`, 'success')

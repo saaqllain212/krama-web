@@ -6,12 +6,14 @@ import { Play, Pause, Save, RotateCcw, ArrowLeft, Check, X } from 'lucide-react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { useAlert } from '@/context/AlertContext'
+import { useXP } from '@/context/XPContext'
 
 const PRESETS = [15, 25, 45, 60, 90]
 
 export default function FocusPage() {
   const supabase = createClient()
   const { showAlert } = useAlert()
+  const { recordFocusSession } = useXP()
 
   // --- STATE ---
   const [targetMinutes, setTargetMinutes] = useState(25)
@@ -70,6 +72,9 @@ export default function FocusPage() {
         })
         
         if (logError) throw logError
+        
+        // Award XP for the focus session
+        await recordFocusSession(duration)
         
         showAlert(`Completed: ${duration}m on "${topic || 'Task'}"`, 'success')
         setSecondsLeft(targetMinutes * 60)

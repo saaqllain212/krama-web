@@ -3,6 +3,8 @@
 import Sidebar from '@/components/dashboard/Sidebar'
 import MobileNav from '@/components/dashboard/MobileNav'
 import TrialGuard from '@/components/dashboard/TrialGuard'
+import { XPProvider } from '@/context/XPContext'
+import XPNotification from '@/components/dashboard/XPNotification'
 
 export default function DashboardLayout({
   children,
@@ -10,16 +12,19 @@ export default function DashboardLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="min-h-screen bg-[#FBF9F6]">
-      <Sidebar />
-      <MobileNav />
-      <main className="lg:pl-64">
-         <div className="mx-auto max-w-6xl p-6 lg:p-12">
-           <TrialGuard>
-              {children}
-           </TrialGuard>
-         </div>
-      </main>
-    </div>
+    <XPProvider>
+      <div className="min-h-screen bg-[#FBF9F6]">
+        <Sidebar />
+        <MobileNav />
+        <main className="lg:pl-64">
+           <div className="mx-auto max-w-6xl p-6 lg:p-12">
+             <TrialGuard>
+                {children}
+             </TrialGuard>
+           </div>
+        </main>
+        <XPNotification />
+      </div>
+    </XPProvider>
   )
 }

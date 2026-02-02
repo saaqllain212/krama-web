@@ -16,6 +16,7 @@ import {
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { useSyllabus } from '@/context/SyllabusContext'
+import LevelBadge from '@/components/dashboard/LevelBadge'
 
 const NAV_ITEMS = [
   { label: 'Overview', href: '/dashboard', icon: LayoutDashboard },
@@ -92,9 +93,9 @@ export default function Sidebar() {
         )}
       </div>
 
-      {/* User Section */}
+      {/* User Section with Level */}
       <div className="border-b-2 border-black/10 p-4">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 mb-3">
           <div className="w-10 h-10 bg-black text-white flex items-center justify-center font-black text-lg">
             {userInitial}
           </div>
@@ -106,13 +107,8 @@ export default function Sidebar() {
           </div>
         </div>
         
-        {/* Progress Bar */}
-        <div className="mt-3 w-full h-1.5 bg-black/10 rounded-full overflow-hidden">
-          <div 
-            className="h-full bg-brand rounded-full transition-all duration-500"
-            style={{ width: `${stats.percentage}%` }}
-          />
-        </div>
+        {/* Level Badge */}
+        <LevelBadge variant="compact" showProgress={true} />
       </div>
 
       {/* Navigation Links */}
