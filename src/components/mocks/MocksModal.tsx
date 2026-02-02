@@ -4,6 +4,8 @@ import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { X, Save, Clock, AlertCircle } from 'lucide-react'
 import { MockLogEntry } from '@/lib/analytics'
+import { motion, AnimatePresence } from 'framer-motion'
+import { useAlert } from '@/context/AlertContext'
 
 type Props = {
   open: boolean
@@ -14,8 +16,8 @@ type Props = {
 
 export default function MocksModal({ open, onClose, examId, onSuccess }: Props) {
   const supabase = createClient()
+  const { showAlert } = useAlert()
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
 
   // FORM STATE
   const [name, setName] = useState('')
@@ -24,58 +26,72 @@ export default function MocksModal({ open, onClose, examId, onSuccess }: Props) 
   const [accuracy, setAccuracy] = useState('')
   const [stress, setStress] = useState('5')
   const [fatigue, setFatigue] = useState('5')
-  
-  // TIME STATE
   const [timeOfDay, setTimeOfDay] = useState('morning')
-  
-  // NOTE STATE
   const [note, setNote] = useState('')
 
-  // NEW: AUTOPSY STATE
+  // AUTOPSY STATE
   const [silly, setSilly] = useState('')
   const [conceptual, setConceptual] = useState('')
   const [unattempted, setUnattempted] = useState('')
 
   if (!open) return null
 
-  // Word Count Helper
   const handleNoteChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const text = e.target.value
     const words = text.trim().split(/\s+/)
-    // Allow typing if under 30 words OR if deleting characters
     if (words.length <= 30 || text.length < note.length) {
-       setNote(text)
+      setNote(text)
     }
+  }
+
+  const resetForm = () => {
+    setName('')
+    setScore('')
+    setMaxScore('200')
+    setAccuracy('')
+    setNote('')
+    setSilly('')
+    setConceptual('')
+    setUnattempted('')
+    setStress('5')
+    setFatigue('5')
+    setTimeOfDay('morning')
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    if (!name.trim()) {
+      showAlert("Please enter a test name", "error")
+      return
+    }
+    if (!score) {
+      showAlert("Please enter your score", "error")
+      return
+    }
+    
     setLoading(true)
-    setError('')
 
     try {
       const { data: { user } } = await supabase.auth.getUser()
-      if (!user) throw new Error("Unauthorized")
+      if (!user) throw new Error("Not logged in")
 
-      // 1. Create the new log object
       const newLog: MockLogEntry = {
         id: crypto.randomUUID(),
         d: new Date().toISOString(),
-        n: name,
+        n: name.trim(),
         s: Number(score),
         m: Number(maxScore),
         a: accuracy ? Number(accuracy) : undefined,
         st: Number(stress),
         fa: Number(fatigue),
-        nt: note,
+        nt: note.trim(),
         t: timeOfDay,
-        // New Autopsy Fields
         si: silly ? Number(silly) : undefined,
         co: conceptual ? Number(conceptual) : undefined,
         ua: unattempted ? Number(unattempted) : undefined,
       }
 
-      // 2. Fetch existing logs
       const { data: existing } = await supabase
         .from('mock_logs')
         .select('logs')
@@ -83,10 +99,9 @@ export default function MocksModal({ open, onClose, examId, onSuccess }: Props) 
         .eq('exam_id', examId)
         .maybeSingle()
 
-      const currentLogs = existing?.logs ? (existing.logs as any[]) : []
+      const currentLogs = existing?.logs ? (existing.logs as MockLogEntry[]) : []
       const updatedLogs = [...currentLogs, newLog]
 
-      // 3. Save back to DB
       const { error: saveError } = await supabase
         .from('mock_logs')
         .upsert({
@@ -97,180 +112,233 @@ export default function MocksModal({ open, onClose, examId, onSuccess }: Props) 
 
       if (saveError) throw saveError
 
+      showAlert(`Test "${name}" logged!`, 'success')
       onSuccess()
       onClose()
-      
-      // Reset Form
-      setName('')
-      setScore('')
-      setNote('')
-      setAccuracy('')
-      setSilly('')
-      setConceptual('')
-      setUnattempted('')
+      resetForm()
 
     } catch (err: any) {
-      setError(err.message || "Failed to save log")
+      console.error('Save error:', err)
+      showAlert(err.message || "Failed to save", "error")
     } finally {
       setLoading(false)
     }
   }
 
+  const scorePercent = score && maxScore ? Math.round((Number(score) / Number(maxScore)) * 100) : 0
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-stone-900/90 backdrop-blur-sm p-4">
-      <div className="bg-[#FDFBF7] w-full max-w-lg border-4 border-black shadow-[10px_10px_0_0_#000] overflow-hidden flex flex-col max-h-[90vh]">
-        
-        {/* HEADER */}
-        <div className="bg-stone-100 p-6 border-b-4 border-black flex justify-between items-center">
-          <h2 className="text-2xl font-black uppercase tracking-tighter">Log Entry</h2>
-          <button onClick={onClose} className="hover:text-red-600 transition-colors">
-            <X size={24} />
-          </button>
-        </div>
-
-        {/* SCROLLABLE FORM */}
-        <form onSubmit={handleSubmit} className="p-6 overflow-y-auto space-y-6">
+    <AnimatePresence>
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.95 }}
+          className="bg-white w-full max-w-lg border-2 border-black shadow-[8px_8px_0_0_#000] overflow-hidden flex flex-col max-h-[90vh]"
+        >
           
-          <div>
-            <label className="block text-xs font-bold uppercase mb-2">Test Name</label>
-            <input 
-              required
-              placeholder="e.g. Vision IAS Abhyaas 1"
-              value={name}
-              onChange={e => setName(e.target.value)}
-              className="w-full border-2 border-black p-3 font-bold focus:bg-stone-50 outline-none"
-            />
+          {/* HEADER */}
+          <div className="bg-stone-100 p-5 border-b-2 border-black flex justify-between items-center shrink-0">
+            <div>
+              <h2 className="text-xl font-black">Log Mock Test</h2>
+              <p className="text-xs font-bold text-black/40 uppercase">{examId}</p>
+            </div>
+            <button 
+              onClick={onClose} 
+              className="p-2 hover:bg-red-100 hover:text-red-600 transition-colors"
+            >
+              <X size={22} />
+            </button>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-             <div>
-               <label className="block text-xs font-bold uppercase mb-2">Score</label>
-               <input 
-                 required type="number"
-                 placeholder="90"
-                 value={score}
-                 onChange={e => setScore(e.target.value)}
-                 className="w-full border-2 border-black p-3 font-bold text-lg outline-none"
-               />
-             </div>
-             <div>
-               <label className="block text-xs font-bold uppercase mb-2">Max Score</label>
-               <input 
-                 required type="number"
-                 value={maxScore}
-                 onChange={e => setMaxScore(e.target.value)}
-                 className="w-full border-2 border-black p-3 font-bold text-lg outline-none bg-stone-100"
-               />
-             </div>
-          </div>
+          {/* SCROLLABLE FORM */}
+          <form onSubmit={handleSubmit} className="p-5 overflow-y-auto flex-1 space-y-5">
+            
+            {/* TEST NAME */}
+            <div>
+              <label className="block text-sm font-bold mb-2">Test Name *</label>
+              <input 
+                required
+                placeholder="e.g. Vision IAS Prelims Test 1"
+                value={name}
+                onChange={e => setName(e.target.value)}
+                className="w-full border-2 border-black p-3 font-bold focus:outline-none focus:shadow-[3px_3px_0_0_#000] transition-all"
+              />
+            </div>
 
-          {/* MISTAKE AUTOPSY (NEW SECTION) */}
-          <div className="bg-red-50 p-4 border-2 border-red-100 rounded-sm">
-             <div className="flex items-center gap-2 mb-3">
-                <AlertCircle size={14} className="text-red-500" />
-                <label className="text-xs font-black uppercase text-red-900">Mistake Autopsy (Marks Lost)</label>
-             </div>
-             <div className="grid grid-cols-3 gap-2">
-                <div>
-                  <label className="block text-[10px] font-bold uppercase mb-1 text-stone-500">Silly</label>
-                  <input type="number" placeholder="0" value={silly} onChange={e => setSilly(e.target.value)} className="w-full border-2 border-stone-200 p-2 font-bold text-sm outline-none focus:border-red-400"/>
-                </div>
-                <div>
-                  <label className="block text-[10px] font-bold uppercase mb-1 text-stone-500">Concept</label>
-                  <input type="number" placeholder="0" value={conceptual} onChange={e => setConceptual(e.target.value)} className="w-full border-2 border-stone-200 p-2 font-bold text-sm outline-none focus:border-red-400"/>
-                </div>
-                <div>
-                  <label className="block text-[10px] font-bold uppercase mb-1 text-stone-500">Unattempted</label>
-                  <input type="number" placeholder="0" value={unattempted} onChange={e => setUnattempted(e.target.value)} className="w-full border-2 border-stone-200 p-2 font-bold text-sm outline-none focus:border-red-400"/>
-                </div>
-             </div>
-          </div>
+            {/* SCORE ROW */}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-bold mb-2">Score *</label>
+                <input 
+                  required 
+                  type="number"
+                  placeholder="90"
+                  value={score}
+                  onChange={e => setScore(e.target.value)}
+                  className="w-full border-2 border-black p-3 font-bold text-xl focus:outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-bold mb-2">Max Score</label>
+                <input 
+                  required 
+                  type="number"
+                  value={maxScore}
+                  onChange={e => setMaxScore(e.target.value)}
+                  className="w-full border-2 border-black p-3 font-bold text-xl focus:outline-none bg-stone-50"
+                />
+              </div>
+            </div>
 
-          {/* TIME & ACCURACY */}
-          <div className="grid grid-cols-2 gap-4">
-             <div>
-               <label className="block text-xs font-bold uppercase mb-2">Accuracy % (Optional)</label>
-               <input 
-                 type="number"
-                 placeholder="75"
-                 value={accuracy}
-                 onChange={e => setAccuracy(e.target.value)}
-                 className="w-full border-2 border-black p-3 font-bold outline-none"
-               />
-             </div>
-             <div>
-               <label className="block text-xs font-bold uppercase mb-2">Time of Day</label>
-               <div className="relative">
+            {/* SCORE PREVIEW */}
+            {score && maxScore && (
+              <div className={`p-4 border-2 text-center ${
+                scorePercent >= 60 ? 'bg-green-50 border-green-300' : 'bg-red-50 border-red-300'
+              }`}>
+                <div className={`text-3xl font-black ${scorePercent >= 60 ? 'text-green-700' : 'text-red-700'}`}>
+                  {scorePercent}%
+                </div>
+                <div className="text-xs font-bold text-black/40">{score} / {maxScore}</div>
+              </div>
+            )}
+
+            {/* MISTAKE AUTOPSY */}
+            <div className="bg-red-50 p-4 border-2 border-red-200">
+              <div className="flex items-center gap-2 mb-3">
+                <AlertCircle size={16} className="text-red-500" />
+                <label className="text-sm font-bold text-red-800">Mistake Analysis (marks lost)</label>
+              </div>
+              <div className="grid grid-cols-3 gap-3">
+                <div>
+                  <label className="block text-xs font-bold mb-1 text-black/50">Silly</label>
+                  <input 
+                    type="number" 
+                    placeholder="0" 
+                    value={silly} 
+                    onChange={e => setSilly(e.target.value)} 
+                    className="w-full border-2 border-red-200 p-2 font-bold text-sm focus:outline-none focus:border-red-400"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold mb-1 text-black/50">Concept</label>
+                  <input 
+                    type="number" 
+                    placeholder="0" 
+                    value={conceptual} 
+                    onChange={e => setConceptual(e.target.value)} 
+                    className="w-full border-2 border-red-200 p-2 font-bold text-sm focus:outline-none focus:border-red-400"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold mb-1 text-black/50">Skipped</label>
+                  <input 
+                    type="number" 
+                    placeholder="0" 
+                    value={unattempted} 
+                    onChange={e => setUnattempted(e.target.value)} 
+                    className="w-full border-2 border-red-200 p-2 font-bold text-sm focus:outline-none focus:border-red-400"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* ACCURACY & TIME */}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-bold mb-2">Accuracy %</label>
+                <input 
+                  type="number"
+                  placeholder="Optional"
+                  value={accuracy}
+                  onChange={e => setAccuracy(e.target.value)}
+                  className="w-full border-2 border-black/30 p-3 font-bold focus:outline-none focus:border-black"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-bold mb-2">Time of Day</label>
+                <div className="relative">
                   <select 
                     value={timeOfDay}
                     onChange={e => setTimeOfDay(e.target.value)}
-                    className="w-full border-2 border-black p-3 font-bold outline-none appearance-none bg-white"
+                    className="w-full border-2 border-black/30 p-3 font-bold focus:outline-none appearance-none bg-white focus:border-black"
                   >
                     <option value="morning">Morning</option>
                     <option value="afternoon">Afternoon</option>
                     <option value="evening">Evening</option>
                     <option value="night">Night</option>
                   </select>
-                  <Clock size={16} className="absolute right-3 top-3.5 pointer-events-none text-stone-400"/>
-               </div>
-             </div>
-          </div>
-
-          {/* SLIDERS */}
-          <div className="grid grid-cols-2 gap-6 bg-stone-100 p-4 border-2 border-stone-200">
-             <div>
-               <label className="block text-xs font-bold uppercase mb-2">Stress (1-10)</label>
-               <input 
-                 type="range" min="1" max="10"
-                 value={stress}
-                 onChange={e => setStress(e.target.value)}
-                 className="w-full accent-black h-2 bg-stone-300 rounded-lg appearance-none cursor-pointer"
-               />
-               <div className="text-right font-black text-sm">{stress}/10</div>
-             </div>
-             <div>
-               <label className="block text-xs font-bold uppercase mb-2">Fatigue (1-10)</label>
-               <input 
-                 type="range" min="1" max="10"
-                 value={fatigue}
-                 onChange={e => setFatigue(e.target.value)}
-                 className="w-full accent-black h-2 bg-stone-300 rounded-lg appearance-none cursor-pointer"
-               />
-               <div className="text-right font-black text-sm">{fatigue}/10</div>
-             </div>
-          </div>
-
-          {/* LIMITED TEXT AREA */}
-          <div>
-            <div className="flex justify-between mb-2">
-               <label className="block text-xs font-bold uppercase">Analysis Note</label>
-               <span className="text-xs font-bold text-stone-400">{note.trim().split(/\s+/).filter(Boolean).length}/30 Words</span>
+                  <Clock size={16} className="absolute right-3 top-3.5 pointer-events-none text-black/30"/>
+                </div>
+              </div>
             </div>
-            <textarea 
-              rows={3}
-              placeholder="Analysis limited to 30 words to keep database light."
-              value={note}
-              onChange={handleNoteChange}
-              className="w-full border-2 border-black p-3 font-medium outline-none text-sm resize-none"
-            />
-          </div>
 
-          {error && (
-            <div className="bg-red-100 border-2 border-red-500 text-red-700 p-3 text-sm font-bold">
-              {error}
+            {/* SLIDERS */}
+            <div className="grid grid-cols-2 gap-6 bg-stone-50 p-4 border border-stone-200">
+              <div>
+                <div className="flex justify-between mb-2">
+                  <label className="text-sm font-bold">Stress</label>
+                  <span className="text-sm font-black">{stress}/10</span>
+                </div>
+                <input 
+                  type="range" 
+                  min="1" 
+                  max="10"
+                  value={stress}
+                  onChange={e => setStress(e.target.value)}
+                  className="w-full h-2 bg-stone-300 rounded-lg appearance-none cursor-pointer accent-black"
+                />
+              </div>
+              <div>
+                <div className="flex justify-between mb-2">
+                  <label className="text-sm font-bold">Fatigue</label>
+                  <span className="text-sm font-black">{fatigue}/10</span>
+                </div>
+                <input 
+                  type="range" 
+                  min="1" 
+                  max="10"
+                  value={fatigue}
+                  onChange={e => setFatigue(e.target.value)}
+                  className="w-full h-2 bg-stone-300 rounded-lg appearance-none cursor-pointer accent-black"
+                />
+              </div>
             </div>
-          )}
 
-          <button 
-            type="submit" 
-            disabled={loading}
-            className="w-full bg-black text-white font-black uppercase py-4 hover:bg-stone-800 transition-all flex items-center justify-center gap-2"
-          >
-             {loading ? 'Processing...' : <><Save size={18} /> Save Entry</>}
-          </button>
+            {/* NOTE */}
+            <div>
+              <div className="flex justify-between mb-2">
+                <label className="text-sm font-bold">Quick Note</label>
+                <span className="text-xs font-bold text-black/40">
+                  {note.trim().split(/\s+/).filter(Boolean).length}/30
+                </span>
+              </div>
+              <textarea 
+                rows={2}
+                placeholder="Key takeaways (30 words max)"
+                value={note}
+                onChange={handleNoteChange}
+                className="w-full border-2 border-black/30 p-3 font-medium text-sm focus:outline-none focus:border-black resize-none"
+              />
+            </div>
 
-        </form>
+            {/* SUBMIT */}
+            <button 
+              type="submit" 
+              disabled={loading}
+              className="w-full bg-black text-white font-black py-4 hover:bg-stone-800 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+            >
+              {loading ? (
+                'Saving...'
+              ) : (
+                <>
+                  <Save size={18} /> Save Test
+                </>
+              )}
+            </button>
+          </form>
+        </motion.div>
       </div>
-    </div>
+    </AnimatePresence>
   )
 }

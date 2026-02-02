@@ -1,8 +1,18 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, Timer, RotateCw, Map, LineChart, LogOut } from 'lucide-react'
+import { 
+  LayoutDashboard, 
+  Timer, 
+  RotateCw, 
+  Map, 
+  LineChart, 
+  LogOut,
+  ChevronRight,
+  User
+} from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { useSyllabus } from '@/context/SyllabusContext'
@@ -20,34 +30,93 @@ export default function Sidebar() {
   const router = useRouter()
   const supabase = createClient()
   
-  // 1. Get Active Protocol
-  const { activeExam } = useSyllabus()
+  const { activeExam, stats } = useSyllabus()
+  
+  // User state
+  const [userName, setUserName] = useState('')
+  const [userInitial, setUserInitial] = useState('U')
+
+  useEffect(() => {
+    const getUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user?.user_metadata?.full_name) {
+        const name = user.user_metadata.full_name
+        setUserName(name.split(' ')[0])
+        setUserInitial(name.charAt(0).toUpperCase())
+      } else if (user?.email) {
+        setUserName(user.email.split('@')[0])
+        setUserInitial(user.email.charAt(0).toUpperCase())
+      }
+    }
+    getUser()
+  }, [supabase])
 
   const handleLogout = async () => {
     await supabase.auth.signOut()
     router.replace('/login')
   }
 
-  // 2. Filter Items Logic
+  // Filter items based on mode
   const visibleItems = NAV_ITEMS.filter(item => {
-    // If in Focus Mode, show Overview, Focus, Review, AND MOCKS.
     if (activeExam === 'focus') {
-       // ✅ CHANGED: Added 'Mock Scores' to this list so it appears in Focus Mode
-       return ['Overview', 'Focus Mode', 'Spaced Review', 'Mock Scores'].includes(item.label)
+      return ['Overview', 'Focus Mode', 'Spaced Review', 'Mock Scores'].includes(item.label)
     }
-    // Otherwise show everything
     return true
   })
 
+  // Get exam label
+  const getExamLabel = () => {
+    switch(activeExam) {
+      case 'upsc': return 'UPSC'
+      case 'ssc': return 'SSC'
+      case 'bank': return 'Bank PO'
+      case 'jee': return 'JEE'
+      case 'neet': return 'NEET'
+      case 'rbi': return 'RBI'
+      case 'custom': return 'Custom'
+      case 'focus': return 'Focus'
+      default: return 'Exam'
+    }
+  }
+
   return (
     <aside className="fixed inset-y-0 left-0 hidden w-64 flex-col border-r-2 border-black bg-white lg:flex">
+      
       {/* Brand Logo */}
-      <div className="flex h-20 items-center border-b-2 border-black px-6">
+      <div className="flex h-20 items-center justify-between border-b-2 border-black px-6">
         <div className="text-2xl font-black uppercase tracking-tight">Krama</div>
+        {activeExam && (
+          <div className="text-[10px] font-bold uppercase tracking-widest bg-black text-white px-2 py-1">
+            {getExamLabel()}
+          </div>
+        )}
+      </div>
+
+      {/* User Section */}
+      <div className="border-b-2 border-black/10 p-4">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-black text-white flex items-center justify-center font-black text-lg">
+            {userInitial}
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="font-bold text-sm truncate">{userName || 'Student'}</div>
+            <div className="text-xs text-black/50 font-medium">
+              {stats.percentage}% complete
+            </div>
+          </div>
+        </div>
+        
+        {/* Progress Bar */}
+        <div className="mt-3 w-full h-1.5 bg-black/10 rounded-full overflow-hidden">
+          <div 
+            className="h-full bg-brand rounded-full transition-all duration-500"
+            style={{ width: `${stats.percentage}%` }}
+          />
+        </div>
       </div>
 
       {/* Navigation Links */}
-      <nav className="flex-1 space-y-2 p-4">
+      <nav className="flex-1 p-4 space-y-1">
         {visibleItems.map((item) => {
           const isActive = pathname === item.href
           const Icon = item.icon
@@ -56,26 +125,29 @@ export default function Sidebar() {
             <Link
               key={item.href}
               href={item.href}
-              className={`group flex items-center gap-3 border-2 px-4 py-3 text-sm font-bold uppercase tracking-wide transition-all hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]
+              className={`group flex items-center justify-between px-4 py-3 text-sm font-bold uppercase tracking-wide transition-all
                 ${isActive 
-                  ? 'border-black bg-brand shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]' 
-                  : 'border-transparent bg-transparent hover:border-black hover:bg-white'
+                  ? 'bg-black text-white' 
+                  : 'text-black/60 hover:bg-black/5 hover:text-black'
                 }`}
             >
-              <Icon className="h-5 w-5 stroke-[2.5px]" />
-              {item.label}
+              <div className="flex items-center gap-3">
+                <Icon className="h-5 w-5" strokeWidth={2} />
+                {item.label}
+              </div>
+              {isActive && <ChevronRight size={16} />}
             </Link>
           )
         })}
       </nav>
 
-      {/* Footer / User / Logout */}
+      {/* Footer / Logout */}
       <div className="border-t-2 border-black p-4">
         <button 
           onClick={handleLogout}
-          className="flex w-full items-center gap-3 border-2 border-transparent px-4 py-3 text-sm font-bold uppercase tracking-wide text-black/40 hover:border-black hover:bg-red-100 hover:text-red-600 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+          className="flex w-full items-center gap-3 px-4 py-3 text-sm font-bold uppercase tracking-wide text-black/40 hover:bg-red-50 hover:text-red-600 transition-all"
         >
-          <LogOut className="h-5 w-5 stroke-[2.5px]" />
+          <LogOut className="h-5 w-5" strokeWidth={2} />
           Log Out
         </button>
       </div>

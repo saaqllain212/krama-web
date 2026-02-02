@@ -10,32 +10,55 @@ import {
   Plus, 
   Crown, 
   Clock, 
-  AlertTriangle, 
   Settings,
-  BarChart2,
-  Settings2
+  Target,
+  Flame,
+  ChevronRight,
+  TrendingUp,
+  Sparkles,
+  Timer
 } from 'lucide-react'
 import Link from 'next/link'
-import Countdown from '@/components/dashboard/Countdown'
 import { useSyllabus } from '@/context/SyllabusContext'
 import MocksModal from '@/components/mocks/MocksModal'
-import StudyHeatmap from '@/components/dashboard/StudyHeatmap'
 import SettingsModal from '@/components/dashboard/SettingsModal'
 import OnboardingModal from '@/components/dashboard/OnboardingModal'
 import CheckoutModal from '@/components/dashboard/CheckoutModal'
 import InitiationModal from '@/components/dashboard/InitiationModal'
 import ProtocolManagerModal from '@/components/dashboard/ProtocolManagerModal'
 import BroadcastBanner from '@/components/dashboard/BroadcastBanner'
-// ✅ NEW: Import the Sentinel Widget
 import ProctorWidget from '@/components/dashboard/sentinel/ProctorWidget'
+import Countdown from '@/components/dashboard/Countdown'
+
+// Helper: Get time-aware greeting
+const getGreeting = () => {
+  const hour = new Date().getHours()
+  if (hour < 12) return 'Good morning'
+  if (hour < 17) return 'Good afternoon'
+  return 'Good evening'
+}
+
+// Helper: Get motivational message based on progress
+const getMotivation = (progress: number, streak: number) => {
+  if (progress >= 100) return "You've crushed today's goal! 🔥"
+  if (progress >= 75) return "Almost there. One more push!"
+  if (progress >= 50) return "Halfway through. Keep the momentum."
+  if (streak >= 7) return `${streak}-day streak! Don't break it.`
+  if (streak >= 3) return "Building consistency. Stay focused."
+  return "Every minute counts. Let's begin."
+}
 
 export default function DashboardPage() {
   const [userName, setUserName] = useState('Student')
   const [userEmail, setUserEmail] = useState('')
   const [userId, setUserId] = useState('')
   const [focusMinutes, setFocusMinutes] = useState(0)
+  const [dailyGoalMinutes, setDailyGoalMinutes] = useState(360) // 6 hours default
   const [dueReviews, setDueReviews] = useState(0)
   const [mocksCount, setMocksCount] = useState(0)
+  const [streak, setStreak] = useState(0)
+  const [weekData, setWeekData] = useState<number[]>([0, 0, 0, 0, 0, 0, 0])
+  const [loading, setLoading] = useState(true)
   
   // MODAL STATES
   const [isMocksModalOpen, setIsMocksModalOpen] = useState(false)
@@ -50,7 +73,6 @@ export default function DashboardPage() {
   const { stats, activeExam } = useSyllabus() 
   const supabase = createClient()
   
-  // CHECK IF FOCUS MODE
   const isFocusMode = activeExam === 'focus'
 
   useEffect(() => {
@@ -60,12 +82,11 @@ export default function DashboardPage() {
       if (user) {
         setUserId(user.id)
 
-        // Capture Name & Email
         if (user.user_metadata?.full_name) {
           setUserName(user.user_metadata.full_name.split(' ')[0])
         }
         if (user.email) {
-            setUserEmail(user.email)
+          setUserEmail(user.email)
         }
 
         // --- 1. FETCH MEMBERSHIP STATUS ---
@@ -83,38 +104,85 @@ export default function DashboardPage() {
             let endDate: Date
 
             if (access.trial_ends_at) {
-               // Use the Admin-extended date
-               endDate = new Date(access.trial_ends_at)
+              endDate = new Date(access.trial_ends_at)
             } else {
-               // Fallback to standard 14 days
-               const start = new Date(access.trial_starts_at)
-               endDate = new Date(start)
-               endDate.setDate(endDate.getDate() + 14)
+              const start = new Date(access.trial_starts_at)
+              endDate = new Date(start)
+              endDate.setDate(endDate.getDate() + 14)
             }
             
-            // Calculate Days Remaining
             const diffTime = endDate.getTime() - today.getTime()
             const daysLeft = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-            
             setTrialDaysLeft(daysLeft)
           }
         }
 
-        // --- 2. Focus Minutes (Today) ---
-        const todayStr = new Date().toISOString().split('T')[0]
-        const { data: logs } = await supabase
-          .from('focus_logs')
-          .select('duration_minutes')
+        // --- 2. FETCH SETTINGS (Goal) ---
+        const { data: settings } = await supabase
+          .from('syllabus_settings')
+          .select('daily_goal_hours')
           .eq('user_id', user.id)
-          .gte('started_at', `${todayStr}T00:00:00.000Z`)
-          .lte('started_at', `${todayStr}T23:59:59.999Z`)
-
-        if (logs) {
-          const total = logs.reduce((sum, log) => sum + log.duration_minutes, 0)
-          setFocusMinutes(total)
+          .single()
+        
+        if (settings) {
+          if (settings.daily_goal_hours) {
+            setDailyGoalMinutes(settings.daily_goal_hours * 60)
+          }
         }
 
-        // --- 3. Due Reviews ---
+        // --- 3. FOCUS MINUTES (Today) + Week Data + Streak ---
+        const today = new Date()
+        const todayStr = today.toISOString().split('T')[0]
+        
+        // Get last 7 days
+        const weekDates: string[] = []
+        for (let i = 6; i >= 0; i--) {
+          const d = new Date(today)
+          d.setDate(d.getDate() - i)
+          weekDates.push(d.toISOString().split('T')[0])
+        }
+        
+        // Get last 30 days for streak calculation
+        const thirtyDaysAgo = new Date(today)
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
+        
+        const { data: logs } = await supabase
+          .from('focus_logs')
+          .select('started_at, duration_minutes')
+          .eq('user_id', user.id)
+          .gte('started_at', thirtyDaysAgo.toISOString())
+
+        if (logs) {
+          // Today's minutes
+          const todayLogs = logs.filter(l => l.started_at.split('T')[0] === todayStr)
+          const total = todayLogs.reduce((sum, log) => sum + log.duration_minutes, 0)
+          setFocusMinutes(total)
+          
+          // Week data
+          const weekMinutes = weekDates.map(date => {
+            const dayLogs = logs.filter(l => l.started_at.split('T')[0] === date)
+            return dayLogs.reduce((sum, log) => sum + log.duration_minutes, 0)
+          })
+          setWeekData(weekMinutes)
+          
+          // Streak calculation
+          const activeDays = new Set(logs.map(l => l.started_at.split('T')[0]))
+          let currentStreak = 0
+          let checkDate = new Date(today)
+          
+          // Allow today to be missing (hasn't logged yet)
+          if (!activeDays.has(checkDate.toISOString().split('T')[0])) {
+            checkDate.setDate(checkDate.getDate() - 1)
+          }
+          
+          while (activeDays.has(checkDate.toISOString().split('T')[0])) {
+            currentStreak++
+            checkDate.setDate(checkDate.getDate() - 1)
+          }
+          setStreak(currentStreak)
+        }
+
+        // --- 4. Due Reviews ---
         const now = new Date().toISOString()
         const { count: reviewCount } = await supabase
           .from('topics')
@@ -125,232 +193,368 @@ export default function DashboardPage() {
         
         if (reviewCount !== null) setDueReviews(reviewCount)
 
-        // --- 4. Mocks Count ---
+        // --- 5. Mocks Count ---
         const { data: mockData } = await supabase
-            .from('mock_logs')
-            .select('logs')
-            .eq('user_id', user.id)
-            .eq('exam_id', activeExam || 'upsc')
-            .maybeSingle()
+          .from('mock_logs')
+          .select('logs')
+          .eq('user_id', user.id)
+          .eq('exam_id', activeExam || 'upsc')
+          .maybeSingle()
         
         if (mockData?.logs) {
-            // @ts-ignore
-            setMocksCount(mockData.logs.length)
+          // @ts-ignore
+          setMocksCount(mockData.logs.length)
         }
       }
+      
+      setLoading(false)
     }
     getData()
   }, [supabase, activeExam])
 
-  return (
-    <div className="space-y-12 pb-20 relative">
-      
-      {/* INITIATION CEREMONY (Triggers on Payment Success) */}
-      <InitiationModal />
-      
-      {/* ONBOARDING WIZARD */}
-      <OnboardingModal />
+  // Calculate progress
+  const progressPercent = Math.min(Math.round((focusMinutes / dailyGoalMinutes) * 100), 100)
+  const hoursLogged = Math.floor(focusMinutes / 60)
+  const minutesLogged = focusMinutes % 60
+  const goalHours = Math.floor(dailyGoalMinutes / 60)
+  
+  // Day labels for week view
+  const dayLabels = ['M', 'T', 'W', 'T', 'F', 'S', 'S']
+  const today = new Date().getDay()
+  const adjustedToday = today === 0 ? 6 : today - 1 // Convert Sunday=0 to index 6
 
-      {/* BROADCAST BANNER */}
+  // Loading skeleton
+  if (loading) {
+    return (
+      <div className="space-y-8 pb-24 animate-pulse">
+        <div className="flex justify-between">
+          <div className="h-10 w-24 bg-stone-200 rounded" />
+          <div className="h-10 w-10 bg-stone-200 rounded" />
+        </div>
+        <div>
+          <div className="h-10 w-64 bg-stone-200 rounded mb-2" />
+          <div className="h-6 w-48 bg-stone-100 rounded" />
+        </div>
+        <div className="h-64 bg-stone-200 rounded" />
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {[1,2,3,4].map(i => <div key={i} className="h-28 bg-stone-200 rounded" />)}
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="space-y-8 pb-24 relative">
+      
+      {/* MODALS */}
+      <InitiationModal />
+      <OnboardingModal />
       <BroadcastBanner />
 
-      {/* HEADER */}
-      <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
-        <div className="w-full md:w-auto md:flex-1">
-          
-          {/* TOP ROW: Badge (Left) + Settings (Right) */}
-          <div className="mb-4 flex items-center justify-between pr-2">
-            
-            {/* STATUS BADGE */}
-            <div className="inline-flex">
-              {isPremium ? (
-                <div className="flex items-center gap-2 rounded-full border border-black bg-yellow-400 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-black shadow-[2px_2px_0_0_#000]">
-                  <Crown size={12} fill="black" />
-                  Pro Member
-                </div>
-              ) : (
-                <button 
-                  onClick={() => setIsCheckoutOpen(true)}
-                  className={`group flex items-center gap-2 rounded-full border border-black px-3 py-1 text-[10px] font-black uppercase tracking-widest shadow-[2px_2px_0_0_#000] transition-transform active:scale-95 cursor-pointer
-                    ${(trialDaysLeft !== null && trialDaysLeft <= 3) ? 'bg-red-500 text-white hover:bg-red-600' : 'bg-stone-200 text-stone-600 hover:bg-stone-300'}`}
-                >
-                  {trialDaysLeft !== null && trialDaysLeft > 0 ? (
-                    <>
-                      <Clock size={12} />
-                      Trial: {trialDaysLeft} Days Left (Upgrade)
-                    </>
-                  ) : (
-                    <>
-                      <AlertTriangle size={12} />
-                      Trial Expired (Upgrade)
-                    </>
-                  )}
-                </button>
-              )}
+      {/* === TOP BAR: Status + Settings === */}
+      <div className="flex items-center justify-between">
+        
+        {/* Status Badge */}
+        <div className="flex items-center gap-3">
+          {isPremium ? (
+            <div className="flex items-center gap-2 bg-gradient-to-r from-amber-400 to-yellow-400 border-2 border-black px-4 py-2 shadow-[3px_3px_0_0_#000]">
+              <Crown size={16} fill="black" />
+              <span className="text-sm font-bold uppercase tracking-wide">Pro</span>
             </div>
-
-            {/* SETTINGS BUTTON */}
+          ) : (
             <button 
-              onClick={() => setIsSettingsOpen(true)}
-              className="rounded-full bg-white p-2 text-stone-400 hover:bg-black hover:text-white transition-all shadow-sm border border-stone-200"
-              title="Settings"
+              onClick={() => setIsCheckoutOpen(true)}
+              className={`flex items-center gap-2 border-2 border-black px-4 py-2 text-sm font-bold uppercase tracking-wide shadow-[3px_3px_0_0_#000] transition-all hover:-translate-y-0.5
+                ${(trialDaysLeft !== null && trialDaysLeft <= 3) 
+                  ? 'bg-red-500 text-white' 
+                  : 'bg-white text-black hover:bg-stone-50'}`}
             >
-              <Settings size={20} />
+              <Clock size={14} />
+              {trialDaysLeft !== null && trialDaysLeft > 0 
+                ? `${trialDaysLeft}d left` 
+                : 'Upgrade'}
             </button>
-          </div>
-
-          <h1 className="text-4xl font-bold tracking-tighter md:text-5xl">
-            Hello, {userName}.
-          </h1>
-          <p className="mt-2 text-lg text-black/60">
-            You have <span className="font-bold text-black">{dueReviews} items</span> to review right now.
-          </p>
+          )}
           
-          {/* ACTION BUTTONS */}
-          <div className="mt-6 flex gap-2">
-            
-            {/* INSIGHTS (Mocks) */}
-            <Link 
-              href="/dashboard/mocks/insights" 
-              className="rounded-full border border-black/10 bg-white px-5 py-2 text-xs font-bold uppercase tracking-widest text-black/60 hover:bg-black hover:text-white transition-colors flex items-center gap-2"
-            >
-              <Activity size={14} /> Insights
-            </Link>
-
-            {/* LOG MOCK */}
-            <button 
-              onClick={() => setIsMocksModalOpen(true)}
-              className="rounded-full border border-black/10 bg-black px-5 py-2 text-xs font-bold uppercase tracking-widest text-white hover:bg-stone-800 transition-colors flex items-center gap-2 shadow-lg shadow-black/20"
-            >
-              <Plus size={14} /> Log Mock
-            </button>
-          </div>
-
+          {/* Streak Badge */}
+          {streak > 0 && (
+            <div className="flex items-center gap-1.5 bg-orange-100 border-2 border-orange-300 px-3 py-2 text-orange-700">
+              <Flame size={16} className="fill-orange-500" />
+              <span className="text-sm font-bold">{streak}</span>
+            </div>
+          )}
         </div>
 
-        <div className="w-full md:w-auto">
-          <Countdown />
-        </div>
+        {/* Settings */}
+        <button 
+          onClick={() => setIsSettingsOpen(true)}
+          className="p-3 bg-white border-2 border-black shadow-[3px_3px_0_0_#000] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] transition-all"
+          title="Settings"
+        >
+          <Settings size={20} />
+        </button>
       </div>
 
-      {/* STATS GRID */}
-      <div className={`grid grid-cols-1 gap-6 md:grid-cols-2 ${isFocusMode ? 'lg:grid-cols-3' : 'lg:grid-cols-4'}`}>
+      {/* === GREETING SECTION === */}
+      <div>
+        <h1 className="text-3xl md:text-4xl font-black tracking-tight text-black">
+          {getGreeting()}, {userName}
+        </h1>
+        <p className="mt-2 text-base md:text-lg font-medium text-black/60">
+          {getMotivation(progressPercent, streak)}
+        </p>
+      </div>
+
+      {/* === HERO CARD: Today's Progress === */}
+      <div className="bg-black text-white p-6 md:p-8 border-2 border-black shadow-[6px_6px_0_0_#CCFF00]">
         
-        {/* CARD 1: DEEP WORK */}
-        <div className="group relative border-neo bg-black p-6 text-white shadow-neo transition-all hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(245,158,11,1)]">
-          <div className="flex items-start justify-between">
-            <div>
-              <div className="text-sm font-bold uppercase tracking-widest text-white/60">Deep Work</div>
-              <div className="mt-2 text-4xl font-bold tracking-tighter">{focusMinutes}m</div>
+        {/* Top Row */}
+        <div className="flex items-start justify-between mb-6">
+          <div>
+            <div className="flex items-center gap-2 text-white/60 text-sm font-bold uppercase tracking-widest mb-2">
+              <Target size={16} />
+              Today's Progress
             </div>
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20">
-              <Play className="h-5 w-5 fill-current" />
+            <div className="flex items-baseline gap-2">
+              <span className="text-5xl md:text-6xl font-black tabular-nums">
+                {hoursLogged}<span className="text-2xl md:text-3xl text-white/50">h</span>
+                {minutesLogged > 0 && (
+                  <> {minutesLogged}<span className="text-2xl md:text-3xl text-white/50">m</span></>
+                )}
+              </span>
+              <span className="text-lg font-bold text-white/40">/ {goalHours}h goal</span>
             </div>
           </div>
-          <Link href="/dashboard/focus" className="absolute inset-0" />
           
-          <Link 
-              href="/dashboard/focus/insights" 
-              className="absolute bottom-4 right-4 z-20 rounded-full bg-white/20 p-2 text-white hover:bg-white hover:text-black transition-colors"
-              title="View Focus Analytics"
-          >
-              <BarChart2 size={16} /> 
-          </Link>
-        </div>
-
-        {/* CARD 2: REVIEWS */}
-        <div className="group relative border-neo bg-brand p-6 text-black shadow-neo transition-all hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
-          <div className="flex items-start justify-between">
-            <div>
-              <div className="text-sm font-bold uppercase tracking-widest text-black/60">Due Reviews</div>
-              <div className="mt-2 text-4xl font-bold tracking-tighter">{dueReviews}</div>
-            </div>
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-black/10">
-              <Brain className="h-5 w-5 stroke-[2.5px]" />
+          {/* Circular Progress Indicator */}
+          <div className="relative w-20 h-20 md:w-24 md:h-24">
+            <svg className="w-full h-full -rotate-90">
+              <circle
+                cx="50%"
+                cy="50%"
+                r="45%"
+                fill="none"
+                stroke="rgba(255,255,255,0.1)"
+                strokeWidth="8"
+              />
+              <circle
+                cx="50%"
+                cy="50%"
+                r="45%"
+                fill="none"
+                stroke="#CCFF00"
+                strokeWidth="8"
+                strokeLinecap="round"
+                strokeDasharray={`${progressPercent * 2.83} 283`}
+                className="transition-all duration-1000 ease-out"
+              />
+            </svg>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <span className="text-xl md:text-2xl font-black text-brand">{progressPercent}%</span>
             </div>
           </div>
-          <Link href="/dashboard/review" className="absolute inset-0" />
         </div>
 
-        {/* CARD 3: SYLLABUS (HIDDEN in Focus Mode) */}
+        {/* Progress Bar */}
+        <div className="w-full h-3 bg-white/10 rounded-full overflow-hidden mb-6">
+          <div 
+            className="h-full bg-brand transition-all duration-1000 ease-out rounded-full"
+            style={{ width: `${progressPercent}%` }}
+          />
+        </div>
+
+        {/* CTA Button */}
+        <Link 
+          href="/dashboard/focus"
+          className="flex items-center justify-center gap-3 w-full bg-brand text-black py-4 md:py-5 font-black text-base md:text-lg uppercase tracking-wide border-2 border-brand hover:bg-brand-hover transition-all group"
+        >
+          <Play size={22} className="fill-black group-hover:scale-110 transition-transform" />
+          Start Focus Session
+        </Link>
+      </div>
+
+      {/* === QUICK STATS ROW === */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+        
+        {/* Stat 1: Deep Work */}
+        <Link 
+          href="/dashboard/focus"
+          className="group bg-white border-2 border-black p-4 md:p-5 shadow-[4px_4px_0_0_#000] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all"
+        >
+          <div className="flex items-center gap-2 text-black/50 mb-2">
+            <Timer size={16} />
+            <span className="text-xs font-bold uppercase tracking-wide">Focus</span>
+          </div>
+          <div className="text-2xl md:text-3xl font-black text-black">{focusMinutes}m</div>
+          <div className="text-xs font-bold text-black/40 mt-1">Today</div>
+        </Link>
+
+        {/* Stat 2: Reviews Due */}
+        <Link 
+          href="/dashboard/review"
+          className={`group border-2 border-black p-4 md:p-5 shadow-[4px_4px_0_0_#000] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all
+            ${dueReviews > 0 ? 'bg-brand' : 'bg-white'}`}
+        >
+          <div className={`flex items-center gap-2 mb-2 ${dueReviews > 0 ? 'text-black/60' : 'text-black/50'}`}>
+            <Brain size={16} />
+            <span className="text-xs font-bold uppercase tracking-wide">Review</span>
+          </div>
+          <div className="text-2xl md:text-3xl font-black text-black">{dueReviews}</div>
+          <div className={`text-xs font-bold mt-1 ${dueReviews > 0 ? 'text-black/60' : 'text-black/40'}`}>
+            {dueReviews > 0 ? 'Due now' : 'All clear'}
+          </div>
+        </Link>
+
+        {/* Stat 3: Syllabus */}
         {!isFocusMode && (
-            <div className="group relative border-neo bg-white p-6 shadow-neo transition-all hover:-translate-y-1">
-              <div className="flex items-start justify-between">
-                <div>
-                  <div className="text-sm font-bold uppercase tracking-widest text-black/40">Syllabus</div>
-                  <div className="mt-2 text-4xl font-bold tracking-tighter">{stats.percentage}%</div>
-                </div>
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-black/5">
-                  <CheckSquare className="h-5 w-5 stroke-[2.5px]" />
-                </div>
-              </div>
-              <div className="mt-4 h-2 w-full overflow-hidden bg-black/10">
-                <div className="h-full bg-black transition-all duration-1000 ease-out" style={{ width: `${stats.percentage}%` }} />
-              </div>
-              <Link href="/dashboard/syllabus" className="absolute inset-0" />
-              
-              {/* PROTOCOL MANAGER BUTTON (Custom Only) */}
-              {activeExam === 'custom' && (
-                  <button 
-                    onClick={(e) => {
-                        e.preventDefault(); 
-                        setIsProtocolManagerOpen(true);
-                    }}
-                    className="absolute bottom-4 right-4 z-20 rounded-full bg-black p-3 text-[#ccff00] shadow-[0_0_20px_#ccff00] border-2 border-[#ccff00] hover:scale-110 transition-all"
-                    title="Manage Custom Protocol"
-                  >
-                    <Settings2 size={20} />
-                  </button>
-              )}
+          <Link 
+            href="/dashboard/syllabus"
+            className="group bg-white border-2 border-black p-4 md:p-5 shadow-[4px_4px_0_0_#000] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all"
+          >
+            <div className="flex items-center gap-2 text-black/50 mb-2">
+              <CheckSquare size={16} />
+              <span className="text-xs font-bold uppercase tracking-wide">Syllabus</span>
             </div>
+            <div className="text-2xl md:text-3xl font-black text-black">{stats.percentage}%</div>
+            <div className="w-full h-1.5 bg-black/10 mt-2 rounded-full overflow-hidden">
+              <div 
+                className="h-full bg-black rounded-full transition-all duration-500"
+                style={{ width: `${stats.percentage}%` }}
+              />
+            </div>
+          </Link>
         )}
 
-        {/* CARD 4: MOCKS */}
-        <div className="group relative border-neo bg-white p-6 shadow-neo transition-all hover:-translate-y-1">
-          <div className="flex items-start justify-between">
-            <div>
-              <div className="text-sm font-bold uppercase tracking-widest text-black/40">Tests Taken</div>
-              <div className="mt-2 text-4xl font-bold tracking-tighter">{mocksCount}</div>
-            </div>
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-black/5">
-              <Activity className="h-5 w-5 stroke-[2.5px]" />
-            </div>
+        {/* Stat 4: Mocks */}
+        <Link 
+          href="/dashboard/mocks"
+          className="group bg-white border-2 border-black p-4 md:p-5 shadow-[4px_4px_0_0_#000] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all"
+        >
+          <div className="flex items-center gap-2 text-black/50 mb-2">
+            <Activity size={16} />
+            <span className="text-xs font-bold uppercase tracking-wide">Mocks</span>
           </div>
-          <Link href="/dashboard/mocks" className="absolute inset-0" />
+          <div className="text-2xl md:text-3xl font-black text-black">{mocksCount}</div>
+          <div className="text-xs font-bold text-black/40 mt-1">Tests taken</div>
+        </Link>
+
+        {/* If Focus Mode, add an extra card */}
+        {isFocusMode && (
+          <div className="bg-white border-2 border-black p-4 md:p-5 shadow-[4px_4px_0_0_#000]">
+            <div className="flex items-center gap-2 text-black/50 mb-2">
+              <Sparkles size={16} />
+              <span className="text-xs font-bold uppercase tracking-wide">Mode</span>
+            </div>
+            <div className="text-lg md:text-xl font-black text-black uppercase">Focus</div>
+            <div className="text-xs font-bold text-black/40 mt-1">Pure productivity</div>
+          </div>
+        )}
+      </div>
+
+      {/* === THIS WEEK SECTION === */}
+      <div className="bg-white border-2 border-black p-5 md:p-6 shadow-[4px_4px_0_0_#000]">
+        <div className="flex items-center justify-between mb-5">
+          <h3 className="text-lg font-black uppercase tracking-tight flex items-center gap-2">
+            <TrendingUp size={20} />
+            This Week
+          </h3>
+          <Link 
+            href="/dashboard/focus/insights"
+            className="text-xs font-bold uppercase tracking-wide text-black/50 hover:text-black flex items-center gap-1 transition-colors"
+          >
+            View All <ChevronRight size={14} />
+          </Link>
         </div>
-
+        
+        {/* Week Grid */}
+        <div className="grid grid-cols-7 gap-2 md:gap-3">
+          {weekData.map((minutes, i) => {
+            const isToday = i === adjustedToday
+            const percentage = Math.min(minutes / dailyGoalMinutes, 1)
+            const height = Math.max(percentage * 100, 8) // Minimum 8% height
+            
+            return (
+              <div key={i} className="flex flex-col items-center gap-2">
+                {/* Bar */}
+                <div className="w-full h-20 md:h-24 bg-stone-100 rounded-sm flex items-end overflow-hidden">
+                  <div 
+                    className={`w-full transition-all duration-500 rounded-sm ${
+                      percentage >= 1 
+                        ? 'bg-brand' 
+                        : percentage > 0 
+                          ? 'bg-amber-400' 
+                          : 'bg-stone-200'
+                    }`}
+                    style={{ height: `${height}%` }}
+                  />
+                </div>
+                {/* Label */}
+                <span className={`text-xs font-bold ${
+                  isToday ? 'text-black bg-black text-white w-6 h-6 rounded-full flex items-center justify-center' : 'text-black/40'
+                }`}>
+                  {dayLabels[i]}
+                </span>
+              </div>
+            )
+          })}
+        </div>
+        
+        {/* Legend */}
+        <div className="flex items-center justify-center gap-4 mt-4 pt-4 border-t border-black/10">
+          <div className="flex items-center gap-2 text-xs font-bold text-black/50">
+            <div className="w-3 h-3 bg-stone-200 rounded-sm" />
+            <span>No activity</span>
+          </div>
+          <div className="flex items-center gap-2 text-xs font-bold text-black/50">
+            <div className="w-3 h-3 bg-amber-400 rounded-sm" />
+            <span>In progress</span>
+          </div>
+          <div className="flex items-center gap-2 text-xs font-bold text-black/50">
+            <div className="w-3 h-3 bg-brand rounded-sm" />
+            <span>Goal hit</span>
+          </div>
+        </div>
       </div>
 
-      {/* HEATMAP & SENTINEL GRID */}
-      {/* 2 Columns for Heatmap, 1 Column for Sentinel */}
-      <div className="mt-12 grid grid-cols-1 gap-6 lg:grid-cols-3">
-         {/* HEATMAP (2/3 Width) */}
-         <div className="lg:col-span-2">
-            <StudyHeatmap />
-         </div>
+      {/* === EXAM COUNTDOWN (Editable) === */}
+      <Countdown />
 
-         {/* SENTINEL WIDGET (1/3 Width) */}
-         <div className="h-full min-h-[250px]">
-            {/* ✅ FIXED: Single instance with prop */}
-            <ProctorWidget onOpenSettings={() => setIsSettingsOpen(true)} />
-         </div>
+      {/* === QUICK ACTIONS === */}
+      <div className="flex gap-3">
+        <Link 
+          href="/dashboard/mocks/insights"
+          className="flex-1 flex items-center justify-center gap-2 bg-white border-2 border-black px-4 py-3 md:py-4 font-bold uppercase text-sm tracking-wide shadow-[3px_3px_0_0_#000] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] transition-all"
+        >
+          <Activity size={16} />
+          Insights
+        </Link>
+        <button 
+          onClick={() => setIsMocksModalOpen(true)}
+          className="flex-1 flex items-center justify-center gap-2 bg-black text-white border-2 border-black px-4 py-3 md:py-4 font-bold uppercase text-sm tracking-wide shadow-[3px_3px_0_0_#000] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] transition-all"
+        >
+          <Plus size={16} />
+          Log Mock
+        </button>
       </div>
 
-      {/* MOCKS MODAL */}
+      {/* === SENTINEL (Smaller) === */}
+      <div className="max-w-md">
+        <ProctorWidget onOpenSettings={() => setIsSettingsOpen(true)} />
+      </div>
+
+      {/* === MODALS === */}
       <MocksModal 
-          open={isMocksModalOpen} 
-          onClose={() => setIsMocksModalOpen(false)} 
-          examId={activeExam || 'upsc'} 
-          onSuccess={() => window.location.reload()} 
+        open={isMocksModalOpen} 
+        onClose={() => setIsMocksModalOpen(false)} 
+        examId={activeExam || 'upsc'} 
+        onSuccess={() => window.location.reload()} 
       />
 
-      {/* SETTINGS MODAL */}
       <SettingsModal 
         open={isSettingsOpen} 
         onClose={() => setIsSettingsOpen(false)} 
       />
 
-      {/* CHECKOUT MODAL */}
       <CheckoutModal 
         isOpen={isCheckoutOpen}
         onClose={() => setIsCheckoutOpen(false)}
@@ -358,12 +562,13 @@ export default function DashboardPage() {
         userEmail={userEmail}
       />
       
-      {/* PROTOCOL MANAGER */}
-      <ProtocolManagerModal 
-        isOpen={isProtocolManagerOpen}
-        onClose={() => setIsProtocolManagerOpen(false)}
-        userId={userId}
-      />
+      {activeExam === 'custom' && (
+        <ProtocolManagerModal 
+          isOpen={isProtocolManagerOpen}
+          onClose={() => setIsProtocolManagerOpen(false)}
+          userId={userId}
+        />
+      )}
     </div>
   )
 }

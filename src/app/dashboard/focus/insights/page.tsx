@@ -4,6 +4,7 @@ import { useEffect, useState, useMemo } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 import { ArrowLeft, Flame, Target, Zap, Clock, AlertTriangle, Loader2, Brain } from 'lucide-react'
+import StudyHeatmap from '@/components/dashboard/StudyHeatmap'
 
 // --- TYPES ---
 type FocusLog = {
@@ -246,6 +247,11 @@ export default function FocusInsightsPage() {
             </div>
          </div>
 
+      </div>
+
+      {/* FULL YEAR HEATMAP */}
+      <div className="max-w-5xl mx-auto mt-8">
+        <StudyHeatmap />
       </div>
     </div>
   )

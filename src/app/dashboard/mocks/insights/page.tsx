@@ -4,15 +4,15 @@ import { useState, useEffect, useMemo, Suspense } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useSyllabus } from '@/context/SyllabusContext'
 import { MockLogEntry, calculatePhase, calculateRecovery, calculateConsistency, calculateBestTime, getChartData } from '@/lib/analytics'
-import { ArrowLeft, TrendingUp, Activity, Zap, Brain, AlertTriangle, Search, X, Info, Sun, AlertCircle, PieChart } from 'lucide-react'
+import { ArrowLeft, TrendingUp, Activity, Zap, Brain, AlertTriangle, Search, X, Sun, PieChart, Target, Clock } from 'lucide-react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 
-// ... (TrendChart component remains the same) ...
+// --- TREND CHART COMPONENT ---
 const TrendChart = ({ data }: { data: { date: string, score: number }[] }) => {
   if (data.length < 2) return (
-    <div className="h-[200px] flex items-center justify-center text-xs font-bold text-stone-400 uppercase tracking-widest border-2 border-dashed border-stone-100">
-       Need 2+ logs for trajectory
+    <div className="h-[200px] flex items-center justify-center text-sm font-bold text-black/30 border-2 border-dashed border-black/10">
+      Need 2+ tests for trajectory
     </div>
   )
 
@@ -28,20 +28,63 @@ const TrendChart = ({ data }: { data: { date: string, score: number }[] }) => {
   return (
     <div className="w-full h-[200px] overflow-hidden relative">
       <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-full overflow-visible" preserveAspectRatio="none">
-         <line x1="0" y1={getY(50)} x2={width} y2={getY(50)} stroke="#e5e5e5" strokeWidth="2" strokeDasharray="5,5" />
-         <line x1="0" y1={getY(75)} x2={width} y2={getY(75)} stroke="#e5e5e5" strokeWidth="2" strokeDasharray="5,5" />
-         <path d={`M ${fillPath}`} fill="rgba(0,0,0,0.05)" stroke="none" />
-         <polyline points={points} fill="none" stroke="black" strokeWidth="3" vectorEffect="non-scaling-stroke" />
-         {data.map((d, i) => (
-            <circle key={i} cx={getX(i)} cy={getY(d.score)} r="4" className="fill-white stroke-black hover:fill-black transition-colors duration-200" strokeWidth="2">
-              <title>{d.date}: {d.score}%</title>
-            </circle>
-         ))}
+        {/* Grid Lines */}
+        <line x1="0" y1={getY(50)} x2={width} y2={getY(50)} stroke="#e5e5e5" strokeWidth="2" strokeDasharray="8,8" />
+        <line x1="0" y1={getY(75)} x2={width} y2={getY(75)} stroke="#e5e5e5" strokeWidth="2" strokeDasharray="8,8" />
+        {/* Fill Area */}
+        <path d={`M ${fillPath}`} fill="rgba(204,255,0,0.15)" stroke="none" />
+        {/* Line */}
+        <polyline points={points} fill="none" stroke="black" strokeWidth="3" vectorEffect="non-scaling-stroke" />
+        {/* Points */}
+        {data.map((d, i) => (
+          <circle 
+            key={i} 
+            cx={getX(i)} 
+            cy={getY(d.score)} 
+            r="6" 
+            className="fill-white stroke-black hover:fill-brand transition-colors cursor-pointer" 
+            strokeWidth="3"
+          >
+            <title>{d.date}: {d.score}%</title>
+          </circle>
+        ))}
       </svg>
-      <div className="absolute top-0 right-0 text-xs font-bold text-stone-400">100%</div>
-      <div className="absolute top-[50%] right-0 text-xs font-bold text-stone-400">50%</div>
-      <div className="absolute bottom-0 left-0 text-xs font-bold text-stone-400">{data[0].date}</div>
-      <div className="absolute bottom-0 right-0 text-xs font-bold text-stone-400">{data[data.length-1].date}</div>
+      {/* Labels */}
+      <div className="absolute top-0 right-2 text-xs font-bold text-black/40">100%</div>
+      <div className="absolute top-[50%] right-2 text-xs font-bold text-black/40 -translate-y-1/2">50%</div>
+      <div className="absolute bottom-0 left-0 text-xs font-bold text-black/40">{data[0].date}</div>
+      <div className="absolute bottom-0 right-0 text-xs font-bold text-black/40">{data[data.length-1].date}</div>
+    </div>
+  )
+}
+
+// --- STAT CARD COMPONENT ---
+const StatCard = ({ icon: Icon, label, value, description, color = 'stone' }: {
+  icon: any
+  label: string
+  value: string
+  description: string
+  color?: 'stone' | 'green' | 'amber' | 'red' | 'blue' | 'purple'
+}) => {
+  const colors = {
+    stone: 'bg-stone-100 text-stone-600',
+    green: 'bg-green-100 text-green-600',
+    amber: 'bg-amber-100 text-amber-600',
+    red: 'bg-red-100 text-red-600',
+    blue: 'bg-blue-100 text-blue-600',
+    purple: 'bg-purple-100 text-purple-600',
+  }
+  
+  return (
+    <div className="bg-white border-2 border-black/10 p-5 hover:border-black hover:shadow-[4px_4px_0_0_#000] transition-all">
+      <div className="flex items-center gap-3 mb-3">
+        <div className={`p-2 ${colors[color]}`}>
+          <Icon size={20} />
+        </div>
+        <span className="text-sm font-bold text-black/50 uppercase tracking-wide">{label}</span>
+      </div>
+      <div className="text-2xl font-black mb-1">{value}</div>
+      <p className="text-sm text-black/50 leading-relaxed">{description}</p>
     </div>
   )
 }
@@ -70,344 +113,362 @@ function InsightsContent() {
           .maybeSingle()
         
         if (data?.logs) {
-           const sorted = (data.logs as unknown as MockLogEntry[])
-             .sort((a, b) => new Date(a.d).getTime() - new Date(b.d).getTime())
-           setAllLogs(sorted)
+          const sorted = (data.logs as unknown as MockLogEntry[])
+            .sort((a, b) => new Date(a.d).getTime() - new Date(b.d).getTime())
+          setAllLogs(sorted)
         }
       }
       setLoading(false)
     }
     fetchLogs()
-  }, [effectiveExamId])
+  }, [effectiveExamId, supabase])
 
   const logs = useMemo(() => {
-     if (!filterQuery) return allLogs
-     return allLogs.filter(log => log.n.toLowerCase().includes(filterQuery.toLowerCase()))
+    if (!filterQuery) return allLogs
+    return allLogs.filter(log => log.n.toLowerCase().includes(filterQuery.toLowerCase()))
   }, [allLogs, filterQuery])
 
   const analytics = useMemo(() => {
     if (logs.length === 0) return null
 
-    // --- NEW: MISTAKE CALCULATION ---
+    // Mistake Calculation
     let totalSilly = 0, totalConcept = 0, totalUnattempted = 0
     let logsWithMistakes = 0
 
     logs.forEach(log => {
-       // Check if this log has any autopsy data
-       if (log.si !== undefined || log.co !== undefined || log.ua !== undefined) {
-           totalSilly += (log.si || 0)
-           totalConcept += (log.co || 0)
-           totalUnattempted += (log.ua || 0)
-           logsWithMistakes++
-       }
+      if (log.si !== undefined || log.co !== undefined || log.ua !== undefined) {
+        totalSilly += (log.si || 0)
+        totalConcept += (log.co || 0)
+        totalUnattempted += (log.ua || 0)
+        logsWithMistakes++
+      }
     })
 
     const totalLost = totalSilly + totalConcept + totalUnattempted
     const mistakes = logsWithMistakes > 0 && totalLost > 0 ? {
-        hasData: true,
-        silly: Math.round((totalSilly / totalLost) * 100),
-        concept: Math.round((totalConcept / totalLost) * 100),
-        unattempted: Math.round((totalUnattempted / totalLost) * 100),
-        totalLost
+      hasData: true,
+      silly: Math.round((totalSilly / totalLost) * 100),
+      concept: Math.round((totalConcept / totalLost) * 100),
+      unattempted: Math.round((totalUnattempted / totalLost) * 100),
+      totalLost
     } : { hasData: false, silly: 0, concept: 0, unattempted: 0, totalLost: 0 }
 
+    // Calculate averages
+    const avgScore = Math.round(logs.reduce((sum, l) => sum + (l.s / l.m) * 100, 0) / logs.length)
+    const recentLogs = logs.slice(-5)
+    const recentAvg = Math.round(recentLogs.reduce((sum, l) => sum + (l.s / l.m) * 100, 0) / recentLogs.length)
+
     return {
-       phase: calculatePhase(logs),
-       recovery: calculateRecovery(logs),
-       consistency: calculateConsistency(logs),
-       bestTime: calculateBestTime(logs),
-       chartData: getChartData(logs),
-       mistakes // <--- ADDED TO ANALYTICS OBJECT
+      phase: calculatePhase(logs),
+      recovery: calculateRecovery(logs),
+      consistency: calculateConsistency(logs),
+      bestTime: calculateBestTime(logs),
+      chartData: getChartData(logs),
+      mistakes,
+      avgScore,
+      recentAvg,
+      totalTests: logs.length
     }
   }, [logs])
 
+  const getPhaseColor = (phase: string) => {
+    switch(phase) {
+      case 'Peak': return 'green'
+      case 'Growth': return 'blue'
+      case 'Stability': return 'amber'
+      case 'Instability': return 'red'
+      default: return 'stone'
+    }
+  }
+
   const getCoachNote = (phase: string) => {
-     switch(phase) {
-        case 'Instability': return "Your scores are fluctuating significantly. Stop testing. Analyze your last 3 failures deeply."
-        case 'Stability': return "You found a baseline. Now push for small, incremental gains. Target one weak subject."
-        case 'Growth': return "You are on an upward trajectory! Maintain this rhythm. Do not burn out."
-        case 'Peak': return "Excellent performance. You are ready. Focus on maintenance and mental calmness."
-        default: return "Insufficient data."
-     }
+    switch(phase) {
+      case 'Instability': return "Scores are fluctuating. Pause testing and analyze your last 3 failures deeply."
+      case 'Stability': return "You've found a baseline. Focus on small, incremental gains in weak areas."
+      case 'Growth': return "Great upward trend! Maintain this rhythm without burning out."
+      case 'Peak': return "Excellent performance. Focus on maintenance and staying calm."
+      default: return "Log more tests to see patterns."
+    }
   }
 
-  // Helper for Mistake Advice
   const getMistakeAdvice = (m: { silly: number, concept: number, unattempted: number }) => {
-      const max = Math.max(m.silly, m.concept, m.unattempted)
-      if (max === m.silly) return "Your main enemy is Carelessness. You know the answers but lose focus. Solution: Read questions twice."
-      if (max === m.concept) return "Your main enemy is Knowledge Gaps. You simply don't know enough yet. Solution: Stop testing, go back to books."
-      return "Your main enemy is Speed. You are running out of time. Solution: Practice timed sectional tests."
+    const max = Math.max(m.silly, m.concept, m.unattempted)
+    if (max === m.silly) return "Your main enemy is Carelessness. Read questions twice before answering."
+    if (max === m.concept) return "Your main enemy is Knowledge Gaps. Go back to studying weak topics."
+    return "Your main enemy is Speed. Practice more timed sectional tests."
   }
 
-  if (loading) return <div className="min-h-screen bg-[#FDFBF7] p-12 flex items-center justify-center font-bold animate-pulse">ANALYZING PATTERNS...</div>
-
-  if (allLogs.length === 0) {
-      return (
-        <div className="min-h-screen bg-[#FDFBF7] p-12 flex flex-col items-center justify-center text-center">
-           <AlertTriangle size={48} className="text-amber-500 mb-4 opacity-80" />
-           <h2 className="text-2xl font-black uppercase mb-4">Insufficient Data</h2>
-           <p className="text-stone-600 mb-6 font-medium">We need at least 1 log for <strong>{effectiveExamId.toUpperCase()}</strong>.</p>
-           <Link href="/dashboard/mocks" className="bg-black text-white px-8 py-3 font-bold uppercase hover:bg-stone-800">Return to Lab</Link>
+  // --- LOADING STATE ---
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#FBF9F6] flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-black border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="font-bold text-black/50">Analyzing patterns...</p>
         </div>
-      )
+      </div>
+    )
+  }
+
+  // --- EMPTY STATE ---
+  if (allLogs.length === 0) {
+    return (
+      <div className="min-h-screen bg-[#FBF9F6] text-black">
+        <Link 
+          href="/dashboard/mocks" 
+          className="inline-flex items-center gap-2 text-sm font-bold text-black/40 hover:text-black transition-colors mb-8"
+        >
+          <ArrowLeft size={16} /> Back to Mocks
+        </Link>
+        
+        <div className="text-center py-20">
+          <PieChart size={64} className="mx-auto mb-6 text-black/20" />
+          <h1 className="text-3xl font-black mb-3">No Data Yet</h1>
+          <p className="text-black/50 mb-8 max-w-md mx-auto">
+            Log at least one mock test to start seeing insights and patterns.
+          </p>
+          <Link 
+            href="/dashboard/mocks"
+            className="inline-flex items-center gap-2 bg-black text-white px-6 py-3 font-bold"
+          >
+            Log Your First Test
+          </Link>
+        </div>
+      </div>
+    )
   }
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7] p-6 md:p-12 text-black">
-      <div className="max-w-4xl mx-auto flex justify-between items-center mb-6">
-        <Link href="/dashboard/mocks" className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-black/40 hover:text-black">
-            <ArrowLeft size={14} /> Back to Lab
+    <div className="min-h-screen bg-[#FBF9F6] text-black pb-20">
+      
+      {/* HEADER */}
+      <div className="mb-8">
+        <Link 
+          href="/dashboard/mocks" 
+          className="inline-flex items-center gap-2 text-sm font-bold text-black/40 hover:text-black transition-colors mb-4"
+        >
+          <ArrowLeft size={16} /> Back to Mocks
         </Link>
+        
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+          <div>
+            <h1 className="text-4xl font-black tracking-tight mb-2">Mock Analytics</h1>
+            <div className="flex items-center gap-3">
+              <span className="bg-black text-white text-xs font-bold px-3 py-1 uppercase">
+                {effectiveExamId}
+              </span>
+              <span className="text-black/50 font-bold">{analytics?.totalTests} tests logged</span>
+            </div>
+          </div>
+
+          {/* SEARCH */}
+          <div className="relative w-full md:w-64">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-black/30" size={18} />
+            <input 
+              value={filterQuery}
+              onChange={(e) => setFilterQuery(e.target.value)}
+              placeholder="Filter tests..."
+              className="w-full bg-white border-2 border-black/20 p-3 pl-10 font-bold text-sm focus:outline-none focus:border-black transition-all placeholder:text-black/30"
+            />
+            {filterQuery && (
+              <button onClick={() => setFilterQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-black/30 hover:text-red-500">
+                <X size={18} />
+              </button>
+            )}
+          </div>
+        </div>
       </div>
 
-      <div className="max-w-4xl mx-auto">
-         
-         {/* BANNER */}
-         <div className="mb-10 bg-amber-50 border-l-4 border-amber-500 p-6 shadow-sm flex items-start gap-4">
-            <div className="text-amber-600 mt-1 shrink-0">
-               <Info size={24} />
-            </div>
-            <div>
-               <h3 className="font-black text-amber-900 text-sm uppercase tracking-wider mb-1">
-                  Protocol Disclaimer
-               </h3>
-               <p className="text-sm text-amber-800 leading-relaxed font-medium">
-                  I calculate trends, not destiny. These insights are strictly for tactical awareness. <br className="hidden md:block"/>
-                  <span className="font-black">Trust your preparation, not this algorithm.</span> If the graph says &quot;Panic&quot;, ignore it and go study.
-               </p>
-            </div>
-         </div>
-
-         {/* HEADER */}
-         <div className="flex flex-col md:flex-row justify-between items-end mb-8 gap-4">
-             <div>
-                <h1 className="text-4xl font-black tracking-tighter uppercase mb-2">Tactical Insights</h1>
-                <p className="text-stone-500 font-bold uppercase tracking-widest text-xs">
-                    Protocol: {effectiveExamId} | Sample Size: {logs.length}
+      {analytics && (
+        <>
+          {/* PHASE BANNER */}
+          <div className={`mb-8 p-6 border-2 border-black shadow-[4px_4px_0_0_#000] ${
+            analytics.phase === 'Peak' ? 'bg-green-50' :
+            analytics.phase === 'Growth' ? 'bg-blue-50' :
+            analytics.phase === 'Stability' ? 'bg-amber-50' :
+            'bg-red-50'
+          }`}>
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div>
+                <div className="text-xs font-bold uppercase text-black/40 mb-1">Current Phase</div>
+                <div className="text-3xl font-black">{analytics.phase}</div>
+              </div>
+              <div className="flex-1 md:ml-8">
+                <p className="text-sm font-medium text-black/70 leading-relaxed">
+                  {getCoachNote(analytics.phase)}
                 </p>
-             </div>
+              </div>
+              <div className="flex gap-6">
+                <div className="text-center">
+                  <div className="text-2xl font-black">{analytics.avgScore}%</div>
+                  <div className="text-xs font-bold text-black/40">Overall Avg</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-black">{analytics.recentAvg}%</div>
+                  <div className="text-xs font-bold text-black/40">Last 5 Avg</div>
+                </div>
+              </div>
+            </div>
+          </div>
 
-             <div className="relative w-full md:w-64">
-                <input 
-                  type="text" 
-                  placeholder="Filter by Name..." 
-                  value={filterQuery}
-                  onChange={(e) => setFilterQuery(e.target.value)}
-                  className="w-full bg-white border-2 border-black p-2 pl-9 font-bold text-sm focus:outline-none focus:shadow-[4px_4px_0_0_#000] transition-all"
-                />
-                <Search className="absolute left-3 top-2.5 text-black/40" size={14} />
-                {filterQuery && (
-                   <button onClick={() => setFilterQuery('')} className="absolute right-3 top-2.5 hover:text-red-600">
-                     <X size={14} />
-                   </button>
+          {/* TREND CHART */}
+          <div className="bg-white border-2 border-black p-6 shadow-[4px_4px_0_0_#000] mb-8">
+            <div className="flex items-center gap-3 mb-6">
+              <TrendingUp size={20} />
+              <h2 className="text-xl font-black">Score Trajectory</h2>
+            </div>
+            <TrendChart data={analytics.chartData} />
+          </div>
+
+          {/* MISTAKE ANALYSIS */}
+          {analytics.mistakes.hasData && (
+            <div className="bg-white border-2 border-black p-6 shadow-[4px_4px_0_0_#000] mb-8">
+              <div className="flex items-center gap-3 mb-4">
+                <AlertTriangle size={20} className="text-red-500" />
+                <h2 className="text-xl font-black">Mistake Breakdown</h2>
+              </div>
+              
+              <p className="text-sm text-black/60 mb-6">
+                {getMistakeAdvice(analytics.mistakes)}
+              </p>
+
+              {/* Stacked Bar */}
+              <div className="h-10 flex overflow-hidden border-2 border-black mb-4">
+                {analytics.mistakes.silly > 0 && (
+                  <div 
+                    style={{ width: `${analytics.mistakes.silly}%` }} 
+                    className="bg-red-500 flex items-center justify-center text-white font-bold text-sm"
+                  >
+                    {analytics.mistakes.silly}%
+                  </div>
                 )}
-             </div>
-         </div>
-
-         {!analytics || logs.length < 3 ? (
-             <div className="bg-white border-2 border-dashed border-stone-300 p-12 text-center mb-12">
-                <p className="font-bold text-stone-500 uppercase">
-                   {filterQuery ? "No logs match your filter." : "Need at least 3 logs to generate insights."}
-                </p>
-             </div>
-         ) : (
-            <>
-                {/* HERO */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-                    <div className="col-span-1 bg-black text-white p-8 shadow-[8px_8px_0_0_#444]">
-                        <div className="text-xs font-bold uppercase tracking-widest opacity-50 mb-2">Current Phase</div>
-                        <h2 className={`text-3xl font-black uppercase mb-4 ${
-                            analytics.phase === 'Growth' ? 'text-green-400' : 
-                            analytics.phase === 'Instability' ? 'text-red-400' : 'text-white'
-                        }`}>
-                            {analytics.phase}
-                        </h2>
-                        <div className="h-1 w-12 bg-white/20 mb-4"></div>
-                        <p className="text-sm font-medium leading-relaxed opacity-90">
-                            {getCoachNote(analytics.phase)}
-                        </p>
-                    </div>
-
-                    <div className="col-span-1 md:col-span-2 bg-white border-2 border-black p-8 shadow-[8px_8px_0_0_#000]">
-                        <div className="flex justify-between items-center mb-6">
-                            <div className="text-xs font-bold uppercase tracking-widest text-stone-400">Performance Trajectory</div>
-                            <div className="flex items-center gap-2 text-xs font-bold uppercase bg-stone-100 px-2 py-1 rounded">
-                                <TrendingUp size={14} /> Last 8 Tests
-                            </div>
-                        </div>
-                        <TrendChart data={analytics.chartData.slice(-8)} />
-                    </div>
-                </div>
-
-                {/* --- NEW SECTION: THE LEAKY BUCKET (Mistake Autopsy) --- */}
-                {analytics.mistakes.hasData && (
-                    <div className="bg-white border-2 border-red-100 p-8 shadow-[8px_8px_0_0_#ffe4e6] mb-12 relative overflow-hidden">
-                        <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
-                            <AlertCircle size={100} className="text-red-500"/>
-                        </div>
-                        
-                        <div className="flex flex-col md:flex-row gap-8 relative z-10">
-                            {/* Left: Text Insight */}
-                            <div className="flex-1">
-                                <div className="flex items-center gap-2 mb-2 text-red-600">
-                                   <PieChart size={18} />
-                                   <span className="text-xs font-black uppercase tracking-widest">The Leaky Bucket</span>
-                                </div>
-                                <h3 className="text-2xl font-black uppercase mb-4 leading-none">
-                                    Where are you losing marks?
-                                </h3>
-                                <p className="text-sm font-medium text-stone-600 leading-relaxed mb-6">
-                                    Based on your logs, here is the breakdown of your lost marks. <br/>
-                                    <span className="font-bold text-black bg-yellow-100 px-1">
-                                        {getMistakeAdvice(analytics.mistakes)}
-                                    </span>
-                                </p>
-                            </div>
-
-                            {/* Right: The Stacked Bar */}
-                            <div className="flex-1 flex flex-col justify-center">
-                                {/* The Bar */}
-                                <div className="h-12 w-full bg-stone-100 flex rounded-md overflow-hidden border-2 border-black/5 mb-4">
-                                    {analytics.mistakes.silly > 0 && (
-                                        <div style={{ width: `${analytics.mistakes.silly}%` }} className="bg-red-500 h-full flex items-center justify-center text-white font-bold text-xs relative group cursor-help">
-                                            {analytics.mistakes.silly}%
-                                            <span className="absolute -top-8 bg-black text-white text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Silly Mistakes</span>
-                                        </div>
-                                    )}
-                                    {analytics.mistakes.concept > 0 && (
-                                        <div style={{ width: `${analytics.mistakes.concept}%` }} className="bg-amber-400 h-full flex items-center justify-center text-black font-bold text-xs relative group cursor-help">
-                                            {analytics.mistakes.concept}%
-                                            <span className="absolute -top-8 bg-black text-white text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Conceptual Errors</span>
-                                        </div>
-                                    )}
-                                    {analytics.mistakes.unattempted > 0 && (
-                                        <div style={{ width: `${analytics.mistakes.unattempted}%` }} className="bg-stone-300 h-full flex items-center justify-center text-stone-600 font-bold text-xs relative group cursor-help">
-                                            {analytics.mistakes.unattempted}%
-                                            <span className="absolute -top-8 bg-black text-white text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Unattempted</span>
-                                        </div>
-                                    )}
-                                </div>
-                                
-                                {/* Legend */}
-                                <div className="flex justify-between text-xs font-bold uppercase text-stone-400">
-                                    <div className="flex items-center gap-1"><div className="w-2 h-2 bg-red-500 rounded-full"></div> Silly</div>
-                                    <div className="flex items-center gap-1"><div className="w-2 h-2 bg-amber-400 rounded-full"></div> Conceptual</div>
-                                    <div className="flex items-center gap-1"><div className="w-2 h-2 bg-stone-300 rounded-full"></div> Unattempted</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                {analytics.mistakes.concept > 0 && (
+                  <div 
+                    style={{ width: `${analytics.mistakes.concept}%` }} 
+                    className="bg-amber-400 flex items-center justify-center text-black font-bold text-sm"
+                  >
+                    {analytics.mistakes.concept}%
+                  </div>
                 )}
+                {analytics.mistakes.unattempted > 0 && (
+                  <div 
+                    style={{ width: `${analytics.mistakes.unattempted}%` }} 
+                    className="bg-stone-300 flex items-center justify-center text-black font-bold text-sm"
+                  >
+                    {analytics.mistakes.unattempted}%
+                  </div>
+                )}
+              </div>
 
-
-                {/* METRICS GRID - NOW WITH GOLDEN HOUR */}
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
-                    
-                    <div className="bg-white border-2 border-stone-200 p-6 hover:border-black transition-colors">
-                        <div className="flex items-center gap-3 mb-4">
-                            <div className="bg-yellow-100 text-yellow-700 p-2 rounded-md"><Sun size={20} /></div>
-                            <div className="font-bold uppercase text-sm">Prime Time</div>
-                        </div>
-                        <div className="text-2xl font-black uppercase mb-2">
-                           {analytics.bestTime.status === 'found' ? analytics.bestTime.time : '—'}
-                        </div>
-                        <p className="text-xs font-medium text-stone-500 leading-relaxed">
-                            {analytics.bestTime.status === 'found' 
-                               ? `You score highest (avg ${analytics.bestTime.avg}%) when testing in the ${analytics.bestTime.time}.`
-                               : "Log more tests at different times to find your peak."}
-                        </p>
-                    </div>
-
-                    <div className="bg-white border-2 border-stone-200 p-6 hover:border-black transition-colors">
-                        <div className="flex items-center gap-3 mb-4">
-                            <div className="bg-amber-100 text-amber-700 p-2 rounded-md"><Zap size={20} /></div>
-                            <div className="font-bold uppercase text-sm">Bounce Back</div>
-                        </div>
-                        <div className="text-2xl font-black uppercase mb-2">
-                            {analytics.recovery.status === 'fast' ? 'Rapid' : 
-                            analytics.recovery.status === 'slow' ? 'Sluggish' : 
-                            analytics.recovery.status === 'none' ? 'Stable' : 'Moderate'}
-                        </div>
-                        <p className="text-xs font-medium text-stone-500 leading-relaxed">
-                            {analytics.recovery.status === 'none' 
-                                ? "No major dips detected recently." 
-                                : `It takes ~${analytics.recovery.count || '?'} tests to recover.`
-                            }
-                        </p>
-                    </div>
-
-                    <div className="bg-white border-2 border-stone-200 p-6 hover:border-black transition-colors">
-                        <div className="flex items-center gap-3 mb-4">
-                            <div className="bg-blue-100 text-blue-700 p-2 rounded-md"><Activity size={20} /></div>
-                            <div className="font-bold uppercase text-sm">Main Threat</div>
-                        </div>
-                        <div className="text-2xl font-black uppercase mb-2">
-                            {analytics.consistency.status === 'solid' ? 'None' : analytics.consistency.status}
-                        </div>
-                        <p className="text-xs font-medium text-stone-500 leading-relaxed">
-                            {analytics.consistency.status === 'solid' 
-                                ? "Performance solid." 
-                                : analytics.consistency.status === 'stress' 
-                                    ? "High stress kills your scores." 
-                                    : "Fatigue is your main enemy."
-                            }
-                        </p>
-                    </div>
-
-                    <div className="bg-white border-2 border-stone-200 p-6 hover:border-black transition-colors">
-                        <div className="flex items-center gap-3 mb-4">
-                            <div className="bg-purple-100 text-purple-700 p-2 rounded-md"><Brain size={20} /></div>
-                            <div className="font-bold uppercase text-sm">Mental State</div>
-                        </div>
-                        <div className="text-2xl font-black uppercase mb-2">
-                            {analytics.phase === 'Instability' ? 'Entropy' : 'Focused'}
-                        </div>
-                        <p className="text-xs font-medium text-stone-500 leading-relaxed">
-                            {analytics.phase === 'Instability' 
-                                ? "Graph is chaotic. Focus on basics." 
-                                : "Baseline holding steady."
-                            }
-                        </p>
-                    </div>
+              {/* Legend */}
+              <div className="flex flex-wrap gap-6 text-sm font-bold">
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 bg-red-500"></div>
+                  <span>Silly Mistakes</span>
                 </div>
-
-                {/* TABLE */}
-                <div className="bg-white border-2 border-stone-200 mb-20">
-                    <div className="p-4 border-b-2 border-stone-200 bg-stone-50 text-xs font-black uppercase tracking-widest text-stone-500 flex justify-between">
-                        <span>Source Data (Recent 8)</span>
-                        <span className="text-stone-400">Total: {logs.length}</span>
-                    </div>
-                    <div className="divide-y divide-stone-100">
-                        {[...logs].reverse().slice(0, 8).map(log => {
-                            const pct = Math.round((log.s / log.m) * 100)
-                            return (
-                                <div key={log.id} className="p-4 flex justify-between items-center text-sm hover:bg-stone-50 transition-colors">
-                                    <div className="flex items-center gap-4">
-                                        <div className="font-mono font-bold text-stone-400 w-24">{new Date(log.d).toLocaleDateString()}</div>
-                                        <div className="font-bold uppercase truncate max-w-[200px] md:max-w-xs">{log.n}</div>
-                                        {/* Show Time Icon if available */}
-                                        {log.t && (
-                                            <span className="text-[10px] font-bold uppercase bg-stone-200 px-1.5 py-0.5 rounded text-stone-500">
-                                                {log.t}
-                                            </span>
-                                        )}
-                                    </div>
-                                    <div className="font-black">{pct}%</div>
-                                </div>
-                            )
-                        })}
-                    </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 bg-amber-400"></div>
+                  <span>Conceptual Errors</span>
                 </div>
-            </>
-         )}
-      </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 bg-stone-300"></div>
+                  <span>Unattempted</span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* METRICS GRID */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <StatCard 
+              icon={Sun}
+              label="Prime Time"
+              value={analytics.bestTime.status === 'found' ? analytics.bestTime.time! : '—'}
+              description={analytics.bestTime.status === 'found' 
+                ? `You score highest (${analytics.bestTime.avg}% avg) in the ${analytics.bestTime.time}.`
+                : "Log tests at different times to find your peak."}
+              color="amber"
+            />
+            
+            <StatCard 
+              icon={Zap}
+              label="Recovery"
+              value={analytics.recovery.status === 'fast' ? 'Fast' : 
+                     analytics.recovery.status === 'slow' ? 'Slow' : 
+                     analytics.recovery.status === 'none' ? 'Stable' : 'Moderate'}
+              description={analytics.recovery.status === 'none' 
+                ? "No major dips detected recently." 
+                : `Takes ~${analytics.recovery.count || '?'} tests to recover from dips.`}
+              color="blue"
+            />
+            
+            <StatCard 
+              icon={Activity}
+              label="Main Threat"
+              value={analytics.consistency.status === 'solid' ? 'None' : 
+                     analytics.consistency.status === 'stress' ? 'Stress' : 'Fatigue'}
+              description={analytics.consistency.status === 'solid' 
+                ? "Your performance is consistent." 
+                : analytics.consistency.status === 'stress' 
+                  ? "High stress correlates with lower scores." 
+                  : "Fatigue is affecting your performance."}
+              color={analytics.consistency.status === 'solid' ? 'green' : 'red'}
+            />
+            
+            <StatCard 
+              icon={Brain}
+              label="Mental State"
+              value={analytics.phase === 'Instability' ? 'Chaotic' : 'Focused'}
+              description={analytics.phase === 'Instability' 
+                ? "Scores are erratic. Focus on fundamentals." 
+                : "Your baseline is holding steady."}
+              color="purple"
+            />
+          </div>
+
+          {/* RECENT TESTS TABLE */}
+          <div className="bg-white border-2 border-black shadow-[4px_4px_0_0_#000]">
+            <div className="p-4 border-b-2 border-black bg-stone-50 flex justify-between items-center">
+              <h3 className="font-black uppercase">Recent Tests</h3>
+              <span className="text-sm font-bold text-black/40">{logs.length} total</span>
+            </div>
+            <div className="divide-y divide-black/10">
+              {[...logs].reverse().slice(0, 10).map(log => {
+                const pct = Math.round((log.s / log.m) * 100)
+                return (
+                  <div key={log.id} className="p-4 flex justify-between items-center hover:bg-stone-50 transition-colors">
+                    <div className="flex items-center gap-4 flex-1 min-w-0">
+                      <div className="font-mono text-sm font-bold text-black/40 w-24 shrink-0">
+                        {new Date(log.d).toLocaleDateString()}
+                      </div>
+                      <div className="font-bold truncate">{log.n}</div>
+                      {log.t && (
+                        <span className="text-xs font-bold uppercase bg-stone-100 px-2 py-1 text-black/50 shrink-0">
+                          {log.t}
+                        </span>
+                      )}
+                    </div>
+                    <div className={`text-lg font-black shrink-0 ml-4 ${pct >= 60 ? 'text-green-600' : 'text-red-600'}`}>
+                      {pct}%
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        </>
+      )}
     </div>
   )
 }
 
 export default function InsightsPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center font-bold">LOADING...</div>}>
+    <Suspense fallback={
+      <div className="min-h-screen bg-[#FBF9F6] flex items-center justify-center">
+        <div className="w-12 h-12 border-4 border-black border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    }>
       <InsightsContent />
     </Suspense>
   )

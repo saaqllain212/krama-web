@@ -1,13 +1,13 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { Play, Pause, Save, RotateCcw, ArrowLeft, Pencil, Check } from 'lucide-react'
+import { Play, Pause, Save, RotateCcw, ArrowLeft, Check, X } from 'lucide-react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { useAlert } from '@/context/AlertContext'
 
-const PRESETS = [15, 25, 45, 60]
+const PRESETS = [15, 25, 45, 60, 90]
 
 export default function FocusPage() {
   const supabase = createClient()
@@ -20,53 +20,41 @@ export default function FocusPage() {
   
   const [topic, setTopic] = useState('')
   const [isSaving, setIsSaving] = useState(false)
-  const [isEditing, setIsEditing] = useState(false)
+  const [isEditingTime, setIsEditingTime] = useState(false)
+  const [tempMinutes, setTempMinutes] = useState('25')
 
-  // --- TIMER LOGIC ---
-  useEffect(() => {
-    let interval: NodeJS.Timeout | null = null
-    if (isActive && secondsLeft > 0) {
-      interval = setInterval(() => setSecondsLeft((s) => s - 1), 1000)
-    } else if (secondsLeft === 0 && isActive) {
-      setIsActive(false)
-      handleSave() // Auto-save when done
-    }
-    return () => { if (interval) clearInterval(interval) }
-  }, [isActive, secondsLeft])
+  // --- REFS for accurate timing ---
+  const startTimeRef = useRef<number | null>(null)
+  const totalSecondsRef = useRef<number>(25 * 60)
+  const intervalRef = useRef<NodeJS.Timeout | null>(null)
 
-  // --- ACTIONS ---
-  const toggleTimer = () => {
-    if (!isActive && !topic.trim()) {
-      setTopic("DEEP WORK") 
-    }
-    setIsActive(!isActive)
-  }
-
-  const resetTimer = () => {
-    setIsActive(false)
-    setSecondsLeft(targetMinutes * 60)
-  }
-
-  const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let val = parseInt(e.target.value) || 0
-    if (val > 180) val = 180 // Cap at 3 hours
-    setTargetMinutes(val)
-    setSecondsLeft(val * 60)
-  }
-
-  const handlePreset = (min: number) => {
-    if (isActive) return
-    setTargetMinutes(min)
-    setSecondsLeft(min * 60)
-  }
-
-  const handleSave = async () => {
-    const duration = Math.floor((targetMinutes * 60 - secondsLeft) / 60)
+  // --- ACCURATE TIMER using Date.now() ---
+  const updateTimer = useCallback(() => {
+    if (!startTimeRef.current) return
     
-    if (duration < 1) {
-      if (!isActive) showAlert("Session too short to record.", "neutral")
-      return
+    const now = Date.now()
+    const elapsed = Math.floor((now - startTimeRef.current) / 1000)
+    const remaining = Math.max(0, totalSecondsRef.current - elapsed)
+    
+    setSecondsLeft(remaining)
+    
+    if (remaining <= 0) {
+      setIsActive(false)
+      startTimeRef.current = null
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current)
+        intervalRef.current = null
+      }
+      // Auto-save when complete
+      handleSaveOnComplete()
     }
+  }, [])
+
+  // Auto-save function when timer completes
+  const handleSaveOnComplete = async () => {
+    const duration = targetMinutes
+    
+    if (duration < 1) return
 
     setIsSaving(true)
     try {
@@ -74,7 +62,6 @@ export default function FocusPage() {
       if (user) {
         const now = new Date().toISOString()
 
-        // 1. Log the Session
         const { error: logError } = await supabase.from('focus_logs').insert({
           user_id: user.id,
           duration_minutes: duration,
@@ -83,19 +70,153 @@ export default function FocusPage() {
         })
         
         if (logError) throw logError
-
-        // Logic Note: We do NOT reset the Sentinel 'last_active_at' here.
-        // Completing work increases the score, it doesn't push back the deadline.
         
-        showAlert(`Log Saved: ${duration}m on ${topic || 'Task'}`, 'success')
-        resetTimer()
+        showAlert(`Completed: ${duration}m on "${topic || 'Task'}"`, 'success')
+        setSecondsLeft(targetMinutes * 60)
+        totalSecondsRef.current = targetMinutes * 60
+        setTopic('')
       }
     } catch (e) {
       console.error(e)
       showAlert("Failed to save log.", "error")
     } finally {
       setIsSaving(false)
-      setIsActive(false)
+    }
+  }
+
+  // Start/stop timer effect
+  useEffect(() => {
+    if (isActive) {
+      // Store the start time and total seconds when starting
+      startTimeRef.current = Date.now()
+      totalSecondsRef.current = secondsLeft
+      
+      // Use interval but calculate from Date.now() for accuracy
+      intervalRef.current = setInterval(updateTimer, 100) // Check every 100ms for responsiveness
+    } else {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current)
+        intervalRef.current = null
+      }
+    }
+    
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current)
+        intervalRef.current = null
+      }
+    }
+  }, [isActive, updateTimer])
+
+  // Handle visibility change (tab switch, minimize)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible' && isActive && startTimeRef.current) {
+        // Immediately recalculate time when tab becomes visible
+        updateTimer()
+      }
+    }
+    
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
+  }, [isActive, updateTimer])
+
+  // --- ACTIONS ---
+  const toggleTimer = () => {
+    if (!isActive && !topic.trim()) {
+      setTopic("Deep Work Session") 
+    }
+    
+    if (isActive) {
+      // Pausing - update secondsLeft to current remaining time
+      if (startTimeRef.current) {
+        const elapsed = Math.floor((Date.now() - startTimeRef.current) / 1000)
+        const remaining = Math.max(0, totalSecondsRef.current - elapsed)
+        setSecondsLeft(remaining)
+        totalSecondsRef.current = remaining
+      }
+      startTimeRef.current = null
+    }
+    
+    setIsActive(!isActive)
+  }
+
+  const resetTimer = () => {
+    setIsActive(false)
+    startTimeRef.current = null
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current)
+      intervalRef.current = null
+    }
+    setSecondsLeft(targetMinutes * 60)
+    totalSecondsRef.current = targetMinutes * 60
+  }
+
+  const handleTimeConfirm = () => {
+    let val = parseInt(tempMinutes) || 25
+    if (val > 180) val = 180
+    if (val < 1) val = 1
+    setTargetMinutes(val)
+    setSecondsLeft(val * 60)
+    totalSecondsRef.current = val * 60
+    setIsEditingTime(false)
+  }
+
+  const handlePreset = (min: number) => {
+    if (isActive) return
+    setTargetMinutes(min)
+    setSecondsLeft(min * 60)
+    totalSecondsRef.current = min * 60
+    setTempMinutes(min.toString())
+  }
+
+  // Manual save function
+  const handleSave = async () => {
+    // Calculate actual elapsed time
+    let elapsedSeconds = targetMinutes * 60 - secondsLeft
+    if (isActive && startTimeRef.current) {
+      const now = Date.now()
+      elapsedSeconds = Math.floor((now - startTimeRef.current) / 1000)
+    }
+    
+    const duration = Math.floor(elapsedSeconds / 60)
+    
+    if (duration < 1) {
+      showAlert("Session too short to record.", "neutral")
+      return
+    }
+
+    setIsSaving(true)
+    setIsActive(false)
+    startTimeRef.current = null
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current)
+      intervalRef.current = null
+    }
+    
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        const now = new Date().toISOString()
+
+        const { error: logError } = await supabase.from('focus_logs').insert({
+          user_id: user.id,
+          duration_minutes: duration,
+          topic: topic || 'Unlabeled Session',
+          started_at: now 
+        })
+        
+        if (logError) throw logError
+        
+        showAlert(`Saved: ${duration}m on "${topic || 'Task'}"`, 'success')
+        resetTimer()
+        setTopic('')
+      }
+    } catch (e) {
+      console.error(e)
+      showAlert("Failed to save log.", "error")
+    } finally {
+      setIsSaving(false)
     }
   }
 
@@ -108,131 +229,182 @@ export default function FocusPage() {
     return `${m}:${sec.toString().padStart(2, '0')}`
   }
 
+  const elapsedMinutes = Math.floor((targetMinutes * 60 - secondsLeft) / 60)
+
   return (
     <div 
-      className={`min-h-screen bg-[#FBF9F6] text-black flex flex-col items-center justify-center overflow-hidden transition-all duration-500
+      className={`min-h-screen bg-[#FBF9F6] text-black flex flex-col transition-all duration-500
       ${isActive ? 'fixed inset-0 z-50' : 'relative'}`}
     >
+      {/* Pulsing background when active */}
       <motion.div 
-        animate={{ opacity: isActive ? 0.4 : 0 }}
+        animate={{ opacity: isActive ? 0.3 : 0 }}
         transition={{ duration: 2, repeat: Infinity, repeatType: "reverse" }}
-        className="absolute inset-0 bg-amber-100 pointer-events-none"
+        className="absolute inset-0 bg-gradient-to-br from-amber-100 to-orange-100 pointer-events-none"
       />
 
-      <Link href="/dashboard" className="absolute top-8 left-8 flex items-center gap-2 font-bold uppercase tracking-widest text-xs text-black/40 hover:text-black transition-colors z-20">
-        <ArrowLeft size={16} /> {isActive ? 'Exit Zen Mode' : 'Dashboard'}
-      </Link>
+      {/* Header */}
+      <div className="relative z-10 p-4 md:p-6">
+        <Link 
+          href="/dashboard" 
+          className="inline-flex items-center gap-2 font-bold uppercase tracking-wide text-sm text-black/40 hover:text-black transition-colors"
+        >
+          <ArrowLeft size={18} /> 
+          {isActive ? 'Exit Session' : 'Dashboard'}
+        </Link>
+      </div>
 
-      <div className="z-10 flex flex-col items-center w-full max-w-xl" suppressHydrationWarning>
-        <div className="mb-10 w-full text-center relative group">
-          <label className="text-[10px] font-black uppercase tracking-[0.2em] text-black/30 mb-2 block">
-            Current Objective
+      {/* Main Content */}
+      <div className="relative z-10 flex-1 flex flex-col items-center justify-center px-6 pb-12">
+        
+        {/* Topic Input */}
+        <div className="w-full max-w-md mb-8 text-center">
+          <label className="text-xs font-black uppercase tracking-[0.2em] text-black/30 mb-3 block">
+            What are you working on?
           </label>
           <input 
             value={topic}
             onChange={(e) => setTopic(e.target.value)}
-            placeholder="NAME YOUR TASK..."
+            placeholder="Name your task..."
             disabled={isActive}
-            className="w-full bg-transparent text-center text-3xl md:text-4xl font-black text-black placeholder:text-black/10 outline-none border-b-4 border-transparent focus:border-amber-500 transition-all uppercase disabled:opacity-80"
+            className="w-full bg-transparent text-center text-xl md:text-2xl font-bold text-black placeholder:text-black/20 outline-none border-b-2 border-black/10 focus:border-black pb-2 transition-all disabled:opacity-70"
           />
-          {!isActive && <Pencil size={14} className="absolute right-0 top-1/2 -translate-y-1/2 text-black/10 opacity-0 group-hover:opacity-100 transition-opacity" />}
         </div>
 
-        <div className="relative mb-12 group">
-          <div className="relative w-[300px] h-[300px] md:w-[380px] md:h-[380px] flex items-center justify-center">
-            <svg className="w-full h-full -rotate-90 drop-shadow-xl">
-              <circle cx="50%" cy="50%" r="48%" fill="none" stroke="#E5E5E5" strokeWidth="12" />
+        {/* Timer Circle */}
+        <div className="relative mb-8">
+          <div className="relative w-64 h-64 md:w-80 md:h-80 flex items-center justify-center">
+            {/* Background Circle */}
+            <svg className="absolute inset-0 w-full h-full -rotate-90">
+              <circle 
+                cx="50%" 
+                cy="50%" 
+                r="46%" 
+                fill="none" 
+                stroke="rgba(0,0,0,0.05)" 
+                strokeWidth="12" 
+              />
               <motion.circle
-                cx="50%" cy="50%" r="48%"
+                cx="50%" 
+                cy="50%" 
+                r="46%"
                 fill="none"
-                stroke="#F59E0B"
-                strokeWidth="24"
-                strokeLinecap="butt"
+                stroke="#000"
+                strokeWidth="12"
+                strokeLinecap="round"
                 initial={{ pathLength: 0 }}
                 animate={{ pathLength: progress / 100 }}
-                transition={{ duration: 1, ease: "linear" }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
               />
             </svg>
-            <div className="absolute inset-0 flex flex-col items-center justify-center">
-              {isEditing ? (
-                <div className="flex items-end gap-2 bg-white/90 p-6 border-4 border-black shadow-[8px_8px_0_0_rgba(0,0,0,1)] z-20">
-                  <div className="flex flex-col">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-black/40">Minutes</label>
-                    <input 
-                      type="number" 
-                      value={targetMinutes}
-                      onChange={handleTimeChange}
-                      className="w-32 text-6xl font-black text-center bg-transparent border-b-4 border-black outline-none"
-                      autoFocus
-                    />
+            
+            {/* Time Display */}
+            <div className="relative flex flex-col items-center justify-center">
+              {isEditingTime ? (
+                <div className="flex flex-col items-center gap-4 bg-white border-2 border-black p-6 shadow-[4px_4px_0_0_#000]">
+                  <label className="text-xs font-bold uppercase tracking-widest text-black/40">
+                    Set Minutes
+                  </label>
+                  <input 
+                    type="number" 
+                    value={tempMinutes}
+                    onChange={(e) => setTempMinutes(e.target.value)}
+                    className="w-24 text-4xl font-black text-center bg-transparent border-b-2 border-black outline-none"
+                    autoFocus
+                    min="1"
+                    max="180"
+                  />
+                  <div className="flex gap-2">
+                    <button 
+                      onClick={handleTimeConfirm}
+                      className="p-2 bg-black text-white hover:bg-stone-800 transition-colors"
+                    >
+                      <Check size={20} />
+                    </button>
+                    <button 
+                      onClick={() => setIsEditingTime(false)}
+                      className="p-2 bg-white border-2 border-black hover:bg-stone-100 transition-colors"
+                    >
+                      <X size={20} />
+                    </button>
                   </div>
-                  <button onClick={() => setIsEditing(false)} className="bg-amber-500 p-2 border-2 border-black hover:bg-amber-600">
-                    <Check size={24} />
-                  </button>
                 </div>
               ) : (
-                <div 
-                  onClick={() => !isActive && setIsEditing(true)}
-                  className={`text-center cursor-pointer transition-transform ${isActive ? 'scale-110' : 'hover:scale-105'}`}
+                <button
+                  onClick={() => !isActive && setIsEditingTime(true)}
+                  disabled={isActive}
+                  className="text-center disabled:cursor-default"
                 >
-                  <div className="text-7xl md:text-9xl font-black tracking-tighter text-black tabular-nums">
+                  <div className={`text-6xl md:text-7xl font-black tracking-tight tabular-nums transition-transform ${!isActive && 'hover:scale-105'}`}>
                     {formatTime(secondsLeft)}
                   </div>
                   {!isActive && (
-                    <div className="text-xs font-bold uppercase tracking-widest text-black/30 mt-2 flex items-center justify-center gap-1">
-                      <Pencil size={10} /> Click Time to Edit
+                    <div className="text-xs font-bold uppercase tracking-widest text-black/30 mt-2">
+                      Tap to edit
                     </div>
                   )}
-                </div>
+                  {isActive && elapsedMinutes > 0 && (
+                    <div className="text-sm font-bold text-black/40 mt-2">
+                      {elapsedMinutes}m elapsed
+                    </div>
+                  )}
+                </button>
               )}
             </div>
           </div>
         </div>
 
-        <div className="flex items-center gap-6 mb-8">
+        {/* Controls */}
+        <div className="flex items-center gap-4 md:gap-6 mb-8">
+          {/* Reset */}
           <button 
             onClick={resetTimer}
-            disabled={isActive}
-            className="w-14 h-14 flex items-center justify-center border-2 border-black/10 text-black/40 hover:border-black hover:text-black hover:bg-white rounded-full transition-all disabled:opacity-0"
+            disabled={isActive || secondsLeft === targetMinutes * 60}
+            className="w-14 h-14 flex items-center justify-center bg-white border-2 border-black/20 text-black/40 hover:border-black hover:text-black transition-all disabled:opacity-30 disabled:hover:border-black/20 disabled:hover:text-black/40"
             title="Reset"
           >
-            <RotateCcw size={20} strokeWidth={2.5} />
+            <RotateCcw size={22} strokeWidth={2} />
           </button>
+          
+          {/* Play/Pause */}
           <button 
             onClick={toggleTimer}
-            className={`h-24 w-24 md:h-28 md:w-28 flex items-center justify-center rounded-full border-[6px] border-black shadow-[6px_6px_0_0_rgba(0,0,0,1)] transition-all active:translate-y-1 active:shadow-none
-              ${isActive ? 'bg-white hover:bg-gray-50' : 'bg-black hover:bg-stone-900'}`}
+            className={`h-20 w-20 md:h-24 md:w-24 flex items-center justify-center border-2 border-black shadow-[4px_4px_0_0_#000] transition-all active:shadow-none active:translate-x-[4px] active:translate-y-[4px]
+              ${isActive ? 'bg-white hover:bg-stone-50' : 'bg-black hover:bg-stone-900'}`}
           >
             {isActive ? (
-              <Pause size={40} className="fill-black text-black" />
+              <Pause size={36} className="fill-black text-black" />
             ) : (
-              <Play size={40} className="fill-amber-500 text-amber-500 ml-2" />
+              <Play size={36} className="fill-brand text-brand ml-1" />
             )}
           </button>
+          
+          {/* Save */}
           <button 
             onClick={handleSave}
-            disabled={isActive || secondsLeft === targetMinutes * 60}
-            className="w-14 h-14 flex items-center justify-center border-2 border-black/10 text-black/40 hover:border-amber-600 hover:text-amber-700 hover:bg-amber-50 rounded-full transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+            disabled={secondsLeft === targetMinutes * 60 || isSaving}
+            className="w-14 h-14 flex items-center justify-center bg-white border-2 border-black/20 text-black/40 hover:border-brand hover:text-black hover:bg-brand/10 transition-all disabled:opacity-30 disabled:hover:border-black/20 disabled:hover:text-black/40 disabled:hover:bg-white"
             title="Save Log"
           >
-            <Save size={20} strokeWidth={2.5} />
+            <Save size={22} strokeWidth={2} />
           </button>
         </div>
 
+        {/* Presets */}
         {!isActive && (
-          <div className="flex gap-3 animate-in fade-in slide-in-from-bottom-4">
-             {PRESETS.map(min => (
-               <button 
-                 key={min}
-                 onClick={() => handlePreset(min)}
-                 className={`px-4 py-2 border-2 text-xs font-bold uppercase transition-all
-                   ${targetMinutes === min 
-                     ? 'border-amber-500 bg-amber-100 text-amber-900' 
-                     : 'border-black/10 text-black/40 hover:border-black hover:text-black bg-white'}`}
-               >
-                 {min}m
-               </button>
-             ))}
+          <div className="flex flex-wrap justify-center gap-2 md:gap-3">
+            {PRESETS.map(min => (
+              <button 
+                key={min}
+                onClick={() => handlePreset(min)}
+                className={`px-4 py-2.5 md:px-5 md:py-3 border-2 text-sm font-bold uppercase transition-all
+                  ${targetMinutes === min 
+                    ? 'border-black bg-black text-white' 
+                    : 'border-black/20 text-black/60 hover:border-black hover:text-black bg-white'}`}
+              >
+                {min}m
+              </button>
+            ))}
           </div>
         )}
       </div>

@@ -3,8 +3,9 @@
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
-import { X, Trash2, RotateCcw, Zap, AlertCircle, Target, Check, AlertTriangle } from 'lucide-react'
+import { X, Trash2, RotateCcw, Zap, AlertCircle, Target } from 'lucide-react'
 import { useSyllabus } from '@/context/SyllabusContext'
+import { useAlert } from '@/context/AlertContext'
 
 interface SettingsModalProps {
   open: boolean
@@ -21,16 +22,19 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
   const [dailyHours, setDailyHours] = useState(6)
   const [initialHours, setInitialHours] = useState(6)
   const [savingGoal, setSavingGoal] = useState(false)
-  
-  // 🔔 NEW: Custom Notification State
-  const [statusMsg, setStatusMsg] = useState<{type: 'success' | 'error', text: string} | null>(null)
 
   const router = useRouter()
   const supabase = createClient()
   const { activeExam } = useSyllabus()
+  const { showAlert } = useAlert()
 
   useEffect(() => {
     if (open) {
+      // Reset states when modal opens
+      setActiveTab(null)
+      setConfirmText('')
+      setShowSwitchConfirm(false)
+      
       const fetchSettings = async () => {
         const { data: { user } } = await supabase.auth.getUser()
         if (user) {
@@ -44,58 +48,49 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
             setDailyHours(data.daily_goal_hours)
             setInitialHours(data.daily_goal_hours)
           } else {
-             const metaTarget = user.user_metadata?.target_hours
-             if (metaTarget) {
-                 setDailyHours(Number(metaTarget))
-                 setInitialHours(Number(metaTarget))
-             }
+            const metaTarget = user.user_metadata?.target_hours
+            if (metaTarget) {
+              setDailyHours(Number(metaTarget))
+              setInitialHours(Number(metaTarget))
+            }
           }
         }
       }
       fetchSettings()
     }
-  }, [open])
-
-  // Clear status after 3 seconds
-  useEffect(() => {
-    if (statusMsg) {
-      const timer = setTimeout(() => setStatusMsg(null), 3000)
-      return () => clearTimeout(timer)
-    }
-  }, [statusMsg])
+  }, [open, supabase])
 
   if (!open) return null
 
   const handleSaveGoal = async () => {
     setSavingGoal(true)
-    setStatusMsg(null) // Clear previous
     try {
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
-        // 1. Update Database
-        await supabase
+        // Update Database
+        const { error: dbError } = await supabase
           .from('syllabus_settings')
           .update({ daily_goal_hours: dailyHours })
           .eq('user_id', user.id)
         
-        // 2. Update Metadata
+        if (dbError) throw dbError
+
+        // Update Metadata
         const { error: metaError } = await supabase.auth.updateUser({
-           data: { target_hours: dailyHours }
+          data: { target_hours: dailyHours }
         })
 
         if (metaError) throw metaError
         
         setInitialHours(dailyHours)
+        showAlert('Daily goal updated!', 'success')
         
-        // ✅ SUCCESS FEEDBACK (No Alert)
-        setStatusMsg({ type: 'success', text: 'PROTOCOL CALIBRATED. TARGET UPDATED.' })
-        
-        // Reload after a brief delay so they see the message
-        setTimeout(() => window.location.reload(), 1500)
+        // Reload after a brief delay
+        setTimeout(() => window.location.reload(), 1000)
       }
     } catch (e) {
-      console.error(e)
-      setStatusMsg({ type: 'error', text: 'SAVE FAILED. CHECK CONSOLE.' })
+      console.error('Save goal error:', e)
+      showAlert('Failed to save goal.', 'error')
     } finally {
       setSavingGoal(false)
     }
@@ -105,153 +100,333 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
     setActiveTab(null)
     setConfirmText('')
     setShowSwitchConfirm(false)
-    setStatusMsg(null)
     onClose()
   }
 
-  // ... (Keep existing handlers for Reset/Delete/Switch)
   const handleSwitchProtocol = async () => {
-    if (!showSwitchConfirm) { setShowSwitchConfirm(true); return }
+    if (!showSwitchConfirm) { 
+      setShowSwitchConfirm(true)
+      return 
+    }
+    
     setLoading(true)
     try {
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
-        await supabase.from('syllabus_settings').update({ active_exam_id: null }).eq('user_id', user.id)
+        const { error } = await supabase
+          .from('syllabus_settings')
+          .update({ active_exam_id: null })
+          .eq('user_id', user.id)
+        
+        if (error) throw error
+        
         localStorage.clear() 
-        window.location.reload()
+        showAlert('Switching protocol...', 'success')
+        setTimeout(() => window.location.reload(), 500)
       }
-    } catch (err) { setLoading(false); setShowSwitchConfirm(false); setStatusMsg({type: 'error', text: "Switch Failed"}); }
+    } catch (err) { 
+      console.error('Switch protocol error:', err)
+      setLoading(false)
+      setShowSwitchConfirm(false)
+      showAlert('Switch failed. Try again.', 'error')
+    }
   }
 
   const handleReset = async () => {
-    if (confirmText !== 'RESET') return
+    if (confirmText !== 'RESET') {
+      showAlert('Type RESET to confirm', 'neutral')
+      return
+    }
+    
     setLoading(true)
     try {
-      const { error } = await supabase.rpc('reset_user_progress')
-      if (error) throw error
-      window.location.reload()
-    } catch (err) { setLoading(false); setStatusMsg({type: 'error', text: "Reset Failed"}); }
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) throw new Error('No user found')
+      
+      console.log('Starting reset for user:', user.id)
+      
+      // Delete data from each table individually with error checking
+      const tables = ['focus_logs', 'topics', 'mock_logs', 'syllabus_progress']
+      
+      for (const table of tables) {
+        console.log(`Deleting from ${table}...`)
+        const { error } = await supabase
+          .from(table)
+          .delete()
+          .eq('user_id', user.id)
+        
+        if (error) {
+          console.error(`Error deleting from ${table}:`, error)
+          // Continue with other tables even if one fails
+        } else {
+          console.log(`Successfully deleted from ${table}`)
+        }
+      }
+      
+      // Reset syllabus settings but keep the active exam
+      console.log('Resetting syllabus_settings...')
+      const { error: settingsError } = await supabase
+        .from('syllabus_settings')
+        .update({ 
+          daily_goal_hours: 6,
+          target_date: null,
+          custom_title: null
+        })
+        .eq('user_id', user.id)
+      
+      if (settingsError) {
+        console.error('Error resetting settings:', settingsError)
+      }
+      
+      showAlert('Progress reset! Reloading...', 'success')
+      setTimeout(() => window.location.reload(), 1500)
+      
+    } catch (err) { 
+      console.error('Reset failed:', err)
+      setLoading(false)
+      showAlert('Reset failed. Check console for details.', 'error')
+    }
   }
 
   const handleDelete = async () => {
-    if (confirmText !== 'DELETE') return
+    if (confirmText !== 'DELETE') {
+      showAlert('Type DELETE to confirm', 'neutral')
+      return
+    }
+    
     setLoading(true)
     try {
-      await fetch('/api/auth/delete-account', { method: 'DELETE' })
+      const response = await fetch('/api/auth/delete-account', { method: 'DELETE' })
+      
+      if (!response.ok) {
+        throw new Error('Delete API failed')
+      }
+      
       await supabase.auth.signOut()
+      showAlert('Account deleted. Goodbye!', 'success')
       router.replace('/')
-    } catch (err) { setLoading(false); setStatusMsg({type: 'error', text: "Delete Failed"}); }
+    } catch (err) { 
+      console.error('Delete account error:', err)
+      setLoading(false)
+      showAlert('Delete failed. Try again.', 'error')
+    }
   }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-      <div className="w-full max-w-lg border-2 border-black bg-white shadow-[8px_8px_0_0_#000] max-h-[90vh] overflow-y-auto relative">
+      <div className="w-full max-w-lg border-2 border-black bg-white shadow-[8px_8px_0_0_#000] max-h-[90vh] overflow-y-auto">
         
-        {/* 🔔 STATUS BANNER (Absolute Position) */}
-        {statusMsg && (
-          <div className={`absolute top-0 left-0 right-0 p-3 text-white font-bold text-xs uppercase flex items-center justify-center gap-2 z-20 animate-in slide-in-from-top-2 ${statusMsg.type === 'success' ? 'bg-black' : 'bg-red-600'}`}>
-            {statusMsg.type === 'success' ? <Check size={14} /> : <AlertTriangle size={14} />}
-            {statusMsg.text}
-          </div>
-        )}
-
+        {/* Header */}
         <div className="flex items-center justify-between border-b-2 border-black bg-stone-100 p-4 sticky top-0 z-10">
-          <h2 className="text-lg font-black uppercase tracking-tight">System Configuration</h2>
-          <button onClick={closeAndReset} className="hover:text-red-600 transition-colors">
+          <h2 className="text-lg font-black uppercase tracking-tight">Settings</h2>
+          <button 
+            onClick={closeAndReset} 
+            className="p-1 hover:bg-red-100 hover:text-red-600 transition-colors"
+          >
             <X size={24} />
           </button>
         </div>
 
-        <div className="p-6 space-y-8">
+        <div className="p-6 space-y-6">
           
-          {/* WORKLOAD */}
-          <div className="border-2 border-black bg-white p-5 shadow-sm">
-             <div className="flex items-start gap-4">
-                <div className="bg-black text-white p-3 rounded-full">
-                   <Target size={20} className="fill-current" />
+          {/* DAILY GOAL */}
+          <div className="border-2 border-black bg-white p-5 shadow-[3px_3px_0_0_#000]">
+            <div className="flex items-start gap-4">
+              <div className="bg-black text-white p-3">
+                <Target size={20} />
+              </div>
+              <div className="flex-1">
+                <div className="flex justify-between items-center mb-3">
+                  <h3 className="font-bold uppercase text-sm">Daily Goal</h3>
+                  <span className="text-sm font-black bg-brand px-3 py-1 text-black">
+                    {dailyHours} hrs/day
+                  </span>
                 </div>
-                <div className="flex-1">
-                   <div className="flex justify-between items-center mb-1">
-                     <h3 className="font-bold uppercase text-sm">Workload Calibration</h3>
-                     <span className="text-xs font-black bg-amber-400 px-2 py-0.5 rounded text-black">{dailyHours} HRS / DAY</span>
-                   </div>
-                   <input type="range" min="1" max="14" step="1" value={dailyHours} onChange={(e) => setDailyHours(parseInt(e.target.value))} className="w-full h-2 bg-stone-200 rounded-lg appearance-none cursor-pointer accent-black mb-4" />
-                   {dailyHours !== initialHours && (
-                     <button onClick={handleSaveGoal} disabled={savingGoal} className="w-full bg-black text-white py-2 text-xs font-bold uppercase hover:bg-stone-800 transition-all">
-                        {savingGoal ? 'Calibrating...' : 'Update Target'}
-                     </button>
-                   )}
-                </div>
-             </div>
+                <input 
+                  type="range" 
+                  min="1" 
+                  max="14" 
+                  step="1" 
+                  value={dailyHours} 
+                  onChange={(e) => setDailyHours(parseInt(e.target.value))} 
+                  className="w-full h-2 bg-stone-200 rounded-lg appearance-none cursor-pointer accent-black mb-4" 
+                />
+                {dailyHours !== initialHours && (
+                  <button 
+                    onClick={handleSaveGoal} 
+                    disabled={savingGoal} 
+                    className="w-full bg-black text-white py-3 text-sm font-bold uppercase hover:bg-stone-800 transition-all disabled:opacity-50"
+                  >
+                    {savingGoal ? 'Saving...' : 'Save Changes'}
+                  </button>
+                )}
+              </div>
+            </div>
           </div>
 
           {/* PROTOCOL SWITCH */}
-          <div className="border-2 border-black bg-stone-50 p-5 shadow-sm">
-             <div className="flex items-start gap-4">
-                <div className={`p-3 rounded-full transition-colors ${showSwitchConfirm ? 'bg-red-600 text-white' : 'bg-black text-white'}`}>
-                   {showSwitchConfirm ? <AlertCircle size={20}/> : <Zap size={20} className="fill-current" />}
-                </div>
-                <div className="flex-1">
-                   <h3 className="font-bold uppercase text-sm">Active Protocol</h3>
-                   {!showSwitchConfirm ? (
-                       <>
-                           <div className="text-xs font-mono bg-white border border-stone-200 inline-block px-2 py-1 mt-1 rounded uppercase mb-2">{activeExam || 'UNKNOWN'}</div>
-                           <p className="text-xs text-stone-500 leading-relaxed mb-4">Switching protocols will reboot your setup. <span className="font-bold">This will delete saved custom files.</span></p>
-                           <button onClick={handleSwitchProtocol} className="bg-white border-2 border-black px-4 py-2 text-xs font-bold uppercase hover:bg-black hover:text-white transition-all shadow-[2px_2px_0_0_#000]">Switch Protocol</button>
-                       </>
-                   ) : (
-                       <div className="animate-in fade-in slide-in-from-left-2">
-                           <p className="text-xs font-bold text-red-600 mb-3 uppercase tracking-wide">Warning: This deletes all local data.</p>
-                           <div className="flex gap-2">
-                               <button onClick={handleSwitchProtocol} disabled={loading} className="bg-red-600 text-white border-2 border-red-800 px-4 py-2 text-xs font-bold uppercase hover:bg-red-700 shadow-[2px_2px_0_0_rgba(153,27,27,1)]">{loading ? 'Rebooting...' : 'Confirm Reboot'}</button>
-                               <button onClick={() => setShowSwitchConfirm(false)} className="text-xs font-bold uppercase text-stone-400 hover:text-black px-2">Cancel</button>
-                           </div>
-                       </div>
-                   )}
-                </div>
-             </div>
-          </div>
-
-          {/* DANGER ZONE */}
-          <div className="border-t-2 border-stone-100 relative"><span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-white px-2 text-[10px] font-bold uppercase text-stone-300">Danger Zone</span></div>
-
-          {/* Reset Progress */}
-          <div className="border-2 border-dashed border-stone-300 p-4 hover:border-black transition-colors group">
+          <div className="border-2 border-black bg-stone-50 p-5 shadow-[3px_3px_0_0_#000]">
             <div className="flex items-start gap-4">
-              <div className="bg-stone-100 p-3 rounded-full group-hover:bg-black group-hover:text-white transition-colors"><RotateCcw size={20} /></div>
+              <div className={`p-3 transition-colors ${showSwitchConfirm ? 'bg-red-600 text-white' : 'bg-black text-white'}`}>
+                {showSwitchConfirm ? <AlertCircle size={20}/> : <Zap size={20} />}
+              </div>
               <div className="flex-1">
-                <h3 className="font-bold uppercase text-sm">Reset Progress</h3>
-                {activeTab === 'reset' ? (
-                  <div className="mt-4 bg-stone-50 p-3 border border-stone-200">
-                    <label className="text-[10px] font-bold uppercase text-stone-400">Type "RESET" to confirm</label>
-                    <div className="flex gap-2 mt-1">
-                      <input type="text" value={confirmText} onChange={(e) => setConfirmText(e.target.value)} className="w-full border border-stone-300 px-2 py-1 text-sm font-bold uppercase" />
-                      <button onClick={handleReset} disabled={confirmText !== 'RESET' || loading} className="bg-black text-white px-4 py-1 text-xs font-bold uppercase disabled:opacity-50">Confirm</button>
+                <h3 className="font-bold uppercase text-sm mb-2">Active Protocol</h3>
+                {!showSwitchConfirm ? (
+                  <>
+                    <div className="text-sm font-mono bg-white border-2 border-black inline-block px-3 py-1 mb-3 uppercase">
+                      {activeExam || 'None'}
+                    </div>
+                    <p className="text-sm text-black/60 mb-4">
+                      Switch to a different exam. Your progress is saved separately for each exam.
+                    </p>
+                    <button 
+                      onClick={handleSwitchProtocol} 
+                      className="bg-white border-2 border-black px-5 py-2.5 text-sm font-bold uppercase hover:bg-black hover:text-white transition-all shadow-[3px_3px_0_0_#000] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px]"
+                    >
+                      Switch Exam
+                    </button>
+                  </>
+                ) : (
+                  <div>
+                    <p className="text-sm font-bold text-red-600 mb-4">
+                      This will clear local cache and reload. Continue?
+                    </p>
+                    <div className="flex gap-3">
+                      <button 
+                        onClick={handleSwitchProtocol} 
+                        disabled={loading} 
+                        className="bg-red-600 text-white border-2 border-red-800 px-5 py-2.5 text-sm font-bold uppercase hover:bg-red-700 disabled:opacity-50"
+                      >
+                        {loading ? 'Switching...' : 'Yes, Switch'}
+                      </button>
+                      <button 
+                        onClick={() => setShowSwitchConfirm(false)} 
+                        className="px-5 py-2.5 text-sm font-bold uppercase text-black/50 hover:text-black"
+                      >
+                        Cancel
+                      </button>
                     </div>
                   </div>
-                ) : ( <button onClick={() => { setActiveTab('reset'); setConfirmText('') }} className="mt-1 text-xs font-bold text-stone-400 underline hover:text-black">Reset All Data</button> )}
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* DANGER ZONE DIVIDER */}
+          <div className="relative py-4">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t-2 border-red-200"></div>
+            </div>
+            <div className="relative flex justify-center">
+              <span className="bg-white px-4 text-xs font-bold uppercase text-red-400 tracking-widest">
+                Danger Zone
+              </span>
+            </div>
+          </div>
+
+          {/* RESET PROGRESS */}
+          <div className="border-2 border-dashed border-black/20 p-5 hover:border-black transition-colors">
+            <div className="flex items-start gap-4">
+              <div className="bg-stone-100 p-3 text-black/60">
+                <RotateCcw size={20} />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-bold uppercase text-sm mb-1">Reset Progress</h3>
+                <p className="text-sm text-black/50 mb-3">
+                  Clears all focus logs, review topics, mock scores, and syllabus progress.
+                </p>
+                {activeTab === 'reset' ? (
+                  <div className="bg-stone-50 border border-stone-200 p-4">
+                    <label className="text-xs font-bold uppercase text-black/50 block mb-2">
+                      Type "RESET" to confirm
+                    </label>
+                    <div className="flex gap-2">
+                      <input 
+                        type="text" 
+                        value={confirmText} 
+                        onChange={(e) => setConfirmText(e.target.value.toUpperCase())} 
+                        placeholder="RESET"
+                        className="flex-1 border-2 border-black px-3 py-2 text-sm font-bold uppercase focus:outline-none" 
+                      />
+                      <button 
+                        onClick={handleReset} 
+                        disabled={confirmText !== 'RESET' || loading} 
+                        className="bg-black text-white px-5 py-2 text-sm font-bold uppercase disabled:opacity-30"
+                      >
+                        {loading ? '...' : 'Reset'}
+                      </button>
+                    </div>
+                    <button 
+                      onClick={() => { setActiveTab(null); setConfirmText('') }}
+                      className="mt-3 text-xs font-bold text-black/40 hover:text-black"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                ) : (
+                  <button 
+                    onClick={() => { setActiveTab('reset'); setConfirmText('') }} 
+                    className="text-sm font-bold text-black/50 underline hover:text-black"
+                  >
+                    Reset All Data
+                  </button>
+                )}
               </div>
             </div>
           </div>
           
-           {/* Delete Account */}
-           <div className="border-2 border-dashed border-red-200 bg-red-50/50 p-4 hover:border-red-600 transition-colors group">
+          {/* DELETE ACCOUNT */}
+          <div className="border-2 border-dashed border-red-300 bg-red-50 p-5 hover:border-red-500 transition-colors">
             <div className="flex items-start gap-4">
-              <div className="bg-white p-3 rounded-full text-red-600 border border-red-100 group-hover:bg-red-600 group-hover:text-white transition-colors"><Trash2 size={20} /></div>
+              <div className="bg-white p-3 text-red-500 border border-red-200">
+                <Trash2 size={20} />
+              </div>
               <div className="flex-1">
-                <h3 className="font-bold uppercase text-sm text-red-700">Delete Account</h3>
+                <h3 className="font-bold uppercase text-sm text-red-700 mb-1">Delete Account</h3>
+                <p className="text-sm text-red-600/70 mb-3">
+                  Permanently delete your account and all data. This cannot be undone.
+                </p>
                 {activeTab === 'delete' ? (
-                  <div className="mt-4 bg-white p-3 border border-red-200">
-                    <label className="text-[10px] font-bold uppercase text-red-400">Type "DELETE" to confirm</label>
-                    <div className="flex gap-2 mt-1">
-                      <input type="text" value={confirmText} onChange={(e) => setConfirmText(e.target.value)} className="w-full border border-red-300 px-2 py-1 text-sm font-bold uppercase text-red-600" />
-                      <button onClick={handleDelete} disabled={confirmText !== 'DELETE' || loading} className="bg-red-600 text-white px-4 py-1 text-xs font-bold uppercase hover:bg-red-700">Nuke It</button>
+                  <div className="bg-white border border-red-200 p-4">
+                    <label className="text-xs font-bold uppercase text-red-400 block mb-2">
+                      Type "DELETE" to confirm
+                    </label>
+                    <div className="flex gap-2">
+                      <input 
+                        type="text" 
+                        value={confirmText} 
+                        onChange={(e) => setConfirmText(e.target.value.toUpperCase())} 
+                        placeholder="DELETE"
+                        className="flex-1 border-2 border-red-400 px-3 py-2 text-sm font-bold uppercase text-red-600 focus:outline-none" 
+                      />
+                      <button 
+                        onClick={handleDelete} 
+                        disabled={confirmText !== 'DELETE' || loading} 
+                        className="bg-red-600 text-white px-5 py-2 text-sm font-bold uppercase hover:bg-red-700 disabled:opacity-30"
+                      >
+                        {loading ? '...' : 'Delete'}
+                      </button>
                     </div>
+                    <button 
+                      onClick={() => { setActiveTab(null); setConfirmText('') }}
+                      className="mt-3 text-xs font-bold text-red-400 hover:text-red-600"
+                    >
+                      Cancel
+                    </button>
                   </div>
-                ) : ( <button onClick={() => { setActiveTab('delete'); setConfirmText('') }} className="mt-1 text-xs font-bold text-red-400 underline hover:text-red-600">Permanently Delete</button> )}
+                ) : (
+                  <button 
+                    onClick={() => { setActiveTab('delete'); setConfirmText('') }} 
+                    className="text-sm font-bold text-red-400 underline hover:text-red-600"
+                  >
+                    Delete My Account
+                  </button>
+                )}
               </div>
             </div>
           </div>
+
         </div>
       </div>
     </div>
