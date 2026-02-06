@@ -13,11 +13,11 @@ export default function DashboardLayout({
 }) {
   return (
     <XPProvider>
-      <div className="min-h-screen bg-[#FBF9F6]">
+      <div className="min-h-screen bg-gray-50">
         <Sidebar />
         <MobileNav />
         <main className="lg:pl-64">
-           <div className="mx-auto max-w-6xl p-6 lg:p-12">
+           <div className="mx-auto max-w-7xl p-6 lg:p-8">
              <TrialGuard>
                 {children}
              </TrialGuard>

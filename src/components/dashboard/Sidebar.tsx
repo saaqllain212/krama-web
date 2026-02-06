@@ -10,13 +10,13 @@ import {
   Map, 
   LineChart, 
   LogOut,
-  ChevronRight,
-  User
+  Settings,
+  Sparkles,
+  Brain
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { useSyllabus } from '@/context/SyllabusContext'
-import LevelBadge from '@/components/dashboard/LevelBadge'
 
 const NAV_ITEMS = [
   { label: 'Overview', href: '/dashboard', icon: LayoutDashboard },
@@ -24,6 +24,11 @@ const NAV_ITEMS = [
   { label: 'Spaced Review', href: '/dashboard/review', icon: RotateCw },
   { label: 'Syllabus Map', href: '/dashboard/syllabus', icon: Map },
   { label: 'Mock Scores', href: '/dashboard/mocks', icon: LineChart },
+]
+
+const COMING_SOON_ITEMS = [
+  { label: 'AI MCQ Gen', icon: Sparkles, badge: 'Beta' },
+  { label: 'Companions', icon: Brain, badge: 'Soon' },
 ]
 
 export default function Sidebar() {
@@ -36,6 +41,7 @@ export default function Sidebar() {
   // User state
   const [userName, setUserName] = useState('')
   const [userInitial, setUserInitial] = useState('U')
+  const [userLevel, setUserLevel] = useState(1)
 
   useEffect(() => {
     const getUser = async () => {
@@ -48,9 +54,13 @@ export default function Sidebar() {
         setUserName(user.email.split('@')[0])
         setUserInitial(user.email.charAt(0).toUpperCase())
       }
+      
+      // Calculate level from percentage
+      const level = Math.floor(stats.percentage / 10) + 1
+      setUserLevel(Math.min(level, 10))
     }
     getUser()
-  }, [supabase])
+  }, [supabase, stats.percentage])
 
   const handleLogout = async () => {
     await supabase.auth.signOut()
@@ -81,38 +91,51 @@ export default function Sidebar() {
   }
 
   return (
-    <aside className="fixed inset-y-0 left-0 hidden w-64 flex-col border-r-2 border-black bg-white lg:flex">
+    <aside className="fixed inset-y-0 left-0 hidden w-64 flex-col bg-gray-50 border-r border-gray-200 lg:flex">
       
       {/* Brand Logo */}
-      <div className="flex h-20 items-center justify-between border-b-2 border-black px-6">
-        <div className="text-2xl font-black uppercase tracking-tight">Krama</div>
+      <div className="flex h-16 items-center justify-between px-6 border-b border-gray-200">
+        <div className="text-2xl font-black uppercase tracking-tight text-gray-900">Krama</div>
         {activeExam && (
-          <div className="text-[10px] font-bold uppercase tracking-widest bg-black text-white px-2 py-1">
+          <div className="text-[10px] font-bold uppercase tracking-wider bg-primary-500 text-white px-2 py-1 rounded-full">
             {getExamLabel()}
           </div>
         )}
       </div>
 
-      {/* User Section with Level */}
-      <div className="border-b-2 border-black/10 p-4">
+      {/* User Section */}
+      <div className="p-4 border-b border-gray-200">
         <div className="flex items-center gap-3 mb-3">
-          <div className="w-10 h-10 bg-black text-white flex items-center justify-center font-black text-lg">
-            {userInitial}
+          {/* Avatar with gradient */}
+          <div className="relative w-10 h-10">
+            <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-purple-500 rounded-full flex items-center justify-center font-bold text-white text-base shadow-soft">
+              {userInitial}
+            </div>
+            {/* Level badge */}
+            <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-success-500 rounded-full flex items-center justify-center text-[10px] font-bold text-white border-2 border-gray-50">
+              {userLevel}
+            </div>
           </div>
+          
           <div className="flex-1 min-w-0">
-            <div className="font-bold text-sm truncate">{userName || 'Student'}</div>
-            <div className="text-xs text-black/50 font-medium">
+            <div className="font-semibold text-sm text-gray-900 truncate">{userName || 'Student'}</div>
+            <div className="text-xs text-gray-500 font-medium">
               {stats.percentage}% complete
             </div>
           </div>
         </div>
         
-        {/* Level Badge */}
-        <LevelBadge variant="compact" showProgress={true} />
+        {/* Progress bar */}
+        <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+          <div 
+            className="h-full bg-gradient-to-r from-primary-500 to-purple-500 transition-all duration-500 rounded-full"
+            style={{ width: `${stats.percentage}%` }}
+          />
+        </div>
       </div>
 
       {/* Navigation Links */}
-      <nav className="flex-1 p-4 space-y-1">
+      <nav className="flex-1 p-3 space-y-1 overflow-y-auto scrollbar-thin">
         {visibleItems.map((item) => {
           const isActive = pathname === item.href
           const Icon = item.icon
@@ -121,30 +144,64 @@ export default function Sidebar() {
             <Link
               key={item.href}
               href={item.href}
-              className={`group flex items-center justify-between px-4 py-3 text-sm font-bold uppercase tracking-wide transition-all
+              className={`group flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all
                 ${isActive 
-                  ? 'bg-black text-white' 
-                  : 'text-black/60 hover:bg-black/5 hover:text-black'
+                  ? 'bg-primary-500 text-white shadow-soft' 
+                  : 'text-gray-700 hover:bg-white hover:shadow-soft'
                 }`}
             >
-              <div className="flex items-center gap-3">
-                <Icon className="h-5 w-5" strokeWidth={2} />
-                {item.label}
-              </div>
-              {isActive && <ChevronRight size={16} />}
+              <Icon className="h-5 w-5 flex-shrink-0" strokeWidth={2} />
+              <span>{item.label}</span>
             </Link>
           )
         })}
+        
+        {/* Divider */}
+        <div className="py-2">
+          <div className="h-px bg-gray-200" />
+        </div>
+        
+        {/* Coming Soon Section */}
+        <div className="px-2 py-2">
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+            Coming Soon
+          </p>
+          {COMING_SOON_ITEMS.map((item) => {
+            const Icon = item.icon
+            return (
+              <div
+                key={item.label}
+                className="flex items-center justify-between px-4 py-3 rounded-lg text-sm font-medium text-gray-400 cursor-not-allowed"
+              >
+                <div className="flex items-center gap-3">
+                  <Icon className="h-5 w-5" strokeWidth={2} />
+                  <span>{item.label}</span>
+                </div>
+                <span className="text-[10px] font-bold uppercase tracking-wider bg-purple-100 text-purple-600 px-2 py-0.5 rounded-full">
+                  {item.badge}
+                </span>
+              </div>
+            )
+          })}
+        </div>
       </nav>
 
-      {/* Footer / Logout */}
-      <div className="border-t-2 border-black p-4">
+      {/* Footer Actions */}
+      <div className="p-3 border-t border-gray-200 space-y-2">
+        <Link
+          href="/dashboard/profile"
+          className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-700 hover:bg-white hover:shadow-soft transition-all"
+        >
+          <Settings className="h-5 w-5" strokeWidth={2} />
+          <span>Settings</span>
+        </Link>
+        
         <button 
           onClick={handleLogout}
-          className="flex w-full items-center gap-3 px-4 py-3 text-sm font-bold uppercase tracking-wide text-black/40 hover:bg-red-50 hover:text-red-600 transition-all"
+          className="flex w-full items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-700 hover:bg-red-50 hover:text-red-600 transition-all"
         >
           <LogOut className="h-5 w-5" strokeWidth={2} />
-          Log Out
+          <span>Log Out</span>
         </button>
       </div>
     </aside>
