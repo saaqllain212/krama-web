@@ -8,7 +8,6 @@ import AIMCQSection from "./AIMCQSection"
 import ProblemSection from "./ProblemSection"
 import InteractiveConsole from "./InteractiveConsole" 
 import Workflow from "./Workflow"
-import FocusBanner from "./FocusBanner" 
 import ToolsGrid from "./ToolsGrid"
 import MobileSection from "./MobileSection"
 import PricingCard from "./PricingCard"
@@ -41,13 +40,10 @@ export default function LandingPage() {
         {/* The "How" - Interactive Tour */}
         <InteractiveConsole />
 
-        {/* Visual Break */}
-        <FocusBanner />
-
-        {/* The Process */}
+        {/* The Process - NEW ANIMATED TIMELINE */}
         <Workflow />
 
-        {/* The Tools */}
+        {/* The Tools - NEW BENTO GRID */}
         <ToolsGrid />
         
         {/* Mobile App Teaser */}
