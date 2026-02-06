@@ -3,6 +3,8 @@
 import Navbar from "./Navbar"
 import Hero from "./Hero"
 import ExamSelector from "./ExamSelector"
+import DualBrainPreview from "./DualBrainPreview"
+import AIMCQSection from "./AIMCQSection"
 import ProblemSection from "./ProblemSection"
 import InteractiveConsole from "./InteractiveConsole" 
 import Workflow from "./Workflow"
@@ -11,25 +13,27 @@ import ToolsGrid from "./ToolsGrid"
 import MobileSection from "./MobileSection"
 import PricingCard from "./PricingCard"
 import Footer from "./Footer"
-import TopBanner from "./TopBanner"
 import SyllabusBuilderSection from "./SyllabusBuilderSection"
 
 export default function LandingPage() {
   return (
-    <div className="flex min-h-screen flex-col bg-[#FBF9F6] text-black">
+    <div className="flex min-h-screen flex-col bg-white text-gray-900">
       
-      {/* 1. Launch Banner */}
-      <TopBanner />
-
-      {/* 2. Navigation */}
+      {/* Navigation */}
       <Navbar />
       
       <main>
+        {/* Hero Section - New gradient design */}
         <Hero />
 
-        {/* 3. Exam Selector */}
-        {/* This puts the exam buttons right below the main headline */}
+        {/* Exam Selector */}
         <ExamSelector />
+        
+        {/* NEW: Dual Brain Preview */}
+        <DualBrainPreview />
+
+        {/* NEW: AI MCQ Generator */}
+        <AIMCQSection />
         
         {/* The "Why" */}
         <ProblemSection /> 
@@ -49,7 +53,7 @@ export default function LandingPage() {
         {/* Mobile App Teaser */}
         <MobileSection />
 
-        {/* Pricing */}
+        {/* Pricing - Updated design */}
         <PricingCard />
 
         {/* Protocol Architect (Syllabus Helper) */}

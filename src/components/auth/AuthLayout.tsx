@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { Shield, Clock, Target, Zap } from 'lucide-react'
+import { Shield, Clock, Target, Zap, Sparkles, Brain } from 'lucide-react'
 
 interface AuthLayoutProps {
   children: React.ReactNode
@@ -11,32 +11,36 @@ interface AuthLayoutProps {
 }
 
 const BENEFITS = [
-  { icon: <Target size={18} />, text: 'Track your entire syllabus visually' },
-  { icon: <Clock size={18} />, text: 'Pomodoro timer for deep focus' },
-  { icon: <Zap size={18} />, text: 'Spaced repetition so you never forget' },
-  { icon: <Shield size={18} />, text: 'Your data stays private, always' },
+  { icon: <Target size={20} />, text: 'Visual syllabus tracking for every topic' },
+  { icon: <Clock size={20} />, text: 'Pomodoro timer for deep focus sessions' },
+  { icon: <Sparkles size={20} />, text: 'AI MCQ generator from your PDFs' },
+  { icon: <Brain size={20} />, text: 'Dual companions that evolve with you' },
 ]
 
 export default function AuthLayout({ children, title, subtitle, mode = 'signup' }: AuthLayoutProps) {
   return (
     <div className="flex min-h-screen w-full">
       
-      {/* LEFT SIDE: Brand & Value Props (Hidden on mobile) */}
-      <div className="relative hidden w-1/2 flex-col justify-between bg-black p-10 lg:flex lg:p-12">
+      {/* LEFT SIDE: Gradient Brand Panel */}
+      <div className="relative hidden w-1/2 flex-col justify-between p-10 lg:flex lg:p-12 overflow-hidden bg-gradient-to-br from-primary-600 via-primary-700 to-purple-700">
         
-        {/* Background Pattern */}
-        <div className="absolute inset-0 opacity-[0.02]" style={{
-          backgroundImage: `repeating-linear-gradient(
-            45deg,
-            transparent,
-            transparent 10px,
-            rgba(255,255,255,0.1) 10px,
-            rgba(255,255,255,0.1) 20px
-          )`
-        }} />
+        {/* Animated Background Pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div 
+            className="absolute inset-0"
+            style={{
+              backgroundImage: `radial-gradient(circle at 2px 2px, white 1px, transparent 0)`,
+              backgroundSize: '40px 40px'
+            }}
+          />
+        </div>
+
+        {/* Floating Orbs */}
+        <div className="absolute top-20 right-20 w-64 h-64 bg-purple-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse" />
+        <div className="absolute bottom-20 left-20 w-72 h-72 bg-cyan-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse" style={{ animationDelay: '1s' }} />
 
         {/* Logo */}
-        <Link href="/" className="relative z-10 text-2xl font-black uppercase tracking-tight text-white hover:text-brand transition-colors">
+        <Link href="/" className="relative z-10 text-3xl font-black uppercase tracking-tight text-white hover:text-white/80 transition-colors">
           Krama
         </Link>
 
@@ -44,19 +48,23 @@ export default function AuthLayout({ children, title, subtitle, mode = 'signup' 
         <div className="relative z-10 flex-1 flex flex-col justify-center max-w-md">
           
           {/* Headline */}
-          <h2 className="text-4xl font-bold tracking-tight text-white leading-tight">
-            Stop studying randomly.
-            <span className="block text-white/40 mt-1">Start studying smart.</span>
+          <h2 className="text-4xl font-bold tracking-tight text-white leading-tight mb-4">
+            Your study companion,
+            <span className="block text-white/70 mt-2">powered by AI.</span>
           </h2>
 
+          <p className="text-white/80 text-lg mb-10">
+            Join students who are studying smarter with AI-generated practice questions and intelligent tracking.
+          </p>
+
           {/* Benefits */}
-          <div className="mt-10 space-y-4">
+          <div className="space-y-4">
             {BENEFITS.map((benefit, i) => (
               <div 
                 key={i}
-                className="flex items-center gap-4 text-white/70 group"
+                className="flex items-center gap-4 text-white/90 group"
               >
-                <div className="flex-shrink-0 w-10 h-10 bg-white/10 border border-white/10 flex items-center justify-center text-brand group-hover:bg-brand group-hover:text-black transition-all">
+                <div className="flex-shrink-0 w-12 h-12 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl flex items-center justify-center group-hover:bg-white/20 group-hover:scale-110 transition-all">
                   {benefit.icon}
                 </div>
                 <span className="text-sm font-medium">{benefit.text}</span>
@@ -64,23 +72,16 @@ export default function AuthLayout({ children, title, subtitle, mode = 'signup' 
             ))}
           </div>
 
-          {/* Social Proof */}
-          <div className="mt-12 pt-8 border-t border-white/10">
-            <div className="flex items-center gap-4">
-              {/* Avatar Stack */}
-              <div className="flex -space-x-2">
-                {[1, 2, 3, 4].map((i) => (
-                  <div 
-                    key={i}
-                    className="w-8 h-8 rounded-full bg-gradient-to-br from-brand to-green-400 border-2 border-black flex items-center justify-center text-[10px] font-bold text-black"
-                  >
-                    {['A', 'R', 'S', 'P'][i-1]}
-                  </div>
-                ))}
+          {/* Stats */}
+          <div className="mt-12 pt-8 border-t border-white/20">
+            <div className="grid grid-cols-2 gap-6">
+              <div>
+                <div className="text-3xl font-bold text-white">14 Days</div>
+                <div className="text-sm text-white/60">Free Trial</div>
               </div>
-              <div className="text-sm">
-                <span className="text-white font-bold">50+ students</span>
-                <span className="text-white/50"> already tracking</span>
+              <div>
+                <div className="text-3xl font-bold text-white">₹299</div>
+                <div className="text-sm text-white/60">Lifetime Access</div>
               </div>
             </div>
           </div>
@@ -88,29 +89,31 @@ export default function AuthLayout({ children, title, subtitle, mode = 'signup' 
 
         {/* Bottom Quote */}
         <div className="relative z-10">
-          <blockquote className="text-white/60 text-sm font-medium italic">
-            "Finally, a tool that doesn't try to do everything. Just works."
+          <blockquote className="text-white/70 text-sm font-medium italic">
+            "Finally, a study tracker that actually helps instead of overwhelming me."
           </blockquote>
-          <p className="mt-2 text-xs font-bold text-white/40 uppercase tracking-wider">
-            — UPSC Aspirant, Delhi
+          <p className="mt-2 text-xs font-semibold text-white/50 uppercase tracking-wider">
+            — JEE Aspirant, Mumbai
           </p>
         </div>
       </div>
 
       {/* RIGHT SIDE: The Form */}
-      <div className="flex w-full flex-col bg-[#FBF9F6] lg:w-1/2">
+      <div className="flex w-full flex-col bg-gray-50 lg:w-1/2">
         
-        {/* Top Bar (Mobile Logo + Desktop subtle branding) */}
+        {/* Top Bar */}
         <div className="flex items-center justify-between p-6 lg:p-8">
-          <Link href="/" className="text-xl font-black uppercase tracking-tight lg:text-black/20 hover:text-black transition-colors">
+          <Link href="/" className="text-2xl font-black uppercase tracking-tight text-gray-900 lg:text-gray-400 hover:text-gray-900 transition-colors">
             Krama
           </Link>
           
           {/* Trial Badge */}
           {mode === 'signup' && (
-            <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-black/40">
-              <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-              14-Day Free Trial
+            <div className="flex items-center gap-2 bg-success-100 px-3 py-1.5 rounded-full">
+              <span className="w-2 h-2 bg-success-500 rounded-full animate-pulse" />
+              <span className="text-xs font-semibold text-success-700 uppercase tracking-wider">
+                14-Day Free Trial
+              </span>
             </div>
           )}
         </div>
@@ -121,8 +124,8 @@ export default function AuthLayout({ children, title, subtitle, mode = 'signup' 
             
             {/* Header */}
             <div className="mb-8">
-              <h1 className="text-3xl font-bold tracking-tight text-black md:text-4xl">{title}</h1>
-              <p className="mt-2 text-base font-medium text-black/50">{subtitle}</p>
+              <h1 className="text-4xl font-bold tracking-tight text-gray-900">{title}</h1>
+              <p className="mt-3 text-lg font-medium text-gray-600">{subtitle}</p>
             </div>
 
             {/* Form Content */}
@@ -131,11 +134,11 @@ export default function AuthLayout({ children, title, subtitle, mode = 'signup' 
         </div>
 
         {/* Footer */}
-        <div className="p-6 text-center text-[11px] font-medium text-black/30 lg:p-8">
+        <div className="p-6 text-center text-xs font-medium text-gray-500 lg:p-8">
           By continuing, you agree to our{' '}
-          <Link href="/legal/terms" className="underline hover:text-black">Terms</Link>
+          <Link href="/legal/terms" className="text-primary-600 hover:text-primary-700 underline">Terms</Link>
           {' '}and{' '}
-          <Link href="/legal/privacy" className="underline hover:text-black">Privacy Policy</Link>
+          <Link href="/legal/privacy" className="text-primary-600 hover:text-primary-700 underline">Privacy Policy</Link>
         </div>
       </div>
       
