@@ -4,8 +4,6 @@ import Navbar from "./Navbar"
 import Hero from "./Hero"
 import ExamSelector from "./ExamSelector"
 import ProblemSection from "./ProblemSection"
-// 👇 1. IMPORT THE NEW SENTINEL COMPONENT
-import SentinelSection from "./SentinelSection" 
 import InteractiveConsole from "./InteractiveConsole" 
 import Workflow from "./Workflow"
 import FocusBanner from "./FocusBanner" 
@@ -35,9 +33,6 @@ export default function LandingPage() {
         
         {/* The "Why" */}
         <ProblemSection /> 
-
-        {/* ⚡ 4. NEW: The Sentinel Section (Inserted Here) */}
-        <SentinelSection />
         
         {/* The "How" - Interactive Tour */}
         <InteractiveConsole />

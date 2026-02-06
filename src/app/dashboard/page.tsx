@@ -27,7 +27,6 @@ import CheckoutModal from '@/components/dashboard/CheckoutModal'
 import InitiationModal from '@/components/dashboard/InitiationModal'
 import ProtocolManagerModal from '@/components/dashboard/ProtocolManagerModal'
 import BroadcastBanner from '@/components/dashboard/BroadcastBanner'
-import ProctorWidget from '@/components/dashboard/sentinel/ProctorWidget'
 import Countdown from '@/components/dashboard/Countdown'
 
 // Helper: Get time-aware greeting
@@ -535,11 +534,6 @@ export default function DashboardPage() {
           <Plus size={16} />
           Log Mock
         </button>
-      </div>
-
-      {/* === SENTINEL (Smaller) === */}
-      <div className="max-w-md">
-        <ProctorWidget onOpenSettings={() => setIsSettingsOpen(true)} />
       </div>
 
       {/* === MODALS === */}
