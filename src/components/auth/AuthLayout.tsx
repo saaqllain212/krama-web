@@ -1,31 +1,43 @@
 'use client'
 
 import Link from 'next/link'
-import { Shield, Clock, Target, Zap, Sparkles, Brain } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import GrowthGuardianMascot from './GrowthGuardianMascot'
+import TimeWraithMascot from './TimeWraithMascot'
 
 interface AuthLayoutProps {
   children: React.ReactNode
   title: string
   subtitle: string
   mode?: 'signup' | 'login'
+  mascotState?: 'idle' | 'watching' | 'typing-name' | 'typing-email' | 'typing-password' | 'celebrating' | 'success' | 'error'
 }
 
-const BENEFITS = [
-  { icon: <Target size={20} />, text: 'Visual syllabus tracking for every topic' },
-  { icon: <Clock size={20} />, text: 'Pomodoro timer for deep focus sessions' },
-  { icon: <Sparkles size={20} />, text: 'AI MCQ generator from your PDFs' },
-  { icon: <Brain size={20} />, text: 'Dual companions that evolve with you' },
-]
+export default function AuthLayout({ 
+  children, 
+  title, 
+  subtitle, 
+  mode = 'signup',
+  mascotState = 'idle'
+}: AuthLayoutProps) {
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
 
-export default function AuthLayout({ children, title, subtitle, mode = 'signup' }: AuthLayoutProps) {
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePos({ x: e.clientX, y: e.clientY })
+    }
+    window.addEventListener('mousemove', handleMouseMove)
+    return () => window.removeEventListener('mousemove', handleMouseMove)
+  }, [])
+
   return (
     <div className="flex min-h-screen w-full">
       
-      {/* LEFT SIDE: Gradient Brand Panel */}
-      <div className="relative hidden w-1/2 flex-col justify-between p-10 lg:flex lg:p-12 overflow-hidden bg-gradient-to-br from-primary-600 via-primary-700 to-purple-700">
+      {/* LEFT SIDE: Mascot Panel */}
+      <div className="relative hidden w-1/2 flex-col justify-between p-10 lg:flex lg:p-12 overflow-hidden bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
         
         {/* Animated Background Pattern */}
-        <div className="absolute inset-0 opacity-10">
+        <div className="absolute inset-0 opacity-5">
           <div 
             className="absolute inset-0"
             style={{
@@ -35,66 +47,77 @@ export default function AuthLayout({ children, title, subtitle, mode = 'signup' 
           />
         </div>
 
-        {/* Floating Orbs */}
-        <div className="absolute top-20 right-20 w-64 h-64 bg-purple-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse" />
-        <div className="absolute bottom-20 left-20 w-72 h-72 bg-cyan-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse" style={{ animationDelay: '1s' }} />
+        {/* Floating Gradient Orbs */}
+        {mode === 'signup' ? (
+          <>
+            <div className="absolute top-20 right-20 w-64 h-64 bg-green-500/20 rounded-full mix-blend-screen filter blur-3xl animate-pulse" />
+            <div className="absolute bottom-20 left-20 w-72 h-72 bg-emerald-500/20 rounded-full mix-blend-screen filter blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+          </>
+        ) : (
+          <>
+            <div className="absolute top-20 right-20 w-64 h-64 bg-orange-500/20 rounded-full mix-blend-screen filter blur-3xl animate-pulse" />
+            <div className="absolute bottom-20 left-20 w-72 h-72 bg-red-500/20 rounded-full mix-blend-screen filter blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+          </>
+        )}
 
         {/* Logo */}
-        <Link href="/" className="relative z-10 text-3xl font-black uppercase tracking-tight text-white hover:text-white/80 transition-colors">
-          Krama
+        <Link href="/" className="relative z-10 flex items-center gap-2 group">
+          <span className="text-3xl">🌱</span>
+          <span className="text-2xl font-black uppercase tracking-tight text-white group-hover:text-white/80 transition-colors">
+            Krama
+          </span>
         </Link>
 
-        {/* Main Content */}
-        <div className="relative z-10 flex-1 flex flex-col justify-center max-w-md">
-          
-          {/* Headline */}
-          <h2 className="text-4xl font-bold tracking-tight text-white leading-tight mb-4">
-            Your study companion,
-            <span className="block text-white/70 mt-2">powered by AI.</span>
-          </h2>
-
-          <p className="text-white/80 text-lg mb-10">
-            Join students who are studying smarter with AI-generated practice questions and intelligent tracking.
-          </p>
-
-          {/* Benefits */}
-          <div className="space-y-4">
-            {BENEFITS.map((benefit, i) => (
-              <div 
-                key={i}
-                className="flex items-center gap-4 text-white/90 group"
-              >
-                <div className="flex-shrink-0 w-12 h-12 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl flex items-center justify-center group-hover:bg-white/20 group-hover:scale-110 transition-all">
-                  {benefit.icon}
-                </div>
-                <span className="text-sm font-medium">{benefit.text}</span>
-              </div>
-            ))}
+        {/* MASCOT - The Star of the Show! */}
+        <div className="relative z-10 flex-1 flex flex-col justify-center items-center">
+          <div className="w-full max-w-md aspect-square">
+            {mode === 'signup' ? (
+              <GrowthGuardianMascot state={mascotState as any} />
+            ) : (
+              <TimeWraithMascot state={mascotState as any} />
+            )}
           </div>
 
-          {/* Stats */}
-          <div className="mt-12 pt-8 border-t border-white/20">
-            <div className="grid grid-cols-2 gap-6">
-              <div>
-                <div className="text-3xl font-bold text-white">14 Days</div>
-                <div className="text-sm text-white/60">Free Trial</div>
-              </div>
-              <div>
-                <div className="text-3xl font-bold text-white">₹299</div>
-                <div className="text-sm text-white/60">Lifetime Access</div>
-              </div>
-            </div>
+          {/* Mascot Description */}
+          <div className="mt-8 text-center max-w-md">
+            {mode === 'signup' ? (
+              <>
+                <h2 className="text-2xl font-bold text-white mb-3">
+                  Meet Your Growth Guardian 🌳
+                </h2>
+                <p className="text-white/70 text-sm leading-relaxed">
+                  This companion grows stronger with every study session. 
+                  Watch it evolve as you build your knowledge tree, one hour at a time.
+                </p>
+              </>
+            ) : (
+              <>
+                <h2 className="text-2xl font-bold text-white mb-3">
+                  The Time Wraith Awaits ⏳
+                </h2>
+                <p className="text-white/70 text-sm leading-relaxed">
+                  Every moment matters. This guardian reminds you that time flows 
+                  whether you study or not. Make it count.
+                </p>
+              </>
+            )}
           </div>
         </div>
 
-        {/* Bottom Quote */}
+        {/* Bottom Stats */}
         <div className="relative z-10">
-          <blockquote className="text-white/70 text-sm font-medium italic">
-            "Finally, a study tracker that actually helps instead of overwhelming me."
-          </blockquote>
-          <p className="mt-2 text-xs font-semibold text-white/50 uppercase tracking-wider">
-            — JEE Aspirant, Mumbai
-          </p>
+          <div className="grid grid-cols-2 gap-6 p-6 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl">
+            <div>
+              <div className="text-3xl font-bold text-white">14 Days</div>
+              <div className="text-sm text-white/60 mt-1">Free Trial</div>
+            </div>
+            <div>
+              <div className="text-3xl font-bold bg-gradient-to-r from-primary-400 to-cyan-400 bg-clip-text text-transparent">
+                ₹299
+              </div>
+              <div className="text-sm text-white/60 mt-1">Lifetime Access</div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -103,13 +126,16 @@ export default function AuthLayout({ children, title, subtitle, mode = 'signup' 
         
         {/* Top Bar */}
         <div className="flex items-center justify-between p-6 lg:p-8">
-          <Link href="/" className="text-2xl font-black uppercase tracking-tight text-gray-900 lg:text-gray-400 hover:text-gray-900 transition-colors">
-            Krama
+          <Link href="/" className="flex items-center gap-2 group">
+            <span className="text-2xl">🌱</span>
+            <span className="text-xl font-black uppercase tracking-tight text-gray-900 group-hover:text-primary-600 transition-colors">
+              Krama
+            </span>
           </Link>
           
           {/* Trial Badge */}
           {mode === 'signup' && (
-            <div className="flex items-center gap-2 bg-success-100 px-3 py-1.5 rounded-full">
+            <div className="flex items-center gap-2 bg-success-100 px-4 py-2 rounded-full border border-success-200">
               <span className="w-2 h-2 bg-success-500 rounded-full animate-pulse" />
               <span className="text-xs font-semibold text-success-700 uppercase tracking-wider">
                 14-Day Free Trial
@@ -126,6 +152,13 @@ export default function AuthLayout({ children, title, subtitle, mode = 'signup' 
             <div className="mb-8">
               <h1 className="text-4xl font-bold tracking-tight text-gray-900">{title}</h1>
               <p className="mt-3 text-lg font-medium text-gray-600">{subtitle}</p>
+              
+              {/* Fun hint about mascot */}
+              {mode === 'login' && (
+                <p className="mt-4 text-sm text-gray-500 italic">
+                  💡 Psst... watch the hourglass when you type your password
+                </p>
+              )}
             </div>
 
             {/* Form Content */}

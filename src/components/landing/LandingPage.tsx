@@ -1,5 +1,8 @@
 'use client'
 
+// 1. New Imports added here
+import { useEasterEggs, EasterEggToast, StudentEasterEggs } from '@/components/EasterEggs'
+
 import Navbar from "./Navbar"
 import Hero from "./Hero"
 import ExamSelector from "./ExamSelector"
@@ -15,49 +18,58 @@ import Footer from "./Footer"
 import SyllabusBuilderSection from "./SyllabusBuilderSection"
 
 export default function LandingPage() {
+  // 2. Initialize the Easter Egg hook
+  const { eggs, activeEgg, handleLogoClick, handleCoffeeType } = useEasterEggs()
+
   return (
-    <div className="flex min-h-screen flex-col bg-white text-gray-900">
+    <>
+      {/* 3. Add the Toast and Secret Component */}
+      <EasterEggToast egg={activeEgg} />
+      <StudentEasterEggs />
       
-      {/* Navigation */}
-      <Navbar />
-      
-      <main>
-        {/* Hero Section - New gradient design */}
-        <Hero />
-
-        {/* Exam Selector */}
-        <ExamSelector />
+      <div className="flex min-h-screen flex-col bg-white text-gray-900">
         
-        {/* NEW: Dual Brain Preview */}
-        <DualBrainPreview />
-
-        {/* NEW: AI MCQ Generator */}
-        <AIMCQSection />
+        {/* 4. Pass the click handler to Navbar */}
+        <Navbar onLogoClick={handleLogoClick} />
         
-        {/* The "Why" */}
-        <ProblemSection /> 
-        
-        {/* The "How" - Interactive Tour */}
-        <InteractiveConsole />
+        <main>
+          {/* Hero Section - New gradient design */}
+          <Hero />
 
-        {/* The Process - NEW ANIMATED TIMELINE */}
-        <Workflow />
+          {/* Exam Selector */}
+          <ExamSelector />
+          
+          {/* NEW: Dual Brain Preview */}
+          <DualBrainPreview />
 
-        {/* The Tools - NEW BENTO GRID */}
-        <ToolsGrid />
-        
-        {/* Mobile App Teaser */}
-        <MobileSection />
+          {/* NEW: AI MCQ Generator */}
+          <AIMCQSection />
+          
+          {/* The "Why" */}
+          <ProblemSection /> 
+          
+          {/* The "How" - Interactive Tour */}
+          <InteractiveConsole />
 
-        {/* Pricing - Updated design */}
-        <PricingCard />
+          {/* The Process - NEW ANIMATED TIMELINE */}
+          <Workflow />
 
-        {/* Protocol Architect (Syllabus Helper) */}
-        <SyllabusBuilderSection />
+          {/* The Tools - NEW BENTO GRID */}
+          <ToolsGrid />
+          
+          {/* Mobile App Teaser */}
+          <MobileSection />
 
-      </main>
+          {/* Pricing - Updated design */}
+          <PricingCard />
 
-      <Footer />
-    </div>
+          {/* Protocol Architect (Syllabus Helper) */}
+          <SyllabusBuilderSection />
+
+        </main>
+
+        <Footer />
+      </div>
+    </>
   )
 }

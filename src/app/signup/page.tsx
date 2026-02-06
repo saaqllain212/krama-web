@@ -1,14 +1,20 @@
-import AuthLayout from "@/components/auth/AuthLayout";
-import SignupForm from "@/components/auth/SignupForm";
+'use client'
+
+import { useState } from 'react'
+import AuthLayout from "@/components/auth/AuthLayout"
+import SignupForm from "@/components/auth/SignupForm"
 
 export default function SignupPage() {
+  const [mascotState, setMascotState] = useState<'idle' | 'watching' | 'typing-name' | 'typing-email' | 'typing-password' | 'celebrating'>('watching')
+
   return (
     <AuthLayout 
-      title="Start your free trial" 
-      subtitle="14 days free. No credit card required."
+      title="Start your journey" 
+      subtitle="Join hundreds of students studying smarter."
       mode="signup"
+      mascotState={mascotState}
     >
-      <SignupForm />
+      <SignupForm onMascotStateChange={setMascotState} />
     </AuthLayout>
   )
 }

@@ -6,7 +6,13 @@ import Link from 'next/link'
 import { ArrowRight, Loader2, Mail, Lock, Eye, EyeOff, AlertCircle } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 
-export default function LoginForm() {
+// 1. ADDED INTERFACE
+interface LoginFormProps {
+  onMascotStateChange?: (state: any) => void
+}
+
+// 2. UPDATED COMPONENT TO ACCEPT PROPS
+export default function LoginForm({ onMascotStateChange }: LoginFormProps) {
   const router = useRouter()
   const supabase = createClient()
   
@@ -29,9 +35,15 @@ export default function LoginForm() {
 
       if (authError) throw authError
 
+      // 3. ADDED SUCCESS TRIGGER
+      onMascotStateChange?.('success')
+
       router.push('/dashboard')
       router.refresh() 
     } catch (err: any) {
+      // 4. ADDED ERROR TRIGGER
+      onMascotStateChange?.('error')
+
       const msg = err.message || ''
       
       if (msg.toLowerCase().includes('invalid')) {
@@ -66,6 +78,9 @@ export default function LoginForm() {
             type="email" 
             required
             value={email}
+            // 5. ADDED MASCOT TRIGGERS
+            onFocus={() => onMascotStateChange?.('typing-email')}
+            onBlur={() => onMascotStateChange?.('watching')}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="you@example.com"
             className="w-full border-2 border-black/10 bg-white pl-11 pr-4 py-3.5 text-sm font-medium placeholder:text-black/30 focus:border-black focus:outline-none transition-colors"
@@ -90,6 +105,9 @@ export default function LoginForm() {
             type={showPassword ? 'text' : 'password'}
             required
             value={password}
+            // 5. ADDED MASCOT TRIGGERS
+            onFocus={() => onMascotStateChange?.('typing-password')}
+            onBlur={() => onMascotStateChange?.('watching')}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Enter your password"
             className="w-full border-2 border-black/10 bg-white pl-11 pr-12 py-3.5 text-sm font-medium placeholder:text-black/30 focus:border-black focus:outline-none transition-colors"

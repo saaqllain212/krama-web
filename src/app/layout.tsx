@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     siteName: "Krama",
     images: [
       {
-        url: "/api/og?title=Strategic%20Study%20Tracker", // Points to your new API
+        url: "/api/og?title=Strategic%20Study%20Tracker",
         width: 1200,
         height: 630,
         alt: "Krama Study Tracker",
@@ -70,9 +70,16 @@ export default function RootLayout({
             </AlertProvider>
         </PostHogProvider>
 
+        {/* Razorpay Script */}
         <Script 
           id="razorpay-checkout-js"
           src="https://checkout.razorpay.com/v1/checkout.js"
+          strategy="lazyOnload"
+        />
+
+        {/* 👇 NEW: Confetti Script added here */}
+        <Script 
+          src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"
           strategy="lazyOnload"
         />
         

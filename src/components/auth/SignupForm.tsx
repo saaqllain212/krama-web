@@ -6,7 +6,13 @@ import Link from 'next/link'
 import { ArrowRight, Loader2, Lock, AlertTriangle, Mail, User, Eye, EyeOff, Check } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 
-export default function SignupForm() {
+// 1. ADDED THIS INTERFACE
+interface SignupFormProps {
+  onMascotStateChange?: (state: any) => void
+}
+
+// 2. UPDATED COMPONENT TO ACCEPT PROPS
+export default function SignupForm({ onMascotStateChange }: SignupFormProps) {
   const router = useRouter()
   const supabase = createClient()
   
@@ -81,6 +87,8 @@ export default function SignupForm() {
 
       if (data.user) {
          setSuccess(true)
+         // 3. ADDED MASCOT CELEBRATION HERE
+         onMascotStateChange?.('celebrating') 
       }
     } catch (err: any) {
       const msg = err.message || 'Something went wrong'
@@ -105,7 +113,7 @@ export default function SignupForm() {
         <div className="w-20 h-20 bg-brand/20 border-2 border-brand flex items-center justify-center">
           <Mail className="text-black" size={32} />
         </div>
-         
+          
         <div className="space-y-3">
           <h2 className="text-2xl font-black uppercase tracking-tight">Check Your Email</h2>
           <p className="text-sm font-medium text-black/60 max-w-xs mx-auto">
@@ -172,6 +180,9 @@ export default function SignupForm() {
               required
               disabled={isCapacityError || checkingStatus}
               value={fullName}
+              // 4. ADDED MASCOT TRIGGERS HERE
+              onFocus={() => onMascotStateChange?.('typing-name')}
+              onBlur={() => onMascotStateChange?.('watching')}
               onChange={(e) => setFullName(e.target.value)}
               placeholder="Your name"
               className="w-full border-2 border-black/10 bg-white pl-11 pr-4 py-3.5 text-sm font-medium placeholder:text-black/30 focus:border-black focus:outline-none transition-colors disabled:cursor-not-allowed disabled:bg-black/5"
@@ -189,6 +200,9 @@ export default function SignupForm() {
               required
               disabled={isCapacityError || checkingStatus}
               value={email}
+              // 4. ADDED MASCOT TRIGGERS HERE
+              onFocus={() => onMascotStateChange?.('typing-email')}
+              onBlur={() => onMascotStateChange?.('watching')}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"
               className="w-full border-2 border-black/10 bg-white pl-11 pr-4 py-3.5 text-sm font-medium placeholder:text-black/30 focus:border-black focus:outline-none transition-colors disabled:cursor-not-allowed disabled:bg-black/5"
@@ -206,6 +220,9 @@ export default function SignupForm() {
               required
               disabled={isCapacityError || checkingStatus}
               value={password}
+              // 4. ADDED MASCOT TRIGGERS HERE
+              onFocus={() => onMascotStateChange?.('typing-password')}
+              onBlur={() => onMascotStateChange?.('watching')}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Min. 6 characters"
               className="w-full border-2 border-black/10 bg-white pl-11 pr-12 py-3.5 text-sm font-medium placeholder:text-black/30 focus:border-black focus:outline-none transition-colors disabled:cursor-not-allowed disabled:bg-black/5"

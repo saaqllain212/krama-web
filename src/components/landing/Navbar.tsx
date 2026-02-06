@@ -3,14 +3,24 @@
 import Link from 'next/link'
 import KramaLogo from './KramaLogo'
 
-export default function Navbar() {
+// 1. ADD THIS INTERFACE
+interface NavbarProps {
+  onLogoClick?: () => void
+}
+
+// 2. UPDATE FUNCTION TO ACCEPT PROPS
+export default function Navbar({ onLogoClick }: NavbarProps) {
   return (
     <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur-lg border-b border-gray-200/50 shadow-sm">
       <div className="px-6 md:px-12 lg:px-16">
         <div className="flex h-16 items-center justify-between">
           
-          {/* Logo */}
-          <Link href="/" className="hover:opacity-80 transition-opacity">
+          {/* 3. ADD onClick={onLogoClick} HERE */}
+          <Link 
+            href="/" 
+            onClick={onLogoClick}
+            className="hover:opacity-80 transition-opacity"
+          >
             <KramaLogo size="md" animated={false} />
           </Link>
 
