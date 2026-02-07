@@ -40,7 +40,6 @@ export default function CheckoutModal({ isOpen, onClose, userEmail, userName }: 
     setCouponStatus('checking')
     
     try {
-      // Validate coupon by checking with API
       const res = await fetch('/api/payment/validate-coupon', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -67,7 +66,6 @@ export default function CheckoutModal({ isOpen, onClose, userEmail, userName }: 
     setLoading(true)
     
     try {
-      // Create Order
       const res = await fetch('/api/payment/create-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -77,12 +75,10 @@ export default function CheckoutModal({ isOpen, onClose, userEmail, userName }: 
 
       if (!res.ok) throw new Error(data.error || 'Failed to create order')
 
-      // Check if Razorpay key exists
       if (!process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID) {
         throw new Error('Payment not configured. Please contact support.')
       }
 
-      // Initialize Razorpay
       const options = {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
         amount: data.amount,
@@ -94,48 +90,36 @@ export default function CheckoutModal({ isOpen, onClose, userEmail, userName }: 
           name: userName,
           email: userEmail,
         },
-        theme: { color: '#000000' },
+        theme: { color: '#6366f1' },
         handler: async function (response: any) {
-          // Verify Payment
           const verifyRes = await fetch('/api/payment/verify', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              orderCreationId: data.orderId,
-              razorpayPaymentId: response.razorpay_payment_id,
-              razorpaySignature: response.razorpay_signature,
+              orderId: response.razorpay_order_id,
+              paymentId: response.razorpay_payment_id,
+              signature: response.razorpay_signature,
               couponCode: data.couponApplied,
-              amount: data.amount
             }),
           })
-          
-          if (verifyRes.ok) {
-            showAlert('Payment successful! Upgrading...', 'success')
-            setTimeout(() => {
-              window.location.href = '/dashboard?initiation=true'
-            }, 1000)
+          const verifyData = await verifyRes.json()
+
+          if (verifyRes.ok && verifyData.success) {
+            showAlert('Payment successful! Welcome to Pro!', 'success')
+            setTimeout(() => window.location.reload(), 1500)
           } else {
-            showAlert('Payment verification failed. Contact support.', 'error')
+            showAlert('Verification failed. Contact support.', 'error')
           }
         },
         modal: {
-          ondismiss: function() {
-            setLoading(false)
-          }
+          ondismiss: () => setLoading(false)
         }
       }
 
-      // @ts-ignore
-      const rzp1 = new window.Razorpay(options)
-      rzp1.on('payment.failed', function() {
-        showAlert('Payment failed. Please try again.', 'error')
-        setLoading(false)
-      })
-      rzp1.open()
-
+      const rzp = new (window as any).Razorpay(options)
+      rzp.open()
     } catch (err: any) {
-      console.error('Payment error:', err)
-      showAlert(err.message || 'Something went wrong. Please try again.', 'error')
+      showAlert(err.message || 'Payment failed', 'error')
       setLoading(false)
     }
   }
@@ -150,18 +134,18 @@ export default function CheckoutModal({ isOpen, onClose, userEmail, userName }: 
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            className="w-full max-w-md bg-white border border-gray-200 shadow-xl overflow-hidden"
+            className="w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden"
           >
             
             {/* HEADER */}
-            <div className="bg-black text-white p-5 flex justify-between items-center">
+            <div className="bg-gradient-to-r from-primary-600 to-purple-600 text-white p-5 flex justify-between items-center">
               <div>
                 <h2 className="text-xl font-bold">Upgrade to Pro</h2>
-                <p className="text-xs font-bold text-white/50">Unlock all features</p>
+                <p className="text-sm text-white/70">Unlock all features</p>
               </div>
               <button 
                 onClick={onClose} 
-                className="p-2 hover:bg-white/10 transition-colors"
+                className="p-2 rounded-lg hover:bg-white/10 transition-colors"
               >
                 <X size={20} />
               </button>
@@ -173,38 +157,38 @@ export default function CheckoutModal({ isOpen, onClose, userEmail, userName }: 
               <div className="space-y-3">
                 {FEATURES.map((feature, i) => (
                   <div key={i} className="flex items-center gap-3">
-                    <div className="bg-primary-500 p-1.5">
-                      <feature.icon size={16} className="text-black" />
+                    <div className="bg-primary-100 p-2 rounded-lg">
+                      <feature.icon size={16} className="text-primary-600" />
                     </div>
-                    <span className="font-bold text-sm">{feature.text}</span>
+                    <span className="font-semibold text-sm text-gray-800">{feature.text}</span>
                   </div>
                 ))}
               </div>
 
               {/* PRICE CARD */}
-              <div className="bg-stone-50 border border-gray-200 p-5">
+              <div className="bg-gray-50 rounded-xl border border-gray-200 p-5">
                 <div className="flex justify-between items-start mb-3">
                   <div>
-                    <p className="text-xs font-bold uppercase text-black/40 mb-1">Lifetime Access</p>
+                    <p className="text-xs font-semibold text-gray-500 mb-1">Lifetime Access</p>
                     <div className="flex items-baseline gap-2">
-                      <span className="text-3xl font-bold">₹{finalPrice}</span>
+                      <span className="text-3xl font-bold text-gray-900">₹{finalPrice}</span>
                       {discountAmount > 0 && (
-                        <span className="text-lg text-black/40 line-through">₹{basePrice}</span>
+                        <span className="text-lg text-gray-400 line-through">₹{basePrice}</span>
                       )}
                     </div>
                   </div>
                   {discountAmount > 0 && (
-                    <div className="bg-green-100 text-green-700 px-3 py-1 text-xs font-bold uppercase">
+                    <div className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold">
                       Save ₹{discountAmount}
                     </div>
                   )}
                 </div>
-                <p className="text-xs text-black/50">One-time payment. No subscriptions. Forever yours.</p>
+                <p className="text-xs text-gray-500">One-time payment. No subscriptions. Forever yours.</p>
               </div>
 
               {/* COUPON INPUT */}
               <div>
-                <label className="flex items-center gap-2 text-xs font-bold uppercase text-black/50 mb-2">
+                <label className="flex items-center gap-2 text-xs font-semibold text-gray-500 mb-2">
                   <Tag size={14} /> Have a coupon?
                 </label>
                 <div className="flex gap-2">
@@ -218,12 +202,12 @@ export default function CheckoutModal({ isOpen, onClose, userEmail, userName }: 
                       }}
                       placeholder="ENTER CODE"
                       disabled={couponStatus === 'valid'}
-                      className={`w-full border-2 px-4 py-3 text-sm font-bold uppercase focus:outline-none transition-colors ${
+                      className={`w-full border rounded-lg px-4 py-3 text-sm font-semibold uppercase focus:outline-none transition-colors ${
                         couponStatus === 'valid' 
-                          ? 'border-green-500 bg-green-50' 
+                          ? 'border-green-400 bg-green-50' 
                           : couponStatus === 'invalid'
-                            ? 'border-red-500 bg-red-50'
-                            : 'border-gray-200 focus:shadow-sm focus:ring-2 focus:ring-primary-500/20'
+                            ? 'border-red-400 bg-red-50'
+                            : 'border-gray-200 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-400'
                       }`}
                     />
                     {couponStatus === 'valid' && (
@@ -233,7 +217,7 @@ export default function CheckoutModal({ isOpen, onClose, userEmail, userName }: 
                   <button 
                     onClick={handleApplyCoupon}
                     disabled={couponStatus === 'checking' || couponStatus === 'valid' || !coupon.trim()}
-                    className="px-5 py-3 bg-black text-white font-bold text-sm uppercase disabled:opacity-30 hover:bg-stone-800 transition-colors"
+                    className="px-5 py-3 bg-gray-900 text-white rounded-lg font-semibold text-sm disabled:opacity-30 hover:bg-gray-800 transition-colors"
                   >
                     {couponStatus === 'checking' ? <Loader2 size={18} className="animate-spin" /> : 'Apply'}
                   </button>
@@ -241,7 +225,7 @@ export default function CheckoutModal({ isOpen, onClose, userEmail, userName }: 
                 {couponStatus === 'valid' && (
                   <button 
                     onClick={() => { setCoupon(''); setCouponStatus('idle'); setDiscountAmount(0) }}
-                    className="mt-2 text-xs font-bold text-red-500 hover:text-red-700"
+                    className="mt-2 text-xs font-semibold text-red-500 hover:text-red-700"
                   >
                     Remove coupon
                   </button>
@@ -252,7 +236,7 @@ export default function CheckoutModal({ isOpen, onClose, userEmail, userName }: 
               <button 
                 onClick={handlePayment}
                 disabled={loading}
-                className="w-full bg-primary-500 text-black border border-gray-200 py-4 font-bold uppercase tracking-wide shadow-lg hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                className="w-full bg-primary-500 text-white py-4 rounded-xl font-bold text-base shadow-md hover:bg-primary-600 hover:shadow-lg transition-all disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {loading ? (
                   <Loader2 className="animate-spin" size={20} />
@@ -262,7 +246,7 @@ export default function CheckoutModal({ isOpen, onClose, userEmail, userName }: 
               </button>
 
               {/* SECURITY NOTE */}
-              <div className="flex items-center justify-center gap-2 text-xs font-bold text-black/30">
+              <div className="flex items-center justify-center gap-2 text-xs font-medium text-gray-400">
                 <Shield size={14} />
                 <span>Secured by Razorpay</span>
               </div>

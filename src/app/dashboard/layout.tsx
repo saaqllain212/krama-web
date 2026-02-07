@@ -13,7 +13,7 @@ export default function DashboardLayout({
 }) {
   return (
     <XPProvider>
-      <div className="min-h-screen bg-[#f8f9fb]">
+      <div className="min-h-screen bg-[#f0f2f7]">
         <Sidebar />
         <MobileNav />
         <main className="lg:pl-64">
