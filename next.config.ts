@@ -8,13 +8,13 @@ const withPWA = withPWAInit({
   cacheOnFrontEndNav: true,
   aggressiveFrontEndNavCaching: true,
   reloadOnOnline: true,
-  disable: process.env.NODE_ENV === "development", // Only run in production
+  disable: process.env.NODE_ENV === "development",
   workboxOptions: {
     disableDevLogs: true,
   },
 });
 
-// 2. Your Base Config (Kept exactly as is)
+// 2. Your Base Config
 const nextConfig: NextConfig = {
   reactCompiler: false, 
 };
@@ -23,7 +23,6 @@ const nextConfig: NextConfig = {
 export default withSentryConfig(
   withPWA(nextConfig), 
   {
-    // --- Sentry Settings (Preserved) ---
     org: "krama", 
     project: "javascript-nextjs", 
 
@@ -31,11 +30,16 @@ export default withSentryConfig(
       deleteSourcemapsAfterUpload: true,
     },
 
-    reactComponentAnnotation: {
-      enabled: true,
+    // Fixed: moved from top-level to webpack namespace (Sentry v10+)
+    webpack: {
+      reactComponentAnnotation: {
+        enabled: true,
+      },
+      treeshake: {
+        removeDebugLogging: true,
+      },
     },
 
     silent: !process.env.CI,
-    disableLogger: true,
   }
 );
