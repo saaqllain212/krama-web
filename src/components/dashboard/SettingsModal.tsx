@@ -140,6 +140,7 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) throw new Error('No user found')
       
+      // 1. Delete row-based data (logs, topics, scores)
       const tables = ['focus_logs', 'topics', 'mock_logs', 'syllabus_progress']
       
       for (const table of tables) {
@@ -153,6 +154,42 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
         }
       }
       
+      // 2. Reset user_stats (XP, level, streak, achievements) — update, don't delete
+      const { error: statsError } = await supabase
+        .from('user_stats')
+        .update({
+          xp: 0,
+          current_streak: 0,
+          longest_streak: 0,
+          total_focus_minutes: 0,
+          total_reviews: 0,
+          total_mocks: 0,
+          achievements: [],
+          last_active_date: null
+        })
+        .eq('user_id', user.id)
+      
+      if (statsError) {
+        console.error('Error resetting user_stats:', statsError)
+      }
+
+      // 3. Reset companion data if table exists
+      const { error: companionError } = await supabase
+        .from('companions')
+        .update({
+          health: 50,
+          total_hours: 0,
+          evolution_stage: 1,
+          idle_days: 0,
+          wasted_days: 0
+        })
+        .eq('user_id', user.id)
+      
+      if (companionError && companionError.code !== '42P01') {
+        console.error('Error resetting companions:', companionError)
+      }
+
+      // 4. Reset syllabus settings
       const { error: settingsError } = await supabase
         .from('syllabus_settings')
         .update({ 
@@ -165,8 +202,18 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
       if (settingsError) {
         console.error('Error resetting settings:', settingsError)
       }
+
+      // 5. Clear local MCQ data
+      try {
+        const keysToRemove = Object.keys(localStorage).filter(k => 
+          k.startsWith('krama_mcq_') || k.startsWith('mcq_')
+        )
+        keysToRemove.forEach(k => localStorage.removeItem(k))
+      } catch (e) {
+        // localStorage might not be available
+      }
       
-      showAlert('Progress reset! Reloading...', 'success')
+      showAlert('All progress reset! Reloading...', 'success')
       setTimeout(() => window.location.reload(), 1500)
       
     } catch (err) { 
@@ -322,7 +369,7 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
               <div className="flex-1">
                 <h3 className="font-semibold text-sm text-gray-900 mb-1">Reset Progress</h3>
                 <p className="text-sm text-gray-500 mb-3">
-                  Clears all focus logs, review topics, mock scores, and syllabus progress.
+                  Clears all focus logs, review topics, mock scores, syllabus progress, XP, streaks, and achievements.
                 </p>
                 {activeTab === 'reset' ? (
                   <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">

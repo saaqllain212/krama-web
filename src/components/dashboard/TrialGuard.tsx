@@ -157,7 +157,7 @@ export default function TrialGuard({ children }: { children: React.ReactNode }) 
   // --- RENDER 1: LOADING ---
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#FBF9F6] flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <Loader2 className="animate-spin opacity-20" size={40} />
       </div>
     )
@@ -167,12 +167,12 @@ export default function TrialGuard({ children }: { children: React.ReactNode }) 
   if (isLocked) {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-stone-900/90 backdrop-blur-md p-6">
-        <div className="max-w-md w-full bg-[#FBF9F6] border-4 border-black shadow-[12px_12px_0_0_#ccff00] p-8 text-center">
+        <div className="max-w-md w-full bg-gray-50 border border-gray-200 rounded-2xl shadow-xl p-8 text-center">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-black rounded-full mb-6">
             <Lock className="text-white" size={32} />
           </div>
           
-          <h1 className="text-3xl font-black uppercase tracking-tighter mb-2">
+          <h1 className="text-3xl font-bold uppercase tracking-tighter mb-2">
             Trial Expired
           </h1>
           <p className="text-black/60 font-medium mb-8">
@@ -180,7 +180,7 @@ export default function TrialGuard({ children }: { children: React.ReactNode }) 
             Unlock lifetime access to continue your preparation.
           </p>
 
-          <div className="space-y-3 mb-8 text-left bg-white border-2 border-black/5 p-4">
+          <div className="space-y-3 mb-8 text-left bg-white border border-gray-200/5 p-4">
              <div className="flex items-center gap-2 text-sm font-bold">
                <CheckCircle size={16} className="text-green-600"/> Unlimited Focus Logs
              </div>
@@ -195,7 +195,7 @@ export default function TrialGuard({ children }: { children: React.ReactNode }) 
           <button 
             onClick={handlePayment}
             disabled={paymentProcessing}
-            className="w-full bg-black text-white py-4 font-black uppercase tracking-widest hover:bg-stone-800 hover:-translate-y-1 transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            className="w-full bg-black text-white py-4 font-bold uppercase tracking-widest hover:bg-stone-800 hover:-translate-y-1 transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             {paymentProcessing ? <Loader2 className="animate-spin" size={20}/> : `Unlock Now • ₹${PRICE}`}
           </button>

@@ -122,19 +122,19 @@ export default function ProtocolManagerModal({ isOpen, onClose, userId }: Protoc
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-      <div className="w-full max-w-lg bg-white border-4 border-black shadow-[8px_8px_0_0_#ccff00]">
+      <div className="w-full max-w-lg bg-white rounded-2xl border border-gray-200 shadow-xl">
         
         {/* Header */}
         <div className="bg-black text-white p-4 flex justify-between items-center">
-            <h3 className="font-black uppercase tracking-widest">Protocol Manager</h3>
+            <h3 className="font-bold uppercase tracking-widest">Protocol Manager</h3>
             <button onClick={onClose}><X /></button>
         </div>
 
         {/* Tabs */}
-        <div className="flex border-b-2 border-black/10">
+        <div className="flex border-b-2 border-gray-200/10">
             <button 
               onClick={() => setActiveTab('inject')}
-              className={`flex-1 py-3 text-xs font-bold uppercase tracking-widest ${activeTab === 'inject' ? 'bg-[#ccff00] text-black' : 'text-stone-400 hover:text-black'}`}
+              className={`flex-1 py-3 text-xs font-bold uppercase tracking-widest ${activeTab === 'inject' ? 'bg-primary-500 text-white' : 'text-stone-400 hover:text-black'}`}
             >
                 Inject Modules
             </button>
@@ -157,12 +157,12 @@ export default function ProtocolManagerModal({ isOpen, onClose, userId }: Protoc
                         value={manualText}
                         onChange={(e) => setManualText(e.target.value)}
                         placeholder={`New Subject\n- Topic A\n- Topic B`}
-                        className="w-full h-40 bg-stone-100 border-2 border-black/10 p-4 font-mono text-xs focus:border-black outline-none resize-none"
+                        className="w-full h-40 bg-stone-100 border border-gray-200/10 p-4 font-mono text-xs focus:border-gray-200 outline-none resize-none"
                     />
                     <button 
                         onClick={handleInject}
                         disabled={loading || !manualText}
-                        className="w-full bg-black text-white py-4 font-black uppercase tracking-widest hover:bg-[#ccff00] hover:text-black transition-all flex items-center justify-center gap-2"
+                        className="w-full bg-primary-500 text-white py-4 font-semibold rounded-lg hover:bg-primary-500 hover:text-white transition-all flex items-center justify-center gap-2"
                     >
                         {loading ? <Loader2 className="animate-spin" /> : status === 'success' ? <Check /> : <Plus size={18} />}
                         {status === 'success' ? 'Protocol Expanded' : 'Inject Data'}
@@ -172,7 +172,7 @@ export default function ProtocolManagerModal({ isOpen, onClose, userId }: Protoc
                 <div className="space-y-6 text-center py-6">
                     <AlertTriangle size={48} className="mx-auto text-red-500" />
                     <div>
-                        <h4 className="font-black text-xl uppercase mb-2">Danger Zone</h4>
+                        <h4 className="font-bold text-xl uppercase mb-2">Danger Zone</h4>
                         <p className="text-stone-500 text-sm">
                             This will wipe your current syllabus and all tracked progress. You will be sent back to System Setup.
                         </p>
@@ -180,7 +180,7 @@ export default function ProtocolManagerModal({ isOpen, onClose, userId }: Protoc
                     <button 
                         onClick={handleReset}
                         disabled={loading}
-                        className="w-full border-2 border-red-500 text-red-600 py-4 font-black uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all"
+                        className="w-full border-2 border-red-500 text-red-600 py-4 font-bold uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all"
                     >
                         {loading ? 'Wiping System...' : 'Confirm System Wipe'}
                     </button>

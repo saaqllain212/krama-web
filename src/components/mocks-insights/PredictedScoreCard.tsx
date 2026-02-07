@@ -115,7 +115,7 @@ export default function PredictedScoreCard({ logs }: PredictedScoreCardProps) {
           <div className={`p-3 bg-gradient-to-br ${getTrendColor()} rounded-xl`}>
             {getTrendIcon()}
           </div>
-          <div className="text-6xl font-black bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+          <div className="text-6xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
             {prediction.predictedScore}%
           </div>
         </div>

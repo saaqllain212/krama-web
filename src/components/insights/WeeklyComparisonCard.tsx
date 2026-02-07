@@ -88,7 +88,7 @@ export default function WeeklyComparisonCard({ logs }: WeeklyComparisonCardProps
             </div>
           </div>
           <div className="flex items-end gap-3">
-            <div className="text-3xl font-black text-gray-900">{stats.thisWeekHours}h</div>
+            <div className="text-3xl font-bold text-gray-900">{stats.thisWeekHours}h</div>
             <div className="text-sm text-gray-500 mb-1">vs {stats.lastWeekHours}h last week</div>
           </div>
         </div>
@@ -103,7 +103,7 @@ export default function WeeklyComparisonCard({ logs }: WeeklyComparisonCardProps
             </div>
           </div>
           <div className="flex items-end gap-3">
-            <div className="text-3xl font-black text-gray-900">{stats.thisWeekSessions}</div>
+            <div className="text-3xl font-bold text-gray-900">{stats.thisWeekSessions}</div>
             <div className="text-sm text-gray-500 mb-1">vs {stats.lastWeekSessions} last week</div>
           </div>
         </div>

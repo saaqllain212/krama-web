@@ -150,13 +150,13 @@ export default function CheckoutModal({ isOpen, onClose, userEmail, userName }: 
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            className="w-full max-w-md bg-white border-2 border-black shadow-[8px_8px_0_0_#000] overflow-hidden"
+            className="w-full max-w-md bg-white border border-gray-200 shadow-xl overflow-hidden"
           >
             
             {/* HEADER */}
             <div className="bg-black text-white p-5 flex justify-between items-center">
               <div>
-                <h2 className="text-xl font-black">Upgrade to Pro</h2>
+                <h2 className="text-xl font-bold">Upgrade to Pro</h2>
                 <p className="text-xs font-bold text-white/50">Unlock all features</p>
               </div>
               <button 
@@ -173,7 +173,7 @@ export default function CheckoutModal({ isOpen, onClose, userEmail, userName }: 
               <div className="space-y-3">
                 {FEATURES.map((feature, i) => (
                   <div key={i} className="flex items-center gap-3">
-                    <div className="bg-brand p-1.5">
+                    <div className="bg-primary-500 p-1.5">
                       <feature.icon size={16} className="text-black" />
                     </div>
                     <span className="font-bold text-sm">{feature.text}</span>
@@ -182,19 +182,19 @@ export default function CheckoutModal({ isOpen, onClose, userEmail, userName }: 
               </div>
 
               {/* PRICE CARD */}
-              <div className="bg-stone-50 border-2 border-black p-5">
+              <div className="bg-stone-50 border border-gray-200 p-5">
                 <div className="flex justify-between items-start mb-3">
                   <div>
                     <p className="text-xs font-bold uppercase text-black/40 mb-1">Lifetime Access</p>
                     <div className="flex items-baseline gap-2">
-                      <span className="text-3xl font-black">₹{finalPrice}</span>
+                      <span className="text-3xl font-bold">₹{finalPrice}</span>
                       {discountAmount > 0 && (
                         <span className="text-lg text-black/40 line-through">₹{basePrice}</span>
                       )}
                     </div>
                   </div>
                   {discountAmount > 0 && (
-                    <div className="bg-green-100 text-green-700 px-3 py-1 text-xs font-black uppercase">
+                    <div className="bg-green-100 text-green-700 px-3 py-1 text-xs font-bold uppercase">
                       Save ₹{discountAmount}
                     </div>
                   )}
@@ -223,7 +223,7 @@ export default function CheckoutModal({ isOpen, onClose, userEmail, userName }: 
                           ? 'border-green-500 bg-green-50' 
                           : couponStatus === 'invalid'
                             ? 'border-red-500 bg-red-50'
-                            : 'border-black focus:shadow-[3px_3px_0_0_#000]'
+                            : 'border-gray-200 focus:shadow-sm focus:ring-2 focus:ring-primary-500/20'
                       }`}
                     />
                     {couponStatus === 'valid' && (
@@ -252,7 +252,7 @@ export default function CheckoutModal({ isOpen, onClose, userEmail, userName }: 
               <button 
                 onClick={handlePayment}
                 disabled={loading}
-                className="w-full bg-brand text-black border-2 border-black py-4 font-black uppercase tracking-wide shadow-[4px_4px_0_0_#000] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                className="w-full bg-primary-500 text-black border border-gray-200 py-4 font-bold uppercase tracking-wide shadow-lg hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {loading ? (
                   <Loader2 className="animate-spin" size={20} />

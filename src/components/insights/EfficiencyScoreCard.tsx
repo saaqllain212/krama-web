@@ -114,7 +114,7 @@ export default function EfficiencyScoreCard({ logs }: EfficiencyScoreCardProps) 
           </svg>
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="text-center">
-              <div className="text-4xl font-black text-gray-900">{stats.efficiency}%</div>
+              <div className="text-4xl font-bold text-gray-900">{stats.efficiency}%</div>
               <div className="text-xs text-gray-500 font-medium">Efficiency</div>
             </div>
           </div>
@@ -133,7 +133,7 @@ export default function EfficiencyScoreCard({ logs }: EfficiencyScoreCardProps) 
             <CheckCircle size={14} className="text-green-600" />
             <span className="text-xs font-bold text-gray-600">Completed</span>
           </div>
-          <div className="text-2xl font-black text-gray-900">{stats.completed}</div>
+          <div className="text-2xl font-bold text-gray-900">{stats.completed}</div>
         </div>
         
         <div className="p-3 bg-red-50 rounded-lg border border-red-200">
@@ -141,7 +141,7 @@ export default function EfficiencyScoreCard({ logs }: EfficiencyScoreCardProps) 
             <XCircle size={14} className="text-red-600" />
             <span className="text-xs font-bold text-gray-600">Incomplete</span>
           </div>
-          <div className="text-2xl font-black text-gray-900">{stats.total - stats.completed}</div>
+          <div className="text-2xl font-bold text-gray-900">{stats.total - stats.completed}</div>
         </div>
       </div>
       

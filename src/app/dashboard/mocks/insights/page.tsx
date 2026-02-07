@@ -90,7 +90,7 @@ const StatCard = ({ icon: Icon, label, value, description, color = 'blue' }: {
         </div>
         <span className="text-sm font-bold text-gray-600 uppercase tracking-wide">{label}</span>
       </div>
-      <div className="text-3xl font-black text-gray-900 mb-2">{value}</div>
+      <div className="text-3xl font-bold text-gray-900 mb-2">{value}</div>
       <p className="text-sm text-gray-600 leading-relaxed">{description}</p>
     </div>
   )
@@ -210,7 +210,7 @@ function InsightsContent() {
           <div className="p-2 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg">
             <Sparkles className="text-white" size={24} />
           </div>
-          <h1 className="text-4xl font-black text-gray-900">
+          <h1 className="text-4xl font-bold text-gray-900">
             Mock Test Analysis
           </h1>
         </div>
@@ -225,7 +225,7 @@ function InsightsContent() {
         ) : !analytics ? (
           <div className="text-center py-20">
             <Brain size={48} className="mx-auto text-gray-300 mb-4" />
-            <h2 className="text-2xl font-black text-gray-900 mb-2">No Tests Logged Yet</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">No Tests Logged Yet</h2>
             <p className="text-gray-500 mb-6">Take your first mock test to generate insights</p>
             <Link 
               href={`/dashboard/mocks${effectiveExamId !== activeExam ? `?exam=${effectiveExamId}` : ''}`}
@@ -246,18 +246,18 @@ function InsightsContent() {
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                   <div className="text-xs font-bold uppercase text-gray-600 mb-1 tracking-wide">Current Phase</div>
-                  <div className="text-4xl font-black text-gray-900 mb-2">{analytics.phase}</div>
+                  <div className="text-4xl font-bold text-gray-900 mb-2">{analytics.phase}</div>
                   <p className="text-sm text-gray-700 leading-relaxed max-w-xl">
                     {getCoachNote(analytics.phase)}
                   </p>
                 </div>
                 <div className="flex gap-6">
                   <div className="text-center">
-                    <div className="text-3xl font-black text-gray-900">{analytics.avgScore}%</div>
+                    <div className="text-3xl font-bold text-gray-900">{analytics.avgScore}%</div>
                     <div className="text-xs font-bold text-gray-600">Overall Avg</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-3xl font-black text-gray-900">{analytics.recentAvg}%</div>
+                    <div className="text-3xl font-bold text-gray-900">{analytics.recentAvg}%</div>
                     <div className="text-xs font-bold text-gray-600">Last 5 Avg</div>
                   </div>
                 </div>
@@ -277,7 +277,7 @@ function InsightsContent() {
                   <TrendingUp size={20} className="text-white" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-black text-gray-900">Score Trajectory</h2>
+                  <h2 className="text-xl font-bold text-gray-900">Score Trajectory</h2>
                   <p className="text-xs text-gray-500">Performance over time</p>
                 </div>
               </div>
@@ -295,7 +295,7 @@ function InsightsContent() {
                     <AlertTriangle size={20} className="text-white" />
                   </div>
                   <div>
-                    <h2 className="text-xl font-black text-gray-900">Mistake Breakdown</h2>
+                    <h2 className="text-xl font-bold text-gray-900">Mistake Breakdown</h2>
                     <p className="text-xs text-gray-500">Where marks are lost</p>
                   </div>
                 </div>
@@ -401,7 +401,7 @@ function InsightsContent() {
             {/* RECENT TESTS TABLE */}
             <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
               <div className="p-4 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
-                <h3 className="font-black text-gray-900">Recent Tests</h3>
+                <h3 className="font-bold text-gray-900">Recent Tests</h3>
                 <span className="text-sm font-bold text-gray-500">{logs.length} total</span>
               </div>
               <div className="divide-y divide-gray-100">
@@ -420,7 +420,7 @@ function InsightsContent() {
                           </span>
                         )}
                       </div>
-                      <div className={`text-xl font-black shrink-0 ml-4 ${pct >= 60 ? 'text-green-600' : 'text-red-600'}`}>
+                      <div className={`text-xl font-bold shrink-0 ml-4 ${pct >= 60 ? 'text-green-600' : 'text-red-600'}`}>
                         {pct}%
                       </div>
                     </div>

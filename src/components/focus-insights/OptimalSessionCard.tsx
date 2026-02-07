@@ -71,7 +71,7 @@ export default function OptimalSessionCard({ logs }: OptimalSessionCardProps) {
       <div className="text-center mb-6">
         <div className="inline-flex items-baseline gap-2 mb-3">
           <Clock size={32} className="text-green-600" />
-          <div className="text-6xl font-black bg-gradient-to-r from-green-600 to-teal-600 bg-clip-text text-transparent">
+          <div className="text-6xl font-bold bg-gradient-to-r from-green-600 to-teal-600 bg-clip-text text-transparent">
             {optimal.optimalLength}
           </div>
           <div className="text-2xl font-bold text-gray-400">min</div>

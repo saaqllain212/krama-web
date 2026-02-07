@@ -83,12 +83,12 @@ export default function StudyHeatmap() {
   }
 
   return (
-    <div className="border-2 border-black bg-white p-6 shadow-[6px_6px_0_0_#000]">
+    <div className="border border-gray-200 bg-white p-6 shadow-soft">
       
       {/* HEADER */}
       <div className="flex flex-col md:flex-row md:items-end justify-between mb-6 gap-4">
         <div>
-          <h3 className="text-xl font-black uppercase tracking-tighter flex items-center gap-2">
+          <h3 className="text-xl font-bold uppercase tracking-tighter flex items-center gap-2">
             <Zap size={20} className="text-amber-500 fill-amber-500" />
             Consistency Grid
           </h3>
@@ -101,9 +101,9 @@ export default function StudyHeatmap() {
         <div className="flex items-center gap-2 text-[10px] font-bold uppercase text-stone-400">
           <span>Less</span>
           <div className="w-3 h-3 bg-stone-100 border border-stone-200" />
-          <div className="w-3 h-3 bg-amber-200 border border-black/10" />
-          <div className="w-3 h-3 bg-amber-400 border border-black/10" />
-          <div className="w-3 h-3 bg-amber-700 border border-black/10" />
+          <div className="w-3 h-3 bg-amber-200 border border-gray-200/10" />
+          <div className="w-3 h-3 bg-amber-400 border border-gray-200/10" />
+          <div className="w-3 h-3 bg-amber-700 border border-gray-200/10" />
           <span>Goal</span>
         </div>
       </div>
@@ -127,7 +127,7 @@ export default function StudyHeatmap() {
                 <div 
                   key={date}
                   title={`${date}: ${minutes}m Focused`}
-                  className={`w-3 h-3 transition-all hover:scale-125 border border-transparent hover:border-black ${getColor(minutes)}`}
+                  className={`w-3 h-3 transition-all hover:scale-125 border border-transparent hover:border-gray-200 ${getColor(minutes)}`}
                 />
               )
             })}

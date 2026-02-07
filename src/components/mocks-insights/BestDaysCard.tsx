@@ -83,13 +83,13 @@ export default function BestDaysCard({ logs }: BestDaysCardProps) {
       <div className="grid grid-cols-2 gap-3 mb-4">
         <div className="p-4 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl border border-green-200">
           <div className="text-xs font-bold text-gray-600 uppercase tracking-wide mb-2">Best Day</div>
-          <div className="text-2xl font-black text-green-700">{dayStats.best.day}</div>
+          <div className="text-2xl font-bold text-green-700">{dayStats.best.day}</div>
           <div className="text-sm text-gray-600 mt-1">{dayStats.best.avg}% avg ({dayStats.best.count} tests)</div>
         </div>
         
         <div className="p-4 bg-gradient-to-br from-red-50 to-rose-50 rounded-xl border border-red-200">
           <div className="text-xs font-bold text-gray-600 uppercase tracking-wide mb-2">Worst Day</div>
-          <div className="text-2xl font-black text-red-700">{dayStats.worst.day}</div>
+          <div className="text-2xl font-bold text-red-700">{dayStats.worst.day}</div>
           <div className="text-sm text-gray-600 mt-1">{dayStats.worst.avg}% avg ({dayStats.worst.count} tests)</div>
         </div>
       </div>

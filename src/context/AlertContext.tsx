@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, ReactNode } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { AlertCircle, CheckCircle, X, Trash2 } from 'lucide-react'
+import { AlertCircle, CheckCircle, Info } from 'lucide-react'
 
 // Types
 type AlertType = 'success' | 'error' | 'neutral'
@@ -20,10 +20,8 @@ export function AlertProvider({ children }: { children: ReactNode }) {
   const [alert, setAlert] = useState<AlertState>({ show: false, msg: '', type: 'neutral' })
   const [confirm, setConfirm] = useState<ConfirmState>({ show: false, msg: '', onConfirm: () => {} })
 
-  // Functions accessible to app
   const showAlert = (msg: string, type: AlertType = 'neutral') => {
     setAlert({ show: true, msg, type })
-    // Auto-hide after 3 seconds
     setTimeout(() => setAlert(prev => ({ ...prev, show: false })), 3000)
   }
 
@@ -40,7 +38,7 @@ export function AlertProvider({ children }: { children: ReactNode }) {
     <AlertContext.Provider value={{ showAlert, askConfirm }}>
       {children}
 
-      {/* --- 1. THE TOAST (Alert) --- */}
+      {/* --- TOAST --- */}
       <AnimatePresence>
         {alert.show && (
           <motion.div 
@@ -49,46 +47,50 @@ export function AlertProvider({ children }: { children: ReactNode }) {
             exit={{ y: 50, opacity: 0 }}
             className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[100]"
           >
-            <div className={`px-6 py-3 border-2 shadow-[4px_4px_0_rgba(0,0,0,0.2)] flex items-center gap-3 font-bold uppercase tracking-wider text-sm
-              ${alert.type === 'error' ? 'bg-red-50 border-red-600 text-red-900' : 
-                alert.type === 'success' ? 'bg-emerald-50 border-emerald-600 text-emerald-900' : 
-                'bg-white border-black text-black'}`}>
-              
-              {alert.type === 'success' && <CheckCircle size={16} />}
-              {alert.type === 'error' && <AlertCircle size={16} />}
+            <div className={`px-5 py-3 rounded-xl shadow-lg flex items-center gap-3 font-medium text-sm border
+              ${alert.type === 'error' 
+                ? 'bg-red-50 border-red-200 text-red-800' 
+                : alert.type === 'success' 
+                  ? 'bg-emerald-50 border-emerald-200 text-emerald-800' 
+                  : 'bg-white border-gray-200 text-gray-800'
+              }`}
+            >
+              {alert.type === 'success' && <CheckCircle size={18} className="text-emerald-500 flex-shrink-0" />}
+              {alert.type === 'error' && <AlertCircle size={18} className="text-red-500 flex-shrink-0" />}
+              {alert.type === 'neutral' && <Info size={18} className="text-gray-400 flex-shrink-0" />}
               {alert.msg}
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* --- 2. THE MODAL (Confirm) --- */}
+      {/* --- CONFIRM MODAL --- */}
       <AnimatePresence>
         {confirm.show && (
           <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[150] flex items-center justify-center p-4">
             <motion.div 
-              initial={{ scale: 0.9, opacity: 0 }} 
+              initial={{ scale: 0.95, opacity: 0 }} 
               animate={{ scale: 1, opacity: 1 }} 
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white border-4 border-black p-8 max-w-sm w-full shadow-[12px_12px_0_rgba(0,0,0,1)] relative"
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-xl border border-gray-200"
             >
-              <h3 className="text-xl font-black uppercase mb-4 text-black">Confirmation Required</h3>
-              <p className="text-black/60 font-medium mb-8 leading-relaxed">
+              <h3 className="text-lg font-bold text-gray-900 mb-3">Are you sure?</h3>
+              <p className="text-gray-600 text-sm mb-6 leading-relaxed">
                 {confirm.msg}
               </p>
               
-              <div className="flex gap-4">
+              <div className="flex gap-3">
                 <button 
                   onClick={() => setConfirm({ ...confirm, show: false })} 
-                  className="flex-1 py-3 border-2 border-black/10 hover:border-black font-bold uppercase text-xs transition-colors"
+                  className="flex-1 py-2.5 rounded-lg border border-gray-200 text-gray-700 font-medium text-sm hover:bg-gray-50 transition-colors"
                 >
                   Cancel
                 </button>
                 <button 
                   onClick={handleConfirm} 
-                  className="flex-1 py-3 bg-red-600 text-white border-2 border-black hover:bg-red-700 font-bold uppercase text-xs shadow-[4px_4px_0_black] active:translate-y-1 active:shadow-none transition-all"
+                  className="flex-1 py-2.5 rounded-lg bg-red-500 text-white font-medium text-sm hover:bg-red-600 transition-colors"
                 >
-                  Proceed
+                  Confirm
                 </button>
               </div>
             </motion.div>

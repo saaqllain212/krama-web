@@ -108,7 +108,7 @@ export default function FocusInsightsPage() {
     return (
       <div className="min-h-screen bg-gray-50 p-8 flex flex-col items-center justify-center text-center">
         <Brain size={48} className="text-gray-300 mb-4" />
-        <h1 className="text-3xl font-black text-gray-900 mb-2">No Data Yet</h1>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">No Data Yet</h1>
         <p className="text-gray-500 mb-6">Complete your first Focus Session to generate insights.</p>
         <Link 
           href="/dashboard/focus" 
@@ -138,7 +138,7 @@ export default function FocusInsightsPage() {
               <div className="p-2 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg">
                 <Sparkles className="text-white" size={24} />
               </div>
-              <h1 className="text-4xl font-black text-gray-900">
+              <h1 className="text-4xl font-bold text-gray-900">
                 Focus Analytics
               </h1>
             </div>
@@ -147,7 +147,7 @@ export default function FocusInsightsPage() {
           
           <div className="text-right">
             <div className="text-sm font-semibold text-gray-500 mb-1">Total Hours Logged</div>
-            <div className="text-5xl font-black bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <div className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
               {(stats.totalMinutesAllTime / 60).toFixed(1)}h
             </div>
           </div>
@@ -168,7 +168,7 @@ export default function FocusInsightsPage() {
               </div>
               <Flame className={`${stats.streak > 0 ? 'fill-orange-500 text-orange-500' : 'fill-gray-300 text-gray-300'}`} size={24} />
             </div>
-            <div className="text-6xl font-black text-gray-900 mb-1">{stats.streak}</div>
+            <div className="text-6xl font-bold text-gray-900 mb-1">{stats.streak}</div>
             <div className="text-sm text-gray-600">consecutive days</div>
           </div>
 
@@ -181,8 +181,8 @@ export default function FocusInsightsPage() {
               </div>
               <Brain className="text-gray-700" size={24} />
             </div>
-            <div className="text-6xl font-black text-gray-900 mb-2">{stats.avgSession}<span className="text-2xl text-gray-400">m</span></div>
-            <div className={`inline-block text-xs font-black uppercase px-3 py-1 rounded-full text-white ${
+            <div className="text-6xl font-bold text-gray-900 mb-2">{stats.avgSession}<span className="text-2xl text-gray-400">m</span></div>
+            <div className={`inline-block text-xs font-bold uppercase px-3 py-1 rounded-full text-white ${
               stats.deepWorkBadge === 'MONK' ? 'bg-gradient-to-r from-purple-500 to-pink-600' : 
               stats.deepWorkBadge === 'STUDENT' ? 'bg-gradient-to-r from-blue-500 to-cyan-600' : 
               'bg-gradient-to-r from-red-500 to-rose-600'
@@ -202,7 +202,7 @@ export default function FocusInsightsPage() {
             </div>
             
             <div className="mb-3 flex justify-between items-end">
-              <span className="text-4xl font-black">
+              <span className="text-4xl font-bold">
                 {Math.floor(stats.minutesToday / 60)}<span className="text-lg text-gray-400">h</span> {stats.minutesToday % 60}<span className="text-lg text-gray-400">m</span>
               </span>
               <span className="text-sm font-bold text-primary-400 mb-1">Goal: {dailyGoal}h</span>
@@ -230,7 +230,7 @@ export default function FocusInsightsPage() {
               <Clock size={20} className="text-white" />
             </div>
             <div>
-              <h2 className="text-xl font-black text-gray-900">Peak Hours</h2>
+              <h2 className="text-xl font-bold text-gray-900">Peak Hours</h2>
               <p className="text-xs text-gray-500">When you're most productive</p>
             </div>
           </div>
@@ -267,7 +267,7 @@ export default function FocusInsightsPage() {
               <TrendingUp size={20} className="text-white" />
             </div>
             <div>
-              <h2 className="text-xl font-black text-gray-900">Topic Distribution</h2>
+              <h2 className="text-xl font-bold text-gray-900">Topic Distribution</h2>
               <p className="text-xs text-gray-500">Top 5 focus areas</p>
             </div>
           </div>
@@ -302,7 +302,7 @@ export default function FocusInsightsPage() {
 
         {/* FULL YEAR HEATMAP */}
         <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
-          <h3 className="font-black text-gray-900 text-xl mb-4">Study Calendar</h3>
+          <h3 className="font-bold text-gray-900 text-xl mb-4">Study Calendar</h3>
           <StudyHeatmap />
         </div>
       </div>

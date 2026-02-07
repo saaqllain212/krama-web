@@ -100,7 +100,7 @@ export default function MonthComparisonCard({ logs }: MonthComparisonCardProps) 
             </div>
           </div>
           <div className="flex items-end gap-3">
-            <div className="text-3xl font-black text-gray-900">{stats.thisMonthAvg}%</div>
+            <div className="text-3xl font-bold text-gray-900">{stats.thisMonthAvg}%</div>
             <div className="text-sm text-gray-500 mb-1">
               vs {stats.lastMonthAvg}% last month
             </div>
@@ -117,7 +117,7 @@ export default function MonthComparisonCard({ logs }: MonthComparisonCardProps) 
             </div>
           </div>
           <div className="flex items-end gap-3">
-            <div className="text-3xl font-black text-gray-900">{stats.thisMonthCount}</div>
+            <div className="text-3xl font-bold text-gray-900">{stats.thisMonthCount}</div>
             <div className="text-sm text-gray-500 mb-1">
               vs {stats.lastMonthCount} last month
             </div>

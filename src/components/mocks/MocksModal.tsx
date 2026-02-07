@@ -139,13 +139,13 @@ export default function MocksModal({ open, onClose, examId, onSuccess }: Props) 
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.95 }}
-          className="bg-white w-full max-w-lg border-2 border-black shadow-[8px_8px_0_0_#000] overflow-hidden flex flex-col max-h-[90vh]"
+          className="bg-white w-full max-w-lg border border-gray-200 shadow-xl rounded-2xl overflow-hidden flex flex-col max-h-[90vh]"
         >
           
           {/* HEADER */}
-          <div className="bg-stone-100 p-5 border-b-2 border-black flex justify-between items-center shrink-0">
+          <div className="bg-stone-100 p-5 border-b-2 border-gray-200 flex justify-between items-center shrink-0">
             <div>
-              <h2 className="text-xl font-black">Log Mock Test</h2>
+              <h2 className="text-xl font-bold">Log Mock Test</h2>
               <p className="text-xs font-bold text-black/40 uppercase">{examId}</p>
             </div>
             <button 
@@ -167,7 +167,7 @@ export default function MocksModal({ open, onClose, examId, onSuccess }: Props) 
                 placeholder="e.g. Vision IAS Prelims Test 1"
                 value={name}
                 onChange={e => setName(e.target.value)}
-                className="w-full border-2 border-black p-3 font-bold focus:outline-none focus:shadow-[3px_3px_0_0_#000] transition-all"
+                className="w-full border border-gray-200 p-3 font-bold focus:outline-none focus:shadow-md transition-all"
               />
             </div>
 
@@ -181,7 +181,7 @@ export default function MocksModal({ open, onClose, examId, onSuccess }: Props) 
                   placeholder="90"
                   value={score}
                   onChange={e => setScore(e.target.value)}
-                  className="w-full border-2 border-black p-3 font-bold text-xl focus:outline-none"
+                  className="w-full border border-gray-200 p-3 font-bold text-xl focus:outline-none"
                 />
               </div>
               <div>
@@ -191,7 +191,7 @@ export default function MocksModal({ open, onClose, examId, onSuccess }: Props) 
                   type="number"
                   value={maxScore}
                   onChange={e => setMaxScore(e.target.value)}
-                  className="w-full border-2 border-black p-3 font-bold text-xl focus:outline-none bg-stone-50"
+                  className="w-full border border-gray-200 p-3 font-bold text-xl focus:outline-none bg-stone-50"
                 />
               </div>
             </div>
@@ -201,7 +201,7 @@ export default function MocksModal({ open, onClose, examId, onSuccess }: Props) 
               <div className={`p-4 border-2 text-center ${
                 scorePercent >= 60 ? 'bg-green-50 border-green-300' : 'bg-red-50 border-red-300'
               }`}>
-                <div className={`text-3xl font-black ${scorePercent >= 60 ? 'text-green-700' : 'text-red-700'}`}>
+                <div className={`text-3xl font-bold ${scorePercent >= 60 ? 'text-green-700' : 'text-red-700'}`}>
                   {scorePercent}%
                 </div>
                 <div className="text-xs font-bold text-black/40">{score} / {maxScore}</div>
@@ -257,7 +257,7 @@ export default function MocksModal({ open, onClose, examId, onSuccess }: Props) 
                   placeholder="Optional"
                   value={accuracy}
                   onChange={e => setAccuracy(e.target.value)}
-                  className="w-full border-2 border-black/30 p-3 font-bold focus:outline-none focus:border-black"
+                  className="w-full border border-gray-200/30 p-3 font-bold focus:outline-none focus:border-gray-200"
                 />
               </div>
               <div>
@@ -266,7 +266,7 @@ export default function MocksModal({ open, onClose, examId, onSuccess }: Props) 
                   <select 
                     value={timeOfDay}
                     onChange={e => setTimeOfDay(e.target.value)}
-                    className="w-full border-2 border-black/30 p-3 font-bold focus:outline-none appearance-none bg-white focus:border-black"
+                    className="w-full border border-gray-200/30 p-3 font-bold focus:outline-none appearance-none bg-white focus:border-gray-200"
                   >
                     <option value="morning">Morning</option>
                     <option value="afternoon">Afternoon</option>
@@ -283,7 +283,7 @@ export default function MocksModal({ open, onClose, examId, onSuccess }: Props) 
               <div>
                 <div className="flex justify-between mb-2">
                   <label className="text-sm font-bold">Stress</label>
-                  <span className="text-sm font-black">{stress}/10</span>
+                  <span className="text-sm font-bold">{stress}/10</span>
                 </div>
                 <input 
                   type="range" 
@@ -297,7 +297,7 @@ export default function MocksModal({ open, onClose, examId, onSuccess }: Props) 
               <div>
                 <div className="flex justify-between mb-2">
                   <label className="text-sm font-bold">Fatigue</label>
-                  <span className="text-sm font-black">{fatigue}/10</span>
+                  <span className="text-sm font-bold">{fatigue}/10</span>
                 </div>
                 <input 
                   type="range" 
@@ -323,7 +323,7 @@ export default function MocksModal({ open, onClose, examId, onSuccess }: Props) 
                 placeholder="Key takeaways (30 words max)"
                 value={note}
                 onChange={handleNoteChange}
-                className="w-full border-2 border-black/30 p-3 font-medium text-sm focus:outline-none focus:border-black resize-none"
+                className="w-full border border-gray-200/30 p-3 font-medium text-sm focus:outline-none focus:border-gray-200 resize-none"
               />
             </div>
 
@@ -331,7 +331,7 @@ export default function MocksModal({ open, onClose, examId, onSuccess }: Props) 
             <button 
               type="submit" 
               disabled={loading}
-              className="w-full bg-black text-white font-black py-4 hover:bg-stone-800 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+              className="w-full bg-black text-white font-bold py-4 hover:bg-stone-800 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
             >
               {loading ? (
                 'Saving...'
