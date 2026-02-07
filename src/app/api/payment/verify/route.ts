@@ -63,7 +63,7 @@ async function verifyPaymentHandler(req: NextRequest, validData: any) {
     )
 
     // 5. EXECUTE UPDATES
-    const updates: Promise<any>[] = [
+    const updates: any[] = [
       // A. Flip user to Premium
       supabaseAdmin
         .from('user_access')
