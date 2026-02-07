@@ -6,12 +6,10 @@ import Link from 'next/link'
 import { ArrowRight, Loader2, Mail, Lock, Eye, EyeOff, AlertCircle } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 
-// 1. ADDED INTERFACE
 interface LoginFormProps {
   onMascotStateChange?: (state: any) => void
 }
 
-// 2. UPDATED COMPONENT TO ACCEPT PROPS
 export default function LoginForm({ onMascotStateChange }: LoginFormProps) {
   const router = useRouter()
   const supabase = createClient()
@@ -35,13 +33,11 @@ export default function LoginForm({ onMascotStateChange }: LoginFormProps) {
 
       if (authError) throw authError
 
-      // 3. ADDED SUCCESS TRIGGER
       onMascotStateChange?.('success')
 
       router.push('/dashboard')
       router.refresh() 
     } catch (err: any) {
-      // 4. ADDED ERROR TRIGGER
       onMascotStateChange?.('error')
 
       const msg = err.message || ''
@@ -63,7 +59,7 @@ export default function LoginForm({ onMascotStateChange }: LoginFormProps) {
       
       {/* Error Banner */}
       {error && (
-        <div className="border-2 border-red-200 bg-red-50 p-3 flex items-center gap-3 text-sm font-medium text-red-700 animate-in slide-in-from-top-2 duration-300">
+        <div className="border border-danger-200 bg-danger-50 p-3 flex items-center gap-3 text-sm font-medium text-danger-700 rounded-xl animate-slide-down">
           <AlertCircle size={18} className="shrink-0" />
           <span>{error}</span>
         </div>
@@ -71,19 +67,18 @@ export default function LoginForm({ onMascotStateChange }: LoginFormProps) {
 
       {/* Email Field */}
       <div className="space-y-1.5">
-        <label className="text-xs font-bold uppercase tracking-wider text-black/70">Email</label>
+        <label className="text-sm font-medium text-gray-700">Email</label>
         <div className="relative">
-          <Mail size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-black/30" />
+          <Mail size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
           <input 
             type="email" 
             required
             value={email}
-            // 5. ADDED MASCOT TRIGGERS
             onFocus={() => onMascotStateChange?.('typing-email')}
             onBlur={() => onMascotStateChange?.('watching')}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="you@example.com"
-            className="w-full border-2 border-black/10 bg-white pl-11 pr-4 py-3.5 text-sm font-medium placeholder:text-black/30 focus:border-black focus:outline-none transition-colors"
+            className="input pl-11"
           />
         </div>
       </div>
@@ -91,31 +86,30 @@ export default function LoginForm({ onMascotStateChange }: LoginFormProps) {
       {/* Password Field */}
       <div className="space-y-1.5">
         <div className="flex justify-between items-center">
-          <label className="text-xs font-bold uppercase tracking-wider text-black/70">Password</label>
+          <label className="text-sm font-medium text-gray-700">Password</label>
           <Link 
             href="/forgot-password" 
-            className="text-xs font-bold text-black/40 hover:text-black transition-colors"
+            className="text-xs font-medium text-gray-400 hover:text-primary-600 transition-colors"
           >
             Forgot password?
           </Link>
         </div>
         <div className="relative">
-          <Lock size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-black/30" />
+          <Lock size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
           <input 
             type={showPassword ? 'text' : 'password'}
             required
             value={password}
-            // 5. ADDED MASCOT TRIGGERS
             onFocus={() => onMascotStateChange?.('typing-password')}
             onBlur={() => onMascotStateChange?.('watching')}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Enter your password"
-            className="w-full border-2 border-black/10 bg-white pl-11 pr-12 py-3.5 text-sm font-medium placeholder:text-black/30 focus:border-black focus:outline-none transition-colors"
+            className="input pl-11 pr-12"
           />
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-4 top-1/2 -translate-y-1/2 text-black/30 hover:text-black transition-colors"
+            className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700 transition-colors"
           >
             {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
           </button>
@@ -125,7 +119,7 @@ export default function LoginForm({ onMascotStateChange }: LoginFormProps) {
       {/* Submit Button */}
       <button 
         disabled={loading}
-        className="group w-full flex items-center justify-center gap-2 border-2 border-black bg-brand text-black py-4 text-sm font-bold uppercase tracking-wide shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-0.5 hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] active:translate-y-0 active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+        className="btn btn-primary w-full group flex items-center justify-center gap-2 py-4 text-base disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {loading ? (
           <Loader2 className="h-5 w-5 animate-spin" />
@@ -138,9 +132,9 @@ export default function LoginForm({ onMascotStateChange }: LoginFormProps) {
       </button>
 
       {/* Signup Link */}
-      <p className="text-center text-sm font-medium text-black/50 pt-4">
-        Don't have an account?{' '}
-        <Link href="/signup" className="font-bold text-black hover:text-brand transition-colors">
+      <p className="text-center text-sm text-gray-500 pt-4">
+        Don&apos;t have an account?{' '}
+        <Link href="/signup" className="font-semibold text-primary-600 hover:text-primary-700 transition-colors">
           Sign up free
         </Link>
       </p>

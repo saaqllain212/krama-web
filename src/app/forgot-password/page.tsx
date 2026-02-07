@@ -49,36 +49,36 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FBF9F6] flex flex-col items-center justify-center p-6">
+    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-6">
       <div className="w-full max-w-md">
         
         {/* BACK LINK */}
         <Link 
           href="/login" 
-          className="inline-flex items-center gap-2 text-sm font-bold text-black/40 hover:text-black transition-colors mb-8"
+          className="inline-flex items-center gap-2 text-sm font-medium text-gray-400 hover:text-gray-700 transition-colors mb-8"
         >
           <ArrowLeft size={16} /> Back to Login
         </Link>
 
         {/* CARD */}
-        <div className="bg-white border-2 border-black p-8 shadow-[6px_6px_0_0_#000]">
+        <div className="card p-8">
           
           {status === 'success' ? (
             // SUCCESS STATE
             <div className="text-center">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <CheckCircle size={32} className="text-green-600" />
+              <div className="w-16 h-16 bg-success-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                <CheckCircle size={32} className="text-success-600" />
               </div>
-              <h1 className="text-2xl font-black mb-3">Check Your Email</h1>
-              <p className="text-black/60 mb-6">
-                We sent a password reset link to <strong>{email}</strong>
+              <h1 className="text-2xl font-bold text-gray-900 mb-3">Check Your Email</h1>
+              <p className="text-gray-500 mb-6">
+                We sent a password reset link to <strong className="text-gray-900">{email}</strong>
               </p>
-              <p className="text-sm text-black/40 mb-6">
-                Didn't receive the email? Check your spam folder or try again.
+              <p className="text-sm text-gray-400 mb-6">
+                Didn&apos;t receive the email? Check your spam folder or try again.
               </p>
               <button 
                 onClick={() => { setStatus('idle'); setEmail('') }}
-                className="text-sm font-bold text-black/50 hover:text-black"
+                className="text-sm font-medium text-gray-400 hover:text-primary-600 transition-colors"
               >
                 Try a different email
               </button>
@@ -87,9 +87,9 @@ export default function ForgotPasswordPage() {
             // FORM STATE
             <>
               <div className="text-center mb-8">
-                <h1 className="text-3xl font-black mb-2">Forgot Password?</h1>
-                <p className="text-black/50">
-                  Enter your email and we'll send you a reset link
+                <h1 className="text-3xl font-bold text-gray-900 mb-2">Forgot Password?</h1>
+                <p className="text-gray-500">
+                  Enter your email and we&apos;ll send you a reset link
                 </p>
               </div>
 
@@ -97,26 +97,26 @@ export default function ForgotPasswordPage() {
                 
                 {/* ERROR BANNER */}
                 {status === 'error' && (
-                  <div className="border-2 border-red-200 bg-red-50 p-3 flex items-center gap-3 text-sm font-medium text-red-700">
+                  <div className="border border-danger-200 bg-danger-50 p-3 flex items-center gap-3 text-sm font-medium text-danger-700 rounded-xl">
                     <AlertCircle size={18} className="shrink-0" />
                     <span>{message}</span>
                   </div>
                 )}
 
                 {/* EMAIL FIELD */}
-                <div className="space-y-2">
-                  <label className="text-xs font-bold uppercase tracking-wider text-black/70">
+                <div className="space-y-1.5">
+                  <label className="text-sm font-medium text-gray-700">
                     Email Address
                   </label>
                   <div className="relative">
-                    <Mail size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-black/30" />
+                    <Mail size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
                     <input 
                       type="email" 
                       required
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="you@example.com"
-                      className="w-full border-2 border-black/10 bg-white pl-11 pr-4 py-3.5 text-sm font-medium placeholder:text-black/30 focus:border-black focus:outline-none transition-colors"
+                      className="input pl-11"
                     />
                   </div>
                 </div>
@@ -125,7 +125,7 @@ export default function ForgotPasswordPage() {
                 <button 
                   type="submit"
                   disabled={loading}
-                  className="w-full flex items-center justify-center gap-2 border-2 border-black bg-brand text-black py-4 text-sm font-bold uppercase tracking-wide shadow-[4px_4px_0_0_#000] hover:-translate-y-0.5 hover:shadow-[5px_5px_0_0_#000] active:translate-y-0 active:shadow-[2px_2px_0_0_#000] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="btn btn-primary w-full flex items-center justify-center gap-2 py-4 text-base disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? (
                     <Loader2 className="h-5 w-5 animate-spin" />
@@ -135,10 +135,10 @@ export default function ForgotPasswordPage() {
                 </button>
               </form>
 
-              {/* SIGNUP LINK */}
-              <p className="text-center text-sm font-medium text-black/50 mt-6">
+              {/* LOGIN LINK */}
+              <p className="text-center text-sm text-gray-500 mt-6">
                 Remember your password?{' '}
-                <Link href="/login" className="font-bold text-black hover:text-brand transition-colors">
+                <Link href="/login" className="font-semibold text-primary-600 hover:text-primary-700 transition-colors">
                   Log in
                 </Link>
               </p>
