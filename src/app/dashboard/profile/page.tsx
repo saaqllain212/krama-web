@@ -36,7 +36,7 @@ export default function ProfilePage() {
     setGenerating(true)
     try {
       const canvas = await html2canvas(shareCardRef.current, {
-        backgroundColor: '#FBF9F6',
+        backgroundColor: '#f9fafb',
         scale: 2,
       })
       
@@ -45,7 +45,6 @@ export default function ProfilePage() {
         
         const file = new File([blob], 'krama-progress.png', { type: 'image/png' })
         
-        // Try native share first (check if sharing files is supported)
         if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
           try {
             await navigator.share({
@@ -54,7 +53,6 @@ export default function ProfilePage() {
               files: [file]
             })
           } catch (e) {
-            // User cancelled or share failed, download instead
             downloadImage(blob)
           }
         } else {
@@ -82,8 +80,8 @@ export default function ProfilePage() {
 
   if (loading || !stats || !levelInfo) {
     return (
-      <div className="min-h-screen bg-[#FBF9F6] flex items-center justify-center">
-        <div className="w-12 h-12 border-4 border-black border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="w-12 h-12 border-4 border-primary-500 border-t-transparent rounded-full animate-spin" />
       </div>
     )
   }
@@ -94,16 +92,16 @@ export default function ProfilePage() {
   const lockedAchievements = ACHIEVEMENTS.filter(a => !stats.achievements.includes(a.id))
 
   return (
-    <div className="min-h-screen bg-[#FBF9F6] text-black pb-20">
+    <div className="pb-20">
       {/* HEADER */}
       <div className="mb-8">
         <Link 
           href="/dashboard" 
-          className="inline-flex items-center gap-2 text-sm font-bold text-black/40 hover:text-black transition-colors mb-4"
+          className="inline-flex items-center gap-2 text-sm font-medium text-gray-400 hover:text-gray-700 transition-colors mb-4"
         >
           <ArrowLeft size={16} /> Dashboard
         </Link>
-        <h1 className="text-4xl font-black tracking-tight">Your Profile</h1>
+        <h1 className="text-4xl font-bold tracking-tight text-gray-900">Your Profile</h1>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -112,13 +110,13 @@ export default function ProfilePage() {
         <div className="lg:col-span-2 space-y-6">
           
           {/* SHAREABLE CARD */}
-          <div className="bg-white border-2 border-black shadow-[6px_6px_0_0_#000] overflow-hidden">
-            <div className="p-4 border-b-2 border-black bg-stone-50 flex items-center justify-between">
-              <h2 className="font-black uppercase">Progress Card</h2>
+          <div className="card overflow-hidden">
+            <div className="p-4 border-b border-gray-200 bg-gray-50 flex items-center justify-between">
+              <h2 className="font-bold text-gray-900">Progress Card</h2>
               <button
                 onClick={handleShare}
                 disabled={generating}
-                className="flex items-center gap-2 bg-black text-white px-4 py-2 text-xs font-bold uppercase hover:bg-stone-800 disabled:opacity-50"
+                className="btn btn-primary flex items-center gap-2 text-xs disabled:opacity-50"
               >
                 {generating ? (
                   'Generating...'
@@ -131,51 +129,51 @@ export default function ProfilePage() {
             </div>
             
             {/* The actual card to be captured */}
-            <div ref={shareCardRef} className="p-8 bg-[#FBF9F6]">
-              <div className="bg-white border-2 border-black p-6">
+            <div ref={shareCardRef} className="p-8 bg-gray-50">
+              <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-soft">
                 {/* Header */}
                 <div className="flex items-center justify-between mb-6">
-                  <div className="font-black text-xl tracking-tight">KRAMA</div>
-                  <div className="text-xs font-bold text-black/40">usekrama.com</div>
+                  <div className="font-bold text-xl tracking-tight text-gray-900">KRAMA</div>
+                  <div className="text-xs font-medium text-gray-400">usekrama.com</div>
                 </div>
 
                 {/* Level & Name */}
                 <div className="flex items-center gap-4 mb-6">
-                  <div className={`w-16 h-16 ${colors.bg} border-2 ${colors.border} flex items-center justify-center`}>
-                    <span className={`text-3xl font-black ${colors.text}`}>{levelInfo.level}</span>
+                  <div className={`w-16 h-16 ${colors.bg} border-2 ${colors.border} rounded-xl flex items-center justify-center`}>
+                    <span className={`text-3xl font-bold ${colors.text}`}>{levelInfo.level}</span>
                   </div>
                   <div>
-                    <div className="text-2xl font-black">{userName}</div>
-                    <div className={`text-sm font-bold ${colors.text}`}>{levelInfo.title}</div>
+                    <div className="text-2xl font-bold text-gray-900">{userName}</div>
+                    <div className={`text-sm font-semibold ${colors.text}`}>{levelInfo.title}</div>
                   </div>
                 </div>
 
                 {/* Stats Grid */}
                 <div className="grid grid-cols-3 gap-4 mb-6">
-                  <div className="text-center p-3 bg-stone-50 border border-stone-200">
-                    <div className="text-2xl font-black">{formatXP(stats.xp)}</div>
-                    <div className="text-[10px] font-bold text-black/40 uppercase">Total XP</div>
+                  <div className="text-center p-3 bg-gray-50 rounded-lg border border-gray-100">
+                    <div className="text-2xl font-bold text-gray-900">{formatXP(stats.xp)}</div>
+                    <div className="text-[10px] font-semibold text-gray-400 uppercase">Total XP</div>
                   </div>
-                  <div className="text-center p-3 bg-stone-50 border border-stone-200">
-                    <div className="text-2xl font-black">{stats.current_streak}</div>
-                    <div className="text-[10px] font-bold text-black/40 uppercase">Day Streak</div>
+                  <div className="text-center p-3 bg-gray-50 rounded-lg border border-gray-100">
+                    <div className="text-2xl font-bold text-gray-900">{stats.current_streak}</div>
+                    <div className="text-[10px] font-semibold text-gray-400 uppercase">Day Streak</div>
                   </div>
-                  <div className="text-center p-3 bg-stone-50 border border-stone-200">
-                    <div className="text-2xl font-black">{totalHours}h</div>
-                    <div className="text-[10px] font-bold text-black/40 uppercase">Focus Time</div>
+                  <div className="text-center p-3 bg-gray-50 rounded-lg border border-gray-100">
+                    <div className="text-2xl font-bold text-gray-900">{totalHours}h</div>
+                    <div className="text-[10px] font-semibold text-gray-400 uppercase">Focus Time</div>
                   </div>
                 </div>
 
                 {/* Progress to next level */}
                 {nextLevelInfo?.nextLevel && (
                   <div>
-                    <div className="flex justify-between text-xs font-bold text-black/40 mb-1">
+                    <div className="flex justify-between text-xs font-medium text-gray-400 mb-1">
                       <span>Progress to Level {nextLevelInfo.nextLevel.level}</span>
                       <span>{nextLevelInfo.progress}%</span>
                     </div>
-                    <div className="h-3 bg-stone-200 border border-stone-300">
+                    <div className="h-3 bg-gray-200 rounded-full overflow-hidden">
                       <div 
-                        className="h-full bg-brand"
+                        className={`h-full rounded-full ${colors.text.replace('text-', 'bg-')}`}
                         style={{ width: `${nextLevelInfo.progress}%` }}
                       />
                     </div>
@@ -186,21 +184,21 @@ export default function ProfilePage() {
           </div>
 
           {/* ACHIEVEMENTS */}
-          <div className="bg-white border-2 border-black shadow-[4px_4px_0_0_#000] p-6">
-            <h2 className="font-black text-lg mb-6 flex items-center gap-2">
+          <div className="card p-6">
+            <h2 className="font-bold text-lg mb-6 flex items-center gap-2 text-gray-900">
               <Trophy size={20} /> Achievements
             </h2>
             
             {/* Unlocked */}
             {unlockedAchievements.length > 0 && (
               <div className="mb-6">
-                <div className="text-xs font-bold text-black/40 uppercase mb-3">Unlocked ({unlockedAchievements.length})</div>
+                <div className="text-xs font-semibold text-gray-400 uppercase mb-3">Unlocked ({unlockedAchievements.length})</div>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   {unlockedAchievements.map(achievement => (
-                    <div key={achievement.id} className="p-4 bg-brand/10 border-2 border-brand text-center">
+                    <div key={achievement.id} className="p-4 bg-primary-50 border border-primary-200 rounded-xl text-center">
                       <div className="text-3xl mb-2">{achievement.icon}</div>
-                      <div className="font-bold text-sm">{achievement.name}</div>
-                      <div className="text-[10px] text-black/50">{achievement.description}</div>
+                      <div className="font-semibold text-sm text-gray-900">{achievement.name}</div>
+                      <div className="text-[10px] text-gray-500">{achievement.description}</div>
                     </div>
                   ))}
                 </div>
@@ -210,13 +208,13 @@ export default function ProfilePage() {
             {/* Locked */}
             {lockedAchievements.length > 0 && (
               <div>
-                <div className="text-xs font-bold text-black/40 uppercase mb-3">Locked ({lockedAchievements.length})</div>
+                <div className="text-xs font-semibold text-gray-400 uppercase mb-3">Locked ({lockedAchievements.length})</div>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   {lockedAchievements.map(achievement => (
-                    <div key={achievement.id} className="p-4 bg-stone-100 border border-stone-200 text-center opacity-50">
+                    <div key={achievement.id} className="p-4 bg-gray-50 border border-gray-200 rounded-xl text-center opacity-50">
                       <div className="text-3xl mb-2 grayscale">🔒</div>
-                      <div className="font-bold text-sm">{achievement.name}</div>
-                      <div className="text-[10px] text-black/50">{achievement.description}</div>
+                      <div className="font-semibold text-sm text-gray-900">{achievement.name}</div>
+                      <div className="text-[10px] text-gray-500">{achievement.description}</div>
                     </div>
                   ))}
                 </div>
@@ -229,25 +227,25 @@ export default function ProfilePage() {
         <div className="space-y-6">
           
           {/* LEVEL CARD */}
-          <div className={`${colors.bg} border-2 ${colors.border} p-6`}>
+          <div className={`${colors.bg} border-2 ${colors.border} p-6 rounded-2xl`}>
             <div className="flex items-center gap-4 mb-4">
-              <div className={`w-20 h-20 bg-white border-2 ${colors.border} flex items-center justify-center`}>
-                <span className={`text-4xl font-black ${colors.text}`}>{levelInfo.level}</span>
+              <div className={`w-20 h-20 bg-white border-2 ${colors.border} rounded-xl flex items-center justify-center`}>
+                <span className={`text-4xl font-bold ${colors.text}`}>{levelInfo.level}</span>
               </div>
               <div>
-                <div className={`text-2xl font-black ${colors.text}`}>{levelInfo.title}</div>
-                <div className="text-sm font-bold text-black/50">{formatXP(stats.xp)} XP total</div>
+                <div className={`text-2xl font-bold ${colors.text}`}>{levelInfo.title}</div>
+                <div className="text-sm font-medium text-gray-600">{formatXP(stats.xp)} XP total</div>
               </div>
             </div>
             
             {nextLevelInfo?.nextLevel && (
-              <div className="bg-white/50 p-3 rounded">
-                <div className="text-xs font-bold text-black/50 mb-2">
+              <div className="bg-white/50 p-3 rounded-lg">
+                <div className="text-xs font-medium text-gray-600 mb-2">
                   {nextLevelInfo.xpNeeded} XP to {nextLevelInfo.nextLevel.title}
                 </div>
                 <div className="h-2 bg-white rounded-full overflow-hidden">
                   <div 
-                    className={`h-full ${colors.text.replace('text-', 'bg-')}`}
+                    className={`h-full rounded-full ${colors.text.replace('text-', 'bg-')}`}
                     style={{ width: `${nextLevelInfo.progress}%` }}
                   />
                 </div>
@@ -256,53 +254,53 @@ export default function ProfilePage() {
           </div>
 
           {/* STATS BREAKDOWN */}
-          <div className="bg-white border-2 border-black shadow-[4px_4px_0_0_#000] p-6 space-y-4">
-            <h3 className="font-black uppercase text-sm">Statistics</h3>
+          <div className="card p-6 space-y-3">
+            <h3 className="font-bold text-sm text-gray-900 uppercase tracking-wider">Statistics</h3>
             
-            <div className="flex items-center justify-between p-3 bg-stone-50 border border-stone-200">
+            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-xl border border-gray-100">
               <div className="flex items-center gap-3">
                 <Flame className="text-orange-500" size={20} />
-                <span className="font-bold">Current Streak</span>
+                <span className="font-medium text-gray-700">Current Streak</span>
               </div>
-              <span className="font-black text-xl">{stats.current_streak}</span>
+              <span className="font-bold text-xl text-gray-900">{stats.current_streak}</span>
             </div>
 
-            <div className="flex items-center justify-between p-3 bg-stone-50 border border-stone-200">
+            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-xl border border-gray-100">
               <div className="flex items-center gap-3">
                 <TrendingUp className="text-green-500" size={20} />
-                <span className="font-bold">Longest Streak</span>
+                <span className="font-medium text-gray-700">Longest Streak</span>
               </div>
-              <span className="font-black text-xl">{stats.longest_streak}</span>
+              <span className="font-bold text-xl text-gray-900">{stats.longest_streak}</span>
             </div>
 
-            <div className="flex items-center justify-between p-3 bg-stone-50 border border-stone-200">
+            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-xl border border-gray-100">
               <div className="flex items-center gap-3">
                 <Clock className="text-blue-500" size={20} />
-                <span className="font-bold">Focus Time</span>
+                <span className="font-medium text-gray-700">Focus Time</span>
               </div>
-              <span className="font-black text-xl">{totalHours}h</span>
+              <span className="font-bold text-xl text-gray-900">{totalHours}h</span>
             </div>
 
-            <div className="flex items-center justify-between p-3 bg-stone-50 border border-stone-200">
+            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-xl border border-gray-100">
               <div className="flex items-center gap-3">
                 <Brain className="text-purple-500" size={20} />
-                <span className="font-bold">Reviews Done</span>
+                <span className="font-medium text-gray-700">Reviews Done</span>
               </div>
-              <span className="font-black text-xl">{stats.total_reviews}</span>
+              <span className="font-bold text-xl text-gray-900">{stats.total_reviews}</span>
             </div>
 
-            <div className="flex items-center justify-between p-3 bg-stone-50 border border-stone-200">
+            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-xl border border-gray-100">
               <div className="flex items-center gap-3">
                 <Target className="text-red-500" size={20} />
-                <span className="font-bold">Mocks Logged</span>
+                <span className="font-medium text-gray-700">Mocks Logged</span>
               </div>
-              <span className="font-black text-xl">{stats.total_mocks}</span>
+              <span className="font-bold text-xl text-gray-900">{stats.total_mocks}</span>
             </div>
           </div>
 
           {/* ALL LEVELS */}
-          <div className="bg-white border-2 border-black shadow-[4px_4px_0_0_#000] p-6">
-            <h3 className="font-black uppercase text-sm mb-4">All Levels</h3>
+          <div className="card p-6">
+            <h3 className="font-bold text-sm text-gray-900 uppercase tracking-wider mb-4">All Levels</h3>
             <div className="space-y-2 max-h-[300px] overflow-y-auto">
               {LEVELS.map(level => {
                 const lvlColors = getLevelColor(level.color)
@@ -312,20 +310,20 @@ export default function ProfilePage() {
                 return (
                   <div 
                     key={level.level}
-                    className={`flex items-center justify-between p-2 rounded ${
+                    className={`flex items-center justify-between p-2 rounded-lg ${
                       isCurrent ? `${lvlColors.bg} border-2 ${lvlColors.border}` : 
-                      isCurrentOrPast ? 'bg-stone-50' : 'opacity-40'
+                      isCurrentOrPast ? 'bg-gray-50' : 'opacity-40'
                     }`}
                   >
                     <div className="flex items-center gap-3">
-                      <span className={`font-black ${isCurrent ? lvlColors.text : 'text-black/30'}`}>
+                      <span className={`font-bold ${isCurrent ? lvlColors.text : 'text-gray-400'}`}>
                         {level.level}
                       </span>
-                      <span className={`font-bold text-sm ${isCurrent ? lvlColors.text : ''}`}>
+                      <span className={`font-medium text-sm ${isCurrent ? lvlColors.text : ''}`}>
                         {level.title}
                       </span>
                     </div>
-                    <span className="text-xs font-bold text-black/40">
+                    <span className="text-xs font-medium text-gray-400">
                       {formatXP(level.xp)} XP
                     </span>
                   </div>

@@ -136,7 +136,7 @@ export default function InsightsPage() {
               <div className="p-2 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg">
                 <Sparkles className="text-white" size={24} />
               </div>
-              <h1 className="text-4xl font-black text-gray-900">
+              <h1 className="text-4xl font-bold text-gray-900">
                 Study Analytics
               </h1>
             </div>
@@ -145,7 +145,7 @@ export default function InsightsPage() {
           
           <div className="text-right">
             <div className="text-sm font-semibold text-gray-500 mb-1">Total Deep Work</div>
-            <div className="text-5xl font-black bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <div className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
               {totalHours}h
             </div>
           </div>
@@ -249,7 +249,7 @@ export default function InsightsPage() {
                     className="group flex items-center justify-between p-4 bg-gray-50 hover:bg-white border border-gray-200 hover:border-primary-500 rounded-xl hover:shadow-sm transition-all"
                   >
                     <div className="flex items-center gap-4 flex-1">
-                      <div className="text-2xl font-black text-gray-200 group-hover:text-primary-500 w-10 text-center transition-colors">
+                      <div className="text-2xl font-bold text-gray-200 group-hover:text-primary-500 w-10 text-center transition-colors">
                         #{allTopics.findIndex(t => t.name === topic.name) + 1}
                       </div>
                       <div>
@@ -270,7 +270,7 @@ export default function InsightsPage() {
                     </div>
 
                     <div className="flex items-center gap-4">
-                      <div className="text-xl font-black text-gray-900">
+                      <div className="text-xl font-bold text-gray-900">
                         {formatDuration(topic.totalMinutes)}
                       </div>
                       <button 

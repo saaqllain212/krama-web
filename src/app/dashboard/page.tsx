@@ -96,14 +96,14 @@ export default function DashboardPage() {
         // --- 2. FETCH TODAY'S FOCUS TIME ---
         const today = new Date().toISOString().split('T')[0]
         const { data: focusData } = await supabase
-          .from('focus_sessions')
-          .select('duration')
+          .from('focus_logs')
+          .select('duration_minutes')
           .eq('user_id', user.id)
           .gte('started_at', `${today}T00:00:00`)
           .lt('started_at', `${today}T23:59:59`)
 
         if (focusData) {
-          const total = focusData.reduce((sum, s) => sum + (s.duration || 0), 0)
+          const total = focusData.reduce((sum, s) => sum + (s.duration_minutes || 0), 0)
           setFocusMinutes(total)
         }
 
@@ -111,8 +111,8 @@ export default function DashboardPage() {
         const weekAgo = new Date()
         weekAgo.setDate(weekAgo.getDate() - 6)
         const { data: weekFocus } = await supabase
-          .from('focus_sessions')
-          .select('started_at, duration')
+          .from('focus_logs')
+          .select('started_at, duration_minutes')
           .eq('user_id', user.id)
           .gte('started_at', weekAgo.toISOString())
 
@@ -122,14 +122,14 @@ export default function DashboardPage() {
             const sessionDate = new Date(session.started_at)
             const dayOfWeek = sessionDate.getDay()
             const adjustedDay = dayOfWeek === 0 ? 6 : dayOfWeek - 1
-            newWeekData[adjustedDay] += session.duration || 0
+            newWeekData[adjustedDay] += session.duration_minutes || 0
           })
           setWeekData(newWeekData)
         }
 
         // --- 4. FETCH STREAK ---
         const { data: streakData } = await supabase
-          .from('focus_sessions')
+          .from('focus_logs')
           .select('started_at')
           .eq('user_id', user.id)
           .order('started_at', { ascending: false })
@@ -155,10 +155,9 @@ export default function DashboardPage() {
 
         // --- 5. FETCH DUE REVIEWS ---
         const { data: reviewData } = await supabase
-          .from('spaced_repetition')
+          .from('topics')
           .select('id')
           .eq('user_id', user.id)
-          .eq('exam_id', activeExam || 'upsc')
           .lte('next_review', today)
 
         if (reviewData) {
@@ -167,7 +166,7 @@ export default function DashboardPage() {
 
         // --- 6. FETCH MOCKS COUNT ---
         const { data: mockData } = await supabase
-          .from('mock_tests')
+          .from('mock_logs')
           .select('logs')
           .eq('user_id', user.id)
           .eq('exam_id', activeExam || 'upsc')
