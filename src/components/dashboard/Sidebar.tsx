@@ -24,6 +24,7 @@ const NAV_ITEMS = [
   { label: 'Spaced Review', href: '/dashboard/review', icon: RotateCw },
   { label: 'Syllabus Map', href: '/dashboard/syllabus', icon: Map },
   { label: 'Mock Scores', href: '/dashboard/mocks', icon: LineChart },
+  { label: 'Analytics', href: '/dashboard/insights', icon: Sparkles },
 ]
 
 const COMING_SOON_ITEMS = [
