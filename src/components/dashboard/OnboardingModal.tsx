@@ -16,11 +16,8 @@ export default function OnboardingModal() {
   const [step, setStep] = useState(1)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
-  
-  // ✅ NEW: Error State (Replaces Browser Alerts)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
-  // DATA STATE
   const [selectedExam, setSelectedExam] = useState<string | null>(null)
   const [examDate, setExamDate] = useState('')
   const [dailyHours, setDailyHours] = useState(6)
@@ -64,7 +61,7 @@ export default function OnboardingModal() {
   }, [])
 
   const handleExamSelect = (examId: string) => {
-    setErrorMessage(null) // Clear errors
+    setErrorMessage(null)
     setSelectedExam(examId)
     if (examId === 'focus') {
       setStep(3)
@@ -80,7 +77,6 @@ export default function OnboardingModal() {
     const file = e.target.files?.[0]
     if (!file) return
 
-    // ✅ UI Validation
     if (file.type !== "application/json") {
       setErrorMessage("Invalid file type. Please upload a .json file.")
       return
@@ -95,7 +91,6 @@ export default function OnboardingModal() {
       setSelectedExam('custom')
       setStep(2)
     } catch (err) {
-      // ✅ UI Validation
       setErrorMessage("Invalid JSON format. File must contain an array of topics.")
     }
   }
@@ -116,7 +111,6 @@ export default function OnboardingModal() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) throw new Error("No User")
 
-      // ✅ STANDARD SAVE (Only Metadata)
       await supabase.from('syllabus_settings').upsert({
         user_id: user.id,
         active_exam_id: selectedExam,
@@ -149,16 +143,16 @@ export default function OnboardingModal() {
   if (loading || !isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-stone-900/95 backdrop-blur-md p-4">
-      <div className="w-full max-w-2xl bg-gray-50 rounded-2xl border border-gray-200 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-gray-900/80 backdrop-blur-md p-4">
+      <div className="w-full max-w-2xl bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
         
         {/* HEADER */}
-        <div className="bg-black text-white p-6 flex justify-between items-center shrink-0">
-          <h2 className="text-xl font-bold uppercase tracking-widest flex items-center gap-2">
-             <Zap size={20} className="text-primary-400" /> System Setup
+        <div className="bg-gradient-to-r from-primary-600 to-purple-600 text-white p-6 flex justify-between items-center shrink-0">
+          <h2 className="text-xl font-bold flex items-center gap-2">
+             <Zap size={20} className="text-white/80" /> Let&apos;s Get You Started
           </h2>
-          <div className="text-xs font-bold text-white/50 uppercase tracking-widest">
-            Step {step} / 3
+          <div className="text-sm font-medium text-white/60">
+            Step {step} of 3
           </div>
         </div>
 
@@ -174,8 +168,8 @@ export default function OnboardingModal() {
                 className="space-y-6"
               >
                 <div className="text-center mb-8">
-                  <h3 className="text-3xl font-bold uppercase mb-2">Identify Target</h3>
-                  <p className="text-stone-500 font-medium">Select the protocol you wish to load.</p>
+                  <h3 className="text-3xl font-bold mb-2 text-gray-900">Choose Your Exam</h3>
+                  <p className="text-gray-500">Select the exam you&apos;re preparing for.</p>
                 </div>
 
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
@@ -183,60 +177,60 @@ export default function OnboardingModal() {
                     <button 
                       key={id}
                       onClick={() => handleExamSelect(id)}
-                      className="group p-4 border border-gray-200/10 hover:border-gray-200 hover:bg-white hover:shadow-lg transition-all text-left"
+                      className="group p-4 rounded-xl border border-gray-200 hover:border-primary-300 hover:bg-primary-50 hover:shadow-md transition-all text-left"
                     >
-                      <BookOpen className="mb-2 text-black/40 group-hover:text-black" />
-                      <div className="font-bold uppercase text-lg">{id}</div>
-                      <div className="text-[10px] font-bold text-stone-400 uppercase">Standard Syllabus</div>
+                      <BookOpen className="mb-2 text-gray-400 group-hover:text-primary-500" />
+                      <div className="font-bold text-lg text-gray-900">{id.toUpperCase()}</div>
+                      <div className="text-xs text-gray-400">Standard Syllabus</div>
                     </button>
                   ))}
                 </div>
 
                 {/* CUSTOM UPLOAD CARD */}
-                <div className="group relative p-6 border border-gray-200/10 hover:border-gray-200 hover:bg-white hover:shadow-lg transition-all text-left">
+                <div className="group relative p-6 rounded-xl border border-gray-200 hover:border-primary-300 hover:bg-primary-50 hover:shadow-md transition-all text-left">
                     <input type="file" accept=".json" onChange={handleFileUpload} className="absolute inset-0 opacity-0 cursor-pointer z-10" />
-                    <div className="mb-4 text-black/40 group-hover:text-black flex justify-between items-start">
+                    <div className="mb-4 text-gray-400 group-hover:text-primary-500 flex justify-between items-start">
                       <div>
                           <Upload size={24} className={selectedExam === 'custom' ? 'hidden' : 'block'} />
                           <FileJson size={24} className={selectedExam === 'custom' ? 'block text-green-600' : 'hidden'} />
                       </div>
                     </div>
-                    <div className="font-bold uppercase text-xl">Custom JSON</div>
-                    <div className="text-xs font-bold text-stone-400 uppercase">
-                      {selectedExam === 'custom' ? 'File Loaded' : 'Upload File'}
+                    <div className="font-bold text-xl text-gray-900">Custom JSON</div>
+                    <div className="text-xs text-gray-400">
+                      {selectedExam === 'custom' ? 'File Loaded ✓' : 'Upload your syllabus file'}
                     </div>
                 </div>
 
-                {/* ✅ ERROR DISPLAY AREA */}
+                {/* ERROR */}
                 {errorMessage && (
-                    <div className="flex items-center gap-2 p-3 bg-red-100 border border-red-200 text-red-700 text-xs font-bold uppercase tracking-wide">
+                    <div className="flex items-center gap-2 p-3 bg-red-50 rounded-lg border border-red-200 text-red-600 text-sm">
                         <AlertCircle size={16} /> {errorMessage}
                     </div>
                 )}
 
                 {/* PROTOCOL ARCHITECT BANNER */}
-                <div className="mt-6 bg-amber-50 border border-amber-200 p-4 flex items-start gap-3">
+                <div className="mt-6 bg-amber-50 rounded-xl border border-amber-200 p-4 flex items-start gap-3">
                    <div className="bg-amber-100 p-2 rounded-full shrink-0">
                       <Terminal size={16} className="text-amber-700" />
                    </div>
                    <div>
-                      <h4 className="font-bold text-xs uppercase text-amber-900 mb-1">Don&apos;t have a JSON file?</h4>
-                      <p className="text-[11px] text-amber-800/80 leading-relaxed mb-2">
-                         You can build one easily using our <strong>Protocol Architect</strong> tool.
+                      <h4 className="font-semibold text-sm text-amber-900 mb-1">Don&apos;t have a JSON file?</h4>
+                      <p className="text-xs text-amber-800/80 leading-relaxed mb-2">
+                         Build one easily using our <strong>Syllabus Builder</strong> tool on the home page.
                       </p>
                       <a 
                         href="/" 
                         target="_blank" 
-                        className="inline-flex items-center gap-1 text-[10px] font-bold uppercase text-black hover:underline decoration-2 underline-offset-4"
+                        className="inline-flex items-center gap-1 text-xs font-semibold text-amber-900 hover:underline"
                       >
-                        Go to Home Page & Scroll to Bottom <ExternalLink size={10} />
+                        Go to Home Page <ExternalLink size={10} />
                       </a>
                    </div>
                 </div>
 
-                <button onClick={() => handleExamSelect('focus')} className="w-full mt-4 p-4 border border-gray-200 bg-black text-white hover:bg-stone-800 transition-all flex items-center justify-center gap-3 shadow-lg">
+                <button onClick={() => handleExamSelect('focus')} className="w-full mt-4 p-4 rounded-xl border border-gray-200 bg-gray-900 text-white hover:bg-gray-800 transition-all flex items-center justify-center gap-3 shadow-md">
                   <Zap className="text-primary-400" />
-                  <span className="font-bold uppercase tracking-widest">Pure Focus Mode (No Syllabus)</span>
+                  <span className="font-semibold">Pure Focus Mode (No Syllabus)</span>
                 </button>
               </motion.div>
             )}
@@ -249,24 +243,22 @@ export default function OnboardingModal() {
                 className="text-center space-y-8"
               >
                 <div>
-                  <h3 className="text-3xl font-bold uppercase mb-2">Set Timeline</h3>
-                  <p className="text-stone-500 font-medium">When is D-Day?</p>
+                  <h3 className="text-3xl font-bold mb-2 text-gray-900">Set Your Target Date</h3>
+                  <p className="text-gray-500">When is your exam?</p>
                 </div>
                 <div className="max-w-xs mx-auto relative">
-                   <Calendar className="absolute top-4 left-4 text-black/30 pointer-events-none" />
-                   <input type="date" required value={examDate} onChange={(e) => setExamDate(e.target.value)} className="w-full bg-white rounded-xl border border-gray-200 p-4 pl-12 text-xl font-bold uppercase outline-none focus:shadow-lg transition-all" />
+                   <Calendar className="absolute top-4 left-4 text-gray-400 pointer-events-none" />
+                   <input type="date" required value={examDate} onChange={(e) => setExamDate(e.target.value)} className="w-full bg-gray-50 rounded-xl border border-gray-200 p-4 pl-12 text-xl font-bold outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-400 transition-all" />
                 </div>
                 
-                {/* ✅ ERROR DISPLAY AREA */}
                 {errorMessage && (
-                    <div className="max-w-xs mx-auto flex items-center justify-center gap-2 p-3 bg-red-100 border border-red-200 text-red-700 text-xs font-bold uppercase tracking-wide">
+                    <div className="max-w-xs mx-auto flex items-center justify-center gap-2 p-3 bg-red-50 rounded-lg border border-red-200 text-red-600 text-sm">
                         <AlertCircle size={16} /> {errorMessage}
                     </div>
                 )}
 
-                {/* ✅ REPLACED ALERT WITH VALIDATION FUNCTION */}
-                <button onClick={validateDateStep} className="bg-black text-white px-8 py-3 font-bold uppercase hover:bg-stone-800 transition-all">Confirm Date</button>
-                <button onClick={() => setStep(1)} className="block mx-auto text-xs font-bold text-stone-400 uppercase hover:text-black mt-4">Back</button>
+                <button onClick={validateDateStep} className="bg-gray-900 text-white rounded-xl px-8 py-3 font-semibold hover:bg-gray-800 transition-all">Confirm Date</button>
+                <button onClick={() => setStep(1)} className="block mx-auto text-sm text-gray-400 hover:text-gray-700 mt-4">← Back</button>
               </motion.div>
             )}
 
@@ -278,32 +270,31 @@ export default function OnboardingModal() {
                 className="text-center space-y-8"
               >
                  <div>
-                  <h3 className="text-3xl font-bold uppercase mb-2">The Contract</h3>
-                  <p className="text-stone-500 font-medium">What is your daily deep work target?</p>
+                  <h3 className="text-3xl font-bold mb-2 text-gray-900">Daily Study Goal</h3>
+                  <p className="text-gray-500">How many hours can you study each day?</p>
                 </div>
-                <div className="max-w-md mx-auto bg-white p-8 border border-gray-200/5 shadow-sm">
-                   <div className="text-6xl font-bold mb-2">{dailyHours} <span className="text-lg text-stone-400">HRS</span></div>
-                   <div className="text-xs font-bold uppercase tracking-widest text-amber-500 mb-8">
-                      {dailyHours < 4 ? 'Maintenance Mode' : dailyHours < 8 ? 'Serious Aspirant' : 'Monk Mode'}
+                <div className="max-w-md mx-auto bg-gray-50 rounded-2xl p-8 border border-gray-200">
+                   <div className="text-6xl font-bold mb-2 text-gray-900">{dailyHours} <span className="text-lg text-gray-400">hrs</span></div>
+                   <div className="text-sm font-semibold text-primary-500 mb-8">
+                      {dailyHours < 4 ? 'Light Study' : dailyHours < 8 ? 'Focused Preparation' : 'Intensive Mode'}
                    </div>
-                   <input type="range" min="1" max="14" step="1" value={dailyHours} onChange={(e) => setDailyHours(parseInt(e.target.value))} className="w-full h-2 bg-stone-200 rounded-lg appearance-none cursor-pointer accent-black" />
-                   <div className="flex justify-between text-[10px] font-bold uppercase text-stone-400 mt-2">
-                      <span>1 Hr</span>
-                      <span>14 Hrs</span>
+                   <input type="range" min="1" max="14" step="1" value={dailyHours} onChange={(e) => setDailyHours(parseInt(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-primary-500" />
+                   <div className="flex justify-between text-xs text-gray-400 mt-2">
+                      <span>1 hr</span>
+                      <span>14 hrs</span>
                    </div>
                 </div>
                 
-                {/* ✅ ERROR DISPLAY AREA */}
                 {errorMessage && (
-                    <div className="flex items-center justify-center gap-2 p-3 bg-red-100 border border-red-200 text-red-700 text-xs font-bold uppercase tracking-wide">
+                    <div className="flex items-center justify-center gap-2 p-3 bg-red-50 rounded-lg border border-red-200 text-red-600 text-sm">
                         <AlertCircle size={16} /> {errorMessage}
                     </div>
                 )}
 
                 <button onClick={handleFinish} disabled={saving} className="w-full max-w-md bg-primary-500 text-white rounded-xl px-8 py-4 font-semibold hover:bg-primary-600 transition-all flex items-center justify-center gap-2 shadow-lg">
-                  {saving ? <Loader2 className="animate-spin"/> : <><Check size={20} /> Initialize System</>}
+                  {saving ? <Loader2 className="animate-spin"/> : <><Check size={20} /> Start Studying</>}
                 </button>
-                <button onClick={() => setStep(selectedExam === 'focus' ? 1 : 2)} className="block mx-auto text-xs font-bold text-stone-400 uppercase hover:text-black mt-4">Back</button>
+                <button onClick={() => setStep(selectedExam === 'focus' ? 1 : 2)} className="block mx-auto text-sm text-gray-400 hover:text-gray-700 mt-4">← Back</button>
               </motion.div>
             )}
 
