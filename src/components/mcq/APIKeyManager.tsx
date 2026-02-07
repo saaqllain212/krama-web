@@ -1,10 +1,25 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Key, Eye, EyeOff, CheckCircle2, AlertCircle, ExternalLink, Loader2 } from 'lucide-react'
+import { Key, Eye, EyeOff, CheckCircle2, AlertCircle, ExternalLink, Loader2, Info } from 'lucide-react'
 import { testAPIKey, type APIProvider } from '@/lib/mcq/apiClient'
 
 const API_KEY_STORAGE = 'krama_mcq_api_config'
+
+// Current Gemini models (as of Feb 2026)
+const GEMINI_MODELS = [
+  { value: 'gemini-2.5-flash', label: 'Gemini 2.5 Flash (Recommended)', desc: 'Fast, free tier: ~250 req/day' },
+  { value: 'gemini-2.5-flash-lite', label: 'Gemini 2.5 Flash-Lite', desc: 'Fastest, free tier: ~1000 req/day' },
+  { value: 'gemini-3-flash-preview', label: 'Gemini 3 Flash (Preview)', desc: 'Latest, best quality' },
+  { value: 'gemini-3-pro-preview', label: 'Gemini 3 Pro (Preview)', desc: 'Most powerful, ~100 req/day free' },
+  { value: 'gemini-2.5-pro', label: 'Gemini 2.5 Pro', desc: 'Advanced reasoning, limited free' },
+]
+
+const CLAUDE_MODELS = [
+  { value: 'claude-sonnet-4-5-20250929', label: 'Claude Sonnet 4.5', desc: 'Best value' },
+  { value: 'claude-haiku-4-5-20251001', label: 'Claude Haiku 4.5', desc: 'Fastest, cheapest' },
+  { value: 'claude-opus-4-6', label: 'Claude Opus 4.6', desc: 'Most powerful' },
+]
 
 interface APIConfig {
   provider: APIProvider
@@ -15,7 +30,8 @@ interface APIConfig {
 export default function APIKeyManager() {
   const [provider, setProvider] = useState<APIProvider>('gemini')
   const [apiKey, setApiKey] = useState('')
-  const [modelName, setModelName] = useState('gemini-1.5-flash-latest')
+  const [modelName, setModelName] = useState('gemini-2.5-flash')
+  const [customModel, setCustomModel] = useState('')
   const [showKey, setShowKey] = useState(false)
   const [testing, setTesting] = useState(false)
   const [testResult, setTestResult] = useState<{ valid: boolean; error?: string } | null>(null)
@@ -29,7 +45,14 @@ export default function APIKeyManager() {
         const config: APIConfig = JSON.parse(saved)
         setProvider(config.provider)
         setApiKey(config.apiKey || '')
-        setModelName(config.modelName || (config.provider === 'gemini' ? 'gemini-1.5-flash-latest' : 'claude-sonnet-4-20250514'))
+        
+        // Migrate old model names
+        let model = config.modelName || ''
+        if (model.includes('gemini-1.5')) {
+          // Gemini 1.5 is retired, upgrade to 2.5 Flash
+          model = 'gemini-2.5-flash'
+        }
+        setModelName(model || (config.provider === 'gemini' ? 'gemini-2.5-flash' : 'claude-sonnet-4-5-20250929'))
         setIsSaved(true)
       } catch (e) {
         console.error('Failed to load API config:', e)
@@ -42,14 +65,18 @@ export default function APIKeyManager() {
     setProvider(newProvider)
     setTestResult(null)
     setIsSaved(false)
+    setCustomModel('')
     
     // Set default model
     if (newProvider === 'gemini') {
-      setModelName('gemini-1.5-flash-latest')
+      setModelName('gemini-2.5-flash')
     } else {
-      setModelName('claude-sonnet-4-20250514')
+      setModelName('claude-sonnet-4-5-20250929')
     }
   }
+
+  // Get effective model name
+  const effectiveModel = customModel.trim() || modelName
   
   // Test API key
   const handleTest = async () => {
@@ -61,7 +88,7 @@ export default function APIKeyManager() {
     setTesting(true)
     setTestResult(null)
     
-    const result = await testAPIKey(provider, apiKey.trim(), modelName)
+    const result = await testAPIKey(provider, apiKey.trim(), effectiveModel)
     setTestResult(result)
     setTesting(false)
   }
@@ -71,7 +98,7 @@ export default function APIKeyManager() {
     const config: APIConfig = {
       provider,
       apiKey: apiKey.trim(),
-      modelName
+      modelName: effectiveModel
     }
     
     localStorage.setItem(API_KEY_STORAGE, JSON.stringify(config))
@@ -80,6 +107,8 @@ export default function APIKeyManager() {
     // Trigger event for other components
     window.dispatchEvent(new CustomEvent('mcq-api-config-updated', { detail: config }))
   }
+
+  const models = provider === 'gemini' ? GEMINI_MODELS : CLAUDE_MODELS
   
   return (
     <div className="card">
@@ -109,7 +138,7 @@ export default function APIKeyManager() {
           >
             <div className="font-semibold mb-1">Google Gemini</div>
             <div className="text-sm text-text-secondary">
-              Free (1,500/day) • Recommended
+              Free tier available • Recommended
             </div>
           </button>
           
@@ -123,31 +152,55 @@ export default function APIKeyManager() {
           >
             <div className="font-semibold mb-1">Anthropic Claude</div>
             <div className="text-sm text-text-secondary">
-              Best quality • Paid
+              Best quality • Paid only
             </div>
           </button>
         </div>
       </div>
       
-      {/* Model Name */}
+      {/* Model Selection */}
       <div className="mb-4">
-        <label className="block text-sm font-medium mb-2">Model Name:</label>
-        <input
-          type="text"
+        <label className="block text-sm font-medium mb-2">Model:</label>
+        <select
           value={modelName}
           onChange={(e) => {
             setModelName(e.target.value)
+            setCustomModel('')
             setTestResult(null)
             setIsSaved(false)
           }}
-          className="input w-full font-mono text-sm"
-          placeholder={provider === 'gemini' ? 'gemini-1.5-flash-latest' : 'claude-sonnet-4-20250514'}
-        />
-        <p className="text-xs text-text-tertiary mt-1">
-          {provider === 'gemini' 
-            ? 'Examples: gemini-1.5-flash-latest, gemini-1.5-pro' 
-            : 'Examples: claude-sonnet-4-20250514, claude-opus-4-20250514'}
-        </p>
+          className="input w-full mb-2"
+        >
+          {models.map(m => (
+            <option key={m.value} value={m.value}>
+              {m.label} — {m.desc}
+            </option>
+          ))}
+        </select>
+
+        {/* Custom model override */}
+        <details className="text-sm">
+          <summary className="text-text-tertiary cursor-pointer hover:text-text-secondary">
+            Use a different model name...
+          </summary>
+          <input
+            type="text"
+            value={customModel}
+            onChange={(e) => {
+              setCustomModel(e.target.value)
+              setTestResult(null)
+              setIsSaved(false)
+            }}
+            className="input w-full mt-2 font-mono text-sm"
+            placeholder={provider === 'gemini' ? 'e.g. gemini-3-pro-preview' : 'e.g. claude-opus-4-6'}
+          />
+          <p className="text-xs text-text-tertiary mt-1">
+            Enter exact model name if you want to use a model not listed above. Models change frequently — check{' '}
+            <a href="https://ai.google.dev/gemini-api/docs/models" target="_blank" rel="noopener noreferrer" className="text-primary-500 hover:underline">
+              Google's model list
+            </a>{' '}for the latest.
+          </p>
+        </details>
       </div>
       
       {/* API Key Input */}
@@ -194,10 +247,25 @@ export default function APIKeyManager() {
         </a>
         <p className="text-xs text-text-tertiary mt-2">
           {provider === 'gemini' 
-            ? 'No credit card required • 1,500 free requests per day' 
+            ? 'No credit card required • Free tier: ~250 requests/day (Flash), ~1000/day (Flash-Lite)' 
             : 'Free trial available • Pay as you go'}
         </p>
       </div>
+
+      {/* Free tier info */}
+      {provider === 'gemini' && (
+        <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+          <div className="flex items-start gap-2">
+            <Info className="w-4 h-4 text-blue-500 flex-shrink-0 mt-0.5" />
+            <div className="text-xs text-blue-700">
+              <p className="font-medium mb-1">Gemini Free Tier (Feb 2026):</p>
+              <p>Flash-Lite: ~1,000 req/day • Flash: ~250 req/day • Pro: ~100 req/day</p>
+              <p className="mt-1">Each MCQ generation = 1 request. With Flash, you can generate ~250 question sets per day for free.</p>
+              <p className="mt-1 text-blue-600 font-medium">Note: Google may change free limits without warning. If you hit errors, try Flash-Lite or wait 24h.</p>
+            </div>
+          </div>
+        </div>
+      )}
       
       {/* Test Result */}
       {testResult && (
@@ -212,7 +280,7 @@ export default function APIKeyManager() {
               <div>
                 <p className="font-medium text-success-500">API Key Valid!</p>
                 <p className="text-sm text-text-secondary">
-                  Ready to generate MCQs with {provider === 'gemini' ? 'Gemini' : 'Claude'}
+                  Ready to generate MCQs with {effectiveModel}
                 </p>
               </div>
             </>
@@ -220,8 +288,13 @@ export default function APIKeyManager() {
             <>
               <AlertCircle className="w-5 h-5 text-danger-500 flex-shrink-0 mt-0.5" />
               <div>
-                <p className="font-medium text-danger-500">Invalid API Key</p>
+                <p className="font-medium text-danger-500">Invalid API Key or Model</p>
                 <p className="text-sm text-text-secondary">{testResult.error}</p>
+                {testResult.error?.includes('404') && (
+                  <p className="text-xs text-danger-400 mt-1">
+                    This model may have been retired. Try selecting a different model from the dropdown.
+                  </p>
+                )}
               </div>
             </>
           )}
@@ -278,7 +351,12 @@ export function getCurrentAPIConfig(): APIConfig | null {
   try {
     const saved = localStorage.getItem(API_KEY_STORAGE)
     if (saved) {
-      return JSON.parse(saved)
+      const config = JSON.parse(saved)
+      // Auto-migrate retired model names
+      if (config.modelName?.includes('gemini-1.5')) {
+        config.modelName = 'gemini-2.5-flash'
+      }
+      return config
     }
   } catch (e) {
     console.error('Failed to load API config:', e)

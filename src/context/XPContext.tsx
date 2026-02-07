@@ -11,6 +11,7 @@ import {
   type LevelInfo,
   type Achievement
 } from '@/lib/xp'
+import { updateCompanionAfterStudy } from '@/lib/companions/companionLogic'
 
 type UserStats = {
   xp: number
@@ -178,6 +179,16 @@ export function XPProvider({ children }: { children: ReactNode }) {
       xp: stats.xp + xpEarned + (isFirstFocus ? XP_REWARDS.FIRST_FOCUS : 0),
       total_focus_minutes: stats.total_focus_minutes + minutes
     })
+    
+    // Update companion state (Guardian total hours, health, wraith idle reset)
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        await updateCompanionAfterStudy(supabase, user.id, minutes, stats.current_streak)
+      }
+    } catch (e) {
+      console.error('Companion update failed:', e)
+    }
     
     if (isFirstFocus) {
       setRecentXPGain({ amount: xpEarned + XP_REWARDS.FIRST_FOCUS, reason: 'First focus session! 🎉' })

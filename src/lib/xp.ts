@@ -14,9 +14,9 @@ export const LEVELS = [
   { level: 10, xp: 5200, title: 'Expert', color: 'amber' },
   { level: 11, xp: 6500, title: 'Master', color: 'red' },
   { level: 12, xp: 8000, title: 'Grandmaster', color: 'red' },
-  { level: 13, xp: 10000, title: 'Legend', color: 'brand' },
-  { level: 14, xp: 12500, title: 'Mythic', color: 'brand' },
-  { level: 15, xp: 15000, title: 'Immortal', color: 'brand' },
+  { level: 13, xp: 10000, title: 'Legend', color: 'amber' },
+  { level: 14, xp: 12500, title: 'Mythic', color: 'red' },
+  { level: 15, xp: 15000, title: 'Immortal', color: 'red' },
 ] as const
 
 export type LevelInfo = typeof LEVELS[number]
@@ -71,7 +71,6 @@ export function getLevelColor(color: string): { bg: string, text: string, border
     purple: { bg: 'bg-purple-100', text: 'text-purple-600', border: 'border-purple-300' },
     amber: { bg: 'bg-amber-100', text: 'text-amber-600', border: 'border-amber-300' },
     red: { bg: 'bg-red-100', text: 'text-red-600', border: 'border-red-300' },
-    brand: { bg: 'bg-brand', text: 'text-black', border: 'border-black' },
   }
   return colors[color] || colors.stone
 }

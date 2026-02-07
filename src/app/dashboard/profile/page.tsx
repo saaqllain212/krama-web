@@ -97,11 +97,11 @@ export default function ProfilePage() {
       <div className="mb-8">
         <Link 
           href="/dashboard" 
-          className="inline-flex items-center gap-2 text-sm font-medium text-gray-400 hover:text-gray-700 transition-colors mb-4"
+          className="inline-flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors mb-4"
         >
           <ArrowLeft size={16} /> Dashboard
         </Link>
-        <h1 className="text-4xl font-bold tracking-tight text-gray-900">Your Profile</h1>
+        <h1 className="text-3xl font-bold text-gray-900">Progress Card</h1>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -111,12 +111,12 @@ export default function ProfilePage() {
           
           {/* SHAREABLE CARD */}
           <div className="card overflow-hidden">
-            <div className="p-4 border-b border-gray-200 bg-gray-50 flex items-center justify-between">
-              <h2 className="font-bold text-gray-900">Progress Card</h2>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-bold text-gray-900">Progress Card</h2>
               <button
                 onClick={handleShare}
                 disabled={generating}
-                className="btn btn-primary flex items-center gap-2 text-xs disabled:opacity-50"
+                className="btn btn-secondary flex items-center gap-2 text-sm"
               >
                 {generating ? (
                   'Generating...'
@@ -129,7 +129,7 @@ export default function ProfilePage() {
             </div>
             
             {/* The actual card to be captured */}
-            <div ref={shareCardRef} className="p-8 bg-gray-50">
+            <div ref={shareCardRef} className="p-6 bg-gray-50 rounded-xl">
               <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-soft">
                 {/* Header */}
                 <div className="flex items-center justify-between mb-6">
@@ -139,7 +139,7 @@ export default function ProfilePage() {
 
                 {/* Level & Name */}
                 <div className="flex items-center gap-4 mb-6">
-                  <div className={`w-16 h-16 ${colors.bg} border-2 ${colors.border} rounded-xl flex items-center justify-center`}>
+                  <div className={`w-16 h-16 ${colors.bg} ${colors.border} border-2 rounded-xl flex items-center justify-center`}>
                     <span className={`text-3xl font-bold ${colors.text}`}>{levelInfo.level}</span>
                   </div>
                   <div>
@@ -167,13 +167,13 @@ export default function ProfilePage() {
                 {/* Progress to next level */}
                 {nextLevelInfo?.nextLevel && (
                   <div>
-                    <div className="flex justify-between text-xs font-medium text-gray-400 mb-1">
+                    <div className="flex justify-between text-xs font-semibold text-gray-400 mb-1">
                       <span>Progress to Level {nextLevelInfo.nextLevel.level}</span>
                       <span>{nextLevelInfo.progress}%</span>
                     </div>
                     <div className="h-3 bg-gray-200 rounded-full overflow-hidden">
                       <div 
-                        className={`h-full rounded-full ${colors.text.replace('text-', 'bg-')}`}
+                        className="h-full bg-gradient-to-r from-primary-500 to-purple-500 rounded-full transition-all"
                         style={{ width: `${nextLevelInfo.progress}%` }}
                       />
                     </div>
@@ -184,9 +184,9 @@ export default function ProfilePage() {
           </div>
 
           {/* ACHIEVEMENTS */}
-          <div className="card p-6">
+          <div className="card">
             <h2 className="font-bold text-lg mb-6 flex items-center gap-2 text-gray-900">
-              <Trophy size={20} /> Achievements
+              <Trophy size={20} className="text-primary-500" /> Achievements
             </h2>
             
             {/* Unlocked */}
@@ -227,7 +227,7 @@ export default function ProfilePage() {
         <div className="space-y-6">
           
           {/* LEVEL CARD */}
-          <div className={`${colors.bg} border-2 ${colors.border} p-6 rounded-2xl`}>
+          <div className={`${colors.bg} border ${colors.border} rounded-2xl p-6`}>
             <div className="flex items-center gap-4 mb-4">
               <div className={`w-20 h-20 bg-white border-2 ${colors.border} rounded-xl flex items-center justify-center`}>
                 <span className={`text-4xl font-bold ${colors.text}`}>{levelInfo.level}</span>
@@ -240,7 +240,7 @@ export default function ProfilePage() {
             
             {nextLevelInfo?.nextLevel && (
               <div className="bg-white/50 p-3 rounded-lg">
-                <div className="text-xs font-medium text-gray-600 mb-2">
+                <div className="text-xs font-semibold text-gray-600 mb-2">
                   {nextLevelInfo.xpNeeded} XP to {nextLevelInfo.nextLevel.title}
                 </div>
                 <div className="h-2 bg-white rounded-full overflow-hidden">
@@ -254,10 +254,10 @@ export default function ProfilePage() {
           </div>
 
           {/* STATS BREAKDOWN */}
-          <div className="card p-6 space-y-3">
-            <h3 className="font-bold text-sm text-gray-900 uppercase tracking-wider">Statistics</h3>
+          <div className="card space-y-4">
+            <h3 className="font-bold text-sm text-gray-900 uppercase">Statistics</h3>
             
-            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-xl border border-gray-100">
+            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-100">
               <div className="flex items-center gap-3">
                 <Flame className="text-orange-500" size={20} />
                 <span className="font-medium text-gray-700">Current Streak</span>
@@ -265,7 +265,7 @@ export default function ProfilePage() {
               <span className="font-bold text-xl text-gray-900">{stats.current_streak}</span>
             </div>
 
-            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-xl border border-gray-100">
+            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-100">
               <div className="flex items-center gap-3">
                 <TrendingUp className="text-green-500" size={20} />
                 <span className="font-medium text-gray-700">Longest Streak</span>
@@ -273,7 +273,7 @@ export default function ProfilePage() {
               <span className="font-bold text-xl text-gray-900">{stats.longest_streak}</span>
             </div>
 
-            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-xl border border-gray-100">
+            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-100">
               <div className="flex items-center gap-3">
                 <Clock className="text-blue-500" size={20} />
                 <span className="font-medium text-gray-700">Focus Time</span>
@@ -281,7 +281,7 @@ export default function ProfilePage() {
               <span className="font-bold text-xl text-gray-900">{totalHours}h</span>
             </div>
 
-            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-xl border border-gray-100">
+            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-100">
               <div className="flex items-center gap-3">
                 <Brain className="text-purple-500" size={20} />
                 <span className="font-medium text-gray-700">Reviews Done</span>
@@ -289,7 +289,7 @@ export default function ProfilePage() {
               <span className="font-bold text-xl text-gray-900">{stats.total_reviews}</span>
             </div>
 
-            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-xl border border-gray-100">
+            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-100">
               <div className="flex items-center gap-3">
                 <Target className="text-red-500" size={20} />
                 <span className="font-medium text-gray-700">Mocks Logged</span>
@@ -299,8 +299,8 @@ export default function ProfilePage() {
           </div>
 
           {/* ALL LEVELS */}
-          <div className="card p-6">
-            <h3 className="font-bold text-sm text-gray-900 uppercase tracking-wider mb-4">All Levels</h3>
+          <div className="card">
+            <h3 className="font-bold text-sm text-gray-900 uppercase mb-4">All Levels</h3>
             <div className="space-y-2 max-h-[300px] overflow-y-auto">
               {LEVELS.map(level => {
                 const lvlColors = getLevelColor(level.color)
@@ -311,7 +311,7 @@ export default function ProfilePage() {
                   <div 
                     key={level.level}
                     className={`flex items-center justify-between p-2 rounded-lg ${
-                      isCurrent ? `${lvlColors.bg} border-2 ${lvlColors.border}` : 
+                      isCurrent ? `${lvlColors.bg} border ${lvlColors.border}` : 
                       isCurrentOrPast ? 'bg-gray-50' : 'opacity-40'
                     }`}
                   >

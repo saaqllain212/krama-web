@@ -455,7 +455,7 @@ export function estimateCost(
     return {
       estimatedCost: 0,
       currency: 'USD',
-      note: 'Gemini API is currently free (1,500 requests/day limit)'
+      note: 'Gemini free tier: ~250 req/day (Flash), ~1000/day (Flash-Lite). Each generation = 1 request.'
     }
   } else {
     // Claude pricing (rough estimate)

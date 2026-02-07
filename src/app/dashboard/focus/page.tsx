@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { Play, Pause, RotateCcw, ArrowLeft } from 'lucide-react'
+import { Play, Pause, RotateCcw, ArrowLeft, BarChart3, Maximize2, Minimize2 } from 'lucide-react'
 import Link from 'next/link'
 import { useAlert } from '@/context/AlertContext'
 import { useXP } from '@/context/XPContext'
@@ -23,13 +23,16 @@ export default function FocusPage() {
   const [isSaving, setIsSaving] = useState(false)
   const [todaySessions, setTodaySessions] = useState(0)
   const [todayMinutes, setTodayMinutes] = useState(0)
+  const [customTime, setCustomTime] = useState('')
+  const [isFocusMode, setIsFocusMode] = useState(false)
 
   // --- REFS for accurate timing ---
   const startTimeRef = useRef<number | null>(null)
   const totalSecondsRef = useRef<number>(25 * 60)
-  const intervalRef = useRef<NodeJS.Timeout | null>(null)
+  const rafRef = useRef<number | null>(null)
+  const sessionStartRef = useRef<number | null>(null) // Track when session started for actual duration
 
-  // --- ACCURATE TIMER using Date.now() ---
+  // --- ACCURATE TIMER using requestAnimationFrame + Date.now() ---
   const updateTimer = useCallback(() => {
     if (!startTimeRef.current) return
     
@@ -42,19 +45,39 @@ export default function FocusPage() {
     if (remaining <= 0) {
       setIsActive(false)
       startTimeRef.current = null
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current)
-        intervalRef.current = null
-      }
-      // Auto-save when complete
-      handleSaveOnComplete()
+      // Auto-save when complete - record actual target duration
+      handleSaveSession(targetMinutes)
+      return
     }
-  }, [])
-
-  // Auto-save function when timer completes
-  const handleSaveOnComplete = async () => {
-    const duration = targetMinutes
     
+    rafRef.current = requestAnimationFrame(updateTimer)
+  }, [targetMinutes])
+
+  // Handle tab visibility change - recalculate on return
+  useEffect(() => {
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible' && isActive && startTimeRef.current) {
+        // Force immediate recalculation when tab becomes visible
+        const now = Date.now()
+        const elapsed = Math.floor((now - startTimeRef.current) / 1000)
+        const remaining = Math.max(0, totalSecondsRef.current - elapsed)
+        
+        setSecondsLeft(remaining)
+        
+        if (remaining <= 0) {
+          setIsActive(false)
+          startTimeRef.current = null
+          handleSaveSession(targetMinutes)
+        }
+      }
+    }
+    
+    document.addEventListener('visibilitychange', handleVisibility)
+    return () => document.removeEventListener('visibilitychange', handleVisibility)
+  }, [isActive, targetMinutes])
+
+  // Save session helper
+  const handleSaveSession = async (duration: number) => {
     if (duration < 1) return
 
     setIsSaving(true)
@@ -82,6 +105,8 @@ export default function FocusPage() {
         
         // Reset timer
         setSecondsLeft(targetMinutes * 60)
+        totalSecondsRef.current = targetMinutes * 60
+        sessionStartRef.current = null
         setTopic('')
       }
     } catch (err) {
@@ -113,28 +138,59 @@ export default function FocusPage() {
     fetchTodayData()
   }, [])
 
+  // RAF-based timer loop
   useEffect(() => {
     if (isActive) {
-      intervalRef.current = setInterval(updateTimer, 100)
+      rafRef.current = requestAnimationFrame(updateTimer)
     } else {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current)
-        intervalRef.current = null
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current)
+        rafRef.current = null
       }
     }
     return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current)
+      if (rafRef.current) cancelAnimationFrame(rafRef.current)
     }
   }, [isActive, updateTimer])
+
+  // Toggle focus mode — hide sidebar
+  useEffect(() => {
+    const sidebar = document.querySelector('aside')
+    const mobileNav = document.querySelector('[class*="sticky top-0 z-30"]')
+    const mainContent = document.querySelector('main')
+    
+    if (isFocusMode && isActive) {
+      sidebar?.classList.add('!hidden')
+      mobileNav?.classList.add('!hidden')
+      mainContent?.classList.remove('lg:pl-64')
+    } else {
+      sidebar?.classList.remove('!hidden')
+      mobileNav?.classList.remove('!hidden')
+      mainContent?.classList.add('lg:pl-64')
+    }
+    
+    return () => {
+      sidebar?.classList.remove('!hidden')
+      mobileNav?.classList.remove('!hidden')
+      mainContent?.classList.add('lg:pl-64')
+    }
+  }, [isFocusMode, isActive])
 
   const toggleTimer = () => {
     if (!isActive) {
       // START
       startTimeRef.current = Date.now()
       totalSecondsRef.current = secondsLeft
+      sessionStartRef.current = Date.now()
       setIsActive(true)
     } else {
-      // PAUSE
+      // PAUSE — save the remaining seconds accurately
+      if (startTimeRef.current) {
+        const elapsed = Math.floor((Date.now() - startTimeRef.current) / 1000)
+        const remaining = Math.max(0, totalSecondsRef.current - elapsed)
+        setSecondsLeft(remaining)
+        totalSecondsRef.current = remaining
+      }
       setIsActive(false)
       startTimeRef.current = null
     }
@@ -143,10 +199,12 @@ export default function FocusPage() {
   const resetTimer = () => {
     setIsActive(false)
     setSecondsLeft(targetMinutes * 60)
+    totalSecondsRef.current = targetMinutes * 60
     startTimeRef.current = null
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current)
-      intervalRef.current = null
+    sessionStartRef.current = null
+    if (rafRef.current) {
+      cancelAnimationFrame(rafRef.current)
+      rafRef.current = null
     }
   }
 
@@ -155,7 +213,31 @@ export default function FocusPage() {
       setTargetMinutes(minutes)
       setSecondsLeft(minutes * 60)
       totalSecondsRef.current = minutes * 60
+      setCustomTime('')
     }
+  }
+
+  const handleCustomTime = () => {
+    const mins = parseInt(customTime)
+    if (mins && mins >= 1 && mins <= 300) {
+      setTargetMinutes(mins)
+      setSecondsLeft(mins * 60)
+      totalSecondsRef.current = mins * 60
+      setCustomTime('')
+    }
+  }
+
+  // Manual save (for when user wants to stop early and save)
+  const handleEarlySave = () => {
+    if (!sessionStartRef.current) return
+    
+    const elapsedMs = Date.now() - sessionStartRef.current
+    const actualMinutes = Math.max(1, Math.round(elapsedMs / 60000))
+    
+    setIsActive(false)
+    startTimeRef.current = null
+    
+    handleSaveSession(actualMinutes)
   }
 
   // Format time display
@@ -168,14 +250,36 @@ export default function FocusPage() {
 
   return (
     <div className="min-h-[calc(100vh-8rem)] flex flex-col">
-      {/* Back Button */}
-      <Link 
-        href="/dashboard"
-        className="inline-flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors mb-8"
-      >
-        <ArrowLeft className="w-4 h-4" />
-        Back to Dashboard
-      </Link>
+      {/* Top Bar */}
+      <div className="flex items-center justify-between mb-8">
+        <Link 
+          href="/dashboard"
+          className="inline-flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back to Dashboard
+        </Link>
+
+        <div className="flex items-center gap-3">
+          {/* Focus Insights Link */}
+          <Link 
+            href="/dashboard/focus/insights"
+            className="inline-flex items-center gap-2 text-sm font-medium text-primary-600 hover:text-primary-800 bg-primary-50 hover:bg-primary-100 px-4 py-2 rounded-lg transition-all"
+          >
+            <BarChart3 className="w-4 h-4" />
+            Focus Insights
+          </Link>
+
+          {/* Fullscreen toggle */}
+          <button
+            onClick={() => setIsFocusMode(!isFocusMode)}
+            className="p-2 text-gray-500 hover:text-gray-800 bg-gray-100 hover:bg-gray-200 rounded-lg transition-all"
+            title={isFocusMode ? 'Exit focus mode' : 'Enter focus mode'}
+          >
+            {isFocusMode ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
+          </button>
+        </div>
+      </div>
 
       {/* Main Content - Centered */}
       <div className="flex-1 flex flex-col items-center justify-center max-w-2xl mx-auto w-full">
@@ -242,6 +346,18 @@ export default function FocusPage() {
             )}
           </button>
 
+          {/* Early save button - only show when timer is active */}
+          {isActive && (
+            <button
+              onClick={handleEarlySave}
+              disabled={isSaving}
+              className="btn btn-secondary px-6 text-sm"
+              title="Stop & save elapsed time"
+            >
+              Stop & Save
+            </button>
+          )}
+
           <button
             onClick={resetTimer}
             disabled={isActive || isSaving}
@@ -252,22 +368,45 @@ export default function FocusPage() {
           </button>
         </div>
 
-        {/* Time Presets */}
+        {/* Time Presets + Custom */}
         {!isActive && (
-          <div className="flex flex-wrap items-center justify-center gap-3 mb-12">
-            {PRESETS.map((preset) => (
+          <div className="mb-12 space-y-4">
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              {PRESETS.map((preset) => (
+                <button
+                  key={preset}
+                  onClick={() => changePreset(preset)}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all
+                    ${targetMinutes === preset && !customTime
+                      ? 'bg-primary-500 text-white shadow-soft'
+                      : 'bg-white text-gray-700 border border-gray-200 hover:border-primary-300 hover:shadow-soft'
+                    }`}
+                >
+                  {preset}m
+                </button>
+              ))}
+            </div>
+
+            {/* Custom time input */}
+            <div className="flex items-center justify-center gap-2">
+              <input
+                type="number"
+                value={customTime}
+                onChange={(e) => setCustomTime(e.target.value)}
+                placeholder="Custom (min)"
+                min={1}
+                max={300}
+                className="input w-36 text-center text-sm"
+                onKeyDown={(e) => e.key === 'Enter' && handleCustomTime()}
+              />
               <button
-                key={preset}
-                onClick={() => changePreset(preset)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all
-                  ${targetMinutes === preset
-                    ? 'bg-primary-500 text-white shadow-soft'
-                    : 'bg-white text-gray-700 border border-gray-200 hover:border-primary-300 hover:shadow-soft'
-                  }`}
+                onClick={handleCustomTime}
+                disabled={!customTime || parseInt(customTime) < 1}
+                className="btn btn-secondary text-sm px-4 disabled:opacity-40"
               >
-                {preset}m
+                Set
               </button>
-            ))}
+            </div>
           </div>
         )}
 

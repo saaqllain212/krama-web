@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useCallback } from 'react'
-import { Upload, File, X, AlertCircle, CheckCircle2, Loader2 } from 'lucide-react'
+import { Upload, File, X, AlertCircle, CheckCircle2, Loader2, ImageOff, ExternalLink } from 'lucide-react'
 import { 
   extractTextFromPDF, 
   validatePDFFile, 
@@ -21,6 +21,7 @@ export default function PDFUploader({ onTextExtracted }: PDFUploaderProps) {
   const [progress, setProgress] = useState<ExtractionProgress | null>(null)
   const [result, setResult] = useState<PDFExtractionResult | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [isImageBased, setIsImageBased] = useState(false)
   
   // Handle file drop
   const handleDrop = useCallback((e: React.DragEvent<HTMLDivElement>) => {
@@ -40,6 +41,7 @@ export default function PDFUploader({ onTextExtracted }: PDFUploaderProps) {
   const handleFileSelect = async (selectedFile: File) => {
     setError(null)
     setResult(null)
+    setIsImageBased(false)
     
     // Validate file
     const validation = validatePDFFile(selectedFile)
@@ -71,6 +73,7 @@ export default function PDFUploader({ onTextExtracted }: PDFUploaderProps) {
         onTextExtracted(extractionResult)
       } else {
         setError(extractionResult.error || 'Failed to extract text')
+        setIsImageBased(!!extractionResult.isImageBased)
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Extraction failed')
@@ -86,34 +89,52 @@ export default function PDFUploader({ onTextExtracted }: PDFUploaderProps) {
     setResult(null)
     setError(null)
     setProgress(null)
+    setIsImageBased(false)
   }
   
   return (
     <div className="space-y-4">
       {!file ? (
         // Upload Area
-        <div
-          onDrop={handleDrop}
-          onDragOver={handleDragOver}
-          className="border-2 border-dashed border-border-primary rounded-xl p-12 text-center hover:border-primary-500 hover:bg-primary-500/5 transition-all cursor-pointer"
-        >
-          <input
-            type="file"
-            accept=".pdf"
-            onChange={(e) => e.target.files?.[0] && handleFileSelect(e.target.files[0])}
-            className="hidden"
-            id="pdf-upload"
-          />
-          <label htmlFor="pdf-upload" className="cursor-pointer">
-            <Upload className="w-12 h-12 mx-auto mb-4 text-text-secondary" />
-            <h3 className="text-lg font-semibold mb-2">Upload Your Study PDF</h3>
-            <p className="text-text-secondary mb-4">
-              Drag and drop or click to browse
-            </p>
-            <p className="text-sm text-text-tertiary">
-              Supports text-based PDFs up to 50MB
-            </p>
-          </label>
+        <div>
+          <div
+            onDrop={handleDrop}
+            onDragOver={handleDragOver}
+            className="border-2 border-dashed border-border-primary rounded-xl p-12 text-center hover:border-primary-500 hover:bg-primary-500/5 transition-all cursor-pointer"
+          >
+            <input
+              type="file"
+              accept=".pdf"
+              onChange={(e) => e.target.files?.[0] && handleFileSelect(e.target.files[0])}
+              className="hidden"
+              id="pdf-upload"
+            />
+            <label htmlFor="pdf-upload" className="cursor-pointer">
+              <Upload className="w-12 h-12 mx-auto mb-4 text-text-secondary" />
+              <h3 className="text-lg font-semibold mb-2">Upload Your Study PDF</h3>
+              <p className="text-text-secondary mb-4">
+                Drag and drop or click to browse
+              </p>
+              <p className="text-sm text-text-tertiary">
+                Supports text-based PDFs up to 50MB
+              </p>
+            </label>
+          </div>
+
+          {/* Pre-upload tip */}
+          <div className="mt-3 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+            <div className="flex items-start gap-2">
+              <ImageOff className="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" />
+              <p className="text-xs text-amber-700">
+                <strong>Scanned/Image PDFs won't work.</strong> If your PDF was scanned from a book or contains images of text, 
+                first convert it to text using{' '}
+                <a href="https://www.ilovepdf.com/ocr-pdf" target="_blank" rel="noopener noreferrer" className="underline font-medium">
+                  ilovepdf.com/ocr
+                </a>{' '}
+                (free), then upload the converted version.
+              </p>
+            </div>
+          </div>
         </div>
       ) : (
         // File Preview & Extraction
@@ -190,24 +211,58 @@ export default function PDFUploader({ onTextExtracted }: PDFUploaderProps) {
             </div>
           )}
           
-          {/* Error */}
-          {error && (
+          {/* Error - Image-based PDF */}
+          {error && isImageBased && (
+            <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg">
+              <div className="flex items-start gap-3">
+                <ImageOff className="w-6 h-6 text-amber-500 flex-shrink-0 mt-0.5" />
+                <div className="flex-1">
+                  <p className="font-semibold text-amber-700 mb-2">This is a scanned/image-based PDF</p>
+                  <p className="text-sm text-amber-600 mb-3">
+                    Krama can only extract text from text-based PDFs. Your PDF appears to contain scanned images instead of selectable text.
+                  </p>
+                  <p className="text-sm font-medium text-amber-700 mb-2">Convert it for free using:</p>
+                  <div className="space-y-2 mb-3">
+                    <a 
+                      href="https://www.ilovepdf.com/ocr-pdf" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 text-sm text-primary-600 hover:text-primary-800 font-medium"
+                    >
+                      <ExternalLink className="w-3 h-3" />
+                      ilovepdf.com/ocr — Free online OCR
+                    </a>
+                    <a 
+                      href="https://ocr.space/" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 text-sm text-primary-600 hover:text-primary-800 font-medium"
+                    >
+                      <ExternalLink className="w-3 h-3" />
+                      ocr.space — Free OCR API
+                    </a>
+                    <p className="text-xs text-amber-600">
+                      Or: Upload to Google Drive → Right-click → Open with Google Docs → Download as PDF
+                    </p>
+                  </div>
+                  <button 
+                    onClick={handleRemove}
+                    className="text-sm font-medium text-amber-700 underline hover:text-amber-900"
+                  >
+                    Remove & try another PDF
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Error - General */}
+          {error && !isImageBased && (
             <div className="flex items-start gap-2 p-4 bg-danger-500/10 border border-danger-500/20 rounded-lg">
               <AlertCircle className="w-5 h-5 text-danger-500 flex-shrink-0 mt-0.5" />
               <div className="flex-1">
                 <p className="font-medium text-danger-500 mb-1">Extraction Failed</p>
-                <p className="text-sm text-text-secondary">{error}</p>
-                
-                {error.includes('image-based') && (
-                  <div className="mt-3 text-sm text-text-secondary">
-                    <p className="font-medium mb-1">Possible solutions:</p>
-                    <ul className="list-disc list-inside space-y-1">
-                      <li>Try converting the PDF to text using online tools</li>
-                      <li>Use a different PDF if available</li>
-                      <li>Check if the PDF is password protected</li>
-                    </ul>
-                  </div>
-                )}
+                <p className="text-sm text-text-secondary whitespace-pre-line">{error}</p>
               </div>
             </div>
           )}

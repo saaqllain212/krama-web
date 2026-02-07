@@ -8,9 +8,14 @@
 
 import * as pdfjsLib from 'pdfjs-dist'
 
-// Set worker path
+// Set worker - use inline worker to avoid CDN/Turbopack issues
+// pdfjs-dist v5 ships its own worker, we use it directly
 if (typeof window !== 'undefined') {
-  pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`
+  // Use the bundled worker from pdfjs-dist (works with Turbopack)
+  pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
+    'pdfjs-dist/build/pdf.worker.min.mjs',
+    import.meta.url
+  ).toString()
 }
 
 export interface PDFExtractionResult {
@@ -20,6 +25,7 @@ export interface PDFExtractionResult {
   fileName: string
   estimatedReadingTime: number // in minutes
   error?: string
+  isImageBased?: boolean // Flag for OCR warning
 }
 
 export interface ExtractionProgress {
@@ -90,7 +96,8 @@ export async function extractTextFromPDF(
         pageCount,
         fileName: file.name,
         estimatedReadingTime: 0,
-        error: 'Very little text extracted. This PDF might be image-based (scanned). Please try a text-based PDF.'
+        isImageBased: true,
+        error: 'This PDF appears to be image-based (scanned). Krama cannot read scanned/image PDFs directly. Please convert it to a text-based PDF using a free OCR tool like:\n\n• ilovepdf.com/ocr (free, online)\n• ocr.space (free API)\n• Google Drive (upload → Open with Google Docs)\n\nThen re-upload the converted text-based PDF.'
       }
     }
     
@@ -107,13 +114,39 @@ export async function extractTextFromPDF(
     }
   } catch (error) {
     console.error('PDF extraction error:', error)
+    
+    const errorMessage = error instanceof Error ? error.message : 'Failed to extract text from PDF'
+    
+    // Provide user-friendly error messages
+    if (errorMessage.includes('worker') || errorMessage.includes('fetch')) {
+      return {
+        success: false,
+        text: '',
+        pageCount: 0,
+        fileName: file.name,
+        estimatedReadingTime: 0,
+        error: 'PDF reader failed to initialize. Please try refreshing the page. If the issue persists, try a different PDF file.'
+      }
+    }
+    
+    if (errorMessage.includes('password') || errorMessage.includes('encrypted')) {
+      return {
+        success: false,
+        text: '',
+        pageCount: 0,
+        fileName: file.name,
+        estimatedReadingTime: 0,
+        error: 'This PDF is password-protected. Please remove the password first and try again.'
+      }
+    }
+    
     return {
       success: false,
       text: '',
       pageCount: 0,
       fileName: file.name,
       estimatedReadingTime: 0,
-      error: error instanceof Error ? error.message : 'Failed to extract text from PDF'
+      error: errorMessage
     }
   }
 }

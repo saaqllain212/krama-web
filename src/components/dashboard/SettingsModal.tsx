@@ -67,7 +67,6 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
     try {
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
-        // Update Database
         const { error: dbError } = await supabase
           .from('syllabus_settings')
           .update({ daily_goal_hours: dailyHours })
@@ -75,7 +74,6 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
         
         if (dbError) throw dbError
 
-        // Update Metadata
         const { error: metaError } = await supabase.auth.updateUser({
           data: { target_hours: dailyHours }
         })
@@ -85,7 +83,6 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
         setInitialHours(dailyHours)
         showAlert('Daily goal updated!', 'success')
         
-        // Reload after a brief delay
         setTimeout(() => window.location.reload(), 1000)
       }
     } catch (e) {
@@ -143,13 +140,9 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) throw new Error('No user found')
       
-      console.log('Starting reset for user:', user.id)
-      
-      // Delete data from each table individually with error checking
       const tables = ['focus_logs', 'topics', 'mock_logs', 'syllabus_progress']
       
       for (const table of tables) {
-        console.log(`Deleting from ${table}...`)
         const { error } = await supabase
           .from(table)
           .delete()
@@ -157,14 +150,9 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
         
         if (error) {
           console.error(`Error deleting from ${table}:`, error)
-          // Continue with other tables even if one fails
-        } else {
-          console.log(`Successfully deleted from ${table}`)
         }
       }
       
-      // Reset syllabus settings but keep the active exam
-      console.log('Resetting syllabus_settings...')
       const { error: settingsError } = await supabase
         .from('syllabus_settings')
         .update({ 
@@ -214,31 +202,31 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-      <div className="w-full max-w-lg border-2 border-black bg-white shadow-[8px_8px_0_0_#000] max-h-[90vh] overflow-y-auto">
+      <div className="w-full max-w-lg bg-white rounded-2xl shadow-2xl max-h-[90vh] overflow-y-auto">
         
         {/* Header */}
-        <div className="flex items-center justify-between border-b-2 border-black bg-stone-100 p-4 sticky top-0 z-10">
-          <h2 className="text-lg font-black uppercase tracking-tight">Settings</h2>
+        <div className="flex items-center justify-between border-b border-gray-200 bg-gray-50 p-5 sticky top-0 z-10 rounded-t-2xl">
+          <h2 className="text-lg font-bold text-gray-900">Settings</h2>
           <button 
             onClick={closeAndReset} 
-            className="p-1 hover:bg-red-100 hover:text-red-600 transition-colors"
+            className="p-2 hover:bg-red-100 hover:text-red-600 rounded-lg transition-colors"
           >
-            <X size={24} />
+            <X size={20} />
           </button>
         </div>
 
         <div className="p-6 space-y-6">
           
           {/* DAILY GOAL */}
-          <div className="border-2 border-black bg-white p-5 shadow-[3px_3px_0_0_#000]">
+          <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-soft">
             <div className="flex items-start gap-4">
-              <div className="bg-black text-white p-3">
+              <div className="bg-primary-500 text-white p-3 rounded-lg">
                 <Target size={20} />
               </div>
               <div className="flex-1">
                 <div className="flex justify-between items-center mb-3">
-                  <h3 className="font-bold uppercase text-sm">Daily Goal</h3>
-                  <span className="text-sm font-black bg-brand px-3 py-1 text-black">
+                  <h3 className="font-semibold text-sm text-gray-900">Daily Goal</h3>
+                  <span className="text-sm font-bold bg-primary-100 text-primary-700 px-3 py-1 rounded-full">
                     {dailyHours} hrs/day
                   </span>
                 </div>
@@ -249,13 +237,13 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
                   step="1" 
                   value={dailyHours} 
                   onChange={(e) => setDailyHours(parseInt(e.target.value))} 
-                  className="w-full h-2 bg-stone-200 rounded-lg appearance-none cursor-pointer accent-black mb-4" 
+                  className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-primary-500 mb-4" 
                 />
                 {dailyHours !== initialHours && (
                   <button 
                     onClick={handleSaveGoal} 
                     disabled={savingGoal} 
-                    className="w-full bg-black text-white py-3 text-sm font-bold uppercase hover:bg-stone-800 transition-all disabled:opacity-50"
+                    className="btn btn-primary w-full text-sm disabled:opacity-50"
                   >
                     {savingGoal ? 'Saving...' : 'Save Changes'}
                   </button>
@@ -265,44 +253,44 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
           </div>
 
           {/* PROTOCOL SWITCH */}
-          <div className="border-2 border-black bg-stone-50 p-5 shadow-[3px_3px_0_0_#000]">
+          <div className="bg-gray-50 rounded-xl border border-gray-200 p-5">
             <div className="flex items-start gap-4">
-              <div className={`p-3 transition-colors ${showSwitchConfirm ? 'bg-red-600 text-white' : 'bg-black text-white'}`}>
+              <div className={`p-3 rounded-lg transition-colors ${showSwitchConfirm ? 'bg-red-500 text-white' : 'bg-gray-800 text-white'}`}>
                 {showSwitchConfirm ? <AlertCircle size={20}/> : <Zap size={20} />}
               </div>
               <div className="flex-1">
-                <h3 className="font-bold uppercase text-sm mb-2">Active Protocol</h3>
+                <h3 className="font-semibold text-sm text-gray-900 mb-2">Active Protocol</h3>
                 {!showSwitchConfirm ? (
                   <>
-                    <div className="text-sm font-mono bg-white border-2 border-black inline-block px-3 py-1 mb-3 uppercase">
+                    <div className="text-sm font-mono bg-white border border-gray-200 inline-block px-3 py-1 mb-3 rounded-lg uppercase text-gray-700">
                       {activeExam || 'None'}
                     </div>
-                    <p className="text-sm text-black/60 mb-4">
+                    <p className="text-sm text-gray-500 mb-4">
                       Switch to a different exam. Your progress is saved separately for each exam.
                     </p>
                     <button 
                       onClick={handleSwitchProtocol} 
-                      className="bg-white border-2 border-black px-5 py-2.5 text-sm font-bold uppercase hover:bg-black hover:text-white transition-all shadow-[3px_3px_0_0_#000] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px]"
+                      className="btn btn-secondary text-sm"
                     >
                       Switch Exam
                     </button>
                   </>
                 ) : (
                   <div>
-                    <p className="text-sm font-bold text-red-600 mb-4">
+                    <p className="text-sm font-medium text-red-600 mb-4">
                       This will clear local cache and reload. Continue?
                     </p>
                     <div className="flex gap-3">
                       <button 
                         onClick={handleSwitchProtocol} 
                         disabled={loading} 
-                        className="bg-red-600 text-white border-2 border-red-800 px-5 py-2.5 text-sm font-bold uppercase hover:bg-red-700 disabled:opacity-50"
+                        className="bg-red-500 text-white px-5 py-2.5 text-sm font-semibold rounded-lg hover:bg-red-600 disabled:opacity-50 transition-colors"
                       >
                         {loading ? 'Switching...' : 'Yes, Switch'}
                       </button>
                       <button 
                         onClick={() => setShowSwitchConfirm(false)} 
-                        className="px-5 py-2.5 text-sm font-bold uppercase text-black/50 hover:text-black"
+                        className="px-5 py-2.5 text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors"
                       >
                         Cancel
                       </button>
@@ -316,29 +304,29 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
           {/* DANGER ZONE DIVIDER */}
           <div className="relative py-4">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t-2 border-red-200"></div>
+              <div className="w-full border-t border-red-200"></div>
             </div>
             <div className="relative flex justify-center">
-              <span className="bg-white px-4 text-xs font-bold uppercase text-red-400 tracking-widest">
+              <span className="bg-white px-4 text-xs font-semibold text-red-400 tracking-wider">
                 Danger Zone
               </span>
             </div>
           </div>
 
           {/* RESET PROGRESS */}
-          <div className="border-2 border-dashed border-black/20 p-5 hover:border-black transition-colors">
+          <div className="border border-dashed border-gray-300 rounded-xl p-5 hover:border-gray-400 transition-colors">
             <div className="flex items-start gap-4">
-              <div className="bg-stone-100 p-3 text-black/60">
+              <div className="bg-gray-100 p-3 rounded-lg text-gray-500">
                 <RotateCcw size={20} />
               </div>
               <div className="flex-1">
-                <h3 className="font-bold uppercase text-sm mb-1">Reset Progress</h3>
-                <p className="text-sm text-black/50 mb-3">
+                <h3 className="font-semibold text-sm text-gray-900 mb-1">Reset Progress</h3>
+                <p className="text-sm text-gray-500 mb-3">
                   Clears all focus logs, review topics, mock scores, and syllabus progress.
                 </p>
                 {activeTab === 'reset' ? (
-                  <div className="bg-stone-50 border border-stone-200 p-4">
-                    <label className="text-xs font-bold uppercase text-black/50 block mb-2">
+                  <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                    <label className="text-xs font-semibold text-gray-500 block mb-2">
                       Type "RESET" to confirm
                     </label>
                     <div className="flex gap-2">
@@ -347,19 +335,19 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
                         value={confirmText} 
                         onChange={(e) => setConfirmText(e.target.value.toUpperCase())} 
                         placeholder="RESET"
-                        className="flex-1 border-2 border-black px-3 py-2 text-sm font-bold uppercase focus:outline-none" 
+                        className="input flex-1 text-sm font-semibold uppercase" 
                       />
                       <button 
                         onClick={handleReset} 
                         disabled={confirmText !== 'RESET' || loading} 
-                        className="bg-black text-white px-5 py-2 text-sm font-bold uppercase disabled:opacity-30"
+                        className="bg-gray-800 text-white px-5 py-2 text-sm font-semibold rounded-lg disabled:opacity-30 hover:bg-gray-900 transition-colors"
                       >
                         {loading ? '...' : 'Reset'}
                       </button>
                     </div>
                     <button 
                       onClick={() => { setActiveTab(null); setConfirmText('') }}
-                      className="mt-3 text-xs font-bold text-black/40 hover:text-black"
+                      className="mt-3 text-xs font-medium text-gray-400 hover:text-gray-700 transition-colors"
                     >
                       Cancel
                     </button>
@@ -367,7 +355,7 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
                 ) : (
                   <button 
                     onClick={() => { setActiveTab('reset'); setConfirmText('') }} 
-                    className="text-sm font-bold text-black/50 underline hover:text-black"
+                    className="text-sm font-medium text-gray-500 underline hover:text-gray-800 transition-colors"
                   >
                     Reset All Data
                   </button>
@@ -377,19 +365,19 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
           </div>
           
           {/* DELETE ACCOUNT */}
-          <div className="border-2 border-dashed border-red-300 bg-red-50 p-5 hover:border-red-500 transition-colors">
+          <div className="border border-dashed border-red-300 bg-red-50 rounded-xl p-5 hover:border-red-400 transition-colors">
             <div className="flex items-start gap-4">
-              <div className="bg-white p-3 text-red-500 border border-red-200">
+              <div className="bg-white p-3 rounded-lg text-red-500 border border-red-200">
                 <Trash2 size={20} />
               </div>
               <div className="flex-1">
-                <h3 className="font-bold uppercase text-sm text-red-700 mb-1">Delete Account</h3>
+                <h3 className="font-semibold text-sm text-red-700 mb-1">Delete Account</h3>
                 <p className="text-sm text-red-600/70 mb-3">
                   Permanently delete your account and all data. This cannot be undone.
                 </p>
                 {activeTab === 'delete' ? (
-                  <div className="bg-white border border-red-200 p-4">
-                    <label className="text-xs font-bold uppercase text-red-400 block mb-2">
+                  <div className="bg-white border border-red-200 rounded-lg p-4">
+                    <label className="text-xs font-semibold text-red-400 block mb-2">
                       Type "DELETE" to confirm
                     </label>
                     <div className="flex gap-2">
@@ -398,19 +386,19 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
                         value={confirmText} 
                         onChange={(e) => setConfirmText(e.target.value.toUpperCase())} 
                         placeholder="DELETE"
-                        className="flex-1 border-2 border-red-400 px-3 py-2 text-sm font-bold uppercase text-red-600 focus:outline-none" 
+                        className="flex-1 border border-red-300 rounded-lg px-3 py-2 text-sm font-semibold uppercase text-red-600 focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-400" 
                       />
                       <button 
                         onClick={handleDelete} 
                         disabled={confirmText !== 'DELETE' || loading} 
-                        className="bg-red-600 text-white px-5 py-2 text-sm font-bold uppercase hover:bg-red-700 disabled:opacity-30"
+                        className="bg-red-500 text-white px-5 py-2 text-sm font-semibold rounded-lg hover:bg-red-600 disabled:opacity-30 transition-colors"
                       >
                         {loading ? '...' : 'Delete'}
                       </button>
                     </div>
                     <button 
                       onClick={() => { setActiveTab(null); setConfirmText('') }}
-                      className="mt-3 text-xs font-bold text-red-400 hover:text-red-600"
+                      className="mt-3 text-xs font-medium text-red-400 hover:text-red-600 transition-colors"
                     >
                       Cancel
                     </button>
@@ -418,7 +406,7 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
                 ) : (
                   <button 
                     onClick={() => { setActiveTab('delete'); setConfirmText('') }} 
-                    className="text-sm font-bold text-red-400 underline hover:text-red-600"
+                    className="text-sm font-medium text-red-400 underline hover:text-red-600 transition-colors"
                   >
                     Delete My Account
                   </button>

@@ -85,8 +85,8 @@ export default function ReviewPage() {
 
     return { 
       due, 
-      scheduled: query ? scheduled : scheduled.slice(0, 20),
-      archived: query ? archived : archived.slice(0, 20),
+      scheduled: query ? scheduled : scheduled.slice(0, 15),
+      archived: query ? archived : archived.slice(0, 15),
       totalScheduled: scheduled.length,
       totalArchived: archived.length
     }
@@ -330,7 +330,7 @@ export default function ReviewPage() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-white rounded-2xl shadow-2xl w-full max-w-md"
+              className="bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto"
             >
               {/* Header */}
               <div className="flex items-center justify-between border-b border-gray-200 p-6">

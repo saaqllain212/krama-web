@@ -10,7 +10,7 @@ import {
   Map, 
   LineChart, 
   LogOut,
-  Settings,
+  Trophy,
   Sparkles,
   Brain
 } from 'lucide-react'
@@ -25,11 +25,7 @@ const NAV_ITEMS = [
   { label: 'Syllabus Map', href: '/dashboard/syllabus', icon: Map },
   { label: 'Mock Scores', href: '/dashboard/mocks', icon: LineChart },
   { label: 'Analytics', href: '/dashboard/insights', icon: Sparkles },
-]
-
-const COMING_SOON_ITEMS = [
-  { label: 'AI MCQ Gen', icon: Sparkles, badge: 'Beta' },
-  { label: 'Companions', icon: Brain, badge: 'Soon' },
+  { label: 'AI MCQ Gen', href: '/dashboard/mcq', icon: Brain },
 ]
 
 export default function Sidebar() {
@@ -71,7 +67,7 @@ export default function Sidebar() {
   // Filter items based on mode
   const visibleItems = NAV_ITEMS.filter(item => {
     if (activeExam === 'focus') {
-      return ['Overview', 'Focus Mode', 'Spaced Review', 'Mock Scores'].includes(item.label)
+      return ['Overview', 'Focus Mode', 'Spaced Review', 'Mock Scores', 'AI MCQ Gen'].includes(item.label)
     }
     return true
   })
@@ -96,7 +92,7 @@ export default function Sidebar() {
       
       {/* Brand Logo */}
       <div className="flex h-16 items-center justify-between px-6 border-b border-gray-200">
-        <div className="text-2xl font-black uppercase tracking-tight text-gray-900">Krama</div>
+        <div className="text-2xl font-bold uppercase tracking-tight text-gray-900">Krama</div>
         {activeExam && (
           <div className="text-[10px] font-bold uppercase tracking-wider bg-primary-500 text-white px-2 py-1 rounded-full">
             {getExamLabel()}
@@ -156,35 +152,6 @@ export default function Sidebar() {
             </Link>
           )
         })}
-        
-        {/* Divider */}
-        <div className="py-2">
-          <div className="h-px bg-gray-200" />
-        </div>
-        
-        {/* Coming Soon Section */}
-        <div className="px-2 py-2">
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
-            Coming Soon
-          </p>
-          {COMING_SOON_ITEMS.map((item) => {
-            const Icon = item.icon
-            return (
-              <div
-                key={item.label}
-                className="flex items-center justify-between px-4 py-3 rounded-lg text-sm font-medium text-gray-400 cursor-not-allowed"
-              >
-                <div className="flex items-center gap-3">
-                  <Icon className="h-5 w-5" strokeWidth={2} />
-                  <span>{item.label}</span>
-                </div>
-                <span className="text-[10px] font-bold uppercase tracking-wider bg-purple-100 text-purple-600 px-2 py-0.5 rounded-full">
-                  {item.badge}
-                </span>
-              </div>
-            )
-          })}
-        </div>
       </nav>
 
       {/* Footer Actions */}
@@ -193,8 +160,8 @@ export default function Sidebar() {
           href="/dashboard/profile"
           className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-700 hover:bg-white hover:shadow-soft transition-all"
         >
-          <Settings className="h-5 w-5" strokeWidth={2} />
-          <span>Settings</span>
+          <Trophy className="h-5 w-5" strokeWidth={2} />
+          <span>Progress Card</span>
         </Link>
         
         <button 

@@ -261,7 +261,7 @@ function WelcomeView({ onStart }: { onStart: () => void }) {
                 <h4 className="font-semibold mb-1">Get Your API Key</h4>
                 <p className="text-sm text-text-secondary">
                   Sign up for free Gemini API (2 minutes). No credit card needed. 
-                  1,500 free requests per day!
+                  Free tier: ~250-1000 requests per day!
                 </p>
               </div>
             </div>
@@ -338,7 +338,7 @@ function WelcomeView({ onStart }: { onStart: () => void }) {
             Get Started Now
           </button>
           <p className="text-sm text-text-secondary mt-3">
-            No credit card required • Free Gemini API • Privacy-first
+            No credit card required • Free Gemini API tier • Privacy-first
           </p>
         </div>
       </div>

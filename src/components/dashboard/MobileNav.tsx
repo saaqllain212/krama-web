@@ -13,7 +13,9 @@ import {
   LogOut, 
   Menu, 
   X,
-  ChevronRight
+  ChevronRight,
+  Sparkles,
+  Brain
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useSyllabus } from '@/context/SyllabusContext'
@@ -24,6 +26,8 @@ const NAV_ITEMS = [
   { label: 'Spaced Review', href: '/dashboard/review', icon: RotateCw },
   { label: 'Syllabus Map', href: '/dashboard/syllabus', icon: Map },
   { label: 'Mock Scores', href: '/dashboard/mocks', icon: LineChart },
+  { label: 'Analytics', href: '/dashboard/insights', icon: Sparkles },
+  { label: 'AI MCQ Gen', href: '/dashboard/mcq', icon: Brain },
 ]
 
 export default function MobileNav() {
@@ -61,7 +65,7 @@ export default function MobileNav() {
   // Filter items based on mode
   const visibleItems = NAV_ITEMS.filter(item => {
     if (activeExam === 'focus') {
-      return ['Overview', 'Focus Mode', 'Spaced Review', 'Mock Scores'].includes(item.label)
+      return ['Overview', 'Focus Mode', 'Spaced Review', 'Mock Scores', 'AI MCQ Gen'].includes(item.label)
     }
     return true
   })
@@ -84,20 +88,20 @@ export default function MobileNav() {
   return (
     <>
       {/* TOP HEADER (Always Visible on Mobile) */}
-      <div className="sticky top-0 z-30 flex h-16 items-center justify-between border-b-2 border-black bg-white px-4 lg:hidden">
+      <div className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-gray-200 bg-white px-4 lg:hidden">
         <div className="flex items-center gap-3">
-          <div className="text-xl font-black uppercase tracking-tight">Krama</div>
+          <div className="text-xl font-bold uppercase tracking-tight text-gray-900">Krama</div>
           {activeExam && (
-            <div className="text-[9px] font-bold uppercase tracking-wider bg-black text-white px-2 py-0.5">
+            <div className="text-[9px] font-bold uppercase tracking-wider bg-primary-500 text-white px-2 py-0.5 rounded-full">
               {getExamLabel()}
             </div>
           )}
         </div>
         <button 
           onClick={() => setIsOpen(true)}
-          className="p-2 hover:bg-black/5 transition-colors"
+          className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
         >
-          <Menu className="h-6 w-6" strokeWidth={2} />
+          <Menu className="h-6 w-6 text-gray-700" strokeWidth={2} />
         </button>
       </div>
 
@@ -120,37 +124,37 @@ export default function MobileNav() {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-              className="fixed inset-y-0 right-0 z-50 w-72 flex flex-col border-l-2 border-black bg-white shadow-2xl lg:hidden"
+              className="fixed inset-y-0 right-0 z-50 w-72 flex flex-col border-l border-gray-200 bg-white shadow-2xl lg:hidden"
             >
               {/* Drawer Header */}
-              <div className="flex h-16 items-center justify-between border-b-2 border-black px-5">
-                <span className="text-sm font-black uppercase tracking-widest text-black/40">Menu</span>
+              <div className="flex h-16 items-center justify-between border-b border-gray-200 px-5">
+                <span className="text-sm font-semibold uppercase tracking-wider text-gray-400">Menu</span>
                 <button 
                   onClick={() => setIsOpen(false)} 
-                  className="p-2 hover:bg-red-50 hover:text-red-600 transition-colors"
+                  className="p-2 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors"
                 >
                   <X className="h-5 w-5" strokeWidth={2} />
                 </button>
               </div>
 
               {/* User Section */}
-              <div className="border-b border-black/10 p-5">
+              <div className="border-b border-gray-200 p-5">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-black text-white flex items-center justify-center font-black text-xl">
+                  <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-purple-500 rounded-full text-white flex items-center justify-center font-bold text-xl">
                     {userInitial}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="font-bold text-base truncate">{userName || 'Student'}</div>
-                    <div className="text-sm text-black/50 font-medium">
+                    <div className="font-semibold text-base text-gray-900 truncate">{userName || 'Student'}</div>
+                    <div className="text-sm text-gray-500 font-medium">
                       {stats.percentage}% complete
                     </div>
                   </div>
                 </div>
                 
                 {/* Progress Bar */}
-                <div className="mt-3 w-full h-2 bg-black/10 rounded-full overflow-hidden">
+                <div className="mt-3 w-full h-2 bg-gray-200 rounded-full overflow-hidden">
                   <div 
-                    className="h-full bg-brand rounded-full transition-all duration-500"
+                    className="h-full bg-gradient-to-r from-primary-500 to-purple-500 rounded-full transition-all duration-500"
                     style={{ width: `${stats.percentage}%` }}
                   />
                 </div>
@@ -167,10 +171,10 @@ export default function MobileNav() {
                       key={item.href}
                       href={item.href}
                       onClick={() => setIsOpen(false)}
-                      className={`flex items-center justify-between px-4 py-4 text-sm font-bold uppercase tracking-wide transition-all active:scale-[0.98]
+                      className={`flex items-center justify-between px-4 py-3 rounded-lg text-sm font-medium transition-all active:scale-[0.98]
                         ${isActive 
-                          ? 'bg-black text-white' 
-                          : 'text-black/60 hover:bg-black/5 hover:text-black'
+                          ? 'bg-primary-500 text-white shadow-soft' 
+                          : 'text-gray-700 hover:bg-gray-50'
                         }`}
                     >
                       <div className="flex items-center gap-3">
@@ -184,10 +188,10 @@ export default function MobileNav() {
               </nav>
 
               {/* Footer / Logout */}
-              <div className="border-t-2 border-black p-4 mt-auto">
+              <div className="border-t border-gray-200 p-4 mt-auto">
                 <button 
                   onClick={handleLogout}
-                  className="flex w-full items-center gap-3 px-4 py-4 text-sm font-bold uppercase tracking-wide text-black/40 hover:bg-red-50 hover:text-red-600 transition-all active:scale-[0.98]"
+                  className="flex w-full items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-500 hover:bg-red-50 hover:text-red-600 transition-all active:scale-[0.98]"
                 >
                   <LogOut className="h-5 w-5" strokeWidth={2} />
                   Log Out
