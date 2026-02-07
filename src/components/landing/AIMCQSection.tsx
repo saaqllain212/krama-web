@@ -104,19 +104,16 @@ export default function AIMCQSection() {
               </div>
             </div>
 
-            {/* Right: Coming Soon Badge */}
+            {/* Right: Try It CTA */}
             <div className="flex items-center justify-center">
               <div className="text-center">
                 <div className="inline-flex items-center gap-2 bg-gradient-to-r from-primary-500 to-purple-500 px-6 py-3 rounded-full mb-4 shadow-lg">
                   <Zap className="w-5 h-5 text-white" />
-                  <span className="text-sm font-bold text-white uppercase tracking-wider">Launching Soon</span>
+                  <span className="text-sm font-bold text-white uppercase tracking-wider">Available Now</span>
                 </div>
                 <p className="text-sm text-gray-600 max-w-xs mx-auto">
-                  Currently in beta testing with select students. Join the waitlist to get early access!
+                  Upload your PDFs and start practicing with AI-generated questions tailored to your exam.
                 </p>
-                <button className="btn btn-secondary mt-6">
-                  Join Waitlist
-                </button>
               </div>
             </div>
           </div>

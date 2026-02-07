@@ -40,19 +40,17 @@ My Syllabus:
       if (!manualText.trim()) return
 
       const lines = manualText.split('\n')
-      const result = []
-      let currentBranch = null
+      const result: any[] = []
+      let currentBranch: any = null
 
-      for (let line of lines) {
+      for (const line of lines) {
         const clean = line.trim()
         if (!clean) continue
 
-        // Check if it's a Leaf (starts with dash or bullet)
         const isLeaf = clean.startsWith('-') || clean.startsWith('•') || clean.startsWith('*')
 
         if (isLeaf) {
-          // It's a Topic
-          const title = clean.replace(/^[-•*]\s*/, '') // Remove the dash
+          const title = clean.replace(/^[-•*]\s*/, '')
           const leafNode = {
             id: `leaf_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`,
             title: title,
@@ -61,22 +59,18 @@ My Syllabus:
           }
 
           if (currentBranch) {
-            // @ts-ignore
             currentBranch.children.push(leafNode)
           } else {
-            // Edge case: Topic before any heading -> Create "General" branch
             currentBranch = {
               id: `branch_${Date.now()}`,
               title: "General Section",
               type: 'branch',
               children: [leafNode]
             }
-            // @ts-ignore
             result.push(currentBranch)
           }
 
         } else {
-          // It's a Heading (Branch)
           currentBranch = {
             id: `branch_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`,
             title: clean,
@@ -87,7 +81,6 @@ My Syllabus:
         }
       }
 
-      // Download the result
       const blob = new Blob([JSON.stringify(result, null, 2)], { type: 'application/json' })
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
@@ -109,56 +102,60 @@ My Syllabus:
   return (
     <>
       {/* --- THE CARD (Visible on Landing Page) --- */}
-      <section className="bg-white px-4 py-24 border-t-2 border-black">
+      <section className="bg-white px-6 py-24 md:px-12">
         <div className="mx-auto max-w-5xl">
-          <div className="relative overflow-hidden border-4 border-black bg-stone-900 p-8 md:p-12 text-white shadow-[12px_12px_0_0_#ccff00]">
+          <div className="relative overflow-hidden bg-gray-900 p-8 md:p-12 rounded-2xl text-white shadow-large">
             
             {/* Background Decor */}
-            <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/3 opacity-20">
-               <FileJson size={400} strokeWidth={0.5} />
+            <div className="absolute top-0 right-0 -translate-y-1/3 translate-x-1/4 opacity-10">
+               <FileJson size={300} strokeWidth={0.5} />
             </div>
+
+            {/* Gradient Orbs */}
+            <div className="absolute top-10 right-10 w-64 h-64 bg-primary-500/20 rounded-full blur-3xl" />
+            <div className="absolute bottom-10 left-10 w-48 h-48 bg-purple-500/20 rounded-full blur-3xl" />
 
             <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
               <div className="space-y-4 max-w-xl">
-                <div className="inline-flex items-center gap-2 rounded-full border border-[#ccff00] bg-[#ccff00]/10 px-3 py-1 text-xs font-bold uppercase tracking-widest text-[#ccff00]">
-                  <Terminal size={12} /> Architect Tool
+                <div className="inline-flex items-center gap-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-white">
+                  <Terminal size={14} /> Protocol Architect
                 </div>
-                <h2 className="text-4xl font-black uppercase tracking-tighter">
-                  Build Your Protocol
+                <h2 className="text-3xl md:text-4xl font-bold tracking-tight">
+                  Build Your Custom Syllabus
                 </h2>
-                <p className="text-lg font-medium text-stone-400">
-                  Don't know how to create a JSON file? Use our <span className="text-white font-bold">Protocol Architect</span> to convert your PDF syllabus into a Krama-compatible file in seconds.
+                <p className="text-lg text-white/60">
+                  Don&apos;t know how to create a JSON file? Use our Protocol Architect to convert your syllabus into a Krama-compatible file in seconds.
                 </p>
               </div>
 
               <button 
                 onClick={() => setIsOpen(true)}
-                className="group flex items-center gap-3 bg-[#ccff00] px-8 py-4 text-black font-black uppercase tracking-widest hover:bg-white transition-colors"
+                className="btn btn-primary group flex items-center gap-3 whitespace-nowrap"
               >
-                Launch Architect <ArrowRight className="transition-transform group-hover:translate-x-1" />
+                Launch Architect <ArrowRight className="transition-transform group-hover:translate-x-1" size={18} />
               </button>
             </div>
           </div>
         </div>
       </section>
 
-      {/* --- THE MODAL (Hidden by default) --- */}
+      {/* --- THE MODAL --- */}
       <AnimatePresence>
         {isOpen && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 p-4 backdrop-blur-sm">
+          <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
             <motion.div 
-              initial={{ scale: 0.9, opacity: 0 }}
+              initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-[#FBF9F6] border-4 border-white shadow-2xl"
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-white rounded-2xl shadow-large"
             >
               {/* Modal Header */}
-              <div className="sticky top-0 z-20 flex items-center justify-between bg-black p-6 text-white">
-                <h3 className="flex items-center gap-2 text-xl font-black uppercase tracking-widest">
-                  <Terminal className="text-[#ccff00]" /> Protocol Architect
+              <div className="sticky top-0 z-20 flex items-center justify-between bg-gray-900 p-6 rounded-t-2xl text-white">
+                <h3 className="flex items-center gap-2 text-lg font-bold">
+                  <Terminal className="text-primary-400" size={20} /> Protocol Architect
                 </h3>
-                <button onClick={() => setIsOpen(false)} className="hover:text-[#ccff00] transition-colors">
-                  <X size={28} />
+                <button onClick={() => setIsOpen(false)} className="p-2 hover:bg-white/10 rounded-lg transition-colors">
+                  <X size={22} />
                 </button>
               </div>
 
@@ -166,16 +163,16 @@ My Syllabus:
               <div className="p-8 md:p-12">
                 
                 {/* Tabs */}
-                <div className="flex gap-6 mb-8 border-b-2 border-black/10">
+                <div className="flex gap-6 mb-8 border-b border-gray-200">
                    <button 
                      onClick={() => setActiveTab('ai')}
-                     className={`pb-4 text-sm font-black uppercase tracking-widest flex items-center gap-2 transition-all ${activeTab === 'ai' ? 'text-black border-b-4 border-[#ccff00]' : 'text-stone-400 hover:text-black'}`}
+                     className={`pb-4 text-sm font-semibold flex items-center gap-2 transition-all border-b-2 ${activeTab === 'ai' ? 'text-primary-600 border-primary-500' : 'text-gray-400 border-transparent hover:text-gray-600'}`}
                    >
                      <Bot size={18} /> Method 1: AI Generator
                    </button>
                    <button 
                      onClick={() => setActiveTab('manual')}
-                     className={`pb-4 text-sm font-black uppercase tracking-widest flex items-center gap-2 transition-all ${activeTab === 'manual' ? 'text-black border-b-4 border-[#ccff00]' : 'text-stone-400 hover:text-black'}`}
+                     className={`pb-4 text-sm font-semibold flex items-center gap-2 transition-all border-b-2 ${activeTab === 'manual' ? 'text-primary-600 border-primary-500' : 'text-gray-400 border-transparent hover:text-gray-600'}`}
                    >
                      <Code size={18} /> Method 2: Quick Paste
                    </button>
@@ -185,34 +182,34 @@ My Syllabus:
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
                     <div className="space-y-6">
                       <div className="flex gap-4">
-                        <div className="flex-shrink-0 w-8 h-8 bg-black text-white rounded-full flex items-center justify-center font-bold">1</div>
+                        <div className="flex-shrink-0 w-8 h-8 bg-primary-500 text-white rounded-full flex items-center justify-center font-bold text-sm">1</div>
                         <div>
-                          <h4 className="font-bold uppercase text-lg">Copy Your Syllabus</h4>
-                          <p className="text-stone-500 text-sm">Open your exam PDF or website. Highlight the topics you want to track and Copy (Ctrl+C).</p>
+                          <h4 className="font-bold text-gray-900 text-lg">Copy Your Syllabus</h4>
+                          <p className="text-gray-500 text-sm">Open your exam PDF or website. Highlight the topics you want to track and Copy (Ctrl+C).</p>
                         </div>
                       </div>
                       <div className="flex gap-4">
-                        <div className="flex-shrink-0 w-8 h-8 bg-black text-white rounded-full flex items-center justify-center font-bold">2</div>
+                        <div className="flex-shrink-0 w-8 h-8 bg-primary-500 text-white rounded-full flex items-center justify-center font-bold text-sm">2</div>
                         <div>
-                          <h4 className="font-bold uppercase text-lg">Copy Our System Prompt</h4>
-                          <p className="text-stone-500 text-sm">We wrote a code for ChatGPT. Copy the black box on the right.</p>
+                          <h4 className="font-bold text-gray-900 text-lg">Copy Our System Prompt</h4>
+                          <p className="text-gray-500 text-sm">We wrote a prompt for ChatGPT. Copy the code box on the right.</p>
                         </div>
                       </div>
                       <div className="flex gap-4">
-                        <div className="flex-shrink-0 w-8 h-8 bg-black text-white rounded-full flex items-center justify-center font-bold">3</div>
+                        <div className="flex-shrink-0 w-8 h-8 bg-primary-500 text-white rounded-full flex items-center justify-center font-bold text-sm">3</div>
                         <div>
-                          <h4 className="font-bold uppercase text-lg">Generate & Upload</h4>
-                          <p className="text-stone-500 text-sm">Paste into ChatGPT. It will give you a code. Save that code as <code className="bg-stone-200 px-1 font-bold text-black">syllabus.json</code> and upload it in Krama.</p>
+                          <h4 className="font-bold text-gray-900 text-lg">Generate & Upload</h4>
+                          <p className="text-gray-500 text-sm">Paste into ChatGPT. Save the output as <code className="bg-gray-100 px-1.5 py-0.5 rounded text-sm font-semibold text-gray-900">syllabus.json</code> and upload it in Krama.</p>
                         </div>
                       </div>
                     </div>
 
                     {/* The Prompt Box */}
-                    <div className="relative group">
-                       <div className="absolute -top-3 left-4 bg-[#ccff00] px-3 py-1 text-xs font-black uppercase tracking-widest border-2 border-black shadow-sm">
+                    <div className="relative">
+                       <div className="absolute -top-3 left-4 bg-primary-500 px-3 py-1 text-xs font-semibold text-white rounded-full shadow-sm">
                          System Prompt
                        </div>
-                       <div className="bg-stone-900 border-4 border-black p-6 pt-8 rounded-sm shadow-[8px_8px_0_0_#000]">
+                       <div className="bg-gray-900 border border-gray-700 p-6 pt-8 rounded-xl">
                           <textarea 
                             readOnly
                             value={SYSTEM_PROMPT}
@@ -220,7 +217,7 @@ My Syllabus:
                           />
                           <button 
                             onClick={handleCopy}
-                            className="w-full mt-4 bg-white py-3 font-bold uppercase hover:bg-[#ccff00] transition-colors flex items-center justify-center gap-2"
+                            className="w-full mt-4 btn btn-primary flex items-center justify-center gap-2"
                           >
                             {copied ? <Check size={16} /> : <Copy size={16} />}
                             {copied ? 'Prompt Copied!' : 'Copy to Clipboard'}
@@ -229,16 +226,15 @@ My Syllabus:
                     </div>
                   </div>
                 ) : (
-                  // ✅ METHOD 2: QUICK PASTE (NOW ACTIVE)
                   <div className="space-y-6">
-                     <div className="bg-amber-50 border border-amber-200 p-4 text-xs text-amber-900 font-medium flex gap-3 rounded-sm">
-                        <List size={20} className="shrink-0" />
+                     <div className="bg-primary-50 border border-primary-100 p-4 text-xs text-primary-900 font-medium flex gap-3 rounded-xl">
+                        <List size={20} className="shrink-0 text-primary-500" />
                         <div>
-                          <span className="font-bold uppercase">Instructions:</span> 
+                          <span className="font-bold">Instructions:</span> 
                           <ul className="list-disc list-inside mt-1 space-y-1">
-                             <li>Type your <strong>Headings</strong> on a new line (e.g., "History").</li>
-                             <li>Start your <strong>Topics</strong> with a dash (e.g., "- Ancient India").</li>
-                             <li>We will automatically generate the code for you.</li>
+                             <li>Type your <strong>Headings</strong> on a new line (e.g., &quot;History&quot;).</li>
+                             <li>Start your <strong>Topics</strong> with a dash (e.g., &quot;- Ancient India&quot;).</li>
+                             <li>We will automatically generate the JSON for you.</li>
                           </ul>
                         </div>
                      </div>
@@ -247,21 +243,21 @@ My Syllabus:
                         {/* INPUT AREA */}
                         <div>
                           <div className="mb-2 flex justify-between items-end">
-                             <label className="text-xs font-bold uppercase text-stone-500">Paste List Here</label>
-                             <button onClick={() => setManualText('')} className="text-[10px] font-bold uppercase text-red-500 hover:underline">Clear</button>
+                             <label className="text-xs font-semibold text-gray-500">Paste List Here</label>
+                             <button onClick={() => setManualText('')} className="text-[10px] font-semibold text-danger-500 hover:underline">Clear</button>
                           </div>
                           <textarea 
                             value={manualText}
                             onChange={(e) => setManualText(e.target.value)}
                             placeholder={`Phase 1: History\n- Ancient India\n- Medieval India\n\nPhase 2: Geography\n- Climate Patterns\n- River Systems`}
-                            className="w-full h-64 bg-white border-2 border-black/10 p-4 font-mono text-sm focus:border-black outline-none placeholder:text-black/20 resize-none transition-all focus:shadow-[4px_4px_0_0_#000]"
+                            className="input h-64 font-mono text-sm resize-none"
                           />
                         </div>
 
                         {/* ACTION AREA */}
                         <div className="flex flex-col justify-center space-y-6">
-                           <div className="text-sm text-stone-600">
-                              Once you click convert, we will instantly generate a <span className="font-bold text-black bg-stone-200 px-1">syllabus.json</span> file. 
+                           <div className="text-sm text-gray-600">
+                              Once you click convert, we will instantly generate a <span className="font-bold text-gray-900">syllabus.json</span> file. 
                               <br/><br/>
                               You can then upload this file in your dashboard to start tracking immediately.
                            </div>
@@ -269,7 +265,7 @@ My Syllabus:
                            <button 
                              onClick={handleSmartParse}
                              disabled={!manualText.trim()}
-                             className="w-full bg-black text-white py-5 font-black uppercase tracking-widest hover:bg-[#ccff00] hover:text-black transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed shadow-[6px_6px_0_0_#ccff00]"
+                             className="btn btn-primary w-full flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
                            >
                              {parseStatus === 'success' ? <Check size={20} /> : <ArrowRight size={20} />}
                              {parseStatus === 'success' ? 'File Generated!' : 'Convert & Download'}
@@ -278,7 +274,7 @@ My Syllabus:
                            {parseStatus === 'success' && (
                              <motion.p 
                                initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-                               className="text-center text-xs font-bold uppercase text-green-600"
+                               className="text-center text-xs font-semibold text-success-600"
                              >
                                Success! Check your downloads folder.
                              </motion.p>

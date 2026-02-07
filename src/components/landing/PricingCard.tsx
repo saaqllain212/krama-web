@@ -6,8 +6,8 @@ import { useTracker } from '@/analytics/useTracker'
 import { EVENTS } from '@/analytics/events'
 
 const FEATURES = [
-  'AI MCQ Generator (coming soon)',
-  'Dual Study Companions (coming soon)',
+  'AI MCQ Generator',
+  'Dual Study Companions',
   'Pomodoro Focus Timer',
   'Visual Syllabus Tracker',
   'Spaced Repetition System',
@@ -22,7 +22,7 @@ export default function PricingCard() {
   const { track } = useTracker()
 
   return (
-    <section className="px-6 py-24 md:px-12 lg:px-16 bg-gradient-to-br from-gray-50 to-white">
+    <section id="pricing" className="px-6 py-24 md:px-12 lg:px-16 bg-gradient-to-br from-gray-50 to-white">
       <div className="max-w-7xl mx-auto">
         
         {/* Section Header */}

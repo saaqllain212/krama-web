@@ -28,7 +28,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Krama | Strategic Study Tracker",
     description: "The tactical operating system for students.",
-    url: "https://krama.in",
+    url: "https://www.usekrama.com",
     siteName: "Krama",
     images: [
       {
@@ -57,7 +57,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${spaceGrotesk.className} antialiased bg-[#FBF9F6] text-[#1A1A1A]`}>
+      <body className={`${spaceGrotesk.className} antialiased bg-gray-50 text-gray-900`}>
         
         {/* Watchtower: Error Monitoring */}
         <SentryWrapper />

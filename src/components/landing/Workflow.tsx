@@ -35,7 +35,7 @@ const STEPS = [
 
 export default function Workflow() {
   return (
-    <section className="bg-gradient-to-b from-gray-50 to-white py-24">
+    <section id="how-it-works" className="bg-gradient-to-b from-gray-50 to-white py-24">
       <div className="mx-auto max-w-6xl px-6 md:px-12">
         
         {/* Header */}

@@ -15,7 +15,7 @@ export default function DualBrainPreview() {
         {/* Section Header */}
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 bg-purple-100 px-4 py-2 rounded-full mb-6">
-            <span className="text-xs font-semibold text-purple-700 uppercase tracking-wider">Coming Soon</span>
+            <span className="text-xs font-semibold text-purple-700 uppercase tracking-wider">Dual Companions</span>
           </div>
           <h2 className="text-4xl font-bold text-gray-900 mb-4 md:text-5xl">
             Your Dual Study Companions
@@ -134,7 +134,7 @@ export default function DualBrainPreview() {
         {/* Bottom CTA */}
         <div className="text-center mt-12">
           <p className="text-sm text-gray-500">
-            Dual companions coming in <span className="font-semibold text-primary-600">Phase 2 Update</span>
+            Two companions that keep you <span className="font-semibold text-primary-600">accountable and motivated</span>
           </p>
         </div>
       </div>
