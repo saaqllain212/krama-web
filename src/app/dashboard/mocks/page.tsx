@@ -175,7 +175,7 @@ export default function MocksPage() {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
           <motion.div 
             className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm"
-            whileHover={{ y: -4, shadow: '0 10px 30px rgba(0,0,0,0.1)' }}
+            whileHover={{ y: -4, boxShadow: '0 10px 30px rgba(0,0,0,0.1)' }}
           >
             <div className="flex items-center gap-2 text-gray-500 mb-2">
               <Activity size={16} />
@@ -186,7 +186,7 @@ export default function MocksPage() {
           
           <motion.div 
             className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm"
-            whileHover={{ y: -4, shadow: '0 10px 30px rgba(0,0,0,0.1)' }}
+            whileHover={{ y: -4, boxShadow: '0 10px 30px rgba(0,0,0,0.1)' }}
           >
             <div className="flex items-center gap-2 text-gray-500 mb-2">
               <TrendingUp size={16} />
@@ -199,7 +199,7 @@ export default function MocksPage() {
           
           <motion.div 
             className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm"
-            whileHover={{ y: -4, shadow: '0 10px 30px rgba(0,0,0,0.1)' }}
+            whileHover={{ y: -4, boxShadow: '0 10px 30px rgba(0,0,0,0.1)' }}
           >
             <div className="flex items-center gap-2 text-gray-500 mb-2">
               <Award size={16} />
@@ -212,7 +212,7 @@ export default function MocksPage() {
           
           <motion.div 
             className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm"
-            whileHover={{ y: -4, shadow: '0 10px 30px rgba(0,0,0,0.1)' }}
+            whileHover={{ y: -4, boxShadow: '0 10px 30px rgba(0,0,0,0.1)' }}
           >
             <div className="flex items-center gap-2 text-gray-500 mb-2">
               <Target size={16} />
