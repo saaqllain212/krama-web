@@ -11,8 +11,10 @@ import InitiationModal from '@/components/dashboard/InitiationModal'
 import BroadcastBanner from '@/components/dashboard/BroadcastBanner'
 import TodayProgressCard from '@/components/dashboard/TodayProgressCard'
 import QuickStatsGrid from '@/components/dashboard/QuickStatsGrid'
-import DualCompanionsPreview from '@/components/dashboard/DualCompanionsPreview'
 import AIMCQBanner from '@/components/dashboard/AIMCQBanner'
+
+// IMPORTS THE NEW COMPANION WIDGET
+import DualCompanions from '@/components/companions/DualCompanions'
 
 // Helper: Get time-aware greeting
 const getGreeting = () => {
@@ -34,8 +36,9 @@ const getMotivation = (progress: number, streak: number) => {
 
 export default function DashboardPage() {
   const [userName, setUserName] = useState('Student')
-  // FIX 1: Added userEmail state
   const [userEmail, setUserEmail] = useState('')
+  // Added user state for companions
+  const [user, setUser] = useState<any>(null)
   
   const [focusMinutes, setFocusMinutes] = useState(0)
   const [dailyGoalMinutes, setDailyGoalMinutes] = useState(360) // 6 hours default
@@ -61,11 +64,12 @@ export default function DashboardPage() {
       const { data: { user } } = await supabase.auth.getUser()
       
       if (user) {
+        setUser(user) // Store full user object
+        
         if (user.user_metadata?.full_name) {
           setUserName(user.user_metadata.full_name.split(' ')[0])
         }
         
-        // FIX 2: Set email from user data
         if (user.email) {
             setUserEmail(user.email)
         }
@@ -207,10 +211,8 @@ export default function DashboardPage() {
       <OnboardingModal />
       <BroadcastBanner />
       
-      {/* FIX 3: Changed isOpen to open */}
       <SettingsModal open={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
       
-      {/* FIX 4: Added userName and userEmail props */}
       <CheckoutModal 
         isOpen={isCheckoutOpen} 
         onClose={() => setIsCheckoutOpen(false)} 
@@ -264,8 +266,13 @@ export default function DashboardPage() {
         </p>
       </div>
 
-      {/* === DUAL COMPANIONS PREVIEW === */}
-      <DualCompanionsPreview />
+      {/* === DUAL COMPANIONS === */}
+      <DualCompanions 
+        userId={user?.id || ''}
+        todayMinutes={focusMinutes}
+        streak={streak}
+        lastWeekAverage={weekData.reduce((a, b) => a + b, 0) / 7}
+      />
 
       {/* === TODAY'S PROGRESS CARD === */}
       <TodayProgressCard 
