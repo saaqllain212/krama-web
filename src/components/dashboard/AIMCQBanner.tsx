@@ -1,8 +1,11 @@
 'use client'
 
 import { Sparkles, Upload, Key, Target, ArrowRight } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 
 export default function AIMCQBanner() {
+  const router = useRouter()
+  
   return (
     <div className="card bg-gradient-to-br from-primary-500 to-purple-600 text-white border-none shadow-large hover:shadow-glow-primary transition-all">
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
@@ -16,7 +19,7 @@ export default function AIMCQBanner() {
           </div>
           
           <p className="text-white/90 mb-4 max-w-xl">
-            Upload your study PDFs and generate unlimited practice questions with your own Claude or Gemini API key. 
+            Upload your study PDFs and generate unlimited practice questions with your own Gemini or Claude API key. 
             <span className="font-semibold"> All processing happens locally on your device.</span>
           </p>
 
@@ -28,11 +31,11 @@ export default function AIMCQBanner() {
             </div>
             <div className="flex items-center gap-2">
               <Key className="w-4 h-4 text-white/80" />
-              <span className="text-white/90">Your API Key</span>
+              <span className="text-white/90">Free Gemini API</span>
             </div>
             <div className="flex items-center gap-2">
               <Target className="w-4 h-4 text-white/80" />
-              <span className="text-white/90">Exam-Specific</span>
+              <span className="text-white/90">SSC/UPSC/NEET Patterns</span>
             </div>
           </div>
         </div>
@@ -40,16 +43,19 @@ export default function AIMCQBanner() {
         {/* Right: CTA */}
         <div className="flex flex-col items-center md:items-end gap-3">
           <div className="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full mb-2">
-            <span className="text-sm font-bold uppercase tracking-wider">Beta Testing</span>
+            <span className="text-sm font-bold uppercase tracking-wider">Now Live!</span>
           </div>
           
-          <button className="btn bg-white text-primary-600 hover:bg-gray-50 flex items-center gap-2 shadow-large">
-            Join Waitlist
+          <button 
+            onClick={() => router.push('/dashboard/mcq')}
+            className="btn bg-white text-primary-600 hover:bg-gray-50 flex items-center gap-2 shadow-large"
+          >
+            Generate MCQs
             <ArrowRight className="w-4 h-4" />
           </button>
           
           <p className="text-xs text-white/70">
-            Currently available to select beta testers
+            Unlimited questions • LocalStorage • Privacy-first
           </p>
         </div>
       </div>
