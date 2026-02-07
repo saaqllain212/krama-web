@@ -1,7 +1,6 @@
 'use client'
 
 import Link from 'next/link'
-import AuthCursor from '@/components/auth/AuthCursor'
 import GrowthGuardianMascot from './GrowthGuardianMascot'
 import TimeWraithMascot from './TimeWraithMascot'
 
@@ -23,8 +22,6 @@ export default function AuthLayout({
 
   return (
     <>
-      {/* Custom Auth Cursor */}
-      <AuthCursor />
 
       <div className="flex min-h-screen w-full">
         

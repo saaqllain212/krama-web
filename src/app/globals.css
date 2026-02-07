@@ -516,7 +516,7 @@
 /* NEW: Enable custom cursors on desktop only (Step 4)
    This hides the native cursor so the React component shows up.
 */
-@media (min-width: 1024px) {
+/*@media (min-width: 1024px) {
   body {
     cursor: none !important;
   }
@@ -526,7 +526,7 @@
   }
   
   /* Keep native cursor for inputs/textareas for better UX */
-  input,
+  /*input,
   textarea {
     cursor: text !important;
   }
@@ -534,7 +534,7 @@
   select {
     cursor: pointer !important;
   }
-}
+/*}
 
 /* ========================================
    7. REDUCED MOTION SUPPORT
