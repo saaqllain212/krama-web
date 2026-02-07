@@ -135,17 +135,19 @@ export default function MCQGenerator({ onComplete }: MCQGeneratorProps) {
         })
         
         // Update user stats
-        await supabase.rpc('increment', {
+        const { error: statsError } = await supabase.rpc('increment', {
           table_name: 'user_mcq_settings',
           column_name: 'total_mcqs_generated',
           user_id: user.id
-        }).catch(() => {
-          // Create settings if doesn't exist
-          supabase.from('user_mcq_settings').upsert({
+        })
+        
+        // If increment fails (settings don't exist), create them
+        if (statsError) {
+          await supabase.from('user_mcq_settings').upsert({
             user_id: user.id,
             total_mcqs_generated: 1
           })
-        })
+        }
       }
       
       // Success!
