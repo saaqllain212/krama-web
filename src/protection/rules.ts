@@ -13,12 +13,19 @@ export const SignupSchema = z.object({
 });
 
 // 2. Payment Rules
+// Accepts BOTH naming conventions for compatibility:
+// - CheckoutModal sends: orderId, paymentId, signature
+// - Legacy code may send: orderCreationId, razorpayPaymentId, razorpaySignature
 export const PaymentSchema = z.object({
   couponCode: z.string().optional().nullable(),
-  // We purposefully do NOT validate 'amount' here because that must be calculated on the server
+  // Current field names (from CheckoutModal)
+  orderId: z.string().optional(),
+  paymentId: z.string().optional(),
+  signature: z.string().optional(),
+  // Legacy field names (kept for safety)
   orderCreationId: z.string().optional(),
   razorpayPaymentId: z.string().optional(),
-  razorpaySignature: z.string().optional()
+  razorpaySignature: z.string().optional(),
 });
 
 // 3. Admin Rules
@@ -32,5 +39,5 @@ export const AdminActionSchema = z.object({
     'CREATE_COUPON', 
     'TOGGLE_COUPON'
   ]),
-  payload: z.any() // Payload shape varies by action, kept flexible
+  payload: z.any()
 });
