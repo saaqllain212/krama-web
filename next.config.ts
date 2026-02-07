@@ -14,9 +14,9 @@ const withPWA = withPWAInit({
   },
 });
 
-// 2. Your Base Config
+// 2. Your Base Config - SIMPLEST VERSION (just removed reactCompiler)
 const nextConfig: NextConfig = {
-  reactCompiler: false, 
+  // That's it! No other changes needed.
 };
 
 // 3. Wrap everything: Sentry protects the PWA, which wraps the Config

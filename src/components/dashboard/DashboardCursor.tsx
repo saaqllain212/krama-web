@@ -6,6 +6,17 @@ import { usePathname } from 'next/navigation'
 // Define the available modes for the cursor
 type CursorMode = 'default' | 'focus' | 'review' | 'mock' | 'reading'
 
+interface TrailPoint {
+  x: number
+  y: number
+}
+
+interface Ripple {
+  x: number
+  y: number
+  id: number
+}
+
 export default function DashboardCursor() {
   // Refs for the DOM elements
   const dotRef = useRef<HTMLDivElement>(null)
@@ -15,6 +26,8 @@ export default function DashboardCursor() {
   const [mode, setMode] = useState<CursorMode>('default')
   const [isHovering, setIsHovering] = useState(false)
   const [isVisible, setIsVisible] = useState(false)
+  const [trail, setTrail] = useState<TrailPoint[]>([])
+  const [ripples, setRipples] = useState<Ripple[]>([])
   
   const pathname = usePathname()
 
@@ -54,14 +67,19 @@ export default function DashboardCursor() {
     const outline = outlineRef.current
     if (!dot || !outline) return
 
+    // Initialize at center to avoid jump on load
+    const initialX = window.innerWidth / 2
+    const initialY = window.innerHeight / 2
+
     // Position variables
-    let mouseX = 0
-    let mouseY = 0
-    let dotX = 0
-    let dotY = 0
-    let outlineX = 0
-    let outlineY = 0
+    let mouseX = initialX
+    let mouseY = initialY
+    let dotX = initialX
+    let dotY = initialY
+    let outlineX = initialX
+    let outlineY = initialY
     let animationId: number
+    let trailInterval: NodeJS.Timeout
 
     // Track mouse coordinates
     const handleMouseMove = (e: MouseEvent) => {
@@ -69,15 +87,29 @@ export default function DashboardCursor() {
       mouseY = e.clientY
     }
 
+    // Click Ripple Effect (Pro Tip #2)
+    const handleClick = (e: MouseEvent) => {
+      const newRipple = {
+        x: e.clientX,
+        y: e.clientY,
+        id: Date.now()
+      }
+      setRipples(prev => [...prev, newRipple])
+      
+      setTimeout(() => {
+        setRipples(prev => prev.filter(r => r.id !== newRipple.id))
+      }, 600)
+    }
+
     // The Animation Frame
     const animate = () => {
-      // --- SPEED LOGIC ---
-      // If in Focus Mode: We slow it down slightly to be "calmer" and less distracting
-      // If in Default/Other: We keep it snappy (0.9/0.3) like the landing page
+      // --- IMPROVED SPEED LOGIC ---
       const isFocus = mode === 'focus'
       
-      const dotSpeed = isFocus ? 0.2 : 0.9
-      const outlineSpeed = isFocus ? 0.1 : 0.3
+      // Much faster speeds for responsive feel
+      // Focus mode: slightly slower but still responsive
+      const dotSpeed = isFocus ? 0.18 : 0.25
+      const outlineSpeed = isFocus ? 0.12 : 0.15
 
       // Smooth interpolation (Lerp)
       dotX += (mouseX - dotX) * dotSpeed
@@ -85,17 +117,25 @@ export default function DashboardCursor() {
       outlineX += (mouseX - outlineX) * outlineSpeed
       outlineY += (mouseY - outlineY) * outlineSpeed
 
-      // Update DOM elements
+      // Update DOM elements using transform for better performance
       if (dot) {
-        dot.style.left = `${dotX}px`
-        dot.style.top = `${dotY}px`
+        dot.style.transform = `translate(${dotX}px, ${dotY}px) translate(-50%, -50%)`
       }
       if (outline) {
-        outline.style.left = `${outlineX}px`
-        outline.style.top = `${outlineY}px`
+        outline.style.transform = `translate(${outlineX}px, ${outlineY}px) translate(-50%, -50%)`
       }
 
       animationId = requestAnimationFrame(animate)
+    }
+
+    // Trail Effect (Pro Tip #1) - only in focus mode
+    if (mode === 'focus') {
+      trailInterval = setInterval(() => {
+        setTrail(prev => {
+          const newTrail = [...prev, { x: mouseX, y: mouseY }]
+          return newTrail.slice(-8) // Keep last 8 points
+        })
+      }, 50)
     }
 
     // Hover Handlers
@@ -103,6 +143,7 @@ export default function DashboardCursor() {
     const handleMouseLeave = () => setIsHovering(false)
 
     window.addEventListener('mousemove', handleMouseMove)
+    window.addEventListener('click', handleClick)
     
     // Attach to interactive elements
     const interactiveElements = document.querySelectorAll(
@@ -120,11 +161,13 @@ export default function DashboardCursor() {
     // Cleanup
     return () => {
       window.removeEventListener('mousemove', handleMouseMove)
+      window.removeEventListener('click', handleClick)
       interactiveElements.forEach((el) => {
         el.removeEventListener('mouseenter', handleMouseEnter)
         el.removeEventListener('mouseleave', handleMouseLeave)
       })
       cancelAnimationFrame(animationId)
+      if (trailInterval) clearInterval(trailInterval)
     }
   }, [isVisible, mode]) // Re-run when mode changes to adjust speed
 
@@ -139,6 +182,7 @@ export default function DashboardCursor() {
           dotColor: 'bg-green-500',
           glowColor: 'bg-green-400',
           ringColor: 'border-green-500',
+          rippleColor: 'border-green-400',
           glowSize: 'w-3 h-3',
           pulseEnabled: true, // Pulse in focus mode
         }
@@ -147,6 +191,7 @@ export default function DashboardCursor() {
           dotColor: 'bg-blue-500',
           glowColor: 'bg-blue-400',
           ringColor: 'border-blue-500',
+          rippleColor: 'border-blue-400',
           glowSize: 'w-2.5 h-2.5',
           pulseEnabled: false,
         }
@@ -155,6 +200,7 @@ export default function DashboardCursor() {
           dotColor: 'bg-orange-500',
           glowColor: 'bg-orange-400',
           ringColor: 'border-orange-500',
+          rippleColor: 'border-orange-400',
           glowSize: 'w-3 h-3',
           pulseEnabled: false,
         }
@@ -163,6 +209,7 @@ export default function DashboardCursor() {
           dotColor: 'bg-purple-500',
           glowColor: 'bg-purple-400',
           ringColor: 'border-purple-500',
+          rippleColor: 'border-purple-400',
           glowSize: 'w-2 h-2',
           pulseEnabled: false,
         }
@@ -171,6 +218,7 @@ export default function DashboardCursor() {
           dotColor: 'bg-primary-500',
           glowColor: 'bg-primary-400',
           ringColor: 'border-primary-500',
+          rippleColor: 'border-primary-400',
           glowSize: 'w-2.5 h-2.5',
           pulseEnabled: false,
         }
@@ -181,6 +229,37 @@ export default function DashboardCursor() {
 
   return (
     <>
+      {/* --- TRAIL EFFECT (Pro Tip #1) - Only in Focus Mode --- */}
+      {mode === 'focus' && trail.map((point, i) => (
+        <div
+          key={i}
+          className="fixed pointer-events-none z-[9996]"
+          style={{
+            left: point.x,
+            top: point.y,
+            transform: 'translate(-50%, -50%)',
+            opacity: (i / trail.length) * 0.3
+          }}
+        >
+          <div className={`w-1 h-1 ${style.dotColor} rounded-full`} />
+        </div>
+      ))}
+
+      {/* --- CLICK RIPPLES (Pro Tip #2) --- */}
+      {ripples.map(ripple => (
+        <div
+          key={ripple.id}
+          className="fixed pointer-events-none z-[9997]"
+          style={{
+            left: ripple.x,
+            top: ripple.y,
+            transform: 'translate(-50%, -50%)'
+          }}
+        >
+          <div className={`w-10 h-10 border-2 ${style.rippleColor} rounded-full animate-ping opacity-60`} />
+        </div>
+      ))}
+
       {/* --- LAYER 1: The Dot & Glow --- */}
       <div
         ref={dotRef}
@@ -188,8 +267,8 @@ export default function DashboardCursor() {
           isHovering ? 'scale-150' : 'scale-100'
         }`}
         style={{ 
-          left: -100, top: -100,
-          transform: 'translate(-50%, -50%)',
+          left: 0,
+          top: 0,
           willChange: 'transform'
         }}
       >
@@ -204,10 +283,10 @@ export default function DashboardCursor() {
               style.pulseEnabled ? 'animate-pulse' : ''
             }`}
             style={{ 
-              width: style.glowSize.includes('w-3') ? '12px' : '8px',
-              height: style.glowSize.includes('h-3') ? '12px' : '8px',
-              left: '-2px', 
-              top: '-2px' 
+              width: style.glowSize.includes('w-3') ? '14px' : style.glowSize.includes('w-2.5') ? '12px' : '10px',
+              height: style.glowSize.includes('h-3') ? '14px' : style.glowSize.includes('h-2.5') ? '12px' : '10px',
+              left: '-4px', 
+              top: '-4px' 
             }}
           />
           {/* Core Dot */}
@@ -219,14 +298,14 @@ export default function DashboardCursor() {
       <div
         ref={outlineRef}
         className={`fixed pointer-events-none z-[9998] transition-all duration-300 ${
-          isHovering ? 'scale-150 opacity-70' : 'scale-100 opacity-30'
+          isHovering ? 'scale-150 opacity-70' : 'scale-100 opacity-40'
         } ${
           // Pulse the ring too in focus mode
           mode === 'focus' ? 'animate-pulse' : ''
         }`}
         style={{ 
-          left: -100, top: -100,
-          transform: 'translate(-50%, -50%)',
+          left: 0,
+          top: 0,
           willChange: 'transform'
         }}
       >

@@ -2,22 +2,14 @@
 
 import { useEffect, useRef, useState } from 'react'
 
-interface Ripple {
-  x: number
-  y: number
-  id: number
-}
-
-export default function LandingCursor() {
+export default function AuthCursor() {
   const dotRef = useRef<HTMLDivElement>(null)
   const outlineRef = useRef<HTMLDivElement>(null)
   const [isHovering, setIsHovering] = useState(false)
   const [isVisible, setIsVisible] = useState(false)
-  const [ripples, setRipples] = useState<Ripple[]>([])
 
   // 1. Initialize Visibility (Desktop Check)
   useEffect(() => {
-    // Only show on desktop (>= 1024px)
     const checkDesktop = () => setIsVisible(window.innerWidth >= 1024)
     checkDesktop()
     
@@ -27,13 +19,11 @@ export default function LandingCursor() {
 
   // 2. Animation Logic
   useEffect(() => {
-    // If not desktop, don't run animation loop
     if (!isVisible) return
 
     const dot = dotRef.current
     const outline = outlineRef.current
     
-    // Safety check: if refs aren't ready, skip
     if (!dot || !outline) return
 
     // Initialize at center to avoid jump on load
@@ -54,19 +44,15 @@ export default function LandingCursor() {
     }
 
     const animate = () => {
-      // --- IMPROVED SPEED CONFIGURATION ---
-      // Dot: 0.25 = Fast and responsive (was 0.9, too slow)
-      // Ring: 0.15 = Smooth follow, closer to dot (was 0.3, too far behind)
+      // Fast and responsive for auth pages
       const dotSpeed = 0.25
       const outlineSpeed = 0.15
 
-      // Smooth interpolation (lerp)
       dotX += (mouseX - dotX) * dotSpeed
       dotY += (mouseY - dotY) * dotSpeed
       outlineX += (mouseX - outlineX) * outlineSpeed
       outlineY += (mouseY - outlineY) * outlineSpeed
 
-      // Apply positions using transform for better performance
       if (dot) {
         dot.style.transform = `translate(${dotX}px, ${dotY}px) translate(-50%, -50%)`
       }
@@ -81,23 +67,7 @@ export default function LandingCursor() {
     const handleMouseEnter = () => setIsHovering(true)
     const handleMouseLeave = () => setIsHovering(false)
 
-    // Click Ripple Effect (Pro Tip #2)
-    const handleClick = (e: MouseEvent) => {
-      const newRipple = {
-        x: e.clientX,
-        y: e.clientY,
-        id: Date.now()
-      }
-      setRipples(prev => [...prev, newRipple])
-      
-      // Remove ripple after animation completes
-      setTimeout(() => {
-        setRipples(prev => prev.filter(r => r.id !== newRipple.id))
-      }, 600)
-    }
-
     window.addEventListener('mousemove', handleMouseMove)
-    window.addEventListener('click', handleClick)
 
     // Attach listeners to all interactive elements
     const interactiveElements = document.querySelectorAll(
@@ -112,10 +82,9 @@ export default function LandingCursor() {
     // Start the loop
     animationId = requestAnimationFrame(animate)
 
-    // Cleanup function
+    // Cleanup
     return () => {
       window.removeEventListener('mousemove', handleMouseMove)
-      window.removeEventListener('click', handleClick)
       interactiveElements.forEach((el) => {
         el.removeEventListener('mouseenter', handleMouseEnter)
         el.removeEventListener('mouseleave', handleMouseLeave)
@@ -124,27 +93,11 @@ export default function LandingCursor() {
     }
   }, [isVisible])
 
-  // Don't render anything if not desktop
   if (!isVisible) return null
 
   return (
     <>
-      {/* --- CLICK RIPPLES (Pro Tip #2) --- */}
-      {ripples.map(ripple => (
-        <div
-          key={ripple.id}
-          className="fixed pointer-events-none z-[9997]"
-          style={{
-            left: ripple.x,
-            top: ripple.y,
-            transform: 'translate(-50%, -50%)'
-          }}
-        >
-          <div className="w-8 h-8 border-2 border-primary-400 rounded-full animate-ping opacity-75" />
-        </div>
-      ))}
-
-      {/* --- LAYER 1: The Dot Group (High Z-Index) --- */}
+      {/* The Dot */}
       <div
         ref={dotRef}
         className={`fixed pointer-events-none z-[9999] transition-transform duration-100 ease-out ${
@@ -157,11 +110,11 @@ export default function LandingCursor() {
         }}
       >
         <div className="relative">
-          {/* A. The Glow Aura (Blurred background) */}
+          {/* Glow */}
           <div
             className={`absolute inset-0 rounded-full blur-md transition-all duration-300 ${
               isHovering 
-                ? 'bg-purple-400 scale-150 opacity-60' 
+                ? 'bg-primary-400 scale-150 opacity-60' 
                 : 'bg-primary-400 scale-100 opacity-40'
             }`}
             style={{ 
@@ -171,22 +124,18 @@ export default function LandingCursor() {
               top: '-4px' 
             }}
           />
-          {/* B. The Solid Core Dot */}
-          <div
-            className={`w-1.5 h-1.5 rounded-full transition-colors duration-300 ${
-              isHovering ? 'bg-purple-500' : 'bg-primary-500'
-            }`}
-          />
+          {/* Core */}
+          <div className="w-1.5 h-1.5 rounded-full bg-primary-500" />
         </div>
       </div>
 
-      {/* --- LAYER 2: The Outline Ring (Lower Z-Index) --- */}
+      {/* The Ring */}
       <div
         ref={outlineRef}
         className={`fixed pointer-events-none z-[9998] transition-all duration-300 ${
           isHovering 
-            ? 'scale-150 opacity-70 border-purple-500' 
-            : 'scale-100 opacity-40 border-primary-500'
+            ? 'scale-150 opacity-70' 
+            : 'scale-100 opacity-40'
         }`}
         style={{ 
           left: 0,
@@ -194,7 +143,7 @@ export default function LandingCursor() {
           willChange: 'transform'
         }}
       >
-        <div className="w-8 h-8 rounded-full border-2" />
+        <div className="w-8 h-8 rounded-full border-2 border-primary-500" />
       </div>
     </>
   )
