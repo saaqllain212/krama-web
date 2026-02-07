@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import { ArrowLeft, ChevronRight, Folder, Check, Home, FileJson, AlertCircle, RefreshCw, Search, X, Download, AlertTriangle, BookOpen, Layers, Minus, FolderOpen } from 'lucide-react'
+import { ArrowLeft, ChevronRight, Folder, Check, Home, FileJson, RefreshCw, Search, X, Download, BookOpen, Layers, FolderOpen, CheckCircle } from 'lucide-react'
 import Link from 'next/link'
 import { useSyllabus } from '@/context/SyllabusContext'
 import { SyllabusNode } from '@/types/syllabus'
@@ -20,12 +20,12 @@ const OPTIONAL_SUBJECTS = [
 ]
 
 const EXAM_OPTIONS = [
-  { id: 'upsc', name: 'UPSC CSE', desc: 'Prelims + Mains (GS & Optionals)' },
-  { id: 'ssc', name: 'SSC CGL', desc: 'Full Syllabus (Tier I & II)' },
-  { id: 'bank', name: 'Bank PO', desc: 'IBPS / SBI PO Syllabus' },
-  { id: 'jee', name: 'JEE', desc: 'Mains + Advanced (NTA)' },
-  { id: 'neet', name: 'NEET UG', desc: 'Medical Entrance (NTA)' },
-  { id: 'rbi', name: 'RBI Grade B', desc: 'Officer Scale Syllabus' },
+  { id: 'upsc', name: 'UPSC CSE', desc: 'Prelims + Mains (GS & Optionals)', color: 'from-primary-500 to-primary-600' },
+  { id: 'ssc', name: 'SSC CGL', desc: 'Full Syllabus (Tier I & II)', color: 'from-success-500 to-success-600' },
+  { id: 'bank', name: 'Bank PO', desc: 'IBPS / SBI PO Syllabus', color: 'from-purple-500 to-purple-600' },
+  { id: 'jee', name: 'JEE', desc: 'Mains + Advanced (NTA)', color: 'from-orange-500 to-orange-600' },
+  { id: 'neet', name: 'NEET UG', desc: 'Medical Entrance (NTA)', color: 'from-cyan-500 to-cyan-600' },
+  { id: 'rbi', name: 'RBI Grade B', desc: 'Officer Scale Syllabus', color: 'from-pink-500 to-pink-600' },
 ]
 
 // --- HELPERS ---
@@ -148,11 +148,8 @@ export default function SyllabusPage() {
   // --- LOADING ---
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#FBF9F6] flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-12 h-12 border-4 border-black border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="font-bold text-black/50">Loading syllabus...</p>
-        </div>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-gray-500">Loading syllabus...</div>
       </div>
     )
   }
@@ -160,55 +157,52 @@ export default function SyllabusPage() {
   // === RENDER 1: EXAM SELECTION ===
   if (!activeExam) {
     return (
-      <div className="min-h-screen bg-[#FBF9F6] text-black">
-        <Link 
-          href="/dashboard" 
-          className="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-black/40 hover:text-black transition-colors mb-6"
-        >
-          <ArrowLeft size={16} /> Dashboard
-        </Link>
-        
-        {/* DISCLAIMER */}
-        <div className="mb-8 bg-amber-50 border-2 border-amber-200 p-4 flex items-start gap-3">
-          <AlertTriangle className="text-amber-600 shrink-0 mt-0.5" size={20} />
-          <p className="text-sm text-amber-900 leading-relaxed">
-            <span className="font-bold">Note:</span> Syllabi are representative structures based on official notifications. 
-            Always verify with official sources before finalizing your strategy.
-          </p>
-        </div>
+      <div className="min-h-screen bg-gray-50 px-6 py-12">
+        <div className="max-w-4xl mx-auto">
+          <Link 
+            href="/dashboard" 
+            className="inline-flex items-center gap-2 text-sm font-semibold text-gray-500 hover:text-gray-900 transition-colors mb-8"
+          >
+            <ArrowLeft size={16} /> Dashboard
+          </Link>
 
-        <div className="text-center mb-10">
-          <h1 className="text-4xl md:text-5xl font-black tracking-tight mb-3">Choose Your Exam</h1>
-          <p className="text-black/50 font-medium">Progress is saved separately for each exam</p>
-        </div>
-
-        {/* EXAM GRID */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-          {EXAM_OPTIONS.map(exam => (
-            <button 
-              key={exam.id}
-              onClick={() => setActiveExam(exam.id)} 
-              className="group bg-white border-2 border-black p-6 text-left hover:bg-black hover:text-white transition-all shadow-[4px_4px_0_0_#000] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px]"
-            >
-              <h2 className="text-2xl font-black mb-1">{exam.name}</h2>
-              <p className="text-sm font-medium opacity-70">{exam.desc}</p>
-            </button>
-          ))}
-        </div>
-
-        {/* CUSTOM OPTION */}
-        <button 
-          onClick={() => setActiveExam('custom')} 
-          className="w-full bg-stone-100 border-2 border-dashed border-black/30 p-6 text-left hover:border-black hover:bg-stone-50 transition-all"
-        >
-          <div className="flex items-center gap-3">
-            <FileJson size={24} className="text-black/40" />
-            <div>
-              <h2 className="text-xl font-black">Upload Custom Syllabus</h2>
-              <p className="text-sm font-medium text-black/50">Bring your own JSON file</p>
-            </div>
+          <div className="text-center mb-12">
+            <BookOpen size={56} className="mx-auto mb-6 text-primary-500" />
+            <h1 className="text-4xl font-bold text-gray-900 mb-3">Select Your Exam</h1>
+            <p className="text-lg text-gray-600">Choose your syllabus to start tracking progress</p>
           </div>
-        </button>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            {EXAM_OPTIONS.map((exam) => (
+              <motion.button
+                key={exam.id}
+                onClick={() => setActiveExam(exam.id)}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="group relative overflow-hidden bg-white rounded-2xl p-6 border-2 border-gray-200 hover:border-primary-400 hover:shadow-lg transition-all text-left"
+              >
+                <div className={`absolute inset-0 bg-gradient-to-br ${exam.color} opacity-0 group-hover:opacity-5 transition-opacity`} />
+                <h2 className="text-2xl font-bold text-gray-900 mb-2 relative z-10">{exam.name}</h2>
+                <p className="text-sm text-gray-600 relative z-10">{exam.desc}</p>
+              </motion.button>
+            ))}
+          </div>
+
+          <button 
+            onClick={() => setActiveExam('custom')} 
+            className="w-full bg-gradient-to-br from-gray-50 to-gray-100 border-2 border-dashed border-gray-300 rounded-2xl p-6 text-left hover:border-primary-400 hover:bg-white transition-all group"
+          >
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-white rounded-xl group-hover:bg-primary-50 transition-colors">
+                <FileJson size={28} className="text-gray-400 group-hover:text-primary-600 transition-colors" />
+              </div>
+              <div>
+                <h2 className="text-xl font-bold text-gray-900 mb-1">Upload Custom Syllabus</h2>
+                <p className="text-sm text-gray-600">Bring your own JSON file</p>
+              </div>
+            </div>
+          </button>
+        </div>
       </div>
     )
   }
@@ -216,27 +210,33 @@ export default function SyllabusPage() {
   // === RENDER 2: OPTIONAL SELECTION (UPSC) ===
   if (activeExam === 'upsc' && !optionalSubject) {
     return (
-      <div className="min-h-screen bg-[#FBF9F6] text-black flex flex-col items-center justify-center px-4">
-        <div className="max-w-lg w-full text-center">
-          <BookOpen size={48} className="mx-auto mb-6 text-black/20" />
-          <h1 className="text-3xl font-black mb-3">Select Your Optional</h1>
-          <p className="text-black/50 mb-8">This filters your syllabus for accurate progress tracking</p>
+      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center px-6">
+        <div className="max-w-lg w-full">
+          <div className="text-center mb-8">
+            <div className="inline-flex p-4 bg-primary-100 rounded-full mb-4">
+              <Layers size={32} className="text-primary-600" />
+            </div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-3">Select Your Optional</h1>
+            <p className="text-gray-600">This filters your syllabus for accurate progress tracking</p>
+          </div>
           
-          <div className="grid grid-cols-1 gap-3 mb-8">
+          <div className="space-y-3 mb-8">
             {OPTIONAL_SUBJECTS.map((opt) => (
-              <button 
-                key={opt.id} 
+              <motion.button
+                key={opt.id}
                 onClick={() => setOptionalSubject(opt.id)}
-                className="p-4 bg-white border-2 border-black/10 hover:border-black hover:bg-black hover:text-white transition-all font-bold text-left"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="w-full p-4 bg-white rounded-xl border-2 border-gray-200 hover:border-primary-500 hover:bg-primary-50 transition-all font-semibold text-gray-900 text-left"
               >
                 {opt.label}
-              </button>
+              </motion.button>
             ))}
           </div>
           
           <button 
             onClick={() => setActiveExam('')} 
-            className="text-sm font-bold text-red-500 hover:text-red-700"
+            className="w-full text-sm font-semibold text-gray-500 hover:text-gray-900 transition-colors"
           >
             ← Go Back
           </button>
@@ -248,27 +248,27 @@ export default function SyllabusPage() {
   // === RENDER 3: CUSTOM UPLOAD ===
   if (activeExam === 'custom' && data.length === 0) {
     return (
-      <div className="min-h-screen bg-[#FBF9F6] flex flex-col items-center justify-center px-4">
-        <div className="bg-white border-2 border-black p-8 max-w-md w-full shadow-[6px_6px_0_0_#000] text-center">
-          <FileJson size={48} className="mx-auto mb-6 text-black/20" />
-          <h2 className="text-2xl font-black mb-2">Upload Syllabus</h2>
-          <p className="text-black/50 text-sm mb-6">Upload a JSON file with your custom syllabus structure</p>
+      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center px-6">
+        <div className="bg-white rounded-2xl border-2 border-gray-200 p-8 max-w-md w-full shadow-lg text-center">
+          <FileJson size={56} className="mx-auto mb-6 text-primary-500" />
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Upload Syllabus</h2>
+          <p className="text-gray-600 text-sm mb-6">Upload a JSON file with your custom syllabus structure</p>
           
-          <label className="block w-full cursor-pointer bg-black text-white font-bold py-4 hover:bg-stone-800 transition-colors mb-4">
+          <label className="block w-full cursor-pointer btn btn-primary mb-4">
             Select JSON File
             <input type="file" accept=".json" onChange={handleFileUpload} className="hidden" />
           </label>
           
           <button 
             onClick={downloadTemplate} 
-            className="flex items-center justify-center gap-2 w-full text-sm font-bold text-black/50 hover:text-black mb-6"
+            className="flex items-center justify-center gap-2 w-full text-sm font-semibold text-gray-600 hover:text-gray-900 mb-6"
           >
             <Download size={16} /> Download Template
           </button>
           
           <button 
             onClick={() => setActiveExam('')} 
-            className="text-sm font-bold text-red-500 hover:text-red-700"
+            className="text-sm font-semibold text-gray-500 hover:text-gray-900"
           >
             Cancel
           </button>
@@ -287,260 +287,212 @@ export default function SyllabusPage() {
   const progressPercent = allLeaves.length > 0 ? Math.round((completedCount / allLeaves.length) * 100) : 0
 
   return (
-    <div className="min-h-screen bg-[#FBF9F6] text-black pb-20">
+    <div className="min-h-screen bg-gray-50 pb-20">
       
       {/* HEADER */}
-      <div className="mb-6">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
-          <div>
-            <Link 
-              href="/dashboard" 
-              className="inline-flex items-center gap-2 text-sm font-bold text-black/40 hover:text-black transition-colors mb-3"
-            >
-              <ArrowLeft size={16} /> Dashboard
-            </Link>
-            
+      <div className="bg-white border-b border-gray-200 mb-6">
+        <div className="max-w-5xl mx-auto px-6 py-6">
+          <Link 
+            href="/dashboard" 
+            className="inline-flex items-center gap-2 text-sm font-semibold text-gray-500 hover:text-gray-900 transition-colors mb-4"
+          >
+            <ArrowLeft size={16} /> Dashboard
+          </Link>
+          
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div className="flex flex-wrap items-center gap-3">
-              <h1 className="text-3xl md:text-4xl font-black tracking-tight">Syllabus</h1>
-              <span className="bg-black text-white text-xs font-bold px-3 py-1.5">
+              <h1 className="text-3xl md:text-4xl font-bold text-gray-900">Syllabus</h1>
+              <span className="bg-gradient-to-r from-primary-500 to-purple-500 text-white text-xs font-semibold px-4 py-1.5 rounded-full">
                 {getExamLabel(activeExam)}
               </span>
             </div>
-          </div>
-          
-          <div className="flex gap-2">
-            <button 
-              onClick={handleChangeProtocol} 
-              className="flex items-center gap-2 px-4 py-2.5 border-2 border-black/20 text-sm font-bold text-black/60 hover:border-black hover:text-black transition-all"
-            >
-              <RefreshCw size={16} /> Switch
-            </button>
             
-            {activeExam === 'upsc' && optionalSubject && (
+            <div className="flex gap-2">
               <button 
-                onClick={() => askConfirm("Change optional subject?", () => { resetOptionalSelection(); setPath([]) })}
-                className="flex items-center gap-2 px-4 py-2.5 border-2 border-black/20 text-sm font-bold text-black/60 hover:border-black hover:text-black transition-all"
+                onClick={handleChangeProtocol} 
+                className="flex items-center gap-2 px-4 py-2 border-2 border-gray-200 rounded-lg text-sm font-semibold text-gray-700 hover:border-primary-500 hover:text-primary-600 transition-all"
               >
-                <Layers size={16} /> Optional
+                <RefreshCw size={16} /> Switch
               </button>
-            )}
+              
+              {activeExam === 'upsc' && optionalSubject && (
+                <button 
+                  onClick={() => askConfirm("Change optional subject?", () => { resetOptionalSelection(); setPath([]) })}
+                  className="flex items-center gap-2 px-4 py-2 border-2 border-gray-200 rounded-lg text-sm font-semibold text-gray-700 hover:border-primary-500 hover:text-primary-600 transition-all"
+                >
+                  <Layers size={16} /> Optional
+                </button>
+              )}
+            </div>
           </div>
         </div>
+      </div>
 
+      <div className="max-w-5xl mx-auto px-6">
         {/* PROGRESS BAR */}
-        <div className="bg-white border-2 border-black p-4 mb-4 shadow-[3px_3px_0_0_#000]">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-bold text-black/60">Overall Progress</span>
-            <span className="text-lg font-black">{progressPercent}%</span>
+        <div className="bg-white rounded-2xl border border-gray-200 p-6 mb-6 shadow-sm">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-sm font-semibold text-gray-600">Overall Progress</span>
+            <span className="text-2xl font-bold text-gray-900">{progressPercent}%</span>
           </div>
-          <div className="w-full h-3 bg-black/10 overflow-hidden">
-            <div 
-              className="h-full bg-brand transition-all duration-500"
-              style={{ width: `${progressPercent}%` }}
+          <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden">
+            <motion.div 
+              className="h-full bg-gradient-to-r from-primary-500 to-success-500 rounded-full"
+              initial={{ width: 0 }}
+              animate={{ width: `${progressPercent}%` }}
+              transition={{ duration: 0.5 }}
             />
           </div>
-          <div className="mt-2 text-xs font-bold text-black/40">
+          <div className="mt-3 text-xs font-medium text-gray-500">
             {completedCount} of {allLeaves.length} topics completed
           </div>
         </div>
 
         {/* SEARCH */}
-        <div className="relative">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-black/30" size={18} />
+        <div className="relative mb-6">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
           <input 
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search topics..."
-            className="w-full bg-white border-2 border-black p-4 pl-12 font-bold text-sm focus:outline-none focus:shadow-[3px_3px_0_0_#000] transition-all placeholder:text-black/30"
+            className="input pl-11 w-full"
           />
           {searchQuery && (
-            <button 
-              onClick={() => setSearchQuery('')}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-black/30 hover:text-red-500"
-            >
+            <button onClick={() => setSearchQuery('')} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-danger-500">
               <X size={18} />
             </button>
           )}
-          
-          {/* SEARCH DROPDOWN */}
-          <AnimatePresence>
-            {searchResults.length > 0 && (
-              <motion.div 
-                initial={{ opacity: 0, y: -10 }}
+
+          {/* SEARCH RESULTS DROPDOWN */}
+          {searchResults.length > 0 && (
+            <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl border border-gray-200 shadow-lg max-h-64 overflow-y-auto z-10">
+              {searchResults.map((node) => (
+                <button
+                  key={node.id}
+                  onClick={() => handleSearchResultClick(node)}
+                  className="w-full px-4 py-3 text-left hover:bg-primary-50 transition-colors border-b border-gray-100 last:border-0"
+                >
+                  <div className="flex items-center gap-2">
+                    {isChecked(node.id) && <CheckCircle size={16} className="text-success-500" />}
+                    <span className="font-medium text-gray-900">{node.title}</span>
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* BREADCRUMB */}
+        {path.length > 0 && (
+          <div className="flex flex-wrap items-center gap-2 mb-6 text-sm">
+            <button 
+              onClick={() => setPath([])} 
+              className="flex items-center gap-1 px-3 py-1.5 bg-white rounded-lg border border-gray-200 hover:border-primary-500 transition-colors font-medium text-gray-700"
+            >
+              <Home size={14} /> Root
+            </button>
+            {path.map((node, i) => (
+              <div key={node.id} className="flex items-center gap-2">
+                <ChevronRight size={16} className="text-gray-400" />
+                <button
+                  onClick={() => setPath(path.slice(0, i + 1))}
+                  className="px-3 py-1.5 bg-white rounded-lg border border-gray-200 hover:border-primary-500 transition-colors font-medium text-gray-700 truncate max-w-[200px]"
+                >
+                  {node.title}
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* NODES LIST */}
+        <div className="space-y-3">
+          {currentLevelNodes.map((node) => {
+            const status = node.type === 'branch' ? getBranchStatus(node) : null
+            const progress = node.type === 'branch' ? getBranchProgress(node) : null
+            const checked = node.type === 'leaf' && isChecked(node.id)
+
+            return (
+              <motion.div
+                key={node.id}
+                initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                className="absolute top-full left-0 right-0 z-30 mt-2 bg-white border-2 border-black shadow-[4px_4px_0_0_#000] max-h-72 overflow-y-auto"
+                className="bg-white rounded-xl border border-gray-200 hover:border-primary-300 hover:shadow-md transition-all overflow-hidden"
               >
-                {searchResults.map(node => (
-                  <button 
-                    key={node.id}
-                    onClick={() => handleSearchResultClick(node)}
-                    className={`w-full p-4 text-left border-b border-black/10 last:border-b-0 flex items-center justify-between transition-colors ${
-                      isChecked(node.id) ? 'bg-stone-100' : 'hover:bg-brand'
-                    }`}
+                {node.type === 'branch' ? (
+                  // BRANCH
+                  <button
+                    onClick={() => setPath([...path, node])}
+                    className="w-full p-5 flex items-center justify-between text-left group"
                   >
-                    <span className={`font-bold text-sm ${isChecked(node.id) ? 'line-through text-black/40' : ''}`}>
+                    <div className="flex items-center gap-4 flex-1 min-w-0">
+                      <div className={`p-2.5 rounded-lg ${
+                        status === 'full' ? 'bg-success-100' :
+                        status === 'partial' ? 'bg-primary-100' :
+                        'bg-gray-100'
+                      }`}>
+                        {status === 'full' ? (
+                          <FolderOpen size={20} className="text-success-600" />
+                        ) : (
+                          <Folder size={20} className={status === 'partial' ? 'text-primary-600' : 'text-gray-400'} />
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-semibold text-gray-900 group-hover:text-primary-600 transition-colors truncate">
+                          {node.title}
+                        </h3>
+                        {progress && progress.total > 0 && (
+                          <div className="flex items-center gap-2 mt-1">
+                            <div className="flex-1 max-w-[200px] h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                              <div 
+                                className={`h-full rounded-full ${
+                                  status === 'full' ? 'bg-success-500' :
+                                  status === 'partial' ? 'bg-primary-500' :
+                                  'bg-gray-300'
+                                }`}
+                                style={{ width: `${progress.percent}%` }}
+                              />
+                            </div>
+                            <span className="text-xs font-medium text-gray-500">
+                              {progress.done}/{progress.total}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    <ChevronRight size={20} className="text-gray-400 group-hover:text-primary-600 transition-colors" />
+                  </button>
+                ) : (
+                  // LEAF
+                  <button
+                    onClick={() => toggleNode(node.id)}
+                    className="w-full p-5 flex items-center gap-4"
+                  >
+                    <div className={`flex-shrink-0 w-5 h-5 rounded border-2 flex items-center justify-center transition-all ${
+                      checked 
+                        ? 'bg-success-500 border-success-500' 
+                        : 'border-gray-300 hover:border-primary-500'
+                    }`}>
+                      {checked && <Check size={14} className="text-white" />}
+                    </div>
+                    <span className={`font-medium transition-colors ${
+                      checked ? 'text-gray-500 line-through' : 'text-gray-900'
+                    }`}>
                       {node.title}
                     </span>
-                    {isChecked(node.id) && <Check size={16} className="text-green-600" />}
                   </button>
-                ))}
+                )}
               </motion.div>
-            )}
-          </AnimatePresence>
+            )
+          })}
         </div>
-      </div>
 
-      {/* BREADCRUMBS */}
-      {path.length > 0 && (
-        <div className="flex items-center gap-2 mb-6 overflow-x-auto pb-2 -mx-1 px-1">
-          <button 
-            onClick={() => setPath([])}
-            className="shrink-0 p-2.5 bg-white border-2 border-black hover:bg-brand transition-colors"
-          >
-            <Home size={18} />
-          </button>
-          {path.map((node, i) => (
-            <div key={node.id} className="flex items-center gap-2 shrink-0">
-              <ChevronRight size={16} className="text-black/30" />
-              <button 
-                onClick={() => setPath(path.slice(0, i + 1))}
-                className="px-3 py-2 bg-white border-2 border-black/20 hover:border-black text-sm font-bold truncate max-w-[180px] transition-colors"
-              >
-                {node.title}
-              </button>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* THE LIST */}
-      <div className="space-y-2">
-        <AnimatePresence mode="popLayout">
-          {currentLevelNodes.length === 0 ? (
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="py-16 text-center border-2 border-dashed border-black/20"
-            >
-              <AlertCircle className="mx-auto mb-3 text-black/20" size={40} />
-              <p className="font-bold text-black/40">No topics in this section</p>
-            </motion.div>
-          ) : (
-            currentLevelNodes.map((node, index) => {
-              const status = node.type === 'branch' ? getBranchStatus(node) : 'none'
-              const progress = node.type === 'branch' ? getBranchProgress(node) : null
-              
-              return (
-                <motion.div
-                  key={node.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.15, delay: index * 0.02 }}
-                >
-                  {node.type === 'branch' ? (
-                    // === FOLDER ===
-                    <div 
-                      className={`group bg-white border-2 transition-all cursor-pointer ${
-                        status === 'full' 
-                          ? 'border-green-500 bg-green-50' 
-                          : 'border-black/10 hover:border-black hover:shadow-[4px_4px_0_0_#000]'
-                      }`}
-                    >
-                      <div className="flex items-center p-4 md:p-5">
-                        {/* Folder Icon */}
-                        <div 
-                          onClick={() => setPath([...path, node])}
-                          className={`shrink-0 p-2.5 mr-4 transition-colors ${
-                            status === 'full' 
-                              ? 'bg-green-500 text-white' 
-                              : 'bg-stone-100 text-stone-600 group-hover:bg-black group-hover:text-white'
-                          }`}
-                        >
-                          {status === 'full' ? <FolderOpen size={22} /> : <Folder size={22} />}
-                        </div>
-                        
-                        {/* Title & Progress */}
-                        <div 
-                          className="flex-1 min-w-0 mr-4"
-                          onClick={() => setPath([...path, node])}
-                        >
-                          <h3 className={`font-bold text-base md:text-lg leading-tight truncate ${
-                            status === 'full' ? 'text-green-800' : 'text-black'
-                          }`}>
-                            {node.title}
-                          </h3>
-                          {progress && (
-                            <div className="flex items-center gap-3 mt-1.5">
-                              <div className="flex-1 h-1.5 bg-black/10 max-w-[120px] overflow-hidden">
-                                <div 
-                                  className={`h-full transition-all ${status === 'full' ? 'bg-green-500' : 'bg-brand'}`}
-                                  style={{ width: `${progress.percent}%` }}
-                                />
-                              </div>
-                              <span className="text-xs font-bold text-black/40">
-                                {progress.done}/{progress.total}
-                              </span>
-                            </div>
-                          )}
-                        </div>
-                        
-                        {/* Checkbox */}
-                        <button 
-                          onClick={(e) => { e.stopPropagation(); toggleNode(node.id) }} 
-                          className={`shrink-0 w-7 h-7 border-2 flex items-center justify-center transition-all mr-2 ${
-                            status === 'full' 
-                              ? 'bg-green-500 border-green-500 text-white' 
-                              : status === 'partial' 
-                                ? 'bg-stone-200 border-stone-300 text-black' 
-                                : 'border-black/20 hover:border-black'
-                          }`}
-                        >
-                          {status === 'full' && <Check size={16} strokeWidth={3} />}
-                          {status === 'partial' && <Minus size={16} strokeWidth={3} />}
-                        </button>
-                        
-                        {/* Arrow */}
-                        <ChevronRight 
-                          className="shrink-0 text-black/20 group-hover:text-black transition-colors" 
-                          size={20}
-                          onClick={() => setPath([...path, node])}
-                        />
-                      </div>
-                    </div>
-                  ) : (
-                    // === TOPIC (LEAF) ===
-                    <div 
-                      onClick={() => toggleNode(node.id)}
-                      className={`group flex items-center p-4 md:p-5 border-2 cursor-pointer transition-all ${
-                        isChecked(node.id) 
-                          ? 'bg-black border-black text-white' 
-                          : 'bg-white border-black/10 hover:border-black'
-                      }`}
-                    >
-                      {/* Checkbox */}
-                      <div className={`shrink-0 w-7 h-7 border-2 flex items-center justify-center mr-4 transition-all ${
-                        isChecked(node.id) 
-                          ? 'border-brand bg-brand text-black' 
-                          : 'border-black/20 group-hover:border-black'
-                      }`}>
-                        {isChecked(node.id) && <Check size={16} strokeWidth={3} />}
-                      </div>
-                      
-                      {/* Title */}
-                      <span className={`font-bold text-base flex-1 select-none ${
-                        isChecked(node.id) ? 'line-through decoration-brand decoration-2 text-white/60' : ''
-                      }`}>
-                        {node.title}
-                      </span>
-                    </div>
-                  )}
-                </motion.div>
-              )
-            })
-          )}
-        </AnimatePresence>
+        {currentLevelNodes.length === 0 && (
+          <div className="text-center py-16 bg-white rounded-2xl border-2 border-dashed border-gray-300">
+            <BookOpen size={48} className="mx-auto mb-4 text-gray-300" />
+            <p className="text-gray-600">No topics found</p>
+          </div>
+        )}
       </div>
     </div>
   )
