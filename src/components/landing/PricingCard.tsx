@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { Check, Zap } from 'lucide-react'
 import { useTracker } from '@/analytics/useTracker'
 import { EVENTS } from '@/analytics/events'
+import { PricingCouponCard } from './PricingCoupon'
 
 const FEATURES = [
   'AI MCQ Generator',
@@ -76,15 +77,20 @@ export default function PricingCard() {
               Start 14-Day Free Trial
             </Link>
 
+            {/* Add the coupon card */}
+            <div className="mb-8">
+              <PricingCouponCard />
+            </div>
+
             <p className="text-center text-sm text-gray-500 mt-4">
-              No credit card required • Cancel anytime
+              No credit card required • 
             </p>
           </div>
 
           {/* Trust Badge */}
           <div className="mt-8 text-center">
             <p className="text-sm text-gray-600">
-              <span className="font-semibold">14-day money-back guarantee.</span> Not happy? Full refund, no questions asked.
+              <span className="font-semibold">14-day trial.</span> Not happy ?. Tell what u did not like at our mail.
             </p>
           </div>
         </div>

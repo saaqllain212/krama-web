@@ -1,7 +1,10 @@
 'use client'
 
-// 1. New Imports added here
+// 1. Imports
 import { useEasterEggs, EasterEggToast, StudentEasterEggs } from '@/components/EasterEggs'
+
+// NEW: Import the TopBanner
+import TopBanner from "./TopBanner"
 
 import Navbar from "./Navbar"
 import Hero from "./Hero"
@@ -29,6 +32,9 @@ export default function LandingPage() {
       
       <div className="flex min-h-screen flex-col bg-white text-gray-900">
         
+        {/* NEW: TopBanner placed above Navbar */}
+        <TopBanner />
+
         {/* 4. Pass the click handler to Navbar */}
         <Navbar onLogoClick={handleLogoClick} />
         
