@@ -3,6 +3,9 @@
 // 1. Imports
 import { useEasterEggs, EasterEggToast, StudentEasterEggs } from '@/components/EasterEggs'
 
+// NEW: Import the Cursor
+import LandingCursor from '@/components/LandingCursor'
+
 // NEW: Import the TopBanner
 import TopBanner from "./TopBanner"
 
@@ -26,6 +29,9 @@ export default function LandingPage() {
 
   return (
     <>
+      {/* NEW: Add Landing Page Cursor (Step 2) */}
+      <LandingCursor />
+
       {/* 3. Add the Toast and Secret Component */}
       <EasterEggToast egg={activeEgg} />
       <StudentEasterEggs />

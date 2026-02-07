@@ -6,6 +6,9 @@ import TrialGuard from '@/components/dashboard/TrialGuard'
 import { XPProvider } from '@/context/XPContext'
 import XPNotification from '@/components/dashboard/XPNotification'
 
+// NEW: Import Dashboard Cursor
+import DashboardCursor from '@/components/dashboard/DashboardCursor'
+
 export default function DashboardLayout({
   children,
 }: {
@@ -14,6 +17,9 @@ export default function DashboardLayout({
   return (
     <XPProvider>
       <div className="min-h-screen bg-[#f0f2f7]">
+        {/* NEW: Add Dashboard Cursor (Step 3) */}
+        <DashboardCursor />
+
         <Sidebar />
         <MobileNav />
         <main className="lg:pl-64">
