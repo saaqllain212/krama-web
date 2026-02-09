@@ -31,6 +31,34 @@ declare global {
   }
 }
 
+// FIX: Progressive urgency helper — returns banner style based on days left
+function getTrialBannerStyle(daysLeft: number) {
+  if (daysLeft <= 3) {
+    return {
+      bg: 'bg-red-500',
+      text: 'text-white',
+      message: daysLeft === 1 
+        ? '⚠️ Last day of trial — Upgrade now to keep your data' 
+        : `⚠️ Trial ends in ${daysLeft} days`
+    }
+  }
+  if (daysLeft <= 7) {
+    return {
+      bg: 'bg-amber-100',
+      text: 'text-amber-900',
+      message: `Trial ends in ${daysLeft} days — Upgrade for lifetime access`
+    }
+  }
+  if (daysLeft <= 14) {
+    return {
+      bg: 'bg-primary-50',
+      text: 'text-primary-800',
+      message: `${daysLeft} days left in your free trial`
+    }
+  }
+  return null // Don't show banner for > 14 days (extended trials)
+}
+
 export default function TrialGuard({ children }: { children: React.ReactNode }) {
   const supabase = createClient()
   const router = useRouter()
@@ -49,8 +77,6 @@ export default function TrialGuard({ children }: { children: React.ReactNode }) 
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return 
 
-    // 1. Fetch from the NEW Table (user_access)
-    // ✅ CHANGED: We now fetch 'trial_ends_at' to support Admin extensions
     const { data: access } = await supabase
       .from('user_access')
       .select('is_premium, trial_starts_at, trial_ends_at')
@@ -62,33 +88,29 @@ export default function TrialGuard({ children }: { children: React.ReactNode }) 
        return
     }
 
-    // 2. Premium Check
+    // Premium Check
     if (access.is_premium) {
       setLoading(false)
       return // UNLOCKED
     }
 
-    // 3. Trial Timer Check
+    // Trial Timer Check
     const today = new Date()
     let endDate: Date
 
-    // ✅ LOGIC UPDATE: Prefer the database End Date (set by Admin)
     if (access.trial_ends_at) {
         endDate = new Date(access.trial_ends_at)
     } else {
-        // Fallback to strict 14 days if no specific end date exists
         const startDate = new Date(access.trial_starts_at)
         endDate = new Date(startDate)
         endDate.setDate(endDate.getDate() + TRIAL_DAYS)
     }
 
-    // Calculate difference
     const diffTime = endDate.getTime() - today.getTime()
     const daysLeftCalc = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
     
     setDaysLeft(daysLeftCalc)
 
-    // If time is up (and not premium), lock it.
     if (daysLeftCalc <= 0) {
       setIsLocked(true) 
     }
@@ -96,18 +118,16 @@ export default function TrialGuard({ children }: { children: React.ReactNode }) 
     setLoading(false)
   }
 
-  // --- HANDLE PAYMENT LOGIC (Unchanged) ---
+  // --- HANDLE PAYMENT LOGIC ---
   const handlePayment = async () => {
     setPaymentProcessing(true)
     
     try {
-      // 1. Create Order
       const res = await fetch('/api/payment/create-order', { method: 'POST' })
       const data = await res.json()
 
       if (!res.ok) throw new Error(data.error || 'Could not create order')
 
-      // 2. Initialize Razorpay
       const options: RazorpayOptions = {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!,
         amount: data.amount,
@@ -116,8 +136,6 @@ export default function TrialGuard({ children }: { children: React.ReactNode }) 
         description: 'Lifetime Membership',
         order_id: data.orderId,
         handler: async function (response: any) {
-          
-          // 3. Verify Payment on Backend
           const verifyRes = await fetch('/api/payment/verify', {
             method: 'POST',
             body: JSON.stringify({
@@ -132,14 +150,14 @@ export default function TrialGuard({ children }: { children: React.ReactNode }) 
           if (verifyData.success) {
             showAlert('Payment Successful! Welcome to Pro.', 'success')
             setTimeout(() => {
-                window.location.reload() // Reload to unlock the screen
+                window.location.reload()
             }, 1500)
           } else {
             showAlert('Payment Verification Failed.', 'error')
           }
         },
         theme: {
-          color: '#000000', // Black Theme
+          color: '#000000',
         },
       }
 
@@ -212,12 +230,14 @@ export default function TrialGuard({ children }: { children: React.ReactNode }) 
   }
 
   // --- RENDER 3: ACCESS GRANTED ---
+  const bannerStyle = !isLocked ? getTrialBannerStyle(daysLeft) : null
+
   return (
     <>
-      {/* Optional Top Bar for Trial Users */}
-      {!isLocked && daysLeft <= 3 && daysLeft > 0 && (
-         <div className="bg-amber-100 text-amber-900 text-[10px] font-bold uppercase tracking-widest text-center py-1 border-b border-amber-200">
-           Trial Ends in {daysLeft} Days
+      {/* FIX: Progressive urgency banner — blue (14-8d), amber (7-4d), red (3-1d) */}
+      {bannerStyle && (
+         <div className={`${bannerStyle.bg} ${bannerStyle.text} text-[10px] font-bold uppercase tracking-widest text-center py-1.5 -mx-6 lg:-mx-8 -mt-6 lg:-mt-8 mb-6 lg:mb-8`}>
+           {bannerStyle.message}
          </div>
       )}
       {children}

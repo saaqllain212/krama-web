@@ -4,9 +4,30 @@ import Sidebar from '@/components/dashboard/Sidebar'
 import MobileNav from '@/components/dashboard/MobileNav'
 import TrialGuard from '@/components/dashboard/TrialGuard'
 import { XPProvider } from '@/context/XPContext'
+import { FocusModeProvider, useFocusMode } from '@/context/FocusModeContext'
 import XPNotification from '@/components/dashboard/XPNotification'
 
-// NEW: Import Dashboard Cursor
+// Inner layout that reacts to focus mode
+function DashboardInner({ children }: { children: React.ReactNode }) {
+  const { isFocusMode } = useFocusMode()
+
+  return (
+    <div className="min-h-screen bg-[#f0f2f7]">
+      {/* Sidebar & MobileNav hide when focus mode is active */}
+      {!isFocusMode && <Sidebar />}
+      {!isFocusMode && <MobileNav />}
+      
+      <main className={isFocusMode ? '' : 'lg:pl-64'}>
+        <div className="mx-auto max-w-7xl p-6 lg:p-8">
+          <TrialGuard>
+            {children}
+          </TrialGuard>
+        </div>
+      </main>
+      <XPNotification />
+    </div>
+  )
+}
 
 export default function DashboardLayout({
   children,
@@ -15,18 +36,9 @@ export default function DashboardLayout({
 }) {
   return (
     <XPProvider>
-      <div className="min-h-screen bg-[#f0f2f7]">
-        <Sidebar />
-        <MobileNav />
-        <main className="lg:pl-64">
-           <div className="mx-auto max-w-7xl p-6 lg:p-8">
-             <TrialGuard>
-                {children}
-             </TrialGuard>
-           </div>
-        </main>
-        <XPNotification />
-      </div>
+      <FocusModeProvider>
+        <DashboardInner>{children}</DashboardInner>
+      </FocusModeProvider>
     </XPProvider>
   )
 }

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { 
@@ -31,7 +31,8 @@ const NAV_ITEMS = [
 export default function Sidebar() {
   const pathname = usePathname()
   const router = useRouter()
-  const supabase = createClient()
+  // FIX: Memoize supabase client so it's not re-created every render
+  const supabase = useMemo(() => createClient(), [])
   
   const { activeExam, stats } = useSyllabus()
   

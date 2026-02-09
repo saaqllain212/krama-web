@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from 'react'
 import { Sparkles, Trophy, Zap, Coffee, Moon, Sun } from 'lucide-react'
+// FIX: Use npm import instead of window.confetti (CDN script was removed)
+import confetti from 'canvas-confetti'
 
 type EasterEgg = {
   id: string
@@ -71,14 +73,12 @@ export function useEasterEggs() {
       setActiveEgg(egg)
       setTimeout(() => setActiveEgg(null), 5000)
       
-      // Confetti effect
-      if (typeof window !== 'undefined' && (window as any).confetti) {
-        ;(window as any).confetti({
-          particleCount: 100,
-          spread: 70,
-          origin: { y: 0.6 }
-        })
-      }
+      // FIX: Use npm import directly instead of window.confetti
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 }
+      })
     }
   }
 

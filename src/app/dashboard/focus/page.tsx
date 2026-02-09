@@ -6,14 +6,55 @@ import { Play, Pause, RotateCcw, ArrowLeft, BarChart3, Maximize2, Minimize2 } fr
 import Link from 'next/link'
 import { useAlert } from '@/context/AlertContext'
 import { useXP } from '@/context/XPContext'
+import { useFocusMode } from '@/context/FocusModeContext'
 import CircularProgress from '@/components/dashboard/CircularProgress'
 
 const PRESETS = [15, 25, 45, 60, 90]
+
+// --- Audio notification helper (Web Audio API) ---
+function playCompletionSound() {
+  try {
+    const AudioCtx = window.AudioContext || (window as any).webkitAudioContext
+    if (!AudioCtx) return
+    
+    const ctx = new AudioCtx()
+    
+    // Play a pleasant two-tone chime
+    const playTone = (freq: number, startTime: number, duration: number) => {
+      const osc = ctx.createOscillator()
+      const gain = ctx.createGain()
+      
+      osc.connect(gain)
+      gain.connect(ctx.destination)
+      
+      osc.frequency.value = freq
+      osc.type = 'sine'
+      
+      gain.gain.setValueAtTime(0, startTime)
+      gain.gain.linearRampToValueAtTime(0.3, startTime + 0.05)
+      gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration)
+      
+      osc.start(startTime)
+      osc.stop(startTime + duration)
+    }
+    
+    const now = ctx.currentTime
+    playTone(523.25, now, 0.3)        // C5
+    playTone(659.25, now + 0.15, 0.3) // E5
+    playTone(783.99, now + 0.3, 0.5)  // G5 (longer)
+    
+    // Clean up after sounds finish
+    setTimeout(() => ctx.close(), 2000)
+  } catch (e) {
+    // Silently fail — audio is a nice-to-have, not critical
+  }
+}
 
 export default function FocusPage() {
   const supabase = createClient()
   const { showAlert } = useAlert()
   const { recordFocusSession } = useXP()
+  const { isFocusMode, setFocusMode } = useFocusMode()
 
   // --- STATE ---
   const [targetMinutes, setTargetMinutes] = useState(25)
@@ -24,13 +65,12 @@ export default function FocusPage() {
   const [todaySessions, setTodaySessions] = useState(0)
   const [todayMinutes, setTodayMinutes] = useState(0)
   const [customTime, setCustomTime] = useState('')
-  const [isFocusMode, setIsFocusMode] = useState(false)
 
   // --- REFS for accurate timing ---
   const startTimeRef = useRef<number | null>(null)
   const totalSecondsRef = useRef<number>(25 * 60)
   const rafRef = useRef<number | null>(null)
-  const sessionStartRef = useRef<number | null>(null) // Track when session started for actual duration
+  const sessionStartRef = useRef<number | null>(null)
 
   // --- ACCURATE TIMER using requestAnimationFrame + Date.now() ---
   const updateTimer = useCallback(() => {
@@ -45,7 +85,11 @@ export default function FocusPage() {
     if (remaining <= 0) {
       setIsActive(false)
       startTimeRef.current = null
-      // Auto-save when complete - record actual target duration
+      
+      // Play completion sound
+      playCompletionSound()
+      
+      // Auto-save when complete
       handleSaveSession(targetMinutes)
       return
     }
@@ -57,7 +101,6 @@ export default function FocusPage() {
   useEffect(() => {
     const handleVisibility = () => {
       if (document.visibilityState === 'visible' && isActive && startTimeRef.current) {
-        // Force immediate recalculation when tab becomes visible
         const now = Date.now()
         const elapsed = Math.floor((now - startTimeRef.current) / 1000)
         const remaining = Math.max(0, totalSecondsRef.current - elapsed)
@@ -67,6 +110,7 @@ export default function FocusPage() {
         if (remaining <= 0) {
           setIsActive(false)
           startTimeRef.current = null
+          playCompletionSound()
           handleSaveSession(targetMinutes)
         }
       }
@@ -95,15 +139,12 @@ export default function FocusPage() {
         
         if (logError) throw logError
         
-        // Award XP for the focus session
         await recordFocusSession(duration)
         
         showAlert(`Completed: ${duration}m on "${topic || 'Task'}"`, 'success')
         
-        // Refresh today's data
         fetchTodayData()
         
-        // Reset timer
         setSecondsLeft(targetMinutes * 60)
         totalSecondsRef.current = targetMinutes * 60
         sessionStartRef.current = null
@@ -153,28 +194,29 @@ export default function FocusPage() {
     }
   }, [isActive, updateTimer])
 
-  // Toggle focus mode — hide sidebar
+  // FIX: Use React context instead of DOM querySelector
+  // Activate focus mode when timer is running AND user toggled it
   useEffect(() => {
-    const sidebar = document.querySelector('aside')
-    const mobileNav = document.querySelector('[class*="sticky top-0 z-30"]')
-    const mainContent = document.querySelector('main')
-    
-    if (isFocusMode && isActive) {
-      sidebar?.classList.add('!hidden')
-      mobileNav?.classList.add('!hidden')
-      mainContent?.classList.remove('lg:pl-64')
-    } else {
-      sidebar?.classList.remove('!hidden')
-      mobileNav?.classList.remove('!hidden')
-      mainContent?.classList.add('lg:pl-64')
+    if (isFocusMode && !isActive) {
+      // If timer stops/pauses while in focus mode, exit focus mode
+      setFocusMode(false)
     }
-    
+  }, [isActive]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Clean up focus mode when leaving the page
+  useEffect(() => {
     return () => {
-      sidebar?.classList.remove('!hidden')
-      mobileNav?.classList.remove('!hidden')
-      mainContent?.classList.add('lg:pl-64')
+      setFocusMode(false)
     }
-  }, [isFocusMode, isActive])
+  }, [setFocusMode])
+
+  const toggleFocusMode = () => {
+    if (!isFocusMode && isActive) {
+      setFocusMode(true)
+    } else {
+      setFocusMode(false)
+    }
+  }
 
   const toggleTimer = () => {
     if (!isActive) {
@@ -198,6 +240,7 @@ export default function FocusPage() {
 
   const resetTimer = () => {
     setIsActive(false)
+    setFocusMode(false)
     setSecondsLeft(targetMinutes * 60)
     totalSecondsRef.current = targetMinutes * 60
     startTimeRef.current = null
@@ -235,6 +278,7 @@ export default function FocusPage() {
     const actualMinutes = Math.max(1, Math.round(elapsedMs / 60000))
     
     setIsActive(false)
+    setFocusMode(false)
     startTimeRef.current = null
     
     handleSaveSession(actualMinutes)
@@ -270,11 +314,16 @@ export default function FocusPage() {
             Focus Insights
           </Link>
 
-          {/* Fullscreen toggle */}
+          {/* Fullscreen toggle — only works when timer is active */}
           <button
-            onClick={() => setIsFocusMode(!isFocusMode)}
-            className="p-2 text-gray-500 hover:text-gray-800 bg-gray-100 hover:bg-gray-200 rounded-lg transition-all"
-            title={isFocusMode ? 'Exit focus mode' : 'Enter focus mode'}
+            onClick={toggleFocusMode}
+            disabled={!isActive && !isFocusMode}
+            className={`p-2 rounded-lg transition-all ${
+              !isActive && !isFocusMode 
+                ? 'text-gray-300 bg-gray-50 cursor-not-allowed' 
+                : 'text-gray-500 hover:text-gray-800 bg-gray-100 hover:bg-gray-200'
+            }`}
+            title={isFocusMode ? 'Exit focus mode' : isActive ? 'Enter focus mode' : 'Start timer first'}
           >
             {isFocusMode ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
           </button>

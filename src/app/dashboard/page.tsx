@@ -12,6 +12,7 @@ import BroadcastBanner from '@/components/dashboard/BroadcastBanner'
 import TodayProgressCard from '@/components/dashboard/TodayProgressCard'
 import QuickStatsGrid from '@/components/dashboard/QuickStatsGrid'
 import AIMCQBanner from '@/components/dashboard/AIMCQBanner'
+import GettingStartedCard from '@/components/dashboard/GettingStartedCard'
 
 // IMPORTS THE COMPANION WIDGET
 import DualCompanions from '@/components/companions/DualCompanions'
@@ -32,6 +33,82 @@ const getMotivation = (progress: number, streak: number) => {
   if (streak >= 7) return `${streak}-day streak! Don't break it.`
   if (streak >= 3) return "Building consistency. Stay focused."
   return "Every minute counts. Let's begin."
+}
+
+// --- Shimmer skeleton component ---
+function DashboardSkeleton() {
+  return (
+    <div className="space-y-8 pb-24">
+      {/* Top bar skeleton */}
+      <div className="flex justify-between items-center">
+        <div className="h-10 w-28 bg-gray-200 rounded-full skeleton-shimmer" />
+        <div className="h-10 w-10 bg-gray-200 rounded-lg skeleton-shimmer" />
+      </div>
+      
+      {/* Greeting skeleton */}
+      <div className="space-y-3">
+        <div className="h-10 w-72 bg-gray-200 rounded-lg skeleton-shimmer" />
+        <div className="h-6 w-56 bg-gray-100 rounded-lg skeleton-shimmer" />
+      </div>
+
+      {/* Progress card skeleton */}
+      <div className="rounded-2xl border border-gray-200 bg-white p-6 space-y-6">
+        <div className="flex justify-between">
+          <div className="space-y-3">
+            <div className="h-4 w-32 bg-gray-200 rounded skeleton-shimmer" />
+            <div className="h-12 w-40 bg-gray-200 rounded skeleton-shimmer" />
+          </div>
+          <div className="w-24 h-24 bg-gray-200 rounded-full skeleton-shimmer" />
+        </div>
+        <div className="h-px bg-gray-100" />
+        <div className="flex gap-3">
+          {[1,2,3,4,5,6,7].map(i => (
+            <div key={i} className="flex-1 h-10 bg-gray-100 rounded-lg skeleton-shimmer" />
+          ))}
+        </div>
+      </div>
+      
+      {/* Stats grid skeleton */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {[1,2,3,4].map(i => (
+          <div key={i} className="rounded-xl border border-gray-200 bg-white p-6 space-y-4">
+            <div className="w-12 h-12 bg-gray-200 rounded-xl skeleton-shimmer" />
+            <div className="h-8 w-16 bg-gray-200 rounded skeleton-shimmer" />
+            <div className="h-4 w-24 bg-gray-100 rounded skeleton-shimmer" />
+          </div>
+        ))}
+      </div>
+
+      {/* Shimmer animation */}
+      <style jsx>{`
+        .skeleton-shimmer {
+          position: relative;
+          overflow: hidden;
+        }
+        .skeleton-shimmer::after {
+          content: '';
+          position: absolute;
+          top: 0;
+          right: 0;
+          bottom: 0;
+          left: 0;
+          transform: translateX(-100%);
+          background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.6),
+            transparent
+          );
+          animation: shimmer 1.5s infinite;
+        }
+        @keyframes shimmer {
+          100% {
+            transform: translateX(100%);
+          }
+        }
+      `}</style>
+    </div>
+  )
 }
 
 export default function DashboardPage() {
@@ -73,20 +150,18 @@ export default function DashboardPage() {
           setUserEmail(user.email)
         }
 
-        // --- PERFORMANCE FIX: Fetch ALL data in parallel instead of sequentially ---
+        // --- PERFORMANCE FIX: Fetch ALL data in parallel ---
         const today = new Date().toISOString().split('T')[0]
         const weekAgo = new Date()
         weekAgo.setDate(weekAgo.getDate() - 6)
 
         const [accessRes, focusRes, weekRes, statsRes, reviewRes, mockRes] = await Promise.all([
-          // 1. Membership status
           supabase
             .from('user_access')
             .select('is_premium, trial_starts_at, trial_ends_at')
             .eq('user_id', user.id)
             .single(),
 
-          // 2. Today's focus time
           supabase
             .from('focus_logs')
             .select('duration_minutes')
@@ -94,28 +169,24 @@ export default function DashboardPage() {
             .gte('started_at', `${today}T00:00:00`)
             .lt('started_at', `${today}T23:59:59`),
 
-          // 3. Week data for heatmap
           supabase
             .from('focus_logs')
             .select('started_at, duration_minutes')
             .eq('user_id', user.id)
             .gte('started_at', weekAgo.toISOString()),
 
-          // 4. Streak from user_stats (FIX: no longer fetching ALL focus_logs)
           supabase
             .from('user_stats')
             .select('current_streak')
             .eq('user_id', user.id)
             .single(),
 
-          // 5. Due reviews
           supabase
             .from('topics')
             .select('id')
             .eq('user_id', user.id)
             .lte('next_review', today),
 
-          // 6. Mocks count
           supabase
             .from('mock_logs')
             .select('logs')
@@ -124,7 +195,7 @@ export default function DashboardPage() {
             .maybeSingle()
         ])
 
-        // --- Process membership ---
+        // Process membership
         if (accessRes.data) {
           const access = accessRes.data
           setIsPremium(access.is_premium)
@@ -138,13 +209,13 @@ export default function DashboardPage() {
           }
         }
 
-        // --- Process today's focus ---
+        // Process today's focus
         if (focusRes.data) {
           const total = focusRes.data.reduce((sum, s) => sum + (s.duration_minutes || 0), 0)
           setFocusMinutes(total)
         }
 
-        // --- Process week data ---
+        // Process week data
         if (weekRes.data) {
           const newWeekData = [0, 0, 0, 0, 0, 0, 0]
           weekRes.data.forEach((session) => {
@@ -156,17 +227,17 @@ export default function DashboardPage() {
           setWeekData(newWeekData)
         }
 
-        // --- Process streak (FIX: use user_stats instead of recalculating) ---
+        // Process streak (uses user_stats)
         if (statsRes.data) {
           setStreak(statsRes.data.current_streak || 0)
         }
 
-        // --- Process reviews ---
+        // Process reviews
         if (reviewRes.data) {
           setDueReviews(reviewRes.data.length)
         }
 
-        // --- Process mocks ---
+        // Process mocks
         if (mockRes.data?.logs) {
           // @ts-ignore
           setMocksCount(mockRes.data.logs.length)
@@ -183,18 +254,7 @@ export default function DashboardPage() {
 
   // Loading skeleton
   if (loading) {
-    return (
-      <div className="space-y-8 pb-24 animate-pulse">
-        <div className="flex justify-between">
-          <div className="h-10 w-48 bg-gray-200 rounded" />
-          <div className="h-10 w-32 bg-gray-200 rounded" />
-        </div>
-        <div className="h-64 bg-gray-200 rounded-2xl" />
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {[1,2,3,4].map(i => <div key={i} className="h-32 bg-gray-200 rounded-xl" />)}
-        </div>
-      </div>
-    )
+    return <DashboardSkeleton />
   }
 
   return (
@@ -259,6 +319,13 @@ export default function DashboardPage() {
           {getMotivation(progressPercent, streak)}
         </p>
       </div>
+
+      {/* === GETTING STARTED (only for new users with all zeros) === */}
+      <GettingStartedCard 
+        focusMinutes={focusMinutes}
+        dueReviews={dueReviews}
+        syllabusPercentage={stats.percentage}
+      />
 
       {/* === DUAL COMPANIONS === */}
       <DualCompanions 
