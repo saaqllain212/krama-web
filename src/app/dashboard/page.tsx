@@ -13,7 +13,7 @@ import TodayProgressCard from '@/components/dashboard/TodayProgressCard'
 import QuickStatsGrid from '@/components/dashboard/QuickStatsGrid'
 import AIMCQBanner from '@/components/dashboard/AIMCQBanner'
 
-// IMPORTS THE NEW COMPANION WIDGET
+// IMPORTS THE COMPANION WIDGET
 import DualCompanions from '@/components/companions/DualCompanions'
 
 // Helper: Get time-aware greeting
@@ -37,7 +37,6 @@ const getMotivation = (progress: number, streak: number) => {
 export default function DashboardPage() {
   const [userName, setUserName] = useState('Student')
   const [userEmail, setUserEmail] = useState('')
-  // Added user state for companions
   const [user, setUser] = useState<any>(null)
   
   const [focusMinutes, setFocusMinutes] = useState(0)
@@ -64,24 +63,70 @@ export default function DashboardPage() {
       const { data: { user } } = await supabase.auth.getUser()
       
       if (user) {
-        setUser(user) // Store full user object
+        setUser(user)
         
         if (user.user_metadata?.full_name) {
           setUserName(user.user_metadata.full_name.split(' ')[0])
         }
         
         if (user.email) {
-            setUserEmail(user.email)
+          setUserEmail(user.email)
         }
 
-        // --- 1. FETCH MEMBERSHIP STATUS ---
-        const { data: access } = await supabase
-          .from('user_access')
-          .select('is_premium, trial_starts_at, trial_ends_at')
-          .eq('user_id', user.id)
-          .single()
+        // --- PERFORMANCE FIX: Fetch ALL data in parallel instead of sequentially ---
+        const today = new Date().toISOString().split('T')[0]
+        const weekAgo = new Date()
+        weekAgo.setDate(weekAgo.getDate() - 6)
 
-        if (access) {
+        const [accessRes, focusRes, weekRes, statsRes, reviewRes, mockRes] = await Promise.all([
+          // 1. Membership status
+          supabase
+            .from('user_access')
+            .select('is_premium, trial_starts_at, trial_ends_at')
+            .eq('user_id', user.id)
+            .single(),
+
+          // 2. Today's focus time
+          supabase
+            .from('focus_logs')
+            .select('duration_minutes')
+            .eq('user_id', user.id)
+            .gte('started_at', `${today}T00:00:00`)
+            .lt('started_at', `${today}T23:59:59`),
+
+          // 3. Week data for heatmap
+          supabase
+            .from('focus_logs')
+            .select('started_at, duration_minutes')
+            .eq('user_id', user.id)
+            .gte('started_at', weekAgo.toISOString()),
+
+          // 4. Streak from user_stats (FIX: no longer fetching ALL focus_logs)
+          supabase
+            .from('user_stats')
+            .select('current_streak')
+            .eq('user_id', user.id)
+            .single(),
+
+          // 5. Due reviews
+          supabase
+            .from('topics')
+            .select('id')
+            .eq('user_id', user.id)
+            .lte('next_review', today),
+
+          // 6. Mocks count
+          supabase
+            .from('mock_logs')
+            .select('logs')
+            .eq('user_id', user.id)
+            .eq('exam_id', activeExam || 'upsc')
+            .maybeSingle()
+        ])
+
+        // --- Process membership ---
+        if (accessRes.data) {
+          const access = accessRes.data
           setIsPremium(access.is_premium)
           
           if (!access.is_premium && access.trial_ends_at) {
@@ -93,32 +138,16 @@ export default function DashboardPage() {
           }
         }
 
-        // --- 2. FETCH TODAY'S FOCUS TIME ---
-        const today = new Date().toISOString().split('T')[0]
-        const { data: focusData } = await supabase
-          .from('focus_logs')
-          .select('duration_minutes')
-          .eq('user_id', user.id)
-          .gte('started_at', `${today}T00:00:00`)
-          .lt('started_at', `${today}T23:59:59`)
-
-        if (focusData) {
-          const total = focusData.reduce((sum, s) => sum + (s.duration_minutes || 0), 0)
+        // --- Process today's focus ---
+        if (focusRes.data) {
+          const total = focusRes.data.reduce((sum, s) => sum + (s.duration_minutes || 0), 0)
           setFocusMinutes(total)
         }
 
-        // --- 3. FETCH WEEK DATA ---
-        const weekAgo = new Date()
-        weekAgo.setDate(weekAgo.getDate() - 6)
-        const { data: weekFocus } = await supabase
-          .from('focus_logs')
-          .select('started_at, duration_minutes')
-          .eq('user_id', user.id)
-          .gte('started_at', weekAgo.toISOString())
-
-        if (weekFocus) {
+        // --- Process week data ---
+        if (weekRes.data) {
           const newWeekData = [0, 0, 0, 0, 0, 0, 0]
-          weekFocus.forEach((session) => {
+          weekRes.data.forEach((session) => {
             const sessionDate = new Date(session.started_at)
             const dayOfWeek = sessionDate.getDay()
             const adjustedDay = dayOfWeek === 0 ? 6 : dayOfWeek - 1
@@ -127,54 +156,20 @@ export default function DashboardPage() {
           setWeekData(newWeekData)
         }
 
-        // --- 4. FETCH STREAK ---
-        const { data: streakData } = await supabase
-          .from('focus_logs')
-          .select('started_at')
-          .eq('user_id', user.id)
-          .order('started_at', { ascending: false })
-
-        if (streakData && streakData.length > 0) {
-          let currentStreak = 1
-          const dates = streakData.map(s => new Date(s.started_at).toISOString().split('T')[0])
-          const uniqueDates = [...new Set(dates)]
-          
-          for (let i = 1; i < uniqueDates.length; i++) {
-            const prevDate = new Date(uniqueDates[i-1])
-            const currDate = new Date(uniqueDates[i])
-            const diffDays = Math.floor((prevDate.getTime() - currDate.getTime()) / (1000 * 60 * 60 * 24))
-            
-            if (diffDays === 1) {
-              currentStreak++
-            } else {
-              break
-            }
-          }
-          setStreak(currentStreak)
+        // --- Process streak (FIX: use user_stats instead of recalculating) ---
+        if (statsRes.data) {
+          setStreak(statsRes.data.current_streak || 0)
         }
 
-        // --- 5. FETCH DUE REVIEWS ---
-        const { data: reviewData } = await supabase
-          .from('topics')
-          .select('id')
-          .eq('user_id', user.id)
-          .lte('next_review', today)
-
-        if (reviewData) {
-          setDueReviews(reviewData.length)
+        // --- Process reviews ---
+        if (reviewRes.data) {
+          setDueReviews(reviewRes.data.length)
         }
 
-        // --- 6. FETCH MOCKS COUNT ---
-        const { data: mockData } = await supabase
-          .from('mock_logs')
-          .select('logs')
-          .eq('user_id', user.id)
-          .eq('exam_id', activeExam || 'upsc')
-          .maybeSingle()
-        
-        if (mockData?.logs) {
+        // --- Process mocks ---
+        if (mockRes.data?.logs) {
           // @ts-ignore
-          setMocksCount(mockData.logs.length)
+          setMocksCount(mockRes.data.logs.length)
         }
       }
       

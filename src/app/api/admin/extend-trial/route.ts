@@ -1,36 +1,37 @@
 import { createClient } from '@supabase/supabase-js'
+import { createClient as createAuthClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
-
-// Initialize SUPER ADMIN Client
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
 
 export async function POST(req: Request) {
   try {
-    const { userId, days, adminEmail } = await req.json()
+    const { userId, days } = await req.json()
 
-    // SECURITY CHECK
-    if (adminEmail !== process.env.ADMIN_EMAIL) {
+    // SECURITY FIX: Verify admin identity via session, not client-sent email
+    const authClient = await createAuthClient()
+    const { data: { user } } = await authClient.auth.getUser()
+
+    if (!user || user.email !== process.env.ADMIN_EMAIL) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // 1. Check if user_access table exists, if not, create entry or handle error
+    // Initialize SUPER ADMIN Client only after auth passes
+    const supabaseAdmin = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    )
+
+    // 1. Fetch current access
     const { data: currentAccess, error: fetchError } = await supabaseAdmin
       .from('user_access')
       .select('trial_ends_at')
       .eq('user_id', userId)
       .single()
     
-    // If the user has no row in user_access, we will create one.
-    // If the error is anything other than "Row not found", throw it.
     if (fetchError && fetchError.code !== 'PGRST116') {
-         throw fetchError
+      throw fetchError
     }
 
     const today = new Date()
-    // Calculate new date
     const baseDate = (currentAccess?.trial_ends_at && new Date(currentAccess.trial_ends_at) > today)
       ? new Date(currentAccess.trial_ends_at)
       : today
@@ -52,7 +53,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ success: true, newDate: newDateStr })
 
   } catch (error: any) {
-    console.error('SERVER ERROR:', error) // <--- CHECK YOUR TERMINAL FOR THIS
+    console.error('SERVER ERROR:', error)
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }

@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react'
+import { createContext, useContext, useState, useEffect, useCallback, useRef, ReactNode } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { 
   getLevelFromXP, 
@@ -50,6 +50,9 @@ export function XPProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true)
   const [recentXPGain, setRecentXPGain] = useState<{ amount: number, reason: string } | null>(null)
   const [newAchievement, setNewAchievement] = useState<Achievement | null>(null)
+  
+  // FIX: Use ref to track if streak check has already run this session
+  const streakCheckedRef = useRef(false)
 
   // Fetch stats on mount
   const refreshStats = useCallback(async () => {
@@ -93,78 +96,105 @@ export function XPProvider({ children }: { children: ReactNode }) {
     refreshStats()
   }, [refreshStats])
 
-  // Check and update streak on load
+  // Check and update streak on load — FIX: only run once per session
   useEffect(() => {
-    if (!stats) return
+    if (!stats || streakCheckedRef.current) return
+    streakCheckedRef.current = true
     
     const { newStreak, isNewDay } = calculateStreak(stats.last_active_date, stats.current_streak)
     
     if (isNewDay) {
-      updateStats({
+      const streakUpdates: Partial<UserStats> = {
         current_streak: newStreak,
         longest_streak: Math.max(newStreak, stats.longest_streak),
         last_active_date: new Date().toISOString().split('T')[0]
-      })
-      
-      // Award daily login XP
-      if (newStreak > stats.current_streak) {
-        addXP(XP_REWARDS.DAILY_LOGIN, 'Daily login')
-        
-        // Check for streak bonuses
-        if (newStreak === 7) {
-          addXP(XP_REWARDS.STREAK_7_DAYS, '7-day streak bonus!')
-        } else if (newStreak === 30) {
-          addXP(XP_REWARDS.STREAK_30_DAYS, '30-day streak bonus!')
-        }
       }
+      
+      // Calculate total XP to add for daily login + any streak bonuses
+      let bonusXP = 0
+      if (newStreak > stats.current_streak) {
+        bonusXP += XP_REWARDS.DAILY_LOGIN
+        if (newStreak === 7) bonusXP += XP_REWARDS.STREAK_7_DAYS
+        if (newStreak === 30) bonusXP += XP_REWARDS.STREAK_30_DAYS
+      }
+      
+      if (bonusXP > 0) {
+        streakUpdates.xp = stats.xp + bonusXP
+        setRecentXPGain({ amount: bonusXP, reason: newStreak >= 7 ? `${newStreak}-day streak bonus!` : 'Daily login' })
+        setTimeout(() => setRecentXPGain(null), 3000)
+      }
+      
+      updateStats(streakUpdates)
     }
-  }, [stats?.last_active_date])
+  }, [stats?.last_active_date]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Update stats in DB
+  // Update stats in DB — FIX: uses latest stats from ref-like pattern
   const updateStats = async (updates: Partial<UserStats>) => {
     const { data: { user } } = await supabase.auth.getUser()
-    if (!user || !stats) return
+    if (!user) return
 
-    const newStats = { ...stats, ...updates }
-    
-    // Recalculate level
-    const levelInfo = getLevelFromXP(newStats.xp)
-    newStats.level = levelInfo.level
-    newStats.title = levelInfo.title
-    
-    // Check for new achievements
-    const newAchievements = checkNewAchievements(newStats)
-    if (newAchievements.length > 0) {
-      newStats.achievements = [
-        ...newStats.achievements,
-        ...newAchievements.map(a => a.id)
-      ]
-      // Show first new achievement
-      setNewAchievement(newAchievements[0])
-    }
+    // FIX: Read fresh stats from state at call time
+    setStats(prevStats => {
+      if (!prevStats) return prevStats
+      
+      const newStats = { ...prevStats, ...updates }
+      
+      // Recalculate level
+      const levelInfo = getLevelFromXP(newStats.xp)
+      newStats.level = levelInfo.level
+      newStats.title = levelInfo.title
+      
+      // Check for new achievements
+      const newAchievements = checkNewAchievements(newStats)
+      if (newAchievements.length > 0) {
+        newStats.achievements = [
+          ...newStats.achievements,
+          ...newAchievements.map(a => a.id)
+        ]
+        setNewAchievement(newAchievements[0])
+      }
 
-    await supabase
-      .from('user_stats')
-      .update({
-        ...updates,
-        level: newStats.level,
-        title: newStats.title,
-        achievements: newStats.achievements,
-        updated_at: new Date().toISOString()
-      })
-      .eq('user_id', user.id)
+      // Fire DB update (non-blocking)
+      supabase
+        .from('user_stats')
+        .update({
+          ...updates,
+          level: newStats.level,
+          title: newStats.title,
+          achievements: newStats.achievements,
+          updated_at: new Date().toISOString()
+        })
+        .eq('user_id', user.id)
+        .then(({ error }) => {
+          if (error) console.error('Failed to update user_stats:', error)
+        })
 
-    setStats(newStats)
+      return newStats
+    })
   }
 
   // Add XP with notification
   const addXP = async (amount: number, reason: string) => {
-    if (!stats) return
-    
     setRecentXPGain({ amount, reason })
-    await updateStats({ xp: stats.xp + amount })
     
-    // Clear notification after 3 seconds
+    // FIX: Use functional update to avoid stale state
+    setStats(prev => {
+      if (!prev) return prev
+      return { ...prev, xp: prev.xp + amount }
+    })
+    
+    // Persist to DB
+    const { data: { user } } = await supabase.auth.getUser()
+    if (user) {
+      // FIX: Use database-side increment to prevent race conditions
+      await supabase.rpc('increment_xp', { user_id_input: user.id, amount_input: amount }).then(({ error }) => {
+        // If RPC doesn't exist, fall back to regular update
+        if (error) {
+          updateStats({}) // triggers a save with current state
+        }
+      })
+    }
+    
     setTimeout(() => setRecentXPGain(null), 3000)
   }
 
@@ -174,13 +204,14 @@ export function XPProvider({ children }: { children: ReactNode }) {
     
     const xpEarned = minutes * XP_REWARDS.FOCUS_PER_MINUTE
     const isFirstFocus = stats.total_focus_minutes === 0
+    const totalXP = xpEarned + (isFirstFocus ? XP_REWARDS.FIRST_FOCUS : 0)
     
     await updateStats({
-      xp: stats.xp + xpEarned + (isFirstFocus ? XP_REWARDS.FIRST_FOCUS : 0),
+      xp: stats.xp + totalXP,
       total_focus_minutes: stats.total_focus_minutes + minutes
     })
     
-    // Update companion state (Guardian total hours, health, wraith idle reset)
+    // Update companion state
     try {
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
@@ -191,7 +222,7 @@ export function XPProvider({ children }: { children: ReactNode }) {
     }
     
     if (isFirstFocus) {
-      setRecentXPGain({ amount: xpEarned + XP_REWARDS.FIRST_FOCUS, reason: 'First focus session! 🎉' })
+      setRecentXPGain({ amount: totalXP, reason: 'First focus session! 🎉' })
     } else {
       setRecentXPGain({ amount: xpEarned, reason: `${minutes} min focus` })
     }

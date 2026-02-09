@@ -3,7 +3,7 @@ import { Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import Script from 'next/script'; 
 
-// 👇 Sentry Wrapper (Safety System)
+// Sentry Wrapper (Safety System)
 import SentryWrapper from "@/components/SentryWrapper";
 
 // Context Providers
@@ -24,7 +24,6 @@ export const metadata: Metadata = {
   },
   description: "Don't just study harder, study smarter. Krama is the tactical operating system for JEE, NEET, UPSC & SSC aspirants.",
   
-  // 👇 NEW: OPERATION BILLBOARD (Viral Images)
   openGraph: {
     title: "Krama | Strategic Study Tracker",
     description: "The tactical operating system for students.",
@@ -41,7 +40,6 @@ export const metadata: Metadata = {
     locale: "en_US",
     type: "website",
   },
-  // 👆 END NEW SECTION
 
   manifest: "/manifest.json", 
   icons: {
@@ -77,11 +75,11 @@ export default function RootLayout({
           strategy="lazyOnload"
         />
 
-        {/* 👇 NEW: Confetti Script added here */}
-        <Script 
-          src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"
-          strategy="lazyOnload"
-        />
+        {/* FIX: Removed duplicate CDN confetti script.
+            canvas-confetti is already installed as npm dependency (v1.9.4).
+            Import it directly in components that need it:
+            import confetti from 'canvas-confetti'
+        */}
         
       </body>
     </html>

@@ -1,21 +1,23 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { createClient as createAuthClient } from '@/lib/supabase/server'
 
-export async function POST(req: Request) {
+import { Guard } from '@/protection/guard'
+import { AdminActionSchema } from '@/protection/rules'
+
+async function adminActionHandler(req: NextRequest, validData: any) {
   try {
-    const { action, payload } = await req.json()
+    const { action, payload } = validData
 
     // 1. SECURITY CHECK
     const authClient = await createAuthClient()
     const { data: { user } } = await authClient.auth.getUser()
     
-    // SECURITY FIX: Using ADMIN_EMAIL (Server-side only) instead of NEXT_PUBLIC_...
     if (!user || user.email !== process.env.ADMIN_EMAIL) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
     }
 
-    // SECURITY FIX: Initialize "God Mode" client ONLY after authorization passes
+    // Initialize "God Mode" client ONLY after authorization passes
     const supabaseAdmin = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -65,3 +67,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Action failed' }, { status: 500 })
   }
 }
+
+// Wrapped with Guard for rate limiting + Zod validation
+export const POST = Guard(adminActionHandler, { schema: AdminActionSchema })

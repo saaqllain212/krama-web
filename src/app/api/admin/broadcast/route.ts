@@ -1,14 +1,35 @@
 import { createClient } from '@supabase/supabase-js'
+import { createClient as createAuthClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 
-// Initialize SUPER ADMIN Client
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
+// Helper: verify admin session (used by all handlers)
+async function verifyAdmin() {
+  const authClient = await createAuthClient()
+  const { data: { user } } = await authClient.auth.getUser()
+  
+  if (!user || user.email !== process.env.ADMIN_EMAIL) {
+    return null
+  }
+  return user
+}
+
+// Helper: get admin supabase client (only call after verifyAdmin succeeds)
+function getAdminClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  )
+}
 
 // GET: Fetch all announcements for the Admin List
 export async function GET() {
+  const admin = await verifyAdmin()
+  if (!admin) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  const supabaseAdmin = getAdminClient()
+
   const { data, error } = await supabaseAdmin
     .from('announcements')
     .select('*')
@@ -21,14 +42,14 @@ export async function GET() {
 // POST: Create a new announcement
 export async function POST(req: Request) {
   try {
-    const { message, type, adminEmail } = await req.json()
-
-    // Security Check
-    if (adminEmail !== process.env.ADMIN_EMAIL) {
+    const admin = await verifyAdmin()
+    if (!admin) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Insert
+    const { message, type } = await req.json()
+    const supabaseAdmin = getAdminClient()
+
     const { error } = await supabaseAdmin
       .from('announcements')
       .insert({ message, type, is_active: true })
@@ -44,15 +65,17 @@ export async function POST(req: Request) {
 // PATCH: Toggle Active Status
 export async function PATCH(req: Request) {
   try {
-    const { id, is_active, adminEmail } = await req.json()
-
-    if (adminEmail !== process.env.ADMIN_EMAIL) {
+    const admin = await verifyAdmin()
+    if (!admin) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // If activating one, deactivate all others (Optional rule, usually good for banners)
+    const { id, is_active } = await req.json()
+    const supabaseAdmin = getAdminClient()
+
+    // If activating one, deactivate all others
     if (is_active) {
-       await supabaseAdmin.from('announcements').update({ is_active: false }).neq('id', id)
+      await supabaseAdmin.from('announcements').update({ is_active: false }).neq('id', id)
     }
 
     const { error } = await supabaseAdmin
