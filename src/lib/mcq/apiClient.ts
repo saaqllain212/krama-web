@@ -235,7 +235,9 @@ async function generateWithClaude(options: MCQGenerationOptions): Promise<MCQGen
       headers: {
         'Content-Type': 'application/json',
         'x-api-key': options.apiKey,
-        'anthropic-version': '2023-06-01'
+        'anthropic-version': '2023-06-01',
+        // FIX: Required for browser-side CORS — without this, fetch fails silently
+        'anthropic-dangerous-direct-browser-access': 'true'
       },
       body: JSON.stringify({
         model: options.modelName,
@@ -412,7 +414,9 @@ export async function testAPIKey(
         headers: {
           'Content-Type': 'application/json',
           'x-api-key': apiKey,
-          'anthropic-version': '2023-06-01'
+          'anthropic-version': '2023-06-01',
+          // FIX: Required for browser-side CORS
+          'anthropic-dangerous-direct-browser-access': 'true'
         },
         body: JSON.stringify({
           model: modelName,

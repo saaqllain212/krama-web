@@ -3,15 +3,16 @@
 
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { Sprout, Clock, Sparkles, MessageSquare, TrendingUp } from 'lucide-react'
+import { Sprout, Clock, Sparkles, TrendingUp } from 'lucide-react'
 import GuardianTree from './visuals/GuardianTree'
 import WraithHourglass from './visuals/WraithHourglass'
 import MessageBubble from './MessageBubble'
 import CompanionModal from './CompanionModal'
 import { 
   getCompanionState,
+  dailyCompanionUpdate,
   calculateExamUrgency,
   getGuardianProgress,
   type CompanionState 
@@ -20,7 +21,6 @@ import {
   generateGuardianMessage,
   generateWraithMessage,
   buildMessageContext,
-  type MessageContext
 } from '@/lib/companions/messageGenerator'
 
 interface DualCompanionsProps {
@@ -42,10 +42,14 @@ export default function DualCompanions({
   const [loading, setLoading] = useState(true)
   const [selectedCompanion, setSelectedCompanion] = useState<'guardian' | 'wraith' | null>(null)
   
-  const supabase = createClient()
+  // FIX: Memoize supabase client
+  const supabase = useMemo(() => createClient(), [])
+  
+  // FIX: Prevent daily update from running twice (React StrictMode)
+  const dailyUpdateRan = useRef(false)
 
   useEffect(() => {
-    loadCompanionData()
+    if (userId) loadCompanionData()
   }, [userId])
 
   const loadCompanionData = async () => {
@@ -53,19 +57,35 @@ export default function DualCompanions({
       const state = await getCompanionState(supabase, userId)
       
       if (state) {
+        // FIX: Run daily companion update on first dashboard load
+        // This handles health decay, wraith idle days, etc.
+        if (!dailyUpdateRan.current) {
+          dailyUpdateRan.current = true
+          
+          const studiedYesterday = todayMinutes > 0 || lastWeekAverage > 0
+          const dailyGoalMet = todayMinutes >= 60 // At least 1 hour
+          const streakBroken = streak === 0 && (state.wraithLastActive !== null)
+          
+          await dailyCompanionUpdate(
+            supabase,
+            userId,
+            studiedYesterday,
+            dailyGoalMet,
+            streakBroken
+          )
+          
+          // Re-fetch after daily update to get fresh values
+          const updatedState = await getCompanionState(supabase, userId)
+          if (updatedState) {
+            setCompanionState(updatedState)
+            generateMessages(updatedState)
+            setLoading(false)
+            return
+          }
+        }
+        
         setCompanionState(state)
-        
-        // Generate messages based on current context
-        const context = buildMessageContext(state, todayMinutes, streak, {
-          lastWeekAverage,
-          recentPerformance: lastWeekAverage > 60 ? 'improving' : 'stable',
-        })
-        
-        const guardMsg = generateGuardianMessage(context)
-        const wrthMsg = generateWraithMessage(context)
-        
-        setGuardianMessage(guardMsg)
-        setWraithMessage(wrthMsg)
+        generateMessages(state)
       }
       
       setLoading(false)
@@ -73,6 +93,19 @@ export default function DualCompanions({
       console.error('Error loading companion data:', error)
       setLoading(false)
     }
+  }
+  
+  const generateMessages = (state: CompanionState) => {
+    const context = buildMessageContext(state, todayMinutes, streak, {
+      lastWeekAverage,
+      recentPerformance: lastWeekAverage > 60 ? 'improving' : 'stable',
+    })
+    
+    const guardMsg = generateGuardianMessage(context)
+    const wrthMsg = generateWraithMessage(context)
+    
+    setGuardianMessage(guardMsg)
+    setWraithMessage(wrthMsg)
   }
 
   if (loading) {
