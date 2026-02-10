@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { Timer, RotateCw, Map, LineChart, ChevronRight } from 'lucide-react'
+import AnimatedNumber from '@/components/ui/AnimatedNumber'
 
 interface QuickStatsGridProps {
   focusMinutes: number
@@ -16,44 +17,51 @@ export default function QuickStatsGrid({
   syllabusPercentage,
   mocksCount 
 }: QuickStatsGridProps) {
+  const hours = Math.floor(focusMinutes / 60)
+  const mins = focusMinutes % 60
+
   const stats = [
     {
       label: 'Focus Time',
-      value: `${Math.floor(focusMinutes / 60)}h ${focusMinutes % 60}m`,
+      numericValue: hours,
+      suffix: 'h',
+      extraText: mins > 0 ? ` ${mins}m` : '',
       icon: Timer,
       href: '/dashboard/focus',
       gradient: 'from-primary-400 to-primary-600',
-      bgGradient: 'from-primary-50 to-primary-100',
     },
     {
       label: 'Reviews Due',
-      value: dueReviews,
+      numericValue: dueReviews,
+      suffix: '',
+      extraText: '',
       icon: RotateCw,
       href: '/dashboard/review',
       gradient: 'from-purple-400 to-purple-600',
-      bgGradient: 'from-purple-50 to-purple-100',
     },
     {
       label: 'Syllabus',
-      value: `${syllabusPercentage}%`,
+      numericValue: syllabusPercentage,
+      suffix: '%',
+      extraText: '',
       icon: Map,
       href: '/dashboard/syllabus',
       gradient: 'from-cyan-400 to-cyan-600',
-      bgGradient: 'from-cyan-50 to-cyan-100',
     },
     {
       label: 'Mock Tests',
-      value: mocksCount,
+      numericValue: mocksCount,
+      suffix: '',
+      extraText: '',
       icon: LineChart,
       href: '/dashboard/mocks',
       gradient: 'from-success-400 to-success-600',
-      bgGradient: 'from-success-50 to-success-100',
     },
   ]
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-      {stats.map((stat) => {
+      {stats.map((stat, i) => {
         const Icon = stat.icon
         return (
           <Link
@@ -66,7 +74,16 @@ export default function QuickStatsGrid({
             </div>
             
             <div className="mb-1">
-              <div className="text-3xl font-bold text-gray-900">{stat.value}</div>
+              <div className="text-3xl font-bold text-gray-900">
+                <AnimatedNumber 
+                  value={stat.numericValue} 
+                  duration={600 + i * 150}
+                  suffix={stat.suffix}
+                />
+                {stat.extraText && (
+                  <span className="text-lg text-gray-500 font-semibold">{stat.extraText}</span>
+                )}
+              </div>
             </div>
             
             <div className="flex items-center justify-between">

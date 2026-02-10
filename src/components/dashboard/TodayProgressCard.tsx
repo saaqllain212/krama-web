@@ -2,6 +2,7 @@
 
 import CircularProgress from './CircularProgress'
 import WeekHeatmap from './WeekHeatmap'
+import AnimatedNumber from '@/components/ui/AnimatedNumber'
 import { Target, TrendingUp } from 'lucide-react'
 
 interface TodayProgressCardProps {
@@ -31,11 +32,11 @@ export default function TodayProgressCard({
             Today's Progress
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-5xl md:text-6xl font-bold text-gray-900 tabular-nums">
-              {hoursLogged}
+            <span className="text-5xl md:text-6xl font-bold text-gray-900">
+              <AnimatedNumber value={hoursLogged} duration={800} />
               <span className="text-2xl md:text-3xl text-gray-500 font-semibold">h</span>
               {minutesLogged > 0 && (
-                <> {minutesLogged}<span className="text-2xl md:text-3xl text-gray-500 font-semibold">m</span></>
+                <> <AnimatedNumber value={minutesLogged} duration={900} /><span className="text-2xl md:text-3xl text-gray-500 font-semibold">m</span></>
               )}
             </span>
             <span className="text-lg font-medium text-gray-500">/ {goalHours}h goal</span>
@@ -58,7 +59,9 @@ export default function TodayProgressCard({
           {streak > 0 && (
             <div className="flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-full border border-success-200">
               <TrendingUp size={14} className="text-success-600" />
-              <span className="text-sm font-bold text-success-700">{streak} day streak</span>
+              <span className="text-sm font-bold text-success-700">
+                <AnimatedNumber value={streak} duration={600} /> day streak
+              </span>
             </div>
           )}
         </div>

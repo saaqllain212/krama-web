@@ -31,7 +31,7 @@ declare global {
   }
 }
 
-// FIX: Progressive urgency helper — returns banner style based on days left
+// Progressive urgency helper — returns banner style based on days left
 function getTrialBannerStyle(daysLeft: number) {
   if (daysLeft <= 3) {
     return {
@@ -39,7 +39,9 @@ function getTrialBannerStyle(daysLeft: number) {
       text: 'text-white',
       message: daysLeft === 1 
         ? '⚠️ Last day of trial — Upgrade now to keep your data' 
-        : `⚠️ Trial ends in ${daysLeft} days`
+        : daysLeft <= 0
+          ? '⚠️ Trial expired'
+          : `⚠️ Trial ends in ${daysLeft} days`
     }
   }
   if (daysLeft <= 7) {
@@ -68,6 +70,8 @@ export default function TrialGuard({ children }: { children: React.ReactNode }) 
   const [paymentProcessing, setPaymentProcessing] = useState(false)
   const [isLocked, setIsLocked] = useState(false)
   const [daysLeft, setDaysLeft] = useState(0)
+  // FIX: Track premium status so banner doesn't show for pro users
+  const [isPremium, setIsPremium] = useState(false)
 
   useEffect(() => {
     checkStatus()
@@ -90,8 +94,9 @@ export default function TrialGuard({ children }: { children: React.ReactNode }) 
 
     // Premium Check
     if (access.is_premium) {
+      setIsPremium(true) // FIX: Set premium flag
       setLoading(false)
-      return // UNLOCKED
+      return // UNLOCKED — no banner, no lock
     }
 
     // Trial Timer Check
@@ -230,11 +235,11 @@ export default function TrialGuard({ children }: { children: React.ReactNode }) 
   }
 
   // --- RENDER 3: ACCESS GRANTED ---
-  const bannerStyle = !isLocked ? getTrialBannerStyle(daysLeft) : null
+  // FIX: Only show trial banner for non-premium users who are still in trial
+  const bannerStyle = (!isPremium && !isLocked) ? getTrialBannerStyle(daysLeft) : null
 
   return (
     <>
-      {/* FIX: Progressive urgency banner — blue (14-8d), amber (7-4d), red (3-1d) */}
       {bannerStyle && (
          <div className={`${bannerStyle.bg} ${bannerStyle.text} text-[10px] font-bold uppercase tracking-widest text-center py-1.5 -mx-6 lg:-mx-8 -mt-6 lg:-mt-8 mb-6 lg:mb-8`}>
            {bannerStyle.message}
