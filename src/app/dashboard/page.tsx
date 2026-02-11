@@ -39,19 +39,14 @@ const getMotivation = (progress: number, streak: number) => {
 function DashboardSkeleton() {
   return (
     <div className="space-y-8 pb-24">
-      {/* Top bar skeleton */}
       <div className="flex justify-between items-center">
         <div className="h-10 w-28 bg-gray-200 rounded-full skeleton-shimmer" />
         <div className="h-10 w-10 bg-gray-200 rounded-lg skeleton-shimmer" />
       </div>
-      
-      {/* Greeting skeleton */}
       <div className="space-y-3">
         <div className="h-10 w-72 bg-gray-200 rounded-lg skeleton-shimmer" />
         <div className="h-6 w-56 bg-gray-100 rounded-lg skeleton-shimmer" />
       </div>
-
-      {/* Progress card skeleton */}
       <div className="rounded-2xl border border-gray-200 bg-white p-6 space-y-6">
         <div className="flex justify-between">
           <div className="space-y-3">
@@ -67,8 +62,6 @@ function DashboardSkeleton() {
           ))}
         </div>
       </div>
-      
-      {/* Stats grid skeleton */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[1,2,3,4].map(i => (
           <div key={i} className="rounded-xl border border-gray-200 bg-white p-6 space-y-4">
@@ -78,34 +71,15 @@ function DashboardSkeleton() {
           </div>
         ))}
       </div>
-
-      {/* Shimmer animation */}
       <style jsx>{`
-        .skeleton-shimmer {
-          position: relative;
-          overflow: hidden;
-        }
+        .skeleton-shimmer { position: relative; overflow: hidden; }
         .skeleton-shimmer::after {
-          content: '';
-          position: absolute;
-          top: 0;
-          right: 0;
-          bottom: 0;
-          left: 0;
+          content: ''; position: absolute; top: 0; right: 0; bottom: 0; left: 0;
           transform: translateX(-100%);
-          background: linear-gradient(
-            90deg,
-            transparent,
-            rgba(255, 255, 255, 0.6),
-            transparent
-          );
+          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
           animation: shimmer 1.5s infinite;
         }
-        @keyframes shimmer {
-          100% {
-            transform: translateX(100%);
-          }
-        }
+        @keyframes shimmer { 100% { transform: translateX(100%); } }
       `}</style>
     </div>
   )
@@ -117,142 +91,144 @@ export default function DashboardPage() {
   const [user, setUser] = useState<any>(null)
   
   const [focusMinutes, setFocusMinutes] = useState(0)
-  const [dailyGoalMinutes, setDailyGoalMinutes] = useState(360) // 6 hours default
+  const [dailyGoalMinutes, setDailyGoalMinutes] = useState(360) // default — will be overridden from DB
   const [dueReviews, setDueReviews] = useState(0)
   const [mocksCount, setMocksCount] = useState(0)
   const [streak, setStreak] = useState(0)
   const [weekData, setWeekData] = useState<number[]>([0, 0, 0, 0, 0, 0, 0])
   const [loading, setLoading] = useState(true)
   
-  // MODAL STATES
   const [isSettingsOpen, setIsSettingsOpen] = useState(false) 
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false)
   
-  // MEMBERSHIP STATE
   const [isPremium, setIsPremium] = useState(false)
   const [trialDaysLeft, setTrialDaysLeft] = useState<number | null>(null)
 
   const { stats, activeExam } = useSyllabus() 
   const supabase = createClient()
 
-  useEffect(() => {
-    const getData = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
+  const getData = async () => {
+    const { data: { user } } = await supabase.auth.getUser()
+    
+    if (user) {
+      setUser(user)
       
-      if (user) {
-        setUser(user)
-        
-        if (user.user_metadata?.full_name) {
-          setUserName(user.user_metadata.full_name.split(' ')[0])
-        }
-        
-        if (user.email) {
-          setUserEmail(user.email)
-        }
+      if (user.user_metadata?.full_name) {
+        setUserName(user.user_metadata.full_name.split(' ')[0])
+      }
+      if (user.email) {
+        setUserEmail(user.email)
+      }
 
-        // --- PERFORMANCE FIX: Fetch ALL data in parallel ---
-        const today = new Date().toISOString().split('T')[0]
-        const weekAgo = new Date()
-        weekAgo.setDate(weekAgo.getDate() - 6)
+      const today = new Date().toISOString().split('T')[0]
+      const weekAgo = new Date()
+      weekAgo.setDate(weekAgo.getDate() - 6)
 
-        const [accessRes, focusRes, weekRes, statsRes, reviewRes, mockRes] = await Promise.all([
-          supabase
-            .from('user_access')
-            .select('is_premium, trial_starts_at, trial_ends_at')
-            .eq('user_id', user.id)
-            .single(),
+      // FIX: Added goalRes to fetch user's daily goal from syllabus_settings
+      const [accessRes, focusRes, weekRes, statsRes, reviewRes, mockRes, goalRes] = await Promise.all([
+        supabase
+          .from('user_access')
+          .select('is_premium, trial_starts_at, trial_ends_at')
+          .eq('user_id', user.id)
+          .single(),
 
-          supabase
-            .from('focus_logs')
-            .select('duration_minutes')
-            .eq('user_id', user.id)
-            .gte('started_at', `${today}T00:00:00`)
-            .lt('started_at', `${today}T23:59:59`),
+        supabase
+          .from('focus_logs')
+          .select('duration_minutes')
+          .eq('user_id', user.id)
+          .gte('started_at', `${today}T00:00:00`)
+          .lt('started_at', `${today}T23:59:59`),
 
-          supabase
-            .from('focus_logs')
-            .select('started_at, duration_minutes')
-            .eq('user_id', user.id)
-            .gte('started_at', weekAgo.toISOString()),
+        supabase
+          .from('focus_logs')
+          .select('started_at, duration_minutes')
+          .eq('user_id', user.id)
+          .gte('started_at', weekAgo.toISOString()),
 
-          supabase
-            .from('user_stats')
-            .select('current_streak')
-            .eq('user_id', user.id)
-            .single(),
+        supabase
+          .from('user_stats')
+          .select('current_streak')
+          .eq('user_id', user.id)
+          .single(),
 
-          supabase
-            .from('topics')
-            .select('id')
-            .eq('user_id', user.id)
-            .lte('next_review', today),
+        supabase
+          .from('topics')
+          .select('id')
+          .eq('user_id', user.id)
+          .lte('next_review', today),
 
-          supabase
-            .from('mock_logs')
-            .select('logs')
-            .eq('user_id', user.id)
-            .eq('exam_id', activeExam || 'upsc')
-            .maybeSingle()
-        ])
+        supabase
+          .from('mock_logs')
+          .select('logs')
+          .eq('user_id', user.id)
+          .eq('exam_id', activeExam || 'upsc')
+          .maybeSingle(),
 
-        // Process membership
-        if (accessRes.data) {
-          const access = accessRes.data
-          setIsPremium(access.is_premium)
-          
-          if (!access.is_premium && access.trial_ends_at) {
-            const now = new Date()
-            const end = new Date(access.trial_ends_at)
-            const diffTime = end.getTime() - now.getTime()
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-            setTrialDaysLeft(Math.max(0, diffDays))
-          }
-        }
+        // BUG FIX: Fetch daily goal from DB instead of hardcoding 6h
+        supabase
+          .from('syllabus_settings')
+          .select('daily_goal_hours')
+          .eq('user_id', user.id)
+          .single()
+      ])
 
-        // Process today's focus
-        if (focusRes.data) {
-          const total = focusRes.data.reduce((sum, s) => sum + (s.duration_minutes || 0), 0)
-          setFocusMinutes(total)
-        }
-
-        // Process week data
-        if (weekRes.data) {
-          const newWeekData = [0, 0, 0, 0, 0, 0, 0]
-          weekRes.data.forEach((session) => {
-            const sessionDate = new Date(session.started_at)
-            const dayOfWeek = sessionDate.getDay()
-            const adjustedDay = dayOfWeek === 0 ? 6 : dayOfWeek - 1
-            newWeekData[adjustedDay] += session.duration_minutes || 0
-          })
-          setWeekData(newWeekData)
-        }
-
-        // Process streak (uses user_stats)
-        if (statsRes.data) {
-          setStreak(statsRes.data.current_streak || 0)
-        }
-
-        // Process reviews
-        if (reviewRes.data) {
-          setDueReviews(reviewRes.data.length)
-        }
-
-        // Process mocks
-        if (mockRes.data?.logs) {
-          // @ts-ignore
-          setMocksCount(mockRes.data.logs.length)
+      // Process membership
+      if (accessRes.data) {
+        const access = accessRes.data
+        setIsPremium(access.is_premium)
+        if (!access.is_premium && access.trial_ends_at) {
+          const now = new Date()
+          const end = new Date(access.trial_ends_at)
+          const diffTime = end.getTime() - now.getTime()
+          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+          setTrialDaysLeft(Math.max(0, diffDays))
         }
       }
-      
-      setLoading(false)
-    }
-    getData()
-  }, [supabase, activeExam])
 
-  // Calculate progress
+      if (focusRes.data) {
+        const total = focusRes.data.reduce((sum, s) => sum + (s.duration_minutes || 0), 0)
+        setFocusMinutes(total)
+      }
+
+      if (weekRes.data) {
+        const newWeekData = [0, 0, 0, 0, 0, 0, 0]
+        weekRes.data.forEach((session) => {
+          const sessionDate = new Date(session.started_at)
+          const dayOfWeek = sessionDate.getDay()
+          const adjustedDay = dayOfWeek === 0 ? 6 : dayOfWeek - 1
+          newWeekData[adjustedDay] += session.duration_minutes || 0
+        })
+        setWeekData(newWeekData)
+      }
+
+      if (statsRes.data) {
+        setStreak(statsRes.data.current_streak || 0)
+      }
+
+      if (reviewRes.data) {
+        setDueReviews(reviewRes.data.length)
+      }
+
+      if (mockRes.data?.logs) {
+        // @ts-ignore
+        setMocksCount(mockRes.data.logs.length)
+      }
+
+      // BUG FIX: Use DB value for daily goal (overrides the default 360)
+      if (goalRes.data?.daily_goal_hours) {
+        setDailyGoalMinutes(goalRes.data.daily_goal_hours * 60)
+      }
+    }
+    
+    setLoading(false)
+  }
+
+  useEffect(() => {
+    getData()
+  }, [supabase, activeExam]) // eslint-disable-line react-hooks/exhaustive-deps
+
   const progressPercent = Math.min(Math.round((focusMinutes / dailyGoalMinutes) * 100), 100)
 
-  // Loading skeleton
   if (loading) {
     return <DashboardSkeleton />
   }
@@ -260,12 +236,16 @@ export default function DashboardPage() {
   return (
     <div className="space-y-8 pb-24">
       
-      {/* MODALS */}
       <InitiationModal />
       <OnboardingModal />
       <BroadcastBanner />
       
-      <SettingsModal open={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
+      {/* FIX: Pass onGoalSaved callback so dashboard re-fetches without full page reload */}
+      <SettingsModal 
+        open={isSettingsOpen} 
+        onClose={() => setIsSettingsOpen(false)} 
+        onGoalSaved={() => getData()}
+      />
       
       <CheckoutModal 
         isOpen={isCheckoutOpen} 
@@ -274,10 +254,8 @@ export default function DashboardPage() {
         userEmail={userEmail}
       />
 
-      {/* === TOP BAR: Status + Settings === */}
+      {/* === TOP BAR === */}
       <div className="flex items-center justify-between">
-        
-        {/* Status Badge */}
         <div className="flex items-center gap-3">
           {isPremium ? (
             <div className="flex items-center gap-2 bg-gradient-to-r from-amber-400 to-yellow-400 px-4 py-2 rounded-full shadow-soft">
@@ -300,7 +278,6 @@ export default function DashboardPage() {
           )}
         </div>
 
-        {/* Settings */}
         <button 
           onClick={() => setIsSettingsOpen(true)}
           className="p-3 bg-white border border-gray-200 rounded-lg shadow-soft hover:shadow-medium hover:border-primary-300 transition-all"
@@ -310,7 +287,7 @@ export default function DashboardPage() {
         </button>
       </div>
 
-      {/* === GREETING SECTION === */}
+      {/* === GREETING === */}
       <div>
         <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-gray-900">
           {getGreeting()}, {userName}
@@ -320,14 +297,12 @@ export default function DashboardPage() {
         </p>
       </div>
 
-      {/* === GETTING STARTED (only for new users with all zeros) === */}
       <GettingStartedCard 
         focusMinutes={focusMinutes}
         dueReviews={dueReviews}
         syllabusPercentage={stats.percentage}
       />
 
-      {/* === DUAL COMPANIONS === */}
       <DualCompanions 
         userId={user?.id || ''}
         todayMinutes={focusMinutes}
@@ -335,7 +310,6 @@ export default function DashboardPage() {
         lastWeekAverage={weekData.reduce((a, b) => a + b, 0) / 7}
       />
 
-      {/* === TODAY'S PROGRESS CARD === */}
       <TodayProgressCard 
         focusMinutes={focusMinutes}
         dailyGoalMinutes={dailyGoalMinutes}
@@ -343,7 +317,6 @@ export default function DashboardPage() {
         streak={streak}
       />
 
-      {/* === QUICK STATS GRID === */}
       <QuickStatsGrid 
         focusMinutes={focusMinutes}
         dueReviews={dueReviews}
@@ -351,7 +324,6 @@ export default function DashboardPage() {
         mocksCount={mocksCount}
       />
 
-      {/* === AI MCQ GENERATOR BANNER === */}
       <AIMCQBanner />
     </div>
   )

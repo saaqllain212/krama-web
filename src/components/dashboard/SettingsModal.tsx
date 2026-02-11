@@ -10,9 +10,10 @@ import { useAlert } from '@/context/AlertContext'
 interface SettingsModalProps {
   open: boolean
   onClose: () => void
+  onGoalSaved?: () => void // NEW: callback to refresh dashboard without full reload
 }
 
-export default function SettingsModal({ open, onClose }: SettingsModalProps) {
+export default function SettingsModal({ open, onClose, onGoalSaved }: SettingsModalProps) {
   const [activeTab, setActiveTab] = useState<'reset' | 'delete' | null>(null)
   const [confirmText, setConfirmText] = useState('')
   const [loading, setLoading] = useState(false)
@@ -30,7 +31,6 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
 
   useEffect(() => {
     if (open) {
-      // Reset states when modal opens
       setActiveTab(null)
       setConfirmText('')
       setShowSwitchConfirm(false)
@@ -83,7 +83,10 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
         setInitialHours(dailyHours)
         showAlert('Daily goal updated!', 'success')
         
-        setTimeout(() => window.location.reload(), 1000)
+        // FIX: Use callback instead of full page reload
+        if (onGoalSaved) {
+          onGoalSaved()
+        }
       }
     } catch (e) {
       console.error('Save goal error:', e)
@@ -140,7 +143,6 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) throw new Error('No user found')
       
-      // 1. Delete row-based data (logs, topics, scores)
       const tables = ['focus_logs', 'topics', 'mock_logs', 'syllabus_progress']
       
       for (const table of tables) {
@@ -154,7 +156,6 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
         }
       }
       
-      // 2. Reset user_stats (XP, level, streak, achievements) — update, don't delete
       const { error: statsError } = await supabase
         .from('user_stats')
         .update({
@@ -173,23 +174,22 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
         console.error('Error resetting user_stats:', statsError)
       }
 
-      // 3. Reset companion data if table exists
+      // FIX: Use correct table name 'companion_states' instead of 'companions'
       const { error: companionError } = await supabase
-        .from('companions')
+        .from('companion_states')
         .update({
-          health: 50,
-          total_hours: 0,
-          evolution_stage: 1,
-          idle_days: 0,
-          wasted_days: 0
+          guardian_health: 50,
+          guardian_total_hours: 0,
+          guardian_stage: 0,
+          wraith_days_idle: 0,
+          wraith_wasted_days: 0
         })
         .eq('user_id', user.id)
       
       if (companionError && companionError.code !== '42P01') {
-        console.error('Error resetting companions:', companionError)
+        console.error('Error resetting companion_states:', companionError)
       }
 
-      // 4. Reset syllabus settings
       const { error: settingsError } = await supabase
         .from('syllabus_settings')
         .update({ 
@@ -203,7 +203,6 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
         console.error('Error resetting settings:', settingsError)
       }
 
-      // 5. Clear local MCQ data
       try {
         const keysToRemove = Object.keys(localStorage).filter(k => 
           k.startsWith('krama_mcq_') || k.startsWith('mcq_')
@@ -348,7 +347,7 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
             </div>
           </div>
 
-          {/* DANGER ZONE DIVIDER */}
+          {/* DANGER ZONE */}
           <div className="relative py-4">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-red-200"></div>
@@ -360,7 +359,7 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
             </div>
           </div>
 
-          {/* RESET PROGRESS */}
+          {/* RESET */}
           <div className="border border-dashed border-gray-300 rounded-xl p-5 hover:border-gray-400 transition-colors">
             <div className="flex items-start gap-4">
               <div className="bg-gray-100 p-3 rounded-lg text-gray-500">
@@ -374,7 +373,7 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
                 {activeTab === 'reset' ? (
                   <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
                     <label className="text-xs font-semibold text-gray-500 block mb-2">
-                      Type "RESET" to confirm
+                      Type &quot;RESET&quot; to confirm
                     </label>
                     <div className="flex gap-2">
                       <input 
@@ -411,7 +410,7 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
             </div>
           </div>
           
-          {/* DELETE ACCOUNT */}
+          {/* DELETE */}
           <div className="border border-dashed border-red-300 bg-red-50 rounded-xl p-5 hover:border-red-400 transition-colors">
             <div className="flex items-start gap-4">
               <div className="bg-white p-3 rounded-lg text-red-500 border border-red-200">
@@ -425,7 +424,7 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
                 {activeTab === 'delete' ? (
                   <div className="bg-white border border-red-200 rounded-lg p-4">
                     <label className="text-xs font-semibold text-red-400 block mb-2">
-                      Type "DELETE" to confirm
+                      Type &quot;DELETE&quot; to confirm
                     </label>
                     <div className="flex gap-2">
                       <input 

@@ -50,9 +50,6 @@ export function XPProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true)
   const [recentXPGain, setRecentXPGain] = useState<{ amount: number, reason: string } | null>(null)
   const [newAchievement, setNewAchievement] = useState<Achievement | null>(null)
-  
-  // FIX: Use ref to track if streak check has already run this session
-  const streakCheckedRef = useRef(false)
 
   // Fetch stats on mount
   const refreshStats = useCallback(async () => {
@@ -69,7 +66,7 @@ export function XPProvider({ children }: { children: ReactNode }) {
       .single()
 
     if (error && error.code === 'PGRST116') {
-      // No stats yet, create them
+      // No stats yet, create them — FIX: last_active_date defaults to NULL now
       const { data: newStats } = await supabase
         .from('user_stats')
         .insert({ user_id: user.id })
@@ -96,44 +93,15 @@ export function XPProvider({ children }: { children: ReactNode }) {
     refreshStats()
   }, [refreshStats])
 
-  // Check and update streak on load — FIX: only run once per session
-  useEffect(() => {
-    if (!stats || streakCheckedRef.current) return
-    streakCheckedRef.current = true
-    
-    const { newStreak, isNewDay } = calculateStreak(stats.last_active_date, stats.current_streak)
-    
-    if (isNewDay) {
-      const streakUpdates: Partial<UserStats> = {
-        current_streak: newStreak,
-        longest_streak: Math.max(newStreak, stats.longest_streak),
-        last_active_date: new Date().toISOString().split('T')[0]
-      }
-      
-      // Calculate total XP to add for daily login + any streak bonuses
-      let bonusXP = 0
-      if (newStreak > stats.current_streak) {
-        bonusXP += XP_REWARDS.DAILY_LOGIN
-        if (newStreak === 7) bonusXP += XP_REWARDS.STREAK_7_DAYS
-        if (newStreak === 30) bonusXP += XP_REWARDS.STREAK_30_DAYS
-      }
-      
-      if (bonusXP > 0) {
-        streakUpdates.xp = stats.xp + bonusXP
-        setRecentXPGain({ amount: bonusXP, reason: newStreak >= 7 ? `${newStreak}-day streak bonus!` : 'Daily login' })
-        setTimeout(() => setRecentXPGain(null), 3000)
-      }
-      
-      updateStats(streakUpdates)
-    }
-  }, [stats?.last_active_date]) // eslint-disable-line react-hooks/exhaustive-deps
+  // BUG FIX: REMOVED the useEffect that incremented streak on page load.
+  // Streak is now ONLY updated when the user actually studies (in recordFocusSession).
+  // Previously, just opening the dashboard each day would increment the streak.
 
-  // Update stats in DB — FIX: uses latest stats from ref-like pattern
+  // Update stats in DB
   const updateStats = async (updates: Partial<UserStats>) => {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
 
-    // FIX: Read fresh stats from state at call time
     setStats(prevStats => {
       if (!prevStats) return prevStats
       
@@ -177,20 +145,16 @@ export function XPProvider({ children }: { children: ReactNode }) {
   const addXP = async (amount: number, reason: string) => {
     setRecentXPGain({ amount, reason })
     
-    // FIX: Use functional update to avoid stale state
     setStats(prev => {
       if (!prev) return prev
       return { ...prev, xp: prev.xp + amount }
     })
     
-    // Persist to DB
     const { data: { user } } = await supabase.auth.getUser()
     if (user) {
-      // FIX: Use database-side increment to prevent race conditions
       await supabase.rpc('increment_xp', { user_id_input: user.id, amount_input: amount }).then(({ error }) => {
-        // If RPC doesn't exist, fall back to regular update
         if (error) {
-          updateStats({}) // triggers a save with current state
+          updateStats({})
         }
       })
     }
@@ -198,31 +162,59 @@ export function XPProvider({ children }: { children: ReactNode }) {
     setTimeout(() => setRecentXPGain(null), 3000)
   }
 
-  // Record focus session
+  // Record focus session — FIX: This is now the ONLY place streak gets updated
   const recordFocusSession = async (minutes: number) => {
     if (!stats) return
     
     const xpEarned = minutes * XP_REWARDS.FOCUS_PER_MINUTE
     const isFirstFocus = stats.total_focus_minutes === 0
     const totalXP = xpEarned + (isFirstFocus ? XP_REWARDS.FIRST_FOCUS : 0)
+
+    // FIX: Calculate streak here (only when user actually studies)
+    const { newStreak, isNewDay } = calculateStreak(stats.last_active_date, stats.current_streak)
+    
+    let bonusXP = 0
+    const streakUpdates: Partial<UserStats> = {}
+
+    if (isNewDay) {
+      streakUpdates.current_streak = newStreak
+      streakUpdates.longest_streak = Math.max(newStreak, stats.longest_streak)
+      streakUpdates.last_active_date = new Date().toISOString().split('T')[0]
+
+      // Daily login + streak bonuses
+      if (newStreak > stats.current_streak) {
+        bonusXP += XP_REWARDS.DAILY_LOGIN
+        if (newStreak === 7) bonusXP += XP_REWARDS.STREAK_7_DAYS
+        if (newStreak === 30) bonusXP += XP_REWARDS.STREAK_30_DAYS
+      }
+    } else if (!stats.last_active_date) {
+      // First ever study session — set last_active_date
+      streakUpdates.current_streak = 1
+      streakUpdates.longest_streak = 1
+      streakUpdates.last_active_date = new Date().toISOString().split('T')[0]
+      bonusXP += XP_REWARDS.DAILY_LOGIN
+    }
     
     await updateStats({
-      xp: stats.xp + totalXP,
-      total_focus_minutes: stats.total_focus_minutes + minutes
+      xp: stats.xp + totalXP + bonusXP,
+      total_focus_minutes: stats.total_focus_minutes + minutes,
+      ...streakUpdates
     })
     
     // Update companion state
     try {
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
-        await updateCompanionAfterStudy(supabase, user.id, minutes, stats.current_streak)
+        await updateCompanionAfterStudy(supabase, user.id, minutes, streakUpdates.current_streak ?? stats.current_streak)
       }
     } catch (e) {
       console.error('Companion update failed:', e)
     }
     
     if (isFirstFocus) {
-      setRecentXPGain({ amount: totalXP, reason: 'First focus session! 🎉' })
+      setRecentXPGain({ amount: totalXP + bonusXP, reason: 'First focus session! 🎉' })
+    } else if (bonusXP > 0) {
+      setRecentXPGain({ amount: totalXP + bonusXP, reason: `${minutes} min focus + streak bonus!` })
     } else {
       setRecentXPGain({ amount: xpEarned, reason: `${minutes} min focus` })
     }

@@ -37,7 +37,16 @@ export const AdminActionSchema = z.object({
     'DELETE_USER', 
     'UPDATE_PRICE', 
     'CREATE_COUPON', 
-    'TOGGLE_COUPON'
+    'TOGGLE_COUPON',
+    // New admin actions
+    'UPDATE_FEATURE_FLAG',
+    'TOGGLE_MAINTENANCE',
+    'UPDATE_TRIAL_DAYS',
+    'UPDATE_DEFAULT_GOAL',
+    'UPDATE_XP_MULTIPLIER',
+    'UPDATE_USER_STATS',
+    'RESET_USER_STREAK',
+    'BULK_EXTEND_TRIALS',
   ]),
   payload: z.any()
 });
