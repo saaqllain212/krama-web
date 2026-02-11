@@ -83,22 +83,22 @@ export default function StudyHeatmap() {
   }
 
   return (
-    <div className="border border-gray-200 bg-white p-6 shadow-soft">
+    <div className="border border-gray-200 bg-white rounded-xl p-6 shadow-soft">
       
       {/* HEADER */}
       <div className="flex flex-col md:flex-row md:items-end justify-between mb-6 gap-4">
         <div>
-          <h3 className="text-xl font-bold uppercase tracking-tighter flex items-center gap-2">
+          <h3 className="text-xl font-bold flex items-center gap-2">
             <Zap size={20} className="text-amber-500 fill-amber-500" />
             Consistency Grid
           </h3>
-          <p className="text-xs font-bold text-stone-400 uppercase tracking-widest mt-1">
+          <p className="text-xs font-semibold text-gray-400 mt-1">
             Target: {dailyGoalMinutes / 60} Hrs/Day
           </p>
         </div>
 
         {/* LEGEND */}
-        <div className="flex items-center gap-2 text-[10px] font-bold uppercase text-stone-400">
+        <div className="flex items-center gap-2 text-[10px] font-semibold text-gray-400">
           <span>Less</span>
           <div className="w-3 h-3 bg-stone-100 border border-stone-200" />
           <div className="w-3 h-3 bg-amber-200 border border-gray-200/10" />
@@ -110,7 +110,7 @@ export default function StudyHeatmap() {
 
       {/* THE GRID */}
       {loading ? (
-        <div className="h-32 flex items-center justify-center animate-pulse text-xs font-bold uppercase text-stone-300">
+        <div className="h-32 flex items-center justify-center animate-pulse text-xs font-semibold text-gray-300">
           Loading Data...
         </div>
       ) : (
@@ -135,7 +135,7 @@ export default function StudyHeatmap() {
         </div>
       )}
       
-      <div className="mt-2 flex items-center justify-between text-[10px] font-bold uppercase text-stone-400">
+      <div className="mt-2 flex items-center justify-between text-[10px] font-semibold text-gray-400">
         <div className="flex gap-2 items-center">
             <Info size={12} />
             <span>Horizontal Axis: Time (Weeks) &rarr;</span>

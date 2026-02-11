@@ -21,6 +21,12 @@ const CLAUDE_MODELS = [
   { value: 'claude-opus-4-6', label: 'Claude Opus 4.6', desc: 'Most powerful' },
 ]
 
+// Valid model name patterns — blocks emails, URLs, random junk from autofill
+const VALID_MODEL_PATTERNS: Record<APIProvider, RegExp> = {
+  gemini: /^gemini-[\w.-]+$/,
+  claude: /^claude-[\w.-]+$/,
+}
+
 interface APIConfig {
   provider: APIProvider
   apiKey: string
@@ -46,11 +52,18 @@ export default function APIKeyManager() {
         setProvider(config.provider)
         setApiKey(config.apiKey || '')
         
-        // Migrate old model names
+        // Migrate old model names AND sanitize corrupted ones (autofill junk)
         let model = config.modelName || ''
         if (model.includes('gemini-1.5')) {
-          // Gemini 1.5 is retired, upgrade to 2.5 Flash
           model = 'gemini-2.5-flash'
+        }
+        // FIX: If the saved model looks invalid (e.g. an email from autofill), reset it
+        if (model && !VALID_MODEL_PATTERNS[config.provider]?.test(model)) {
+          console.warn('Invalid model name detected (likely autofill), resetting:', model)
+          model = config.provider === 'gemini' ? 'gemini-2.5-flash' : 'claude-sonnet-4-5-20250929'
+          // Also fix the saved config immediately
+          const fixedConfig = { ...config, modelName: model }
+          localStorage.setItem(API_KEY_STORAGE, JSON.stringify(fixedConfig))
         }
         setModelName(model || (config.provider === 'gemini' ? 'gemini-2.5-flash' : 'claude-sonnet-4-5-20250929'))
         setIsSaved(true)
@@ -75,8 +88,28 @@ export default function APIKeyManager() {
     }
   }
 
-  // Get effective model name
-  const effectiveModel = customModel.trim() || modelName
+  // FIX: Get effective model name with validation
+  const getEffectiveModel = (): string => {
+    const custom = customModel.trim()
+    if (custom) {
+      // Validate custom model — reject if it looks like an email or random junk
+      if (custom.includes('@') || custom.includes(' ') || custom.length > 60) {
+        return modelName // Fall back to dropdown selection
+      }
+      if (VALID_MODEL_PATTERNS[provider]?.test(custom)) {
+        return custom
+      }
+      // If it doesn't match pattern but could be a valid model name (no @, reasonable length)
+      // Let it through but warn
+      if (/^[a-z0-9][\w.-]*$/i.test(custom)) {
+        return custom
+      }
+      return modelName // Fallback
+    }
+    return modelName
+  }
+
+  const effectiveModel = getEffectiveModel()
   
   // Test API key
   const handleTest = async () => {
@@ -158,6 +191,61 @@ export default function APIKeyManager() {
         </div>
       </div>
       
+      {/* API Key Input — MOVED ABOVE model selection to prevent autofill conflicts */}
+      <div className="mb-4">
+        <label className="block text-sm font-medium mb-2">API Key:</label>
+        <div className="relative">
+          <input
+            type={showKey ? 'text' : 'password'}
+            value={apiKey}
+            onChange={(e) => {
+              setApiKey(e.target.value)
+              setTestResult(null)
+              setIsSaved(false)
+            }}
+            className="input w-full pr-10 font-mono text-sm"
+            placeholder={provider === 'gemini' ? 'AIza...' : 'sk-ant-...'}
+            autoComplete="off"
+            data-1p-ignore="true"
+            data-lpignore="true"
+            data-form-type="other"
+            name="api-key-input"
+            id="mcq-api-key"
+          />
+          <button
+            onClick={() => setShowKey(!showKey)}
+            className="absolute right-2 top-1/2 -translate-y-1/2 p-2 hover:bg-background-tertiary rounded transition-colors"
+          >
+            {showKey ? (
+              <EyeOff className="w-4 h-4 text-text-secondary" />
+            ) : (
+              <Eye className="w-4 h-4 text-text-secondary" />
+            )}
+          </button>
+        </div>
+      </div>
+
+      {/* Get API Key Links */}
+      <div className="mb-6 p-4 bg-background-secondary rounded-lg">
+        <p className="text-sm font-medium mb-2">Don't have an API key?</p>
+        <a
+          href={provider === 'gemini' 
+            ? 'https://aistudio.google.com/app/apikey'
+            : 'https://console.anthropic.com/'}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-sm text-primary-500 hover:text-primary-600 flex items-center gap-1"
+        >
+          Get {provider === 'gemini' ? 'Gemini' : 'Claude'} API Key
+          <ExternalLink className="w-3 h-3" />
+        </a>
+        <p className="text-xs text-text-tertiary mt-2">
+          {provider === 'gemini' 
+            ? 'No credit card required • Free tier: ~250 requests/day (Flash), ~1000/day (Flash-Lite)' 
+            : 'Free trial available • Pay as you go'}
+        </p>
+      </div>
+
       {/* Model Selection */}
       <div className="mb-4">
         <label className="block text-sm font-medium mb-2">Model:</label>
@@ -193,6 +281,12 @@ export default function APIKeyManager() {
             }}
             className="input w-full mt-2 font-mono text-sm"
             placeholder={provider === 'gemini' ? 'e.g. gemini-3-pro-preview' : 'e.g. claude-opus-4-6'}
+            autoComplete="off"
+            data-1p-ignore="true"
+            data-lpignore="true"
+            data-form-type="other"
+            name="custom-model-name"
+            id="mcq-custom-model"
           />
           <p className="text-xs text-text-tertiary mt-1">
             Enter exact model name if you want to use a model not listed above. Models change frequently — check{' '}
@@ -201,55 +295,6 @@ export default function APIKeyManager() {
             </a>{' '}for the latest.
           </p>
         </details>
-      </div>
-      
-      {/* API Key Input */}
-      <div className="mb-4">
-        <label className="block text-sm font-medium mb-2">API Key:</label>
-        <div className="relative">
-          <input
-            type={showKey ? 'text' : 'password'}
-            value={apiKey}
-            onChange={(e) => {
-              setApiKey(e.target.value)
-              setTestResult(null)
-              setIsSaved(false)
-            }}
-            className="input w-full pr-10 font-mono text-sm"
-            placeholder={provider === 'gemini' ? 'AIza...' : 'sk-ant-...'}
-          />
-          <button
-            onClick={() => setShowKey(!showKey)}
-            className="absolute right-2 top-1/2 -translate-y-1/2 p-2 hover:bg-background-tertiary rounded transition-colors"
-          >
-            {showKey ? (
-              <EyeOff className="w-4 h-4 text-text-secondary" />
-            ) : (
-              <Eye className="w-4 h-4 text-text-secondary" />
-            )}
-          </button>
-        </div>
-      </div>
-      
-      {/* Get API Key Links */}
-      <div className="mb-6 p-4 bg-background-secondary rounded-lg">
-        <p className="text-sm font-medium mb-2">Don't have an API key?</p>
-        <a
-          href={provider === 'gemini' 
-            ? 'https://aistudio.google.com/app/apikey'
-            : 'https://console.anthropic.com/'}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-sm text-primary-500 hover:text-primary-600 flex items-center gap-1"
-        >
-          Get {provider === 'gemini' ? 'Gemini' : 'Claude'} API Key
-          <ExternalLink className="w-3 h-3" />
-        </a>
-        <p className="text-xs text-text-tertiary mt-2">
-          {provider === 'gemini' 
-            ? 'No credit card required • Free tier: ~250 requests/day (Flash), ~1000/day (Flash-Lite)' 
-            : 'Free trial available • Pay as you go'}
-        </p>
       </div>
 
       {/* Free tier info */}
@@ -355,6 +400,13 @@ export function getCurrentAPIConfig(): APIConfig | null {
       // Auto-migrate retired model names
       if (config.modelName?.includes('gemini-1.5')) {
         config.modelName = 'gemini-2.5-flash'
+      }
+      // FIX: Sanitize corrupted model names (from browser autofill)
+      if (config.modelName && config.modelName.includes('@')) {
+        console.warn('Corrupted model name detected, resetting:', config.modelName)
+        config.modelName = config.provider === 'gemini' ? 'gemini-2.5-flash' : 'claude-sonnet-4-5-20250929'
+        // Fix it in storage too
+        localStorage.setItem(API_KEY_STORAGE, JSON.stringify(config))
       }
       return config
     }

@@ -47,14 +47,14 @@ export default function XPNotification() {
               className="bg-white border border-gray-200 rounded-2xl p-8 shadow-xl text-center max-w-sm mx-4"
             >
               <div className="text-6xl mb-4">{newAchievement.icon}</div>
-              <div className="flex items-center justify-center gap-2 text-sm font-bold text-brand uppercase tracking-widest mb-2">
+              <div className="flex items-center justify-center gap-2 text-sm font-bold text-brand uppercase tracking-wide mb-2">
                 <Trophy size={16} /> Achievement Unlocked
               </div>
               <h2 className="text-2xl font-bold mb-2">{newAchievement.name}</h2>
               <p className="text-black/60">{newAchievement.description}</p>
               <button 
                 onClick={clearNotifications}
-                className="mt-6 bg-black text-white px-6 py-3 font-bold text-sm uppercase"
+                className="mt-6 bg-gray-900 text-white px-6 py-3 rounded-xl font-bold text-sm hover:bg-gray-800 transition-colors"
               >
                 Awesome!
               </button>

@@ -125,8 +125,8 @@ export default function ProtocolManagerModal({ isOpen, onClose, userId }: Protoc
       <div className="w-full max-w-lg bg-white rounded-2xl border border-gray-200 shadow-xl">
         
         {/* Header */}
-        <div className="bg-black text-white p-4 flex justify-between items-center">
-            <h3 className="font-bold uppercase tracking-widest">Protocol Manager</h3>
+        <div className="bg-gray-900 text-white p-4 rounded-t-2xl flex justify-between items-center">
+            <h3 className="font-bold">Protocol Manager</h3>
             <button onClick={onClose}><X /></button>
         </div>
 

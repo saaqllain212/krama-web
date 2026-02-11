@@ -195,7 +195,7 @@ export default function TrialGuard({ children }: { children: React.ReactNode }) 
             <Lock className="text-white" size={32} />
           </div>
           
-          <h1 className="text-3xl font-bold uppercase tracking-tighter mb-2">
+          <h1 className="text-3xl font-bold mb-2">
             Trial Expired
           </h1>
           <p className="text-black/60 font-medium mb-8">
@@ -218,14 +218,14 @@ export default function TrialGuard({ children }: { children: React.ReactNode }) 
           <button 
             onClick={handlePayment}
             disabled={paymentProcessing}
-            className="w-full bg-black text-white py-4 font-bold uppercase tracking-widest hover:bg-stone-800 hover:-translate-y-1 transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            className="w-full bg-primary-500 text-white py-4 rounded-xl font-bold text-base hover:bg-primary-600 hover:-translate-y-1 transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             {paymentProcessing ? <Loader2 className="animate-spin" size={20}/> : `Unlock Now • ₹${PRICE}`}
           </button>
           
           <button 
             onClick={() => router.push('/')}
-            className="mt-4 text-xs font-bold uppercase tracking-widest text-black/40 hover:text-black"
+            className="mt-4 text-xs font-semibold text-gray-400 hover:text-gray-700 transition-colors"
           >
             Back to Home
           </button>
