@@ -91,7 +91,7 @@ export default function Hero() {
           </Link>
 
           <p className="text-sm font-medium text-gray-500">
-            No credit card required • Cancel anytime
+            No credit card required • 
           </p>
         </div>
 
