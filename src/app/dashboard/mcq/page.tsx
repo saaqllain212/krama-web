@@ -1,4 +1,5 @@
 'use client'
+import FeatureGate from '@/components/dashboard/FeatureGate'
 
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
@@ -23,6 +24,14 @@ import StorageMonitor from '@/components/mcq/StorageMonitor'
 type ViewMode = 'welcome' | 'generate' | 'quiz' | 'history'
 
 export default function MCQPage() {
+  return (
+    <FeatureGate flag="feature_mcq_enabled" featureName="AI MCQ Generator">
+      <MCQPageInner />
+    </FeatureGate>
+  )
+}
+
+function MCQPageInner() {
   const router = useRouter()
   const supabase = createClient()
   

@@ -1,4 +1,5 @@
 'use client'
+import FeatureGate from '@/components/dashboard/FeatureGate'
 
 import { useState, useEffect, useMemo } from 'react'
 import { createClient } from '@/lib/supabase/client'
@@ -11,6 +12,14 @@ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { motion } from 'framer-motion'
 
 export default function MocksPage() {
+  return (
+    <FeatureGate flag="feature_mocks_enabled" featureName="Mock Scores">
+      <MocksPageInner />
+    </FeatureGate>
+  )
+}
+
+function MocksPageInner() {
   const { activeExam } = useSyllabus()
   const supabase = createClient()
   

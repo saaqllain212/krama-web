@@ -4,78 +4,56 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Lock, Loader2, CheckCircle } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useAlert } from '@/context/AlertContext' 
+import { useAlert } from '@/context/AlertContext'
+import { useAppConfig } from '@/context/AppConfigContext'
 
-// CONFIGURATION
-const TRIAL_DAYS = 14
-const PRICE = 299
-
-// Helper Type for Razorpay
+// Razorpay types
 interface RazorpayOptions {
-  key: string
-  amount: number
-  currency: string
-  name: string
-  description: string
-  order_id: string
-  handler: (response: any) => void
-  theme: {
-    color: string
-  }
+  key: string; amount: number; currency: string; name: string;
+  description: string; order_id: string; handler: (response: any) => void;
+  theme: { color: string }
 }
+declare global { interface Window { Razorpay: new (options: RazorpayOptions) => any } }
 
-// Extend Window interface so TS doesn't complain
-declare global {
-  interface Window {
-    Razorpay: new (options: RazorpayOptions) => any
-  }
-}
-
-// Progressive urgency helper — returns banner style based on days left
-function getTrialBannerStyle(daysLeft: number) {
+function getTrialBannerStyle(daysLeft: number, trialDays: number) {
   if (daysLeft <= 3) {
     return {
-      bg: 'bg-red-500',
-      text: 'text-white',
+      bg: 'bg-red-500', text: 'text-white',
       message: daysLeft === 1 
         ? '⚠️ Last day of trial — Upgrade now to keep your data' 
-        : daysLeft <= 0
-          ? '⚠️ Trial expired'
-          : `⚠️ Trial ends in ${daysLeft} days`
+        : daysLeft <= 0 ? '⚠️ Trial expired' : `⚠️ Trial ends in ${daysLeft} days`
     }
   }
   if (daysLeft <= 7) {
     return {
-      bg: 'bg-amber-100',
-      text: 'text-amber-900',
+      bg: 'bg-amber-100', text: 'text-amber-900',
       message: `Trial ends in ${daysLeft} days — Upgrade for lifetime access`
     }
   }
-  if (daysLeft <= 14) {
+  if (daysLeft <= trialDays) {
     return {
-      bg: 'bg-primary-50',
-      text: 'text-primary-800',
+      bg: 'bg-primary-50', text: 'text-primary-800',
       message: `${daysLeft} days left in your free trial`
     }
   }
-  return null // Don't show banner for > 14 days (extended trials)
+  return null
 }
 
 export default function TrialGuard({ children }: { children: React.ReactNode }) {
   const supabase = createClient()
   const router = useRouter()
   const { showAlert } = useAlert()
+  const { config } = useAppConfig()
   
   const [loading, setLoading] = useState(true)
   const [paymentProcessing, setPaymentProcessing] = useState(false)
   const [isLocked, setIsLocked] = useState(false)
   const [daysLeft, setDaysLeft] = useState(0)
-  // FIX: Track premium status so banner doesn't show for pro users
   const [isPremium, setIsPremium] = useState(false)
 
   useEffect(() => {
     checkStatus()
-  }, [])
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const checkStatus = async () => {
     const { data: { user } } = await supabase.auth.getUser()
@@ -87,43 +65,34 @@ export default function TrialGuard({ children }: { children: React.ReactNode }) 
       .eq('user_id', user.id)
       .single()
 
-    if (!access) {
-       setLoading(false)
-       return
-    }
+    if (!access) { setLoading(false); return }
 
-    // Premium Check
     if (access.is_premium) {
-      setIsPremium(true) // FIX: Set premium flag
+      setIsPremium(true)
       setLoading(false)
-      return // UNLOCKED — no banner, no lock
+      return
     }
 
-    // Trial Timer Check
     const today = new Date()
     let endDate: Date
 
     if (access.trial_ends_at) {
-        endDate = new Date(access.trial_ends_at)
+      endDate = new Date(access.trial_ends_at)
     } else {
-        const startDate = new Date(access.trial_starts_at)
-        endDate = new Date(startDate)
-        endDate.setDate(endDate.getDate() + TRIAL_DAYS)
+      // FIX: Use config.trial_days from AppConfigContext instead of hardcoded 14
+      const startDate = new Date(access.trial_starts_at)
+      endDate = new Date(startDate)
+      endDate.setDate(endDate.getDate() + config.trial_days)
     }
 
     const diffTime = endDate.getTime() - today.getTime()
     const daysLeftCalc = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
     
     setDaysLeft(daysLeftCalc)
-
-    if (daysLeftCalc <= 0) {
-      setIsLocked(true) 
-    }
-    
+    if (daysLeftCalc <= 0) setIsLocked(true)
     setLoading(false)
   }
 
-  // --- HANDLE PAYMENT LOGIC ---
   const handlePayment = async () => {
     setPaymentProcessing(true)
     
@@ -149,26 +118,19 @@ export default function TrialGuard({ children }: { children: React.ReactNode }) 
               razorpaySignature: response.razorpay_signature,
             }),
           })
-
           const verifyData = await verifyRes.json()
-
           if (verifyData.success) {
             showAlert('Payment Successful! Welcome to Pro.', 'success')
-            setTimeout(() => {
-                window.location.reload()
-            }, 1500)
+            setTimeout(() => window.location.reload(), 1500)
           } else {
             showAlert('Payment Verification Failed.', 'error')
           }
         },
-        theme: {
-          color: '#000000',
-        },
+        theme: { color: '#000000' },
       }
 
       const paymentObject = new window.Razorpay(options)
       paymentObject.open()
-
     } catch (error) {
       console.error(error)
       showAlert('Something went wrong. Please try again.', 'error')
@@ -177,7 +139,6 @@ export default function TrialGuard({ children }: { children: React.ReactNode }) 
     }
   }
 
-  // --- RENDER 1: LOADING ---
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -186,7 +147,7 @@ export default function TrialGuard({ children }: { children: React.ReactNode }) 
     )
   }
 
-  // --- RENDER 2: LOCKED (PAYWALL) ---
+  // LOCKED — paywall. FIX: Uses config.base_price from DB
   if (isLocked) {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-stone-900/90 backdrop-blur-md p-6">
@@ -195,24 +156,22 @@ export default function TrialGuard({ children }: { children: React.ReactNode }) 
             <Lock className="text-white" size={32} />
           </div>
           
-          <h1 className="text-3xl font-bold mb-2">
-            Trial Expired
-          </h1>
+          <h1 className="text-3xl font-bold mb-2">Trial Expired</h1>
           <p className="text-black/60 font-medium mb-8">
-            Your {TRIAL_DAYS}-day free access has ended. <br/>
+            Your {config.trial_days}-day free access has ended. <br/>
             Unlock lifetime access to continue your preparation.
           </p>
 
           <div className="space-y-3 mb-8 text-left bg-white border border-gray-200/5 p-4">
-             <div className="flex items-center gap-2 text-sm font-bold">
-               <CheckCircle size={16} className="text-green-600"/> Unlimited Focus Logs
-             </div>
-             <div className="flex items-center gap-2 text-sm font-bold">
-               <CheckCircle size={16} className="text-green-600"/> Full Analytics History
-             </div>
-             <div className="flex items-center gap-2 text-sm font-bold">
-               <CheckCircle size={16} className="text-green-600"/> Cloud Sync
-             </div>
+            <div className="flex items-center gap-2 text-sm font-bold">
+              <CheckCircle size={16} className="text-green-600"/> Unlimited Focus Logs
+            </div>
+            <div className="flex items-center gap-2 text-sm font-bold">
+              <CheckCircle size={16} className="text-green-600"/> Full Analytics History
+            </div>
+            <div className="flex items-center gap-2 text-sm font-bold">
+              <CheckCircle size={16} className="text-green-600"/> Cloud Sync
+            </div>
           </div>
 
           <button 
@@ -220,7 +179,7 @@ export default function TrialGuard({ children }: { children: React.ReactNode }) 
             disabled={paymentProcessing}
             className="w-full bg-primary-500 text-white py-4 rounded-xl font-bold text-base hover:bg-primary-600 hover:-translate-y-1 transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
-            {paymentProcessing ? <Loader2 className="animate-spin" size={20}/> : `Unlock Now • ₹${PRICE}`}
+            {paymentProcessing ? <Loader2 className="animate-spin" size={20}/> : `Unlock Now • ₹${config.base_price}`}
           </button>
           
           <button 
@@ -234,16 +193,15 @@ export default function TrialGuard({ children }: { children: React.ReactNode }) 
     )
   }
 
-  // --- RENDER 3: ACCESS GRANTED ---
-  // FIX: Only show trial banner for non-premium users who are still in trial
-  const bannerStyle = (!isPremium && !isLocked) ? getTrialBannerStyle(daysLeft) : null
+  // ACCESS GRANTED — show banner if in trial
+  const bannerStyle = (!isPremium && !isLocked) ? getTrialBannerStyle(daysLeft, config.trial_days) : null
 
   return (
     <>
       {bannerStyle && (
-         <div className={`${bannerStyle.bg} ${bannerStyle.text} text-[10px] font-bold uppercase tracking-widest text-center py-1.5 -mx-6 lg:-mx-8 -mt-6 lg:-mt-8 mb-6 lg:mb-8`}>
-           {bannerStyle.message}
-         </div>
+        <div className={`${bannerStyle.bg} ${bannerStyle.text} text-[10px] font-bold uppercase tracking-widest text-center py-1.5 -mx-6 lg:-mx-8 -mt-6 lg:-mt-8 mb-6 lg:mb-8`}>
+          {bannerStyle.message}
+        </div>
       )}
       {children}
     </>

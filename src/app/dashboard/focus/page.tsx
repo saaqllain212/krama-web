@@ -1,4 +1,5 @@
 'use client'
+import FeatureGate from '@/components/dashboard/FeatureGate'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
@@ -51,6 +52,14 @@ function playCompletionSound() {
 }
 
 export default function FocusPage() {
+  return (
+    <FeatureGate flag="feature_focus_enabled" featureName="Focus Mode">
+      <FocusPageInner />
+    </FeatureGate>
+  )
+}
+
+function FocusPageInner() {
   const supabase = createClient()
   const { showAlert } = useAlert()
   const { recordFocusSession } = useXP()

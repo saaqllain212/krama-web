@@ -4,39 +4,32 @@ import { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { 
-  LayoutDashboard, 
-  Timer, 
-  RotateCw, 
-  Map, 
-  LineChart, 
-  LogOut,
-  Trophy,
-  Sparkles,
-  Brain
+  LayoutDashboard, Timer, RotateCw, Map, LineChart, LogOut,
+  Trophy, Sparkles, Brain
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { useSyllabus } from '@/context/SyllabusContext'
+import { useAppConfig } from '@/context/AppConfigContext'
 
+// Each nav item maps to a feature flag key (null = always visible)
 const NAV_ITEMS = [
-  { label: 'Overview', href: '/dashboard', icon: LayoutDashboard },
-  { label: 'Focus Mode', href: '/dashboard/focus', icon: Timer },
-  { label: 'Spaced Review', href: '/dashboard/review', icon: RotateCw },
-  { label: 'Syllabus Map', href: '/dashboard/syllabus', icon: Map },
-  { label: 'Mock Scores', href: '/dashboard/mocks', icon: LineChart },
-  { label: 'Analytics', href: '/dashboard/insights', icon: Sparkles },
-  { label: 'AI MCQ Gen', href: '/dashboard/mcq', icon: Brain },
+  { label: 'Overview',       href: '/dashboard',           icon: LayoutDashboard, flag: null },
+  { label: 'Focus Mode',     href: '/dashboard/focus',     icon: Timer,           flag: 'feature_focus_enabled' },
+  { label: 'Spaced Review',  href: '/dashboard/review',    icon: RotateCw,        flag: 'feature_review_enabled' },
+  { label: 'Syllabus Map',   href: '/dashboard/syllabus',  icon: Map,             flag: null },
+  { label: 'Mock Scores',    href: '/dashboard/mocks',     icon: LineChart,        flag: 'feature_mocks_enabled' },
+  { label: 'Analytics',      href: '/dashboard/insights',  icon: Sparkles,        flag: 'feature_insights_enabled' },
+  { label: 'AI MCQ Gen',     href: '/dashboard/mcq',       icon: Brain,           flag: 'feature_mcq_enabled' },
 ]
 
 export default function Sidebar() {
   const pathname = usePathname()
   const router = useRouter()
-  // FIX: Memoize supabase client so it's not re-created every render
   const supabase = useMemo(() => createClient(), [])
-  
   const { activeExam, stats } = useSyllabus()
+  const { config } = useAppConfig()
   
-  // User state
   const [userName, setUserName] = useState('')
   const [userInitial, setUserInitial] = useState('U')
   const [userLevel, setUserLevel] = useState(1)
@@ -52,8 +45,6 @@ export default function Sidebar() {
         setUserName(user.email.split('@')[0])
         setUserInitial(user.email.charAt(0).toUpperCase())
       }
-      
-      // Calculate level from percentage
       const level = Math.floor(stats.percentage / 10) + 1
       setUserLevel(Math.min(level, 10))
     }
@@ -65,15 +56,21 @@ export default function Sidebar() {
     router.replace('/login')
   }
 
-  // Filter items based on mode
+  // Filter items: exam mode filter + feature flag filter
   const visibleItems = NAV_ITEMS.filter(item => {
+    // Exam mode filter (existing logic)
     if (activeExam === 'focus') {
-      return ['Overview', 'Focus Mode', 'Spaced Review', 'Mock Scores', 'AI MCQ Gen'].includes(item.label)
+      if (!['Overview', 'Focus Mode', 'Spaced Review', 'Mock Scores', 'AI MCQ Gen'].includes(item.label)) {
+        return false
+      }
+    }
+    // Feature flag filter — if a flag exists and is disabled, hide the item
+    if (item.flag && !(config as any)[item.flag]) {
+      return false
     }
     return true
   })
 
-  // Get exam label
   const getExamLabel = () => {
     switch(activeExam) {
       case 'upsc': return 'UPSC'
@@ -104,12 +101,10 @@ export default function Sidebar() {
       {/* User Section */}
       <div className="p-4 border-b border-gray-200">
         <div className="flex items-center gap-3 mb-3">
-          {/* Avatar with gradient */}
           <div className="relative w-10 h-10">
             <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-purple-500 rounded-full flex items-center justify-center font-bold text-white text-base shadow-soft">
               {userInitial}
             </div>
-            {/* Level badge */}
             <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-success-500 rounded-full flex items-center justify-center text-[10px] font-bold text-white border-2 border-gray-50">
               {userLevel}
             </div>
@@ -123,7 +118,6 @@ export default function Sidebar() {
           </div>
         </div>
         
-        {/* Progress bar */}
         <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
           <div 
             className="h-full bg-gradient-to-r from-primary-500 to-purple-500 transition-all duration-500 rounded-full"

@@ -12,6 +12,7 @@ import {
   type Achievement
 } from '@/lib/xp'
 import { updateCompanionAfterStudy } from '@/lib/companions/companionLogic'
+import { useAppConfig } from '@/context/AppConfigContext'
 
 type UserStats = {
   xp: number
@@ -46,6 +47,7 @@ const XPContext = createContext<XPContextType | undefined>(undefined)
 
 export function XPProvider({ children }: { children: ReactNode }) {
   const supabase = createClient()
+  const { config: appConfig } = useAppConfig()
   const [stats, setStats] = useState<UserStats | null>(null)
   const [loading, setLoading] = useState(true)
   const [recentXPGain, setRecentXPGain] = useState<{ amount: number, reason: string } | null>(null)
@@ -166,7 +168,7 @@ export function XPProvider({ children }: { children: ReactNode }) {
   const recordFocusSession = async (minutes: number) => {
     if (!stats) return
     
-    const xpEarned = minutes * XP_REWARDS.FOCUS_PER_MINUTE
+    const xpEarned = Math.round(minutes * XP_REWARDS.FOCUS_PER_MINUTE * (appConfig.xp_multiplier || 1))
     const isFirstFocus = stats.total_focus_minutes === 0
     const totalXP = xpEarned + (isFirstFocus ? XP_REWARDS.FIRST_FOCUS : 0)
 

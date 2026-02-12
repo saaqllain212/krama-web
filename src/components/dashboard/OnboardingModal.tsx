@@ -6,11 +6,13 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Check, Upload, Zap, BookOpen, Calendar, Loader2, FileJson, ExternalLink, Terminal, AlertCircle } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useSyllabus } from '@/context/SyllabusContext'
+import { useAppConfig } from '@/context/AppConfigContext'
 
 export default function OnboardingModal() {
   const supabase = createClient()
   const router = useRouter()
   const { setActiveExam } = useSyllabus()
+  const { config: appConfig } = useAppConfig()
 
   const [isOpen, setIsOpen] = useState(false)
   const [step, setStep] = useState(1)
@@ -20,7 +22,8 @@ export default function OnboardingModal() {
 
   const [selectedExam, setSelectedExam] = useState<string | null>(null)
   const [examDate, setExamDate] = useState('')
-  const [dailyHours, setDailyHours] = useState(6)
+  // FIX: Use default from app_config instead of hardcoded 6
+  const [dailyHours, setDailyHours] = useState(appConfig.default_daily_goal_hours || 6)
 
   useEffect(() => {
     const checkDatabase = async (userId: string) => {

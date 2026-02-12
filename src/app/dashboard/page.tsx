@@ -16,6 +16,7 @@ import GettingStartedCard from '@/components/dashboard/GettingStartedCard'
 
 // IMPORTS THE COMPANION WIDGET
 import DualCompanions from '@/components/companions/DualCompanions'
+import { useAppConfig } from '@/context/AppConfigContext'
 
 // Helper: Get time-aware greeting
 const getGreeting = () => {
@@ -106,6 +107,7 @@ export default function DashboardPage() {
 
   const { stats, activeExam } = useSyllabus() 
   const supabase = createClient()
+  const { config: appConfig } = useAppConfig()
 
   const getData = async () => {
     const { data: { user } } = await supabase.auth.getUser()
@@ -303,12 +305,15 @@ export default function DashboardPage() {
         syllabusPercentage={stats.percentage}
       />
 
-      <DualCompanions 
-        userId={user?.id || ''}
-        todayMinutes={focusMinutes}
-        streak={streak}
-        lastWeekAverage={weekData.reduce((a, b) => a + b, 0) / 7}
-      />
+      {/* === DUAL COMPANIONS (feature-flagged) === */}
+      {appConfig.feature_companions_enabled && (
+        <DualCompanions 
+          userId={user?.id || ''}
+          todayMinutes={focusMinutes}
+          streak={streak}
+          lastWeekAverage={weekData.reduce((a, b) => a + b, 0) / 7}
+        />
+      )}
 
       <TodayProgressCard 
         focusMinutes={focusMinutes}
@@ -324,7 +329,8 @@ export default function DashboardPage() {
         mocksCount={mocksCount}
       />
 
-      <AIMCQBanner />
+      {/* === AI MCQ GENERATOR BANNER (feature-flagged) === */}
+      {appConfig.feature_mcq_enabled && <AIMCQBanner />}
     </div>
   )
 }
