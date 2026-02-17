@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowRight, Loader2, Mail, Lock, Eye, EyeOff, AlertCircle } from 'lucide-react'
@@ -12,7 +12,7 @@ interface LoginFormProps {
 
 export default function LoginForm({ onMascotStateChange }: LoginFormProps) {
   const router = useRouter()
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
   
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')

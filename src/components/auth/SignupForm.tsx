@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowRight, Loader2, Lock, AlertTriangle, Mail, User, Eye, EyeOff } from 'lucide-react'
@@ -12,7 +12,7 @@ interface SignupFormProps {
 
 export default function SignupForm({ onMascotStateChange }: SignupFormProps) {
   const router = useRouter()
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
   
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')

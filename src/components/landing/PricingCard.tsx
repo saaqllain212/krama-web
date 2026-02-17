@@ -83,14 +83,14 @@ export default function PricingCard() {
             </div>
 
             <p className="text-center text-sm text-gray-500 mt-4">
-              No credit card required • 
+              No credit card required
             </p>
           </div>
 
           {/* Trust Badge */}
           <div className="mt-8 text-center">
             <p className="text-sm text-gray-600">
-              <span className="font-semibold">14-day trial.</span> Not happy ?. Tell what u did not like at our mail.
+              <span className="font-semibold">14-day free trial.</span> Not satisfied? Write to us — we genuinely want to improve.
             </p>
           </div>
         </div>

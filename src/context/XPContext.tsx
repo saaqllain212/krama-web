@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext, useState, useEffect, useCallback, useRef, ReactNode } from 'react'
+import { createContext, useContext, useState, useEffect, useCallback, useRef, ReactNode, useMemo } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { 
   getLevelFromXP, 
@@ -46,17 +46,28 @@ type XPContextType = {
 const XPContext = createContext<XPContextType | undefined>(undefined)
 
 export function XPProvider({ children }: { children: ReactNode }) {
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
   const { config: appConfig } = useAppConfig()
   const [stats, setStats] = useState<UserStats | null>(null)
   const [loading, setLoading] = useState(true)
   const [recentXPGain, setRecentXPGain] = useState<{ amount: number, reason: string } | null>(null)
   const [newAchievement, setNewAchievement] = useState<Achievement | null>(null)
 
+  // FIX: Cache user ID to avoid calling getUser() on every XP action
+  const userIdRef = useRef<string | null>(null)
+
+  // Helper to get userId — uses cache, falls back to getUser()
+  const getUserId = useCallback(async (): Promise<string | null> => {
+    if (userIdRef.current) return userIdRef.current
+    const { data: { user } } = await supabase.auth.getUser()
+    if (user) userIdRef.current = user.id
+    return user?.id ?? null
+  }, [supabase])
+
   // Fetch stats on mount
   const refreshStats = useCallback(async () => {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) {
+    const userId = await getUserId()
+    if (!userId) {
       setLoading(false)
       return
     }
@@ -64,14 +75,14 @@ export function XPProvider({ children }: { children: ReactNode }) {
     const { data, error } = await supabase
       .from('user_stats')
       .select('*')
-      .eq('user_id', user.id)
+      .eq('user_id', userId)
       .single()
 
     if (error && error.code === 'PGRST116') {
-      // No stats yet, create them — FIX: last_active_date defaults to NULL now
+      // No stats yet, create them
       const { data: newStats } = await supabase
         .from('user_stats')
-        .insert({ user_id: user.id })
+        .insert({ user_id: userId })
         .select()
         .single()
       
@@ -89,7 +100,7 @@ export function XPProvider({ children }: { children: ReactNode }) {
     }
     
     setLoading(false)
-  }, [supabase])
+  }, [supabase, getUserId])
 
   useEffect(() => {
     refreshStats()
@@ -101,8 +112,8 @@ export function XPProvider({ children }: { children: ReactNode }) {
 
   // Update stats in DB
   const updateStats = async (updates: Partial<UserStats>) => {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return
+    const userId = await getUserId()
+    if (!userId) return
 
     setStats(prevStats => {
       if (!prevStats) return prevStats
@@ -134,7 +145,7 @@ export function XPProvider({ children }: { children: ReactNode }) {
           achievements: newStats.achievements,
           updated_at: new Date().toISOString()
         })
-        .eq('user_id', user.id)
+        .eq('user_id', userId)
         .then(({ error }) => {
           if (error) console.error('Failed to update user_stats:', error)
         })
@@ -152,9 +163,9 @@ export function XPProvider({ children }: { children: ReactNode }) {
       return { ...prev, xp: prev.xp + amount }
     })
     
-    const { data: { user } } = await supabase.auth.getUser()
-    if (user) {
-      await supabase.rpc('increment_xp', { user_id_input: user.id, amount_input: amount }).then(({ error }) => {
+    const userId = await getUserId()
+    if (userId) {
+      await supabase.rpc('increment_xp', { user_id_input: userId, amount_input: amount }).then(({ error }) => {
         if (error) {
           updateStats({})
         }
@@ -205,9 +216,9 @@ export function XPProvider({ children }: { children: ReactNode }) {
     
     // Update companion state
     try {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (user) {
-        await updateCompanionAfterStudy(supabase, user.id, minutes, streakUpdates.current_streak ?? stats.current_streak)
+      const userId = await getUserId()
+      if (userId) {
+        await updateCompanionAfterStudy(supabase, userId, minutes, streakUpdates.current_streak ?? stats.current_streak)
       }
     } catch (e) {
       console.error('Companion update failed:', e)

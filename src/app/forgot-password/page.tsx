@@ -1,12 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 import { ArrowLeft, Mail, Loader2, CheckCircle, AlertCircle } from 'lucide-react'
 
 export default function ForgotPasswordPage() {
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
   
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)

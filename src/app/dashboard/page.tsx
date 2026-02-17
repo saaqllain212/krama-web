@@ -1,9 +1,10 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Crown, Clock, Settings as SettingsIcon } from 'lucide-react'
 import { useSyllabus } from '@/context/SyllabusContext'
+import { useXP } from '@/context/XPContext'
 import SettingsModal from '@/components/dashboard/SettingsModal'
 import OnboardingModal from '@/components/dashboard/OnboardingModal'
 import CheckoutModal from '@/components/dashboard/CheckoutModal'
@@ -14,7 +15,6 @@ import QuickStatsGrid from '@/components/dashboard/QuickStatsGrid'
 import AIMCQBanner from '@/components/dashboard/AIMCQBanner'
 import GettingStartedCard from '@/components/dashboard/GettingStartedCard'
 
-// IMPORTS THE COMPANION WIDGET
 import DualCompanions from '@/components/companions/DualCompanions'
 import { useAppConfig } from '@/context/AppConfigContext'
 
@@ -72,16 +72,6 @@ function DashboardSkeleton() {
           </div>
         ))}
       </div>
-      <style jsx>{`
-        .skeleton-shimmer { position: relative; overflow: hidden; }
-        .skeleton-shimmer::after {
-          content: ''; position: absolute; top: 0; right: 0; bottom: 0; left: 0;
-          transform: translateX(-100%);
-          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
-          animation: shimmer 1.5s infinite;
-        }
-        @keyframes shimmer { 100% { transform: translateX(100%); } }
-      `}</style>
     </div>
   )
 }
@@ -92,10 +82,9 @@ export default function DashboardPage() {
   const [user, setUser] = useState<any>(null)
   
   const [focusMinutes, setFocusMinutes] = useState(0)
-  const [dailyGoalMinutes, setDailyGoalMinutes] = useState(360) // default — will be overridden from DB
+  const [dailyGoalMinutes, setDailyGoalMinutes] = useState(360)
   const [dueReviews, setDueReviews] = useState(0)
   const [mocksCount, setMocksCount] = useState(0)
-  const [streak, setStreak] = useState(0)
   const [weekData, setWeekData] = useState<number[]>([0, 0, 0, 0, 0, 0, 0])
   const [loading, setLoading] = useState(true)
   
@@ -106,10 +95,13 @@ export default function DashboardPage() {
   const [trialDaysLeft, setTrialDaysLeft] = useState<number | null>(null)
 
   const { stats, activeExam } = useSyllabus() 
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
   const { config: appConfig } = useAppConfig()
+  // FIX: Use streak from XPContext instead of redundant DB query
+  const { stats: xpStats } = useXP()
+  const streak = xpStats?.current_streak ?? 0
 
-  const getData = async () => {
+  const getData = useCallback(async () => {
     const { data: { user } } = await supabase.auth.getUser()
     
     if (user) {
@@ -126,8 +118,8 @@ export default function DashboardPage() {
       const weekAgo = new Date()
       weekAgo.setDate(weekAgo.getDate() - 6)
 
-      // FIX: Added goalRes to fetch user's daily goal from syllabus_settings
-      const [accessRes, focusRes, weekRes, statsRes, reviewRes, mockRes, goalRes] = await Promise.all([
+      // FIX: Removed redundant user_stats query — streak now comes from XPContext
+      const [accessRes, focusRes, weekRes, reviewRes, mockRes, goalRes] = await Promise.all([
         supabase
           .from('user_access')
           .select('is_premium, trial_starts_at, trial_ends_at')
@@ -148,12 +140,6 @@ export default function DashboardPage() {
           .gte('started_at', weekAgo.toISOString()),
 
         supabase
-          .from('user_stats')
-          .select('current_streak')
-          .eq('user_id', user.id)
-          .single(),
-
-        supabase
           .from('topics')
           .select('id')
           .eq('user_id', user.id)
@@ -166,7 +152,6 @@ export default function DashboardPage() {
           .eq('exam_id', activeExam || 'upsc')
           .maybeSingle(),
 
-        // BUG FIX: Fetch daily goal from DB instead of hardcoding 6h
         supabase
           .from('syllabus_settings')
           .select('daily_goal_hours')
@@ -203,31 +188,26 @@ export default function DashboardPage() {
         setWeekData(newWeekData)
       }
 
-      if (statsRes.data) {
-        setStreak(statsRes.data.current_streak || 0)
-      }
-
       if (reviewRes.data) {
         setDueReviews(reviewRes.data.length)
       }
 
-      if (mockRes.data?.logs) {
-        // @ts-ignore
+      // FIX: Properly type mock_logs instead of @ts-ignore
+      if (mockRes.data?.logs && Array.isArray(mockRes.data.logs)) {
         setMocksCount(mockRes.data.logs.length)
       }
 
-      // BUG FIX: Use DB value for daily goal (overrides the default 360)
       if (goalRes.data?.daily_goal_hours) {
         setDailyGoalMinutes(goalRes.data.daily_goal_hours * 60)
       }
     }
     
     setLoading(false)
-  }
+  }, [supabase, activeExam])
 
   useEffect(() => {
     getData()
-  }, [supabase, activeExam]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [getData])
 
   const progressPercent = Math.min(Math.round((focusMinutes / dailyGoalMinutes) * 100), 100)
 

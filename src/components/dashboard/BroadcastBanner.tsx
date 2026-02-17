@@ -1,13 +1,13 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { X, Megaphone, AlertTriangle, CheckCircle } from 'lucide-react'
 
 export default function BroadcastBanner() {
   const [announcement, setAnnouncement] = useState<any>(null)
   const [visible, setVisible] = useState(true)
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
 
   useEffect(() => {
     const fetchAnnouncement = async () => {

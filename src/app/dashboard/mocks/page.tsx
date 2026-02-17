@@ -21,7 +21,7 @@ export default function MocksPage() {
 
 function MocksPageInner() {
   const { activeExam } = useSyllabus()
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
   
   const [viewExamId, setViewExamId] = useState<string>('upsc')
   const [logs, setLogs] = useState<MockLogEntry[]>([])

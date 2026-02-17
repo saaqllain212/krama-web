@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { ArrowLeft, ChevronRight, ChevronLeft, Check, X, AlertCircle, Trophy, Target, Clock } from 'lucide-react'
 import { type MCQSet } from '@/lib/mcq/localStorage'
 import { createClient } from '@/lib/supabase/client'
@@ -18,7 +18,7 @@ interface Answer {
 }
 
 export default function QuizInterface({ mcqSet, onComplete, onBack }: QuizInterfaceProps) {
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
   
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const [answers, setAnswers] = useState<Answer[]>([])

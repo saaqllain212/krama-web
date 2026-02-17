@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { Sparkles, Loader2, AlertCircle, Settings2, Info } from 'lucide-react'
 import PDFUploader from './PDFUploader'
 import { getCurrentAPIConfig } from './APIKeyManager'
@@ -26,7 +26,7 @@ interface MCQGeneratorProps {
 }
 
 export default function MCQGenerator({ onComplete }: MCQGeneratorProps) {
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
   
   // PDF state
   const [pdfResult, setPdfResult] = useState<PDFExtractionResult | null>(null)

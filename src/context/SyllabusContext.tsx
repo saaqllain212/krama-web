@@ -64,7 +64,7 @@ const filterDataForOptional = (nodes: SyllabusNode[], optionalId: string): Sylla
 }
 
 export function SyllabusProvider({ children }: { children: React.ReactNode }) {
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
   
   const [activeExam, setActiveExamState] = useState<string | null>(null)
   const [optionalSubject, setOptionalSubjectState] = useState<string | null>(null)

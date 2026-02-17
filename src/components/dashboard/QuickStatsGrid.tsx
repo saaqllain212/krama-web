@@ -60,34 +60,34 @@ export default function QuickStatsGrid({
   ]
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
       {stats.map((stat, i) => {
         const Icon = stat.icon
         return (
           <Link
             key={stat.label}
             href={stat.href}
-            className="card group hover:scale-[1.02] transition-all"
+            className="bg-white rounded-xl p-4 border border-gray-200 shadow-soft group hover:border-primary-200 hover:shadow-medium transition-all"
           >
-            <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.gradient} flex items-center justify-center mb-4 shadow-soft group-hover:shadow-glow-primary transition-all`}>
-              <Icon className="w-6 h-6 text-white" strokeWidth={2} />
+            <div className={`w-9 h-9 rounded-lg bg-gradient-to-br ${stat.gradient} flex items-center justify-center mb-3`}>
+              <Icon className="w-4 h-4 text-white" strokeWidth={2.5} />
             </div>
             
-            <div className="mb-1">
-              <div className="text-3xl font-bold text-gray-900">
+            <div className="mb-0.5">
+              <div className="text-2xl font-bold text-gray-900">
                 <AnimatedNumber 
                   value={stat.numericValue} 
                   duration={600 + i * 150}
                   suffix={stat.suffix}
                 />
                 {stat.extraText && (
-                  <span className="text-lg text-gray-500 font-semibold">{stat.extraText}</span>
+                  <span className="text-sm text-gray-500 font-semibold">{stat.extraText}</span>
                 )}
               </div>
             </div>
             
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium text-gray-600">{stat.label}</span>
+              <span className="text-xs font-medium text-gray-500">{stat.label}</span>
               <ChevronRight className="w-4 h-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" />
             </div>
           </Link>

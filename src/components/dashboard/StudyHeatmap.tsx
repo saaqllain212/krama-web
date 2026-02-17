@@ -23,7 +23,7 @@ const getYearData = () => {
 }
 
 export default function StudyHeatmap() {
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
   const [data, setData] = useState<Record<string, number>>({})
   const [loading, setLoading] = useState(true)
   const [dailyGoalMinutes, setDailyGoalMinutes] = useState(240) // Default 4 hours (240m)

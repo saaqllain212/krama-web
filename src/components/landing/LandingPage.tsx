@@ -9,13 +9,9 @@ import TopBanner from "./TopBanner"
 import Navbar from "./Navbar"
 import Hero from "./Hero"
 import ExamSelector from "./ExamSelector"
-import DualBrainPreview from "./DualBrainPreview"
-import AIMCQSection from "./AIMCQSection"
 import ProblemSection from "./ProblemSection"
 import InteractiveConsole from "./InteractiveConsole" 
-import Workflow from "./Workflow"
 import ToolsGrid from "./ToolsGrid"
-import MobileSection from "./MobileSection"
 import PricingCard from "./PricingCard"
 import Footer from "./Footer"
 import SyllabusBuilderSection from "./SyllabusBuilderSection"
@@ -33,44 +29,29 @@ export default function LandingPage() {
       
       <div className="flex min-h-screen flex-col bg-white text-gray-900">
         
-        {/* NEW: TopBanner placed above Navbar */}
         <TopBanner />
-
-        {/* 4. Pass the click handler to Navbar */}
         <Navbar onLogoClick={handleLogoClick} />
         
         <main>
-          {/* Hero Section - New gradient design */}
+          {/* 1. Hero — hook them */}
           <Hero />
 
-          {/* Exam Selector */}
+          {/* 2. Who is this for — exam selector */}
           <ExamSelector />
           
-          {/* NEW: Dual Brain Preview */}
-          <DualBrainPreview />
-
-          {/* NEW: AI MCQ Generator */}
-          <AIMCQSection />
-          
-          {/* The "Why" */}
+          {/* 3. The Problem — why they need this */}
           <ProblemSection /> 
           
-          {/* The "How" - Interactive Tour */}
+          {/* 4. The Solution — interactive walkthrough of the 3-step process */}
           <InteractiveConsole />
 
-          {/* The Process - NEW ANIMATED TIMELINE */}
-          <Workflow />
-
-          {/* The Tools - NEW BENTO GRID */}
+          {/* 5. All Features — bento grid + AI MCQ + companions */}
           <ToolsGrid />
-          
-          {/* Mobile App Teaser */}
-          <MobileSection />
 
-          {/* Pricing - Updated design */}
+          {/* 6. Pricing — clear CTA */}
           <PricingCard />
 
-          {/* Protocol Architect (Syllabus Helper) */}
+          {/* 7. Syllabus Builder — interactive tool that adds value even before signup */}
           <SyllabusBuilderSection />
 
         </main>

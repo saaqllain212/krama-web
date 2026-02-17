@@ -1,7 +1,7 @@
 'use client'
 import FeatureGate from '@/components/dashboard/FeatureGate'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { ArrowLeft, Trash2, Clock, TrendingUp, AlertCircle, Search, Sparkles } from 'lucide-react'
 import Link from 'next/link'
@@ -38,7 +38,7 @@ export default function InsightsPage() {
 }
 
 function InsightsPageInner() {
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
   const { showAlert, askConfirm } = useAlert()
   
   const [loading, setLoading] = useState(true)

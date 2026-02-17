@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { X, Trash2, RotateCcw, Zap, AlertCircle, Target } from 'lucide-react'
@@ -25,7 +25,7 @@ export default function SettingsModal({ open, onClose, onGoalSaved }: SettingsMo
   const [savingGoal, setSavingGoal] = useState(false)
 
   const router = useRouter()
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
   const { activeExam } = useSyllabus()
   const { showAlert } = useAlert()
 

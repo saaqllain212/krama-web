@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react'
+import { createContext, useContext, useState, useEffect, useCallback, ReactNode, useMemo } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { 
   getLevelFromXP, 
@@ -44,7 +44,7 @@ type XPContextType = {
 const XPContext = createContext<XPContextType | undefined>(undefined)
 
 export function XPProvider({ children }: { children: ReactNode }) {
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
   const [stats, setStats] = useState<UserStats | null>(null)
   const [loading, setLoading] = useState(true)
   const [recentXPGain, setRecentXPGain] = useState<{ amount: number, reason: string } | null>(null)

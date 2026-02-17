@@ -99,7 +99,7 @@ const StatCard = ({ icon: Icon, label, value, description, color = 'blue' }: {
 function InsightsContent() {
   const { activeExam } = useSyllabus()
   const searchParams = useSearchParams()
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
   
   const effectiveExamId = searchParams.get('exam') || activeExam || 'upsc'
 

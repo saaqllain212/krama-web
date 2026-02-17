@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { X, Plus, Trash2, Check, AlertTriangle, Loader2, ArrowRight } from 'lucide-react'
 
@@ -11,7 +11,7 @@ interface ProtocolManagerModalProps {
 }
 
 export default function ProtocolManagerModal({ isOpen, onClose, userId }: ProtocolManagerModalProps) {
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
   const [activeTab, setActiveTab] = useState<'inject' | 'reset'>('inject')
   const [loading, setLoading] = useState(false)
   const [manualText, setManualText] = useState('')

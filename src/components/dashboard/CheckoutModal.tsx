@@ -1,8 +1,8 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { X, Loader2, Tag, Check, Zap, Shield, Clock } from 'lucide-react' 
-import Script from 'next/script'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAlert } from '@/context/AlertContext'
 import { useAppConfig } from '@/context/AppConfigContext'
@@ -23,6 +23,7 @@ const FEATURES = [
 export default function CheckoutModal({ isOpen, onClose, userEmail, userName }: CheckoutModalProps) {
   const { showAlert } = useAlert()
   const { config } = useAppConfig()
+  const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [coupon, setCoupon] = useState('')
   const [couponStatus, setCouponStatus] = useState<'idle' | 'checking' | 'valid' | 'invalid'>('idle')
@@ -90,7 +91,7 @@ export default function CheckoutModal({ isOpen, onClose, userEmail, userName }: 
           const verifyData = await verifyRes.json()
           if (verifyRes.ok && verifyData.success) {
             showAlert('Payment successful! Welcome to Pro!', 'success')
-            setTimeout(() => window.location.reload(), 1500)
+            setTimeout(() => router.refresh(), 1500)
           } else {
             showAlert('Verification failed. Contact support.', 'error')
           }
@@ -108,7 +109,7 @@ export default function CheckoutModal({ isOpen, onClose, userEmail, userName }: 
 
   return (
     <>
-      <Script src="https://checkout.razorpay.com/v1/checkout.js" />
+      {/* Razorpay script already loaded in root layout — no duplicate needed */}
       <AnimatePresence>
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
           <motion.div 

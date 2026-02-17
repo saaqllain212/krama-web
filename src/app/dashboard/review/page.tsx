@@ -1,7 +1,7 @@
 'use client'
 import FeatureGate from '@/components/dashboard/FeatureGate'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { reviewTopic, type Topic } from '@/lib/logic'
 import { ArrowLeft, Plus, Search, X, Brain, AlertTriangle, CheckCircle2 } from 'lucide-react'
@@ -31,7 +31,7 @@ export default function ReviewPage() {
 }
 
 function ReviewPageInner() {
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
   const { showAlert, askConfirm } = useAlert()
   const { recordReview } = useXP()
   
@@ -210,11 +210,11 @@ function ReviewPageInner() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900 pb-24">
+    <div className="min-h-screen text-gray-900 pb-24">
       
       {/* HEADER */}
-      <div className="bg-white border-b border-gray-200 mb-8">
-        <div className="max-w-5xl mx-auto px-6 py-8">
+      <div className="mb-8">
+        <div className="max-w-5xl mx-auto">
           <Link 
             href="/dashboard" 
             className="inline-flex items-center gap-2 text-sm font-semibold text-gray-500 hover:text-gray-900 transition-colors mb-6"

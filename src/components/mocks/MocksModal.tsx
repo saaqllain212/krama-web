@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { X, Save, Clock, AlertCircle } from 'lucide-react'
 import { MockLogEntry } from '@/lib/analytics'
@@ -16,7 +16,7 @@ type Props = {
 }
 
 export default function MocksModal({ open, onClose, examId, onSuccess }: Props) {
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
   const { showAlert } = useAlert()
   const { recordMock } = useXP()
   const [loading, setLoading] = useState(false)

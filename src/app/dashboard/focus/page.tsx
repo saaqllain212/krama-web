@@ -1,7 +1,7 @@
 'use client'
 import FeatureGate from '@/components/dashboard/FeatureGate'
 
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Play, Pause, RotateCcw, ArrowLeft, BarChart3, Maximize2, Minimize2 } from 'lucide-react'
 import Link from 'next/link'
@@ -60,7 +60,7 @@ export default function FocusPage() {
 }
 
 function FocusPageInner() {
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
   const { showAlert } = useAlert()
   const { recordFocusSession } = useXP()
   const { isFocusMode, setFocusMode } = useFocusMode()
@@ -364,7 +364,7 @@ function FocusPageInner() {
                 {timeDisplay}
               </div>
               <div className="text-sm font-medium text-gray-500">
-                {isActive ? 'Focus Time' : 'Paused'}
+                {isActive ? 'Focus Time' : secondsLeft === targetMinutes * 60 ? 'Ready' : 'Paused'}
               </div>
             </div>
           </CircularProgress>

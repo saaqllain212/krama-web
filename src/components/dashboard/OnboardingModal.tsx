@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Check, Upload, Zap, BookOpen, Calendar, Loader2, FileJson, ExternalLink, Terminal, AlertCircle } from 'lucide-react'
@@ -9,7 +9,7 @@ import { useSyllabus } from '@/context/SyllabusContext'
 import { useAppConfig } from '@/context/AppConfigContext'
 
 export default function OnboardingModal() {
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
   const router = useRouter()
   const { setActiveExam } = useSyllabus()
   const { config: appConfig } = useAppConfig()

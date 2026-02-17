@@ -1,7 +1,7 @@
 'use client'
 
 import { usePathname } from 'next/navigation'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import Sidebar from '@/components/dashboard/Sidebar'
 import MobileNav from '@/components/dashboard/MobileNav'
 import TrialGuard from '@/components/dashboard/TrialGuard'
@@ -11,14 +11,8 @@ import { AppConfigProvider, useAppConfig } from '@/context/AppConfigContext'
 import XPNotification from '@/components/dashboard/XPNotification'
 import { Wrench } from 'lucide-react'
 
-const pageVariants = {
-  initial: { opacity: 0, y: 6 },
-  animate: { opacity: 1, y: 0 },
-  exit:    { opacity: 0, y: -4 },
-}
-
 const pageTransition = {
-  duration: 0.2,
+  duration: 0.15,
   ease: [0.25, 0.1, 0.25, 1] as [number, number, number, number],
 }
 
@@ -61,18 +55,17 @@ function DashboardInner({ children }: { children: React.ReactNode }) {
         <main className={isFocusMode ? '' : 'lg:pl-64'}>
           <div className="mx-auto max-w-7xl p-6 lg:p-8">
             <TrialGuard>
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={pathname}
-                  variants={pageVariants}
-                  initial="initial"
-                  animate="animate"
-                  exit="exit"
-                  transition={pageTransition}
-                >
-                  {children}
-                </motion.div>
-              </AnimatePresence>
+              {/* FIX: Removed AnimatePresence mode="wait" — it forced full unmount/remount 
+                   on every route change, blocking render until exit completes.
+                   Simple fade-in via motion.div is much lighter. */}
+              <motion.div
+                key={pathname}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={pageTransition}
+              >
+                {children}
+              </motion.div>
             </TrialGuard>
           </div>
         </main>

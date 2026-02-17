@@ -3,7 +3,7 @@
 
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { X, Calendar, Sparkles, MessageCircle, TrendingUp, Trophy } from 'lucide-react'
 import GuardianTree from './visuals/GuardianTree'
@@ -38,7 +38,7 @@ export default function CompanionModal({
   )
   const [saving, setSaving] = useState(false)
   
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
   const isGuardian = companionType === 'guardian'
 
   if (!isOpen) return null

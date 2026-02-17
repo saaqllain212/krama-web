@@ -16,7 +16,7 @@ type FocusLog = {
 }
 
 export default function FocusInsightsPage() {
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
   
   const [logs, setLogs] = useState<FocusLog[]>([])
   const [dailyGoal, setDailyGoal] = useState(8)

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useMemo } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useXP } from '@/context/XPContext'
 import { getLevelColor, formatXP, LEVELS, ACHIEVEMENTS } from '@/lib/xp'
@@ -13,7 +13,7 @@ import html2canvas from 'html2canvas'
 
 export default function ProfilePage() {
   const { stats, levelInfo, nextLevelInfo, loading } = useXP()
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
   const shareCardRef = useRef<HTMLDivElement>(null)
   
   const [userName, setUserName] = useState('Student')

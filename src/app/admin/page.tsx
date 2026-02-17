@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { 
@@ -178,7 +178,7 @@ function UserDetailRow({ u, isExpanded, onToggle, onAction }: {
 
 // ============== MAIN ADMIN PAGE ==============
 export default function AdminDashboard() {
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
   const router = useRouter()
   const { showAlert, askConfirm } = useAlert()
   

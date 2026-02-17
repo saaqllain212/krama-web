@@ -1,7 +1,7 @@
 'use client'
 import FeatureGate from '@/components/dashboard/FeatureGate'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Sparkles, ArrowLeft, AlertCircle, CheckCircle2, Download, Upload } from 'lucide-react'
 import { useRouter } from 'next/navigation'
@@ -33,7 +33,7 @@ export default function MCQPage() {
 
 function MCQPageInner() {
   const router = useRouter()
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
   
   // User state
   const [user, setUser] = useState<any>(null)

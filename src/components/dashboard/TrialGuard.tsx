@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Lock, Loader2, CheckCircle } from 'lucide-react'
 import { useRouter } from 'next/navigation'
@@ -40,7 +40,7 @@ function getTrialBannerStyle(daysLeft: number, trialDays: number) {
 }
 
 export default function TrialGuard({ children }: { children: React.ReactNode }) {
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
   const router = useRouter()
   const { showAlert } = useAlert()
   const { config } = useAppConfig()
