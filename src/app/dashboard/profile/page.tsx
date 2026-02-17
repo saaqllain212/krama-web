@@ -10,6 +10,7 @@ import {
   Share2, Check, TrendingUp, Shield, Smartphone
 } from 'lucide-react'
 import Link from 'next/link'
+import StudyConstellation from '@/components/dashboard/StudyConstellation'
 
 const EXAM_LABELS: Record<string, string> = {
   upsc: 'UPSC', ssc: 'SSC CGL', bank: 'Banking', jee: 'JEE', 
@@ -295,6 +296,11 @@ export default function ProfilePage() {
                 </div>
               </div>
             )}
+          </div>
+
+          {/* STUDY GALAXY */}
+          <div className="card py-6">
+            <StudyConstellation />
           </div>
 
           {/* STREAK INSURANCE */}

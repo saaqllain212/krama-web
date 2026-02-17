@@ -15,6 +15,11 @@ import QuickStatsGrid from '@/components/dashboard/QuickStatsGrid'
 import AIMCQBanner from '@/components/dashboard/AIMCQBanner'
 import GettingStartedCard from '@/components/dashboard/GettingStartedCard'
 import ExamCountdown from '@/components/dashboard/ExamCountdown'
+import DailyQuests from '@/components/dashboard/DailyQuests'
+import WeeklyLeaderboard from '@/components/dashboard/WeeklyLeaderboard'
+import StudyConstellation from '@/components/dashboard/StudyConstellation'
+import StreakEarnBack from '@/components/dashboard/StreakEarnBack'
+import MilestoneCelebration from '@/components/dashboard/MilestoneCelebration'
 
 import DualCompanions from '@/components/companions/DualCompanions'
 import { useAppConfig } from '@/context/AppConfigContext'
@@ -222,6 +227,8 @@ export default function DashboardPage() {
       <InitiationModal />
       <OnboardingModal />
       <BroadcastBanner />
+      <StreakEarnBack />
+      <MilestoneCelebration />
       
       {/* FIX: Pass onGoalSaved callback so dashboard re-fetches without full page reload */}
       <SettingsModal 
@@ -312,6 +319,19 @@ export default function DashboardPage() {
         syllabusPercentage={stats.percentage}
         mocksCount={mocksCount}
       />
+
+      {/* === DAILY QUESTS + CONSTELLATION + LEADERBOARD === */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2">
+          <DailyQuests />
+        </div>
+        <div className="space-y-6">
+          <div className="card flex flex-col items-center py-6">
+            <StudyConstellation compact />
+          </div>
+          <WeeklyLeaderboard />
+        </div>
+      </div>
 
       {/* === AI MCQ GENERATOR BANNER (feature-flagged) === */}
       {appConfig.feature_mcq_enabled && <AIMCQBanner />}

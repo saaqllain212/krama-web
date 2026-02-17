@@ -9,6 +9,7 @@ import { useAlert } from '@/context/AlertContext'
 import { useXP } from '@/context/XPContext'
 import { useFocusMode } from '@/context/FocusModeContext'
 import CircularProgress from '@/components/dashboard/CircularProgress'
+import { FocusThemeProvider, useFocusTheme, FocusThemePicker, THEME_STYLES } from '@/components/dashboard/FocusTheme'
 
 const PRESETS = [15, 25, 45, 60, 90]
 
@@ -54,7 +55,9 @@ function playCompletionSound() {
 export default function FocusPage() {
   return (
     <FeatureGate flag="feature_focus_enabled" featureName="Focus Mode">
-      <FocusPageInner />
+      <FocusThemeProvider>
+        <FocusPageInner />
+      </FocusThemeProvider>
     </FeatureGate>
   )
 }
@@ -307,23 +310,29 @@ function FocusPageInner() {
   // Calculate progress percentage
   const progress = ((targetMinutes * 60 - secondsLeft) / (targetMinutes * 60)) * 100
 
+  const { theme } = useFocusTheme()
+  const themeStyle = THEME_STYLES[theme]
+
   return (
-    <div className="min-h-[calc(100vh-8rem)] flex flex-col">
+    <div className={`min-h-[calc(100vh-8rem)] flex flex-col rounded-2xl -m-6 lg:-m-8 p-6 lg:p-8 transition-colors duration-300 ${themeStyle.bg}`}>
       {/* Top Bar */}
       <div className="flex items-center justify-between mb-8">
         <Link 
           href="/dashboard"
-          className="inline-flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
+          className={`inline-flex items-center gap-2 text-sm font-medium ${themeStyle.subtext} hover:opacity-80 transition-colors`}
         >
           <ArrowLeft className="w-4 h-4" />
           Back to Dashboard
         </Link>
 
         <div className="flex items-center gap-3">
+          {/* Theme Picker */}
+          <FocusThemePicker />
+
           {/* Focus Insights Link */}
           <Link 
             href="/dashboard/focus/insights"
-            className="inline-flex items-center gap-2 text-sm font-medium text-primary-600 hover:text-primary-800 bg-primary-50 hover:bg-primary-100 px-4 py-2 rounded-lg transition-all"
+            className={`inline-flex items-center gap-2 text-sm font-medium ${themeStyle.accent} bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg transition-all`}
           >
             <BarChart3 className="w-4 h-4" />
             Focus Insights
@@ -350,8 +359,8 @@ function FocusPageInner() {
         
         {/* Timer Section */}
         <div className="text-center mb-12">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Focus Mode</h1>
-          <p className="text-gray-600">
+          <h1 className={`text-3xl font-bold ${themeStyle.text} mb-2`}>Focus Mode</h1>
+          <p className={themeStyle.subtext}>
             {topic || 'Select a task to begin'}
           </p>
         </div>
@@ -362,14 +371,14 @@ function FocusPageInner() {
             percentage={progress}
             size={280}
             strokeWidth={12}
-            color={isActive ? '#5B8FF9' : '#e5e7eb'}
+            color={isActive ? themeStyle.timerColor : (theme === 'dark' || theme === 'warm' ? '#444' : '#e5e7eb')}
             showText={false}
           >
             <div className="text-center">
-              <div className="text-7xl font-bold text-gray-900 tabular-nums mb-2">
+              <div className={`text-7xl font-bold ${themeStyle.text} tabular-nums mb-2`}>
                 {timeDisplay}
               </div>
-              <div className="text-sm font-medium text-gray-500">
+              <div className={`text-sm font-medium ${themeStyle.subtext}`}>
                 {isActive ? 'Focus Time' : secondsLeft === targetMinutes * 60 ? 'Ready' : 'Paused'}
               </div>
             </div>
@@ -384,7 +393,7 @@ function FocusPageInner() {
               value={topic}
               onChange={(e) => setTopic(e.target.value)}
               placeholder="What are you working on?"
-              className="input text-center"
+              className={`input text-center ${themeStyle.input}`}
               disabled={isActive}
             />
           </div>
