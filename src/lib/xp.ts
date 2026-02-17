@@ -84,9 +84,13 @@ export function formatXP(xp: number): string {
 }
 
 // Calculate streak
-export function calculateStreak(lastActiveDate: string | null, currentStreak: number): { newStreak: number, isNewDay: boolean } {
+export function calculateStreak(
+  lastActiveDate: string | null, 
+  currentStreak: number,
+  freezesRemaining?: number
+): { newStreak: number, isNewDay: boolean, freezeUsed: boolean } {
   if (!lastActiveDate) {
-    return { newStreak: 1, isNewDay: true }
+    return { newStreak: 1, isNewDay: true, freezeUsed: false }
   }
   
   const last = new Date(lastActiveDate)
@@ -100,13 +104,16 @@ export function calculateStreak(lastActiveDate: string | null, currentStreak: nu
   
   if (diffDays === 0) {
     // Same day, no change
-    return { newStreak: currentStreak, isNewDay: false }
+    return { newStreak: currentStreak, isNewDay: false, freezeUsed: false }
   } else if (diffDays === 1) {
     // Consecutive day, increase streak
-    return { newStreak: currentStreak + 1, isNewDay: true }
+    return { newStreak: currentStreak + 1, isNewDay: true, freezeUsed: false }
+  } else if (diffDays === 2 && (freezesRemaining ?? 0) > 0) {
+    // Missed exactly 1 day — use a freeze to preserve streak
+    return { newStreak: currentStreak + 1, isNewDay: true, freezeUsed: true }
   } else {
     // Streak broken, reset to 1
-    return { newStreak: 1, isNewDay: true }
+    return { newStreak: 1, isNewDay: true, freezeUsed: false }
   }
 }
 

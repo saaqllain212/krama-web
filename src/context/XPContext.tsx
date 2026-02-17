@@ -25,6 +25,8 @@ type UserStats = {
   total_reviews: number
   total_mocks: number
   achievements: string[]
+  streak_freezes_remaining: number
+  streak_freeze_used_at: string | null
 }
 
 type XPContextType = {
@@ -93,10 +95,23 @@ export function XPProvider({ children }: { children: ReactNode }) {
         })
       }
     } else if (data) {
-      setStats({
-        ...data,
-        achievements: data.achievements || []
-      })
+      // Weekly freeze reset: if last freeze was used more than 7 days ago, restore 1 freeze
+      let updatedData = { ...data, achievements: data.achievements || [] }
+      if (data.streak_freeze_used_at) {
+        const lastUsed = new Date(data.streak_freeze_used_at)
+        const now = new Date()
+        const daysSinceUse = Math.floor((now.getTime() - lastUsed.getTime()) / (1000 * 60 * 60 * 24))
+        if (daysSinceUse >= 7 && (data.streak_freezes_remaining ?? 0) < 1) {
+          updatedData.streak_freezes_remaining = 1
+          updatedData.streak_freeze_used_at = null
+          // Persist reset to DB (non-blocking)
+          supabase.from('user_stats').update({
+            streak_freezes_remaining: 1,
+            streak_freeze_used_at: null
+          }).eq('user_id', userId).then(() => {})
+        }
+      }
+      setStats(updatedData)
     }
     
     setLoading(false)
@@ -175,7 +190,7 @@ export function XPProvider({ children }: { children: ReactNode }) {
     setTimeout(() => setRecentXPGain(null), 3000)
   }
 
-  // Record focus session — FIX: This is now the ONLY place streak gets updated
+  // Record focus session — This is the ONLY place streak gets updated
   const recordFocusSession = async (minutes: number) => {
     if (!stats) return
     
@@ -183,8 +198,12 @@ export function XPProvider({ children }: { children: ReactNode }) {
     const isFirstFocus = stats.total_focus_minutes === 0
     const totalXP = xpEarned + (isFirstFocus ? XP_REWARDS.FIRST_FOCUS : 0)
 
-    // FIX: Calculate streak here (only when user actually studies)
-    const { newStreak, isNewDay } = calculateStreak(stats.last_active_date, stats.current_streak)
+    // Calculate streak with freeze support
+    const { newStreak, isNewDay, freezeUsed } = calculateStreak(
+      stats.last_active_date, 
+      stats.current_streak,
+      stats.streak_freezes_remaining ?? 0
+    )
     
     let bonusXP = 0
     const streakUpdates: Partial<UserStats> = {}
@@ -193,6 +212,12 @@ export function XPProvider({ children }: { children: ReactNode }) {
       streakUpdates.current_streak = newStreak
       streakUpdates.longest_streak = Math.max(newStreak, stats.longest_streak)
       streakUpdates.last_active_date = new Date().toISOString().split('T')[0]
+
+      // If a freeze was used, decrement the counter
+      if (freezeUsed) {
+        streakUpdates.streak_freezes_remaining = Math.max(0, (stats.streak_freezes_remaining ?? 0) - 1)
+        streakUpdates.streak_freeze_used_at = new Date().toISOString()
+      }
 
       // Daily login + streak bonuses
       if (newStreak > stats.current_streak) {

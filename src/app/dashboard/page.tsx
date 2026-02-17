@@ -14,6 +14,7 @@ import TodayProgressCard from '@/components/dashboard/TodayProgressCard'
 import QuickStatsGrid from '@/components/dashboard/QuickStatsGrid'
 import AIMCQBanner from '@/components/dashboard/AIMCQBanner'
 import GettingStartedCard from '@/components/dashboard/GettingStartedCard'
+import ExamCountdown from '@/components/dashboard/ExamCountdown'
 
 import DualCompanions from '@/components/companions/DualCompanions'
 import { useAppConfig } from '@/context/AppConfigContext'
@@ -278,6 +279,9 @@ export default function DashboardPage() {
           {getMotivation(progressPercent, streak)}
         </p>
       </div>
+
+      {/* === EXAM COUNTDOWN === */}
+      <ExamCountdown />
 
       <GettingStartedCard 
         focusMinutes={focusMinutes}
