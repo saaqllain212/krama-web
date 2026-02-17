@@ -9,6 +9,7 @@ import { XPProvider } from '@/context/XPContext'
 import { FocusModeProvider, useFocusMode } from '@/context/FocusModeContext'
 import { AppConfigProvider, useAppConfig } from '@/context/AppConfigContext'
 import XPNotification from '@/components/dashboard/XPNotification'
+import StudyReminder from '@/components/dashboard/StudyReminder'
 import { Wrench } from 'lucide-react'
 
 const pageTransition = {
@@ -70,6 +71,7 @@ function DashboardInner({ children }: { children: React.ReactNode }) {
           </div>
         </main>
         <XPNotification />
+        <StudyReminder />
       </div>
     </MaintenanceGate>
   )

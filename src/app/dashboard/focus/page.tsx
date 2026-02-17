@@ -150,6 +150,12 @@ function FocusPageInner() {
         
         await recordFocusSession(duration)
         
+        // Request notification permission after first successful session
+        // This is the best moment — user just experienced value
+        import('@/components/dashboard/StudyReminder').then(mod => {
+          mod.requestNotificationPermission()
+        })
+        
         showAlert(`Completed: ${duration}m on "${topic || 'Task'}"`, 'success')
         
         fetchTodayData()

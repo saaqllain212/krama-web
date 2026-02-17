@@ -18,6 +18,7 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://www.usekrama.com'),
   title: {
     default: "Krama | Strategic Study Tracker",
     template: "%s | Krama" 
