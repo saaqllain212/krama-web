@@ -5,26 +5,32 @@ import { createClient } from '@/lib/supabase/client'
 import { Crown, Clock, Settings as SettingsIcon } from 'lucide-react'
 import { useSyllabus } from '@/context/SyllabusContext'
 import { useXP } from '@/context/XPContext'
-import SettingsModal from '@/components/dashboard/SettingsModal'
-import OnboardingModal from '@/components/dashboard/OnboardingModal'
-import CheckoutModal from '@/components/dashboard/CheckoutModal'
-import InitiationModal from '@/components/dashboard/InitiationModal'
+import { useAppConfig } from '@/context/AppConfigContext'
+import dynamic from 'next/dynamic'
+
+// === ABOVE THE FOLD — Eager loaded (critical for first paint) ===
 import BroadcastBanner from '@/components/dashboard/BroadcastBanner'
 import TodayProgressCard from '@/components/dashboard/TodayProgressCard'
 import QuickStatsGrid from '@/components/dashboard/QuickStatsGrid'
-import AIMCQBanner from '@/components/dashboard/AIMCQBanner'
-import GettingStartedCard from '@/components/dashboard/GettingStartedCard'
 import ExamCountdown from '@/components/dashboard/ExamCountdown'
-import DailyQuests from '@/components/dashboard/DailyQuests'
-import WeeklyLeaderboard from '@/components/dashboard/WeeklyLeaderboard'
-import StudyConstellation from '@/components/dashboard/StudyConstellation'
-import StreakEarnBack from '@/components/dashboard/StreakEarnBack'
-import MilestoneCelebration from '@/components/dashboard/MilestoneCelebration'
+import GettingStartedCard from '@/components/dashboard/GettingStartedCard'
 import LiveStudyingCount from '@/components/dashboard/LiveStudyingCount'
-import WeekInReview from '@/components/dashboard/WeekInReview'
 
-import DualCompanions from '@/components/companions/DualCompanions'
-import { useAppConfig } from '@/context/AppConfigContext'
+// === BELOW THE FOLD — Lazy loaded (not visible on first paint) ===
+const DailyQuests = dynamic(() => import('@/components/dashboard/DailyQuests'), { ssr: false })
+const WeeklyLeaderboard = dynamic(() => import('@/components/dashboard/WeeklyLeaderboard'), { ssr: false })
+const StudyConstellation = dynamic(() => import('@/components/dashboard/StudyConstellation'), { ssr: false })
+const WeekInReview = dynamic(() => import('@/components/dashboard/WeekInReview'), { ssr: false })
+const AIMCQBanner = dynamic(() => import('@/components/dashboard/AIMCQBanner'), { ssr: false })
+const DualCompanions = dynamic(() => import('@/components/companions/DualCompanions'), { ssr: false })
+
+// === MODALS — Lazy loaded (hidden until user interaction) ===
+const SettingsModal = dynamic(() => import('@/components/dashboard/SettingsModal'), { ssr: false })
+const OnboardingModal = dynamic(() => import('@/components/dashboard/OnboardingModal'), { ssr: false })
+const CheckoutModal = dynamic(() => import('@/components/dashboard/CheckoutModal'), { ssr: false })
+const InitiationModal = dynamic(() => import('@/components/dashboard/InitiationModal'), { ssr: false })
+const StreakEarnBack = dynamic(() => import('@/components/dashboard/StreakEarnBack'), { ssr: false })
+const MilestoneCelebration = dynamic(() => import('@/components/dashboard/MilestoneCelebration'), { ssr: false })
 
 // Helper: Get time-aware greeting
 const getGreeting = () => {
