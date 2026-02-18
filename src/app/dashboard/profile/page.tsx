@@ -237,39 +237,61 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          {/* ACHIEVEMENTS */}
+          {/* ACHIEVEMENTS — Visual Badge Grid */}
           <div className="card">
-            <h2 className="font-bold text-lg mb-6 flex items-center gap-2 text-gray-900">
-              <Trophy size={20} className="text-primary-500" /> Achievements
-            </h2>
-            {unlockedAchievements.length > 0 && (
-              <div className="mb-6">
-                <div className="text-xs font-semibold text-gray-400 uppercase mb-3">Unlocked ({unlockedAchievements.length})</div>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                  {unlockedAchievements.map(a => (
-                    <div key={a.id} className="p-4 bg-primary-50 border border-primary-200 rounded-xl text-center">
-                      <div className="text-3xl mb-2">{a.icon}</div>
-                      <div className="font-semibold text-sm text-gray-900">{a.name}</div>
-                      <div className="text-[10px] text-gray-500">{a.description}</div>
-                    </div>
-                  ))}
-                </div>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="font-bold text-lg flex items-center gap-2 text-gray-900">
+                <Trophy size={20} className="text-primary-500" /> Achievements
+              </h2>
+              <div className="text-xs font-bold text-gray-400">
+                {unlockedAchievements.length}/{ACHIEVEMENTS.length}
               </div>
-            )}
-            {lockedAchievements.length > 0 && (
-              <div>
-                <div className="text-xs font-semibold text-gray-400 uppercase mb-3">Locked ({lockedAchievements.length})</div>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                  {lockedAchievements.map(a => (
-                    <div key={a.id} className="p-4 bg-gray-50 border border-gray-200 rounded-xl text-center opacity-50">
-                      <div className="text-3xl mb-2 grayscale">🔒</div>
-                      <div className="font-semibold text-sm text-gray-900">{a.name}</div>
-                      <div className="text-[10px] text-gray-500">{a.description}</div>
+            </div>
+            
+            {/* Progress bar */}
+            <div className="w-full h-2 bg-gray-100 rounded-full mb-6 overflow-hidden">
+              <div 
+                className="h-full bg-gradient-to-r from-primary-500 to-purple-500 rounded-full transition-all duration-500"
+                style={{ width: `${(unlockedAchievements.length / ACHIEVEMENTS.length) * 100}%` }}
+              />
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              {ACHIEVEMENTS.map(a => {
+                const isUnlocked = stats.achievements.includes(a.id)
+                return (
+                  <div 
+                    key={a.id} 
+                    className={`relative p-4 rounded-xl text-center transition-all ${
+                      isUnlocked 
+                        ? 'bg-gradient-to-br from-primary-50 to-purple-50 border-2 border-primary-200 shadow-sm' 
+                        : 'bg-gray-50 border border-gray-200'
+                    }`}
+                  >
+                    {/* Glow effect for unlocked */}
+                    {isUnlocked && (
+                      <div className="absolute inset-0 bg-gradient-to-br from-primary-200/20 to-purple-200/20 rounded-xl animate-pulse" />
+                    )}
+                    <div className="relative">
+                      <div className={`text-3xl mb-2 ${isUnlocked ? '' : 'grayscale opacity-30'}`}>
+                        {isUnlocked ? a.icon : '🔒'}
+                      </div>
+                      <div className={`font-semibold text-sm ${isUnlocked ? 'text-gray-900' : 'text-gray-400'}`}>
+                        {a.name}
+                      </div>
+                      <div className={`text-[10px] mt-0.5 ${isUnlocked ? 'text-gray-500' : 'text-gray-300'}`}>
+                        {a.description}
+                      </div>
+                      {isUnlocked && (
+                        <div className="mt-2 inline-flex items-center gap-1 text-[9px] font-bold text-primary-600 bg-primary-100 px-2 py-0.5 rounded-full">
+                          ✓ Unlocked
+                        </div>
+                      )}
                     </div>
-                  ))}
-                </div>
-              </div>
-            )}
+                  </div>
+                )
+              })}
+            </div>
           </div>
         </div>
 

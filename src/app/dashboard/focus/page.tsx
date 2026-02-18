@@ -66,6 +66,7 @@ function FocusPageInner() {
   const supabase = useMemo(() => createClient(), [])
   const { showAlert } = useAlert()
   const { recordFocusSession } = useXP()
+  const { stats: xpStats } = useXP()
   const { isFocusMode, setFocusMode } = useFocusMode()
 
   // --- STATE ---
@@ -484,22 +485,50 @@ function FocusPageInner() {
         )}
 
         {/* Today's Stats */}
-        <div className="card w-full max-w-md bg-gradient-to-br from-gray-50 to-white">
-          <h3 className="text-sm font-semibold text-gray-700 mb-4">Today's Progress</h3>
+        <div className={`card w-full max-w-md ${theme === 'default' ? 'bg-gradient-to-br from-gray-50 to-white' : themeStyle.card}`}>
+          <h3 className={`text-sm font-semibold ${themeStyle.subtext} mb-4`}>Today&apos;s Progress</h3>
           <div className="grid grid-cols-2 gap-4">
             <div className="text-center">
-              <div className="text-3xl font-bold text-gray-900">{todaySessions}</div>
-              <div className="text-sm text-gray-600">Sessions</div>
+              <div className={`text-3xl font-bold ${themeStyle.text}`}>{todaySessions}</div>
+              <div className={`text-sm ${themeStyle.subtext}`}>Sessions</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-gray-900">
+              <div className={`text-3xl font-bold ${themeStyle.text}`}>
                 {Math.floor(todayMinutes / 60)}h {todayMinutes % 60}m
               </div>
-              <div className="text-sm text-gray-600">Total Time</div>
+              <div className={`text-sm ${themeStyle.subtext}`}>Total Time</div>
             </div>
           </div>
         </div>
       </div>
+
+      {/* === FOCUS MODE FLOATING STATS OVERLAY === */}
+      {/* Only visible during fullscreen focus mode when timer is active */}
+      {isFocusMode && isActive && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40">
+          <div className={`flex items-center gap-4 px-5 py-2.5 rounded-full backdrop-blur-md shadow-lg ${
+            theme === 'dark' || theme === 'warm' 
+              ? 'bg-white/10 text-white/70' 
+              : 'bg-black/5 text-gray-500'
+          }`}>
+            <span className="text-xs font-semibold tabular-nums">
+              Today: {Math.floor(todayMinutes / 60)}h {todayMinutes % 60}m
+            </span>
+            <span className="w-px h-3 bg-current opacity-30" />
+            <span className="text-xs font-semibold">
+              Session {todaySessions + 1}
+            </span>
+            {xpStats && xpStats.current_streak > 0 && (
+              <>
+                <span className="w-px h-3 bg-current opacity-30" />
+                <span className="text-xs font-semibold">
+                  🔥 {xpStats.current_streak}
+                </span>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

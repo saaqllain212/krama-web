@@ -20,6 +20,8 @@ import WeeklyLeaderboard from '@/components/dashboard/WeeklyLeaderboard'
 import StudyConstellation from '@/components/dashboard/StudyConstellation'
 import StreakEarnBack from '@/components/dashboard/StreakEarnBack'
 import MilestoneCelebration from '@/components/dashboard/MilestoneCelebration'
+import LiveStudyingCount from '@/components/dashboard/LiveStudyingCount'
+import WeekInReview from '@/components/dashboard/WeekInReview'
 
 import DualCompanions from '@/components/companions/DualCompanions'
 import { useAppConfig } from '@/context/AppConfigContext'
@@ -285,10 +287,16 @@ export default function DashboardPage() {
         <p className="mt-3 text-lg md:text-xl font-medium text-gray-600">
           {getMotivation(progressPercent, streak)}
         </p>
+        <div className="mt-2">
+          <LiveStudyingCount />
+        </div>
       </div>
 
       {/* === EXAM COUNTDOWN === */}
       <ExamCountdown />
+
+      {/* === WEEK IN REVIEW (shows Mon-Tue only) === */}
+      <WeekInReview />
 
       <GettingStartedCard 
         focusMinutes={focusMinutes}
