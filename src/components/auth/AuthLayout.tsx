@@ -100,8 +100,8 @@ export default function AuthLayout({
           <div className="relative z-10">
             <div className="grid grid-cols-2 gap-6 p-6 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl">
               <div>
-                <div className="text-3xl font-bold text-white">14 Days</div>
-                <div className="text-sm text-white/50 mt-1">Free Trial</div>
+                <div className="text-3xl font-bold text-white">100%</div>
+                <div className="text-sm text-white/50 mt-1">Free to Start</div>
               </div>
               <div>
                 <div className="text-3xl font-bold bg-gradient-to-r from-primary-400 to-cyan-400 bg-clip-text text-transparent">
@@ -130,7 +130,7 @@ export default function AuthLayout({
               <div className="flex items-center gap-2 bg-success-50 px-4 py-2 rounded-full border border-success-200">
                 <span className="w-2 h-2 bg-success-500 rounded-full animate-pulse" />
                 <span className="text-xs font-semibold text-success-700 uppercase tracking-wider">
-                  14-Day Free Trial
+                  Free to Start
                 </span>
               </div>
             )}
@@ -143,7 +143,7 @@ export default function AuthLayout({
               {/* Header */}
               <div className="mb-8">
                 <h1 className="text-4xl font-bold tracking-tight text-gray-900">{title}</h1>
-                <p className="mt-3 text-lg text-gray-500">{subtitle}</p>
+                <p className="mt-3 text-lg text-gray-500 leading-relaxed">{subtitle}</p>
                 
                 {/* Fun hint about mascot */}
                 {mode === 'login' && (

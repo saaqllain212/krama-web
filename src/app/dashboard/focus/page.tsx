@@ -315,9 +315,9 @@ function FocusPageInner() {
   const themeStyle = THEME_STYLES[theme]
 
   return (
-    <div className={`min-h-[calc(100vh-8rem)] flex flex-col rounded-2xl -m-6 lg:-m-8 p-6 lg:p-8 transition-colors duration-300 ${themeStyle.bg}`}>
+    <div className={`min-h-[calc(100vh-8rem)] flex flex-col rounded-2xl -m-4 sm:-m-6 lg:-m-8 p-4 sm:p-6 lg:p-8 transition-colors duration-300 ${themeStyle.bg}`}>
       {/* Top Bar */}
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex items-center justify-between mb-6 sm:mb-8">
         <Link 
           href="/dashboard"
           className={`inline-flex items-center gap-2 text-sm font-medium ${themeStyle.subtext} hover:opacity-80 transition-colors`}
@@ -359,8 +359,8 @@ function FocusPageInner() {
       <div className="flex-1 flex flex-col items-center justify-center max-w-2xl mx-auto w-full">
         
         {/* Timer Section */}
-        <div className="text-center mb-12">
-          <h1 className={`text-3xl font-bold ${themeStyle.text} mb-2`}>Focus Mode</h1>
+        <div className="text-center mb-8 sm:mb-12">
+          <h1 className={`text-2xl sm:text-3xl font-bold ${themeStyle.text} mb-2`}>Focus Mode</h1>
           <p className={themeStyle.subtext}>
             {topic || 'Select a task to begin'}
           </p>
@@ -368,15 +368,36 @@ function FocusPageInner() {
 
         {/* Circular Timer */}
         <div className="mb-8 sm:mb-12">
-          <CircularProgress
-            percentage={progress}
-            size={typeof window !== 'undefined' && window.innerWidth < 640 ? 220 : 280}
-            strokeWidth={10}
-            color={isActive ? themeStyle.timerColor : (theme === 'dark' || theme === 'warm' ? '#444' : '#e5e7eb')}
-            showText={false}
-          >
-            <div className="text-center">
-              <div className={`text-6xl sm:text-7xl font-bold ${themeStyle.text} tabular-nums mb-2`}>
+          {/* Mobile: 200px, Desktop: 280px */}
+          <div className="block sm:hidden">
+            <CircularProgress
+              percentage={progress}
+              size={200}
+              strokeWidth={8}
+              color={isActive ? themeStyle.timerColor : (theme === 'dark' || theme === 'warm' ? '#444' : '#e5e7eb')}
+              showText={false}
+            >
+              <div className="text-center">
+                <div className={`text-5xl font-bold ${themeStyle.text} tabular-nums mb-1`}>
+                {timeDisplay}
+              </div>
+              <div className={`text-xs font-medium ${themeStyle.subtext}`}>
+                {isActive ? 'Focus Time' : secondsLeft === targetMinutes * 60 ? 'Ready' : 'Paused'}
+              </div>
+            </div>
+          </CircularProgress>
+          </div>
+          {/* Desktop timer */}
+          <div className="hidden sm:block">
+            <CircularProgress
+              percentage={progress}
+              size={280}
+              strokeWidth={10}
+              color={isActive ? themeStyle.timerColor : (theme === 'dark' || theme === 'warm' ? '#444' : '#e5e7eb')}
+              showText={false}
+            >
+              <div className="text-center">
+                <div className={`text-7xl font-bold ${themeStyle.text} tabular-nums mb-2`}>
                 {timeDisplay}
               </div>
               <div className={`text-sm font-medium ${themeStyle.subtext}`}>
@@ -384,6 +405,7 @@ function FocusPageInner() {
               </div>
             </div>
           </CircularProgress>
+          </div>
         </div>
 
         {/* Task Input */}
@@ -401,7 +423,7 @@ function FocusPageInner() {
         )}
 
         {/* Controls */}
-        <div className="flex items-center gap-4 mb-12">
+        <div className="flex items-center gap-3 sm:gap-4 mb-8 sm:mb-12">
           <button
             onClick={toggleTimer}
             disabled={isSaving}
@@ -444,8 +466,8 @@ function FocusPageInner() {
 
         {/* Time Presets + Custom */}
         {!isActive && (
-          <div className="mb-12 space-y-4">
-            <div className="flex flex-wrap items-center justify-center gap-3">
+          <div className="mb-8 sm:mb-12 space-y-4">
+            <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
               {PRESETS.map((preset) => (
                 <button
                   key={preset}
@@ -487,16 +509,16 @@ function FocusPageInner() {
         {/* Today's Stats */}
         <div className={`card w-full max-w-md ${theme === 'default' ? 'bg-gradient-to-br from-gray-50 to-white' : themeStyle.card}`}>
           <h3 className={`text-sm font-semibold ${themeStyle.subtext} mb-4`}>Today&apos;s Progress</h3>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-3 sm:gap-4">
             <div className="text-center">
-              <div className={`text-3xl font-bold ${themeStyle.text}`}>{todaySessions}</div>
-              <div className={`text-sm ${themeStyle.subtext}`}>Sessions</div>
+              <div className={`text-2xl sm:text-3xl font-bold ${themeStyle.text}`}>{todaySessions}</div>
+              <div className={`text-xs sm:text-sm ${themeStyle.subtext}`}>Sessions</div>
             </div>
             <div className="text-center">
-              <div className={`text-3xl font-bold ${themeStyle.text}`}>
+              <div className={`text-2xl sm:text-3xl font-bold ${themeStyle.text}`}>
                 {Math.floor(todayMinutes / 60)}h {todayMinutes % 60}m
               </div>
-              <div className={`text-sm ${themeStyle.subtext}`}>Total Time</div>
+              <div className={`text-xs sm:text-sm ${themeStyle.subtext}`}>Total Time</div>
             </div>
           </div>
         </div>

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { ArrowRight, Flame, BookOpen, Target, Clock, Users } from 'lucide-react'
+import { ArrowRight, Flame, BookOpen, Target, Users } from 'lucide-react'
 import { useTracker } from '@/analytics/useTracker' 
 import { EVENTS } from '@/analytics/events'
 import { motion } from 'framer-motion'
@@ -188,7 +188,7 @@ export default function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="max-w-lg text-base sm:text-lg font-medium text-gray-500 leading-relaxed"
+            className="max-w-lg text-base sm:text-lg md:text-xl font-medium text-gray-500 leading-relaxed"
           >
             Focus timer, syllabus tracker, spaced revision, AI MCQs — 
             everything you need to crack UPSC, JEE, NEET & more. In one place.
@@ -220,11 +220,11 @@ export default function Hero() {
               onClick={() => track(EVENTS.AUTH_SIGNUP_CLICKED, { location: 'hero_section' })}
               className="btn btn-primary group inline-flex items-center gap-3 text-base md:text-lg px-8 py-4 rounded-xl"
             >
-              Start Free Trial
+              Get Started Free
               <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
             </Link>
             <span className="text-sm text-gray-400 font-medium">
-              No credit card required
+              Free for 14 days · ₹299 lifetime
             </span>
           </motion.div>
 
@@ -242,8 +242,8 @@ export default function Hero() {
             </div>
             <span className="w-px h-4 bg-gray-200" />
             <div className="flex items-center gap-1.5 text-sm text-gray-500">
-              <Clock size={14} className="text-gray-400" />
-              <span>14-day free trial</span>
+              <span className="font-semibold text-gray-700">₹299</span>
+              <span>lifetime after trial</span>
             </div>
           </motion.div>
         </div>

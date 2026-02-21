@@ -7,7 +7,7 @@ import { useState } from "react"
 const EXAMS = [
   {
     id: 'upsc',
-    href: '/syllabus/upsc/history',
+    href: '/signup',
     emoji: '🏛️',
     tag: 'Union',
     tagColor: 'bg-blue-50 text-blue-700 border-blue-200',
@@ -18,7 +18,7 @@ const EXAMS = [
   },
   {
     id: 'jee',
-    href: '/syllabus/jee/physics',
+    href: '/signup',
     emoji: '⚛️',
     tag: 'Engineering',
     tagColor: 'bg-red-50 text-red-700 border-red-200',
@@ -29,7 +29,7 @@ const EXAMS = [
   },
   {
     id: 'neet',
-    href: '/syllabus/neet/biology',
+    href: '/signup',
     emoji: '🧬',
     tag: 'Medical',
     tagColor: 'bg-green-50 text-green-700 border-green-200',
@@ -40,7 +40,7 @@ const EXAMS = [
   },
   {
     id: 'ssc',
-    href: '/syllabus/ssc/cgl',
+    href: '/signup',
     emoji: '📊',
     tag: 'Govt Jobs',
     tagColor: 'bg-orange-50 text-orange-700 border-orange-200',
@@ -51,7 +51,7 @@ const EXAMS = [
   },
   {
     id: 'rbi',
-    href: '/syllabus/rbi/phase2',
+    href: '/signup',
     emoji: '🏦',
     tag: 'Banking',
     tagColor: 'bg-purple-50 text-purple-700 border-purple-200',

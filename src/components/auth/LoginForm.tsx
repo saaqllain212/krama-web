@@ -67,7 +67,7 @@ export default function LoginForm({ onMascotStateChange }: LoginFormProps) {
 
       {/* Email Field */}
       <div className="space-y-1.5">
-        <label className="text-sm font-medium text-gray-700">Email</label>
+        <label className="text-sm font-semibold text-gray-700">Email</label>
         <div className="relative">
           <Mail size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
           <input 
@@ -86,7 +86,7 @@ export default function LoginForm({ onMascotStateChange }: LoginFormProps) {
       {/* Password Field */}
       <div className="space-y-1.5">
         <div className="flex justify-between items-center">
-          <label className="text-sm font-medium text-gray-700">Password</label>
+          <label className="text-sm font-semibold text-gray-700">Password</label>
           <Link 
             href="/forgot-password" 
             className="text-xs font-medium text-gray-400 hover:text-primary-600 transition-colors"

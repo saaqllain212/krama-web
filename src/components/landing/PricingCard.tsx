@@ -79,11 +79,11 @@ export default function PricingCard() {
               onClick={() => track(EVENTS.AUTH_SIGNUP_CLICKED, { location: 'pricing_section' })}
               className="btn btn-primary w-full text-center text-lg"
             >
-              Start 14-Day Free Trial
+              Get Started Free
             </Link>
 
             <p className="text-center text-sm text-gray-500 mt-4">
-              No credit card required
+              14-day free trial · then ₹299 one-time
             </p>
           </div>
 

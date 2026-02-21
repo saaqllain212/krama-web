@@ -19,7 +19,7 @@ export default function ProblemSection() {
               You study hard. <br />
               <span className="text-white/30">You still forget.</span>
             </h2>
-            <p className="mt-8 text-lg font-medium leading-relaxed text-white/60 max-w-md">
+            <p className="mt-8 text-lg md:text-xl font-medium leading-relaxed text-white/60 max-w-md">
               The human brain is designed to forget <span className="text-white font-bold">50% of what you learn</span> within 24 hours. Cramming fights biology. You will always lose.
             </p>
 

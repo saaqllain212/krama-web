@@ -56,7 +56,7 @@ export default function Navbar({ onLogoClick }: NavbarProps) {
               href="/signup"
               className="btn btn-primary group hidden sm:flex items-center"
             >
-              <span>Start Free Trial</span>
+              <span>Get Started Free</span>
               <svg 
                 className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" 
                 fill="none" 
@@ -104,7 +104,7 @@ export default function Navbar({ onLogoClick }: NavbarProps) {
               onClick={() => setMobileOpen(false)}
               className="block mt-2 btn btn-primary text-center"
             >
-              Start Free Trial
+              Get Started Free
             </Link>
           </div>
         </div>
