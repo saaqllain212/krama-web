@@ -157,12 +157,12 @@ export default function TrialGuard({ children }: { children: React.ReactNode }) 
           </div>
           
           <h1 className="text-3xl font-bold mb-2">Trial Expired</h1>
-          <p className="text-black/60 font-medium mb-8">
+          <p className="text-gray-500 font-medium mb-8 leading-relaxed">
             Your {config.trial_days}-day free access has ended. <br/>
-            Unlock lifetime access to continue your preparation.
+            Get lifetime access for just ₹{config.base_price} — one time, forever.
           </p>
 
-          <div className="space-y-3 mb-8 text-left bg-white border border-gray-200/5 p-4">
+          <div className="space-y-3 mb-8 text-left bg-white border border-gray-200 rounded-xl p-5">
             <div className="flex items-center gap-2 text-sm font-bold">
               <CheckCircle size={16} className="text-green-600"/> Unlimited Focus Logs
             </div>
