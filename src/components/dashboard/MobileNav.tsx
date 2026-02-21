@@ -63,7 +63,7 @@ export default function MobileNav() {
         return false
       }
     }
-    if (item.flag && !(config as Record<string, boolean>)[item.flag]) {
+    if (item.flag && !(config as any)[item.flag]) {
       return false
     }
     return true
