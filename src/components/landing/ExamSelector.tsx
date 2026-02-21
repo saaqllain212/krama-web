@@ -66,7 +66,7 @@ export default function ExamSelector() {
   const [hoveredCard, setHoveredCard] = useState<string | null>(null)
 
   return (
-    <section className="py-24 bg-gradient-to-b from-white to-gray-50">
+    <section className="py-24 bg-white">
       <div className="max-w-6xl mx-auto px-6">
         
         {/* SECTION HEADER */}

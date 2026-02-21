@@ -2,7 +2,7 @@ import { X, Brain } from 'lucide-react'
 
 export default function ProblemSection() {
   return (
-    <section className="bg-black py-24 text-white relative overflow-hidden">
+    <section className="bg-gradient-to-b from-gray-900 to-black py-24 text-white relative overflow-hidden">
       {/* Animated background gradient orbs */}
       <div className="absolute top-20 left-10 w-96 h-96 bg-primary-500/20 rounded-full blur-3xl animate-pulse" />
       <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />

@@ -2,7 +2,7 @@ import { Share, MoreVertical, PlusSquare, Download } from 'lucide-react'
 
 export default function MobileSection() {
   return (
-    <section className="bg-black py-24 text-white relative overflow-hidden">
+    <section className="bg-gradient-to-b from-gray-900 to-black py-24 text-white relative overflow-hidden">
       {/* Background gradient effects */}
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl" />
       <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl" />

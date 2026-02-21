@@ -47,7 +47,7 @@ export default function InteractiveConsole() {
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 tracking-tight">
             Don&apos;t just study.
           </h2>
-          <p className="text-xl text-gray-500 font-medium">Follow the system.</p>
+          <p className="text-xl md:text-2xl text-gray-500 font-medium">Follow the system.</p>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-12 lg:gap-16">
@@ -79,7 +79,7 @@ export default function InteractiveConsole() {
                   activeTab === tab.id ? 'max-h-40 opacity-100 mt-3' : 'max-h-0 opacity-0'
                 }`}>
                   <h3 className="text-xl font-bold text-gray-900 mb-2">{tab.title}</h3>
-                  <p className="text-sm text-gray-600 leading-relaxed max-w-md">
+                  <p className="text-[15px] text-gray-600 leading-relaxed max-w-md">
                     {tab.desc}
                   </p>
                 </div>

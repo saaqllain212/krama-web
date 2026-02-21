@@ -178,7 +178,7 @@ export default function ToolsGrid() {
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
             Everything you need
           </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">
             Four powerful tools. One focused experience.
           </p>
         </motion.div>
@@ -218,7 +218,7 @@ export default function ToolsGrid() {
                 <h3 className="text-xl md:text-2xl font-bold text-white mb-2">
                   {tool.title}
                 </h3>
-                <p className="text-sm text-white/80 mb-6 leading-relaxed">
+                <p className="text-[15px] text-white/80 mb-6 leading-relaxed">
                   {tool.desc}
                 </p>
 

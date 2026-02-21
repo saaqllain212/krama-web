@@ -20,7 +20,7 @@ export default function AIMCQSection() {
           <h2 className="text-4xl font-bold text-gray-900 mb-4 md:text-5xl">
             AI MCQ Generator
           </h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">
             Upload your study material. Get instant practice questions. 
             <br />
             All processing happens <span className="font-semibold text-primary-600">locally on your device</span>.

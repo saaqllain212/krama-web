@@ -14,6 +14,7 @@ const ProblemSection = dynamic(() => import("./ProblemSection"), { ssr: false })
 const InteractiveConsole = dynamic(() => import("./InteractiveConsole"), { ssr: false })
 const ToolsGrid = dynamic(() => import("./ToolsGrid"), { ssr: false })
 const DualBrainPreview = dynamic(() => import("./DualBrainPreview"), { ssr: false })
+const TestimonialsSection = dynamic(() => import("./TestimonialsSection"), { ssr: false })
 const AIMCQSection = dynamic(() => import("./AIMCQSection"), { ssr: false })
 const PricingCard = dynamic(() => import("./PricingCard"), { ssr: false })
 const MobileSection = dynamic(() => import("./MobileSection"), { ssr: false })
@@ -49,19 +50,22 @@ export default function LandingPage() {
           {/* 5. All Features — bento grid */}
           <ToolsGrid />
 
-          {/* 6. Dual Companions — unique selling point */}
+          {/* 6. Social proof — testimonials */}
+          <TestimonialsSection />
+
+          {/* 7. Dual Companions — unique selling point */}
           <DualBrainPreview />
 
-          {/* 7. AI MCQ Generator — another USP */}
+          {/* 8. AI MCQ Generator — another USP */}
           <AIMCQSection />
 
-          {/* 8. Pricing — clear CTA */}
+          {/* 9. Pricing — clear CTA */}
           <PricingCard />
 
-          {/* 9. Mobile PWA — install on phone */}
+          {/* 10. Mobile PWA — install on phone */}
           <MobileSection />
 
-          {/* 10. Syllabus Builder — value before signup */}
+          {/* 11. Syllabus Builder — value before signup */}
           <SyllabusBuilderSection />
         </main>
 

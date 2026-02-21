@@ -11,6 +11,7 @@ import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { useSyllabus } from '@/context/SyllabusContext'
 import { useAppConfig } from '@/context/AppConfigContext'
+import LevelBadge from '@/components/dashboard/LevelBadge'
 
 // Each nav item maps to a feature flag key (null = always visible)
 const NAV_ITEMS = [
@@ -32,7 +33,6 @@ export default function Sidebar() {
   
   const [userName, setUserName] = useState('')
   const [userInitial, setUserInitial] = useState('U')
-  const [userLevel, setUserLevel] = useState(1)
 
   useEffect(() => {
     const getUser = async () => {
@@ -45,11 +45,9 @@ export default function Sidebar() {
         setUserName(user.email.split('@')[0])
         setUserInitial(user.email.charAt(0).toUpperCase())
       }
-      const level = Math.floor(stats.percentage / 10) + 1
-      setUserLevel(Math.min(level, 10))
     }
     getUser()
-  }, [supabase, stats.percentage])
+  }, [supabase])
 
   const handleLogout = async () => {
     await supabase.auth.signOut()
@@ -105,13 +103,13 @@ export default function Sidebar() {
             <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-purple-500 rounded-full flex items-center justify-center font-bold text-white text-base shadow-soft">
               {userInitial}
             </div>
-            <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-success-500 rounded-full flex items-center justify-center text-[10px] font-bold text-white border-2 border-gray-50">
-              {userLevel}
-            </div>
           </div>
           
           <div className="flex-1 min-w-0">
-            <div className="font-semibold text-sm text-gray-900 truncate">{userName || 'Student'}</div>
+            <div className="flex items-center gap-2">
+              <span className="font-semibold text-sm text-gray-900 truncate">{userName || 'Student'}</span>
+              <LevelBadge variant="mini" showProgress={false} clickable={false} />
+            </div>
             <div className="text-xs text-gray-500 font-medium">
               {stats.percentage}% complete
             </div>

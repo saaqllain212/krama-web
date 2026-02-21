@@ -20,7 +20,7 @@ export default function DualBrainPreview() {
           <h2 className="text-4xl font-bold text-gray-900 mb-4 md:text-5xl">
             Your Dual Study Companions
           </h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">
             Two AI personalities that evolve with your study habits. One grows with your effort. One fades when you slack.
           </p>
         </div>
