@@ -136,10 +136,10 @@ export default function Sidebar() {
             <Link
               key={item.href}
               href={item.href}
-              className={`group flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all
+              className={`group flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200
                 ${isActive 
                   ? 'bg-primary-500 text-white shadow-soft' 
-                  : 'text-gray-700 hover:bg-white hover:shadow-soft'
+                  : 'text-gray-600 hover:bg-white hover:text-gray-900 hover:shadow-soft'
                 }`}
             >
               <Icon className="h-5 w-5 flex-shrink-0" strokeWidth={2} />

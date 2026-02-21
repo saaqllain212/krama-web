@@ -68,6 +68,11 @@ export default function PricingCard() {
               ))}
             </div>
 
+            {/* Add the coupon card */}
+            <div className="mb-6">
+              <PricingCouponCard />
+            </div>
+
             {/* CTA */}
             <Link
               href="/signup"
@@ -76,11 +81,6 @@ export default function PricingCard() {
             >
               Start 14-Day Free Trial
             </Link>
-
-            {/* Add the coupon card */}
-            <div className="mb-8">
-              <PricingCouponCard />
-            </div>
 
             <p className="text-center text-sm text-gray-500 mt-4">
               No credit card required

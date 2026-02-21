@@ -32,11 +32,11 @@ export default function TodayProgressCard({
             Today's Progress
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-5xl md:text-6xl font-bold text-gray-900">
+            <span className="text-4xl sm:text-5xl md:text-6xl font-bold text-gray-900">
               <AnimatedNumber value={hoursLogged} duration={800} />
-              <span className="text-2xl md:text-3xl text-gray-500 font-semibold">h</span>
+              <span className="text-lg sm:text-2xl md:text-3xl text-gray-500 font-semibold">h</span>
               {minutesLogged > 0 && (
-                <> <AnimatedNumber value={minutesLogged} duration={900} /><span className="text-2xl md:text-3xl text-gray-500 font-semibold">m</span></>
+                <> <AnimatedNumber value={minutesLogged} duration={900} /><span className="text-lg sm:text-2xl md:text-3xl text-gray-500 font-semibold">m</span></>
               )}
             </span>
             <span className="text-lg font-medium text-gray-500">/ {goalHours}h goal</span>
@@ -46,8 +46,8 @@ export default function TodayProgressCard({
         {/* Circular Progress */}
         <CircularProgress 
           percentage={progressPercent}
-          size={100}
-          strokeWidth={10}
+          size={80}
+          strokeWidth={8}
           color="#5B8FF9"
         />
       </div>

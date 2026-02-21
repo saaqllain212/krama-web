@@ -367,16 +367,16 @@ function FocusPageInner() {
         </div>
 
         {/* Circular Timer */}
-        <div className="mb-12">
+        <div className="mb-8 sm:mb-12">
           <CircularProgress
             percentage={progress}
-            size={280}
-            strokeWidth={12}
+            size={typeof window !== 'undefined' && window.innerWidth < 640 ? 220 : 280}
+            strokeWidth={10}
             color={isActive ? themeStyle.timerColor : (theme === 'dark' || theme === 'warm' ? '#444' : '#e5e7eb')}
             showText={false}
           >
             <div className="text-center">
-              <div className={`text-7xl font-bold ${themeStyle.text} tabular-nums mb-2`}>
+              <div className={`text-6xl sm:text-7xl font-bold ${themeStyle.text} tabular-nums mb-2`}>
                 {timeDisplay}
               </div>
               <div className={`text-sm font-medium ${themeStyle.subtext}`}>

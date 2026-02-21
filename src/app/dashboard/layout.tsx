@@ -13,7 +13,7 @@ import StudyReminder from '@/components/dashboard/StudyReminder'
 import { Wrench } from 'lucide-react'
 
 const pageTransition = {
-  duration: 0.15,
+  duration: 0.25,
   ease: [0.25, 0.1, 0.25, 1] as [number, number, number, number],
 }
 
@@ -49,20 +49,20 @@ function DashboardInner({ children }: { children: React.ReactNode }) {
 
   return (
     <MaintenanceGate>
-      <div className="min-h-screen bg-[#f0f2f7]">
+      <div className="min-h-screen bg-gray-50">
         {!isFocusMode && <Sidebar />}
         {!isFocusMode && <MobileNav />}
         
         <main className={isFocusMode ? '' : 'lg:pl-64'}>
-          <div className="mx-auto max-w-7xl p-6 lg:p-8">
+          <div className="mx-auto max-w-7xl p-4 sm:p-6 lg:p-8">
             <TrialGuard>
               {/* FIX: Removed AnimatePresence mode="wait" — it forced full unmount/remount 
                    on every route change, blocking render until exit completes.
                    Simple fade-in via motion.div is much lighter. */}
               <motion.div
                 key={pathname}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
                 transition={pageTransition}
               >
                 {children}

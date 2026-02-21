@@ -1,29 +1,30 @@
 'use client'
 
-// 1. Imports
 import { useEasterEggs, EasterEggToast, StudentEasterEggs } from '@/components/EasterEggs'
+import dynamic from 'next/dynamic'
 
-// NEW: Import the TopBanner
+// Above the fold - eagerly loaded
 import TopBanner from "./TopBanner"
-
 import Navbar from "./Navbar"
 import Hero from "./Hero"
-import ExamSelector from "./ExamSelector"
-import ProblemSection from "./ProblemSection"
-import InteractiveConsole from "./InteractiveConsole" 
-import ToolsGrid from "./ToolsGrid"
-import PricingCard from "./PricingCard"
-import Footer from "./Footer"
-import SyllabusBuilderSection from "./SyllabusBuilderSection"
+
+// Below the fold - lazy loaded for performance
+const ExamSelector = dynamic(() => import("./ExamSelector"), { ssr: false })
+const ProblemSection = dynamic(() => import("./ProblemSection"), { ssr: false })
+const InteractiveConsole = dynamic(() => import("./InteractiveConsole"), { ssr: false })
+const ToolsGrid = dynamic(() => import("./ToolsGrid"), { ssr: false })
+const DualBrainPreview = dynamic(() => import("./DualBrainPreview"), { ssr: false })
+const AIMCQSection = dynamic(() => import("./AIMCQSection"), { ssr: false })
+const PricingCard = dynamic(() => import("./PricingCard"), { ssr: false })
+const MobileSection = dynamic(() => import("./MobileSection"), { ssr: false })
+const SyllabusBuilderSection = dynamic(() => import("./SyllabusBuilderSection"), { ssr: false })
+const Footer = dynamic(() => import("./Footer"), { ssr: false })
 
 export default function LandingPage() {
-  // 2. Initialize the Easter Egg hook
   const { eggs, activeEgg, handleLogoClick, handleCoffeeType } = useEasterEggs()
 
   return (
     <>
-
-      {/* 3. Add the Toast and Secret Component */}
       <EasterEggToast egg={activeEgg} />
       <StudentEasterEggs />
       
@@ -36,24 +37,32 @@ export default function LandingPage() {
           {/* 1. Hero — hook them */}
           <Hero />
 
-          {/* 2. Who is this for — exam selector */}
-          <ExamSelector />
-          
-          {/* 3. The Problem — why they need this */}
+          {/* 2. The Problem — why they need this */}
           <ProblemSection /> 
           
-          {/* 4. The Solution — interactive walkthrough of the 3-step process */}
+          {/* 3. The Solution — interactive walkthrough of the 3-step process */}
           <InteractiveConsole />
 
-          {/* 5. All Features — bento grid + AI MCQ + companions */}
+          {/* 4. Who is this for — exam selector */}
+          <ExamSelector />
+
+          {/* 5. All Features — bento grid */}
           <ToolsGrid />
 
-          {/* 6. Pricing — clear CTA */}
+          {/* 6. Dual Companions — unique selling point */}
+          <DualBrainPreview />
+
+          {/* 7. AI MCQ Generator — another USP */}
+          <AIMCQSection />
+
+          {/* 8. Pricing — clear CTA */}
           <PricingCard />
 
-          {/* 7. Syllabus Builder — interactive tool that adds value even before signup */}
-          <SyllabusBuilderSection />
+          {/* 9. Mobile PWA — install on phone */}
+          <MobileSection />
 
+          {/* 10. Syllabus Builder — value before signup */}
+          <SyllabusBuilderSection />
         </main>
 
         <Footer />

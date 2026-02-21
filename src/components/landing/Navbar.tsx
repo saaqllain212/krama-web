@@ -46,6 +46,12 @@ export default function Navbar({ onLogoClick }: NavbarProps) {
 
           {/* Desktop CTA + Mobile Toggle */}
           <div className="flex items-center gap-3">
+            <Link
+              href="/login"
+              className="hidden sm:inline-flex text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors px-3 py-2"
+            >
+              Log in
+            </Link>
             <Link 
               href="/signup"
               className="btn btn-primary group hidden sm:flex items-center"
@@ -86,6 +92,13 @@ export default function Navbar({ onLogoClick }: NavbarProps) {
                 {link.label}
               </a>
             ))}
+            <Link
+              href="/login"
+              onClick={() => setMobileOpen(false)}
+              className="block px-4 py-3 text-sm font-medium text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
+            >
+              Log in
+            </Link>
             <Link
               href="/signup"
               onClick={() => setMobileOpen(false)}

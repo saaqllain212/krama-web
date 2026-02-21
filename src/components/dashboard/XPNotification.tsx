@@ -16,7 +16,7 @@ export default function XPNotification() {
             initial={{ opacity: 0, y: 50, scale: 0.8 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -20, scale: 0.8 }}
-            className="fixed bottom-24 right-6 z-50"
+            className="fixed bottom-20 lg:bottom-8 right-4 sm:right-6 z-50"
           >
             <div className="bg-black text-white px-4 py-3 rounded-lg shadow-2xl flex items-center gap-3 border-2 border-brand">
               <div className="bg-primary-500 text-white p-2 rounded-full">

@@ -6,6 +6,7 @@ import { Crown, Clock, Settings as SettingsIcon } from 'lucide-react'
 import { useSyllabus } from '@/context/SyllabusContext'
 import { useXP } from '@/context/XPContext'
 import { useAppConfig } from '@/context/AppConfigContext'
+import { motion } from 'framer-motion'
 import dynamic from 'next/dynamic'
 
 // === ABOVE THE FOLD — Eager loaded (critical for first paint) ===
@@ -32,7 +33,17 @@ const InitiationModal = dynamic(() => import('@/components/dashboard/InitiationM
 const StreakEarnBack = dynamic(() => import('@/components/dashboard/StreakEarnBack'), { ssr: false })
 const MilestoneCelebration = dynamic(() => import('@/components/dashboard/MilestoneCelebration'), { ssr: false })
 
-// Helper: Get time-aware greeting
+// Stagger animation wrapper
+const stagger = {
+  container: {
+    animate: { transition: { staggerChildren: 0.08, delayChildren: 0.1 } }
+  },
+  item: {
+    initial: { opacity: 0, y: 16 },
+    animate: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.25, 0.1, 0.25, 1] } }
+  }
+}
+
 const getGreeting = () => {
   const hour = new Date().getHours()
   if (hour < 12) return 'Good morning'
@@ -40,7 +51,6 @@ const getGreeting = () => {
   return 'Good evening'
 }
 
-// Helper: Get motivational message based on progress
 const getMotivation = (progress: number, streak: number) => {
   if (progress >= 100) return "You've crushed today's goal! 🔥"
   if (progress >= 75) return "Almost there. One more push!"
@@ -50,10 +60,9 @@ const getMotivation = (progress: number, streak: number) => {
   return "Every minute counts. Let's begin."
 }
 
-// --- Shimmer skeleton component ---
 function DashboardSkeleton() {
   return (
-    <div className="space-y-8 pb-24">
+    <div className="space-y-6 pb-24">
       <div className="flex justify-between items-center">
         <div className="h-10 w-28 bg-gray-200 rounded-full skeleton-shimmer" />
         <div className="h-10 w-10 bg-gray-200 rounded-lg skeleton-shimmer" />
@@ -68,21 +77,21 @@ function DashboardSkeleton() {
             <div className="h-4 w-32 bg-gray-200 rounded skeleton-shimmer" />
             <div className="h-12 w-40 bg-gray-200 rounded skeleton-shimmer" />
           </div>
-          <div className="w-24 h-24 bg-gray-200 rounded-full skeleton-shimmer" />
+          <div className="w-20 h-20 bg-gray-200 rounded-full skeleton-shimmer" />
         </div>
         <div className="h-px bg-gray-100" />
-        <div className="flex gap-3">
+        <div className="flex gap-2">
           {[1,2,3,4,5,6,7].map(i => (
             <div key={i} className="flex-1 h-10 bg-gray-100 rounded-lg skeleton-shimmer" />
           ))}
         </div>
       </div>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {[1,2,3,4].map(i => (
-          <div key={i} className="rounded-xl border border-gray-200 bg-white p-6 space-y-4">
-            <div className="w-12 h-12 bg-gray-200 rounded-xl skeleton-shimmer" />
-            <div className="h-8 w-16 bg-gray-200 rounded skeleton-shimmer" />
-            <div className="h-4 w-24 bg-gray-100 rounded skeleton-shimmer" />
+          <div key={i} className="rounded-xl border border-gray-200 bg-white p-4 space-y-3">
+            <div className="w-9 h-9 bg-gray-200 rounded-lg skeleton-shimmer" />
+            <div className="h-7 w-14 bg-gray-200 rounded skeleton-shimmer" />
+            <div className="h-4 w-20 bg-gray-100 rounded skeleton-shimmer" />
           </div>
         ))}
       </div>
@@ -93,7 +102,7 @@ function DashboardSkeleton() {
 export default function DashboardPage() {
   const [userName, setUserName] = useState('Student')
   const [userEmail, setUserEmail] = useState('')
-  const [user, setUser] = useState<any>(null)
+  const [user, setUser] = useState<{ id: string; user_metadata?: { full_name?: string }; email?: string } | null>(null)
   
   const [focusMinutes, setFocusMinutes] = useState(0)
   const [dailyGoalMinutes, setDailyGoalMinutes] = useState(360)
@@ -111,7 +120,6 @@ export default function DashboardPage() {
   const { stats, activeExam } = useSyllabus() 
   const supabase = useMemo(() => createClient(), [])
   const { config: appConfig } = useAppConfig()
-  // FIX: Use streak from XPContext instead of redundant DB query
   const { stats: xpStats } = useXP()
   const streak = xpStats?.current_streak ?? 0
 
@@ -132,40 +140,34 @@ export default function DashboardPage() {
       const weekAgo = new Date()
       weekAgo.setDate(weekAgo.getDate() - 6)
 
-      // FIX: Removed redundant user_stats query — streak now comes from XPContext
       const [accessRes, focusRes, weekRes, reviewRes, mockRes, goalRes] = await Promise.all([
         supabase
           .from('user_access')
           .select('is_premium, trial_starts_at, trial_ends_at')
           .eq('user_id', user.id)
           .single(),
-
         supabase
           .from('focus_logs')
           .select('duration_minutes')
           .eq('user_id', user.id)
           .gte('started_at', `${today}T00:00:00`)
           .lt('started_at', `${today}T23:59:59`),
-
         supabase
           .from('focus_logs')
           .select('started_at, duration_minutes')
           .eq('user_id', user.id)
           .gte('started_at', weekAgo.toISOString()),
-
         supabase
           .from('topics')
           .select('id')
           .eq('user_id', user.id)
           .lte('next_review', today),
-
         supabase
           .from('mock_logs')
           .select('logs')
           .eq('user_id', user.id)
           .eq('exam_id', activeExam || 'upsc')
           .maybeSingle(),
-
         supabase
           .from('syllabus_settings')
           .select('daily_goal_hours')
@@ -173,7 +175,6 @@ export default function DashboardPage() {
           .single()
       ])
 
-      // Process membership
       if (accessRes.data) {
         const access = accessRes.data
         setIsPremium(access.is_premium)
@@ -187,8 +188,7 @@ export default function DashboardPage() {
       }
 
       if (focusRes.data) {
-        const total = focusRes.data.reduce((sum, s) => sum + (s.duration_minutes || 0), 0)
-        setFocusMinutes(total)
+        setFocusMinutes(focusRes.data.reduce((sum, s) => sum + (s.duration_minutes || 0), 0))
       }
 
       if (weekRes.data) {
@@ -206,7 +206,6 @@ export default function DashboardPage() {
         setDueReviews(reviewRes.data.length)
       }
 
-      // FIX: Properly type mock_logs instead of @ts-ignore
       if (mockRes.data?.logs && Array.isArray(mockRes.data.logs)) {
         setMocksCount(mockRes.data.logs.length)
       }
@@ -230,15 +229,18 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="space-y-8 pb-24">
-      
+    <motion.div 
+      className="space-y-6 sm:space-y-8 pb-24"
+      variants={stagger.container}
+      initial="initial"
+      animate="animate"
+    >
       <InitiationModal />
       <OnboardingModal />
       <BroadcastBanner />
       <StreakEarnBack />
       <MilestoneCelebration />
       
-      {/* FIX: Pass onGoalSaved callback so dashboard re-fetches without full page reload */}
       <SettingsModal 
         open={isSettingsOpen} 
         onClose={() => setIsSettingsOpen(false)} 
@@ -253,7 +255,7 @@ export default function DashboardPage() {
       />
 
       {/* === TOP BAR === */}
-      <div className="flex items-center justify-between">
+      <motion.div variants={stagger.item} className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           {isPremium ? (
             <div className="flex items-center gap-2 bg-gradient-to-r from-amber-400 to-yellow-400 px-4 py-2 rounded-full shadow-soft">
@@ -278,77 +280,96 @@ export default function DashboardPage() {
 
         <button 
           onClick={() => setIsSettingsOpen(true)}
-          className="p-3 bg-white border border-gray-200 rounded-lg shadow-soft hover:shadow-medium hover:border-primary-300 transition-all"
+          className="p-2.5 bg-white border border-gray-200 rounded-xl shadow-soft hover:shadow-medium hover:border-primary-300 transition-all"
           title="Settings"
         >
-          <SettingsIcon size={20} className="text-gray-700" />
+          <SettingsIcon size={18} className="text-gray-600" />
         </button>
-      </div>
+      </motion.div>
 
       {/* === GREETING === */}
-      <div>
-        <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-gray-900">
+      <motion.div variants={stagger.item}>
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-gray-900">
           {getGreeting()}, {userName}
         </h1>
-        <p className="mt-3 text-lg md:text-xl font-medium text-gray-600">
+        <p className="mt-2 text-base sm:text-lg md:text-xl font-medium text-gray-500">
           {getMotivation(progressPercent, streak)}
         </p>
         <div className="mt-2">
           <LiveStudyingCount />
         </div>
-      </div>
+      </motion.div>
 
       {/* === EXAM COUNTDOWN === */}
-      <ExamCountdown />
+      <motion.div variants={stagger.item}>
+        <ExamCountdown />
+      </motion.div>
 
-      {/* === WEEK IN REVIEW (shows Mon-Tue only) === */}
-      <WeekInReview />
+      {/* === WEEK IN REVIEW === */}
+      <motion.div variants={stagger.item}>
+        <WeekInReview />
+      </motion.div>
 
-      <GettingStartedCard 
-        focusMinutes={focusMinutes}
-        dueReviews={dueReviews}
-        syllabusPercentage={stats.percentage}
-      />
+      {/* === GETTING STARTED (new users) === */}
+      <motion.div variants={stagger.item}>
+        <GettingStartedCard 
+          focusMinutes={focusMinutes}
+          dueReviews={dueReviews}
+          syllabusPercentage={stats.percentage}
+        />
+      </motion.div>
 
       {/* === DUAL COMPANIONS (feature-flagged) === */}
       {appConfig.feature_companions_enabled && (
-        <DualCompanions 
-          userId={user?.id || ''}
-          todayMinutes={focusMinutes}
-          streak={streak}
-          lastWeekAverage={weekData.reduce((a, b) => a + b, 0) / 7}
-        />
+        <motion.div variants={stagger.item}>
+          <DualCompanions 
+            userId={user?.id || ''}
+            todayMinutes={focusMinutes}
+            streak={streak}
+            lastWeekAverage={weekData.reduce((a, b) => a + b, 0) / 7}
+          />
+        </motion.div>
       )}
 
-      <TodayProgressCard 
-        focusMinutes={focusMinutes}
-        dailyGoalMinutes={dailyGoalMinutes}
-        weekData={weekData}
-        streak={streak}
-      />
+      {/* === TODAY'S PROGRESS === */}
+      <motion.div variants={stagger.item}>
+        <TodayProgressCard 
+          focusMinutes={focusMinutes}
+          dailyGoalMinutes={dailyGoalMinutes}
+          weekData={weekData}
+          streak={streak}
+        />
+      </motion.div>
 
-      <QuickStatsGrid 
-        focusMinutes={focusMinutes}
-        dueReviews={dueReviews}
-        syllabusPercentage={stats.percentage}
-        mocksCount={mocksCount}
-      />
+      {/* === QUICK STATS === */}
+      <motion.div variants={stagger.item}>
+        <QuickStatsGrid 
+          focusMinutes={focusMinutes}
+          dueReviews={dueReviews}
+          syllabusPercentage={stats.percentage}
+          mocksCount={mocksCount}
+        />
+      </motion.div>
 
       {/* === DAILY QUESTS + CONSTELLATION + LEADERBOARD === */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <motion.div variants={stagger.item} className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
         <div className="lg:col-span-2">
           <DailyQuests />
         </div>
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           <div className="card flex flex-col items-center py-6">
             <StudyConstellation compact />
           </div>
           <WeeklyLeaderboard />
         </div>
-      </div>
+      </motion.div>
 
       {/* === AI MCQ GENERATOR BANNER (feature-flagged) === */}
-      {appConfig.feature_mcq_enabled && <AIMCQBanner />}
-    </div>
+      {appConfig.feature_mcq_enabled && (
+        <motion.div variants={stagger.item}>
+          <AIMCQBanner />
+        </motion.div>
+      )}
+    </motion.div>
   )
 }

@@ -67,14 +67,14 @@ export default function QuickStatsGrid({
           <Link
             key={stat.label}
             href={stat.href}
-            className="bg-white rounded-xl p-4 border border-gray-200 shadow-soft group hover:border-primary-200 hover:shadow-medium transition-all"
+            className="bg-white rounded-xl p-3 sm:p-4 border border-gray-200 shadow-soft group hover:border-primary-200 hover:shadow-medium transition-all active:scale-[0.98]"
           >
-            <div className={`w-9 h-9 rounded-lg bg-gradient-to-br ${stat.gradient} flex items-center justify-center mb-3`}>
-              <Icon className="w-4 h-4 text-white" strokeWidth={2.5} />
+            <div className={`w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-gradient-to-br ${stat.gradient} flex items-center justify-center mb-2 sm:mb-3`}>
+              <Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" strokeWidth={2.5} />
             </div>
             
             <div className="mb-0.5">
-              <div className="text-2xl font-bold text-gray-900">
+              <div className="text-xl sm:text-2xl font-bold text-gray-900">
                 <AnimatedNumber 
                   value={stat.numericValue} 
                   duration={600 + i * 150}

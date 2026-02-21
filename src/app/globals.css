@@ -484,64 +484,27 @@
   @keyframes shimmer {
     100% { transform: translateX(100%); }
   }
+
+  /* TopBanner shimmer effect */
+  .animate-shimmer {
+    animation: shimmerSlide 3s ease-in-out infinite;
+  }
+
+  @keyframes shimmerSlide {
+    0%, 100% { transform: translateX(-200%); }
+    50% { transform: translateX(200%); }
+  }
 }
 
 /* ========================================
-   6. CUSTOM CURSOR STYLES
+   6. MOBILE BOTTOM NAV SAFE AREA
    ======================================== */
-
-/* Legacy helper for manual toggle if needed */
-.custom-cursor-enabled {
-  cursor: none;
+/* Add bottom padding on mobile to account for the fixed bottom nav */
+@media (max-width: 1023px) {
+  .pb-24 {
+    padding-bottom: calc(6rem + env(safe-area-inset-bottom, 0px)) !important;
+  }
 }
-
-/* Base styles for dot/outline if not using Tailwind in component */
-.cursor-dot {
-  width: 6px;
-  height: 6px;
-  background: theme('colors.primary.500');
-  border-radius: 50%;
-  position: fixed;
-  pointer-events: none;
-  z-index: 9999;
-  transition: transform 0.15s ease;
-  transform: translate(-50%, -50%);
-}
-
-.cursor-outline {
-  width: 32px;
-  height: 32px;
-  border: 2px solid theme('colors.primary.500');
-  border-radius: 50%;
-  position: fixed;
-  pointer-events: none;
-  z-index: 9998;
-  opacity: 0.3;
-  transition: all 0.2s ease;
-  transform: translate(-50%, -50%);
-}
-
-.cursor-dot.hover {
-  transform: translate(-50%, -50%) scale(1.5);
-  background: theme('colors.success.500');
-}
-
-.cursor-outline.hover {
-  transform: translate(-50%, -50%) scale(1.5);
-  border-color: theme('colors.success.500');
-  opacity: 0.5;
-}
-
-/* NOTE: Custom cursor feature is disabled.
-   Uncomment and fix if re-enabling the React custom cursor component.
-
-@media (min-width: 1024px) {
-  body { cursor: none !important; }
-  * { cursor: none !important; }
-  input, textarea { cursor: text !important; }
-  select { cursor: pointer !important; }
-}
-*/
 
 /* ========================================
    7. REDUCED MOTION SUPPORT

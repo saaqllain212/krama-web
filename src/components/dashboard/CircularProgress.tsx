@@ -1,5 +1,7 @@
 'use client'
 
+import { useEffect, useState } from 'react'
+
 interface CircularProgressProps {
   percentage: number
   size?: number
@@ -19,9 +21,16 @@ export default function CircularProgress({
   showText = true,
   children
 }: CircularProgressProps) {
+  const [animatedPct, setAnimatedPct] = useState(0)
   const radius = (size - strokeWidth) / 2
   const circumference = radius * 2 * Math.PI
-  const offset = circumference - (percentage / 100) * circumference
+  const offset = circumference - (animatedPct / 100) * circumference
+
+  // Animate from 0 to target on mount / value change
+  useEffect(() => {
+    const timer = setTimeout(() => setAnimatedPct(percentage), 100)
+    return () => clearTimeout(timer)
+  }, [percentage])
 
   return (
     <div className="relative inline-flex items-center justify-center" style={{ width: size, height: size }}>
@@ -53,8 +62,8 @@ export default function CircularProgress({
       {/* Center content */}
       <div className="absolute inset-0 flex items-center justify-center">
         {showText && !children && (
-          <span className="text-2xl font-bold text-gray-900">
-            {Math.round(percentage)}%
+          <span className="text-xl sm:text-2xl font-bold text-gray-900">
+            {Math.round(animatedPct)}%
           </span>
         )}
         {children}
