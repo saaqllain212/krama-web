@@ -1,5 +1,6 @@
 'use client'
 import FeatureGate from '@/components/dashboard/FeatureGate'
+import PremiumGate from '@/components/dashboard/PremiumGate'
 
 import { useState, useEffect, useMemo } from 'react'
 import { createClient } from '@/lib/supabase/client'
@@ -14,7 +15,9 @@ import { motion } from 'framer-motion'
 export default function MocksPage() {
   return (
     <FeatureGate flag="feature_mocks_enabled" featureName="Mock Scores">
-      <MocksPageInner />
+      <PremiumGate featureName="Mock Test Analysis">
+        <MocksPageInner />
+      </PremiumGate>
     </FeatureGate>
   )
 }

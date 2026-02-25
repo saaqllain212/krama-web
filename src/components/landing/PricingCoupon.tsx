@@ -21,7 +21,7 @@ export function PricingCouponCard() {
           </div>
           
           <p className="text-sm text-gray-600 mb-3">
-            First 100 users get <span className="font-bold text-primary-600">₹150 OFF</span> on any plan!
+            First 100 users get <span className="font-bold text-primary-600">₹50 OFF</span> — pay just ₹99!
           </p>
           
           {/* Coupon code display */}
@@ -55,7 +55,7 @@ export function PricingCouponBanner() {
             <Tag className="w-5 h-5" />
           </div>
           <div>
-            <p className="font-bold text-sm">Launch Offer: ₹150 OFF</p>
+            <p className="font-bold text-sm">Launch Offer: ₹50 OFF</p>
             <p className="text-xs text-white/80">For the first 100 users only</p>
           </div>
         </div>

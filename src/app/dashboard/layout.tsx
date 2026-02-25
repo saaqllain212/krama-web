@@ -11,6 +11,11 @@ import { AppConfigProvider, useAppConfig } from '@/context/AppConfigContext'
 import XPNotification from '@/components/dashboard/XPNotification'
 import StudyReminder from '@/components/dashboard/StudyReminder'
 import { Wrench } from 'lucide-react'
+import { useState, useEffect, useMemo } from 'react'
+import dynamic from 'next/dynamic'
+import { createClient } from '@/lib/supabase/client'
+
+const CheckoutModal = dynamic(() => import('@/components/dashboard/CheckoutModal'), { ssr: false })
 
 const pageTransition = {
   duration: 0.25,
@@ -46,6 +51,29 @@ function MaintenanceGate({ children }: { children: React.ReactNode }) {
 function DashboardInner({ children }: { children: React.ReactNode }) {
   const { isFocusMode } = useFocusMode()
   const pathname = usePathname()
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false)
+  const [userName, setUserName] = useState('')
+  const [userEmail, setUserEmail] = useState('')
+  const supabase = useMemo(() => createClient(), [])
+
+  // Get user info for checkout
+  useEffect(() => {
+    const getUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        setUserName(user.user_metadata?.full_name || user.email?.split('@')[0] || '')
+        setUserEmail(user.email || '')
+      }
+    }
+    getUser()
+  }, [supabase])
+
+  // Listen for PremiumGate upgrade events
+  useEffect(() => {
+    const handler = () => setIsCheckoutOpen(true)
+    window.addEventListener('open-checkout', handler)
+    return () => window.removeEventListener('open-checkout', handler)
+  }, [])
 
   return (
     <MaintenanceGate>
@@ -72,6 +100,12 @@ function DashboardInner({ children }: { children: React.ReactNode }) {
         </main>
         <XPNotification />
         <StudyReminder />
+        <CheckoutModal 
+          isOpen={isCheckoutOpen} 
+          onClose={() => setIsCheckoutOpen(false)} 
+          userName={userName}
+          userEmail={userEmail}
+        />
       </div>
     </MaintenanceGate>
   )

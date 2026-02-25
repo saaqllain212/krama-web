@@ -222,6 +222,13 @@ export default function DashboardPage() {
     getData()
   }, [getData])
 
+  // Listen for upgrade events from PremiumGate on sub-pages
+  useEffect(() => {
+    const handler = () => setIsCheckoutOpen(true)
+    window.addEventListener('open-checkout', handler)
+    return () => window.removeEventListener('open-checkout', handler)
+  }, [])
+
   const progressPercent = Math.min(Math.round((focusMinutes / dailyGoalMinutes) * 100), 100)
 
   if (loading) {

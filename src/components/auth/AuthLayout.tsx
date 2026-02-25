@@ -105,9 +105,9 @@ export default function AuthLayout({
               </div>
               <div>
                 <div className="text-3xl font-bold bg-gradient-to-r from-primary-400 to-cyan-400 bg-clip-text text-transparent">
-                  ₹299
+                  ₹149
                 </div>
-                <div className="text-sm text-white/50 mt-1">Lifetime Access</div>
+                <div className="text-sm text-white/50 mt-1">Pro Lifetime</div>
               </div>
             </div>
           </div>

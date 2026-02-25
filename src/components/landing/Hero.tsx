@@ -224,7 +224,7 @@ export default function Hero() {
               <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
             </Link>
             <span className="text-sm text-gray-400 font-medium">
-              Free for 14 days · ₹299 lifetime
+              Free forever · Pro for ₹149 lifetime
             </span>
           </motion.div>
 
@@ -242,7 +242,7 @@ export default function Hero() {
             </div>
             <span className="w-px h-4 bg-gray-200" />
             <div className="flex items-center gap-1.5 text-sm text-gray-500">
-              <span className="font-semibold text-gray-700">₹299</span>
+              <span className="font-semibold text-gray-700">₹149</span>
               <span>lifetime after trial</span>
             </div>
           </motion.div>

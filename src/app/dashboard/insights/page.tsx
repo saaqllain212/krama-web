@@ -1,5 +1,6 @@
 'use client'
 import FeatureGate from '@/components/dashboard/FeatureGate'
+import PremiumGate from '@/components/dashboard/PremiumGate'
 
 import { useEffect, useState, useMemo } from 'react'
 import { createClient } from '@/lib/supabase/client'
@@ -32,7 +33,9 @@ type FocusLog = {
 export default function InsightsPage() {
   return (
     <FeatureGate flag="feature_insights_enabled" featureName="Analytics">
-      <InsightsPageInner />
+      <PremiumGate featureName="Analytics & Insights">
+        <InsightsPageInner />
+      </PremiumGate>
     </FeatureGate>
   )
 }

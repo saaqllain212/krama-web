@@ -17,7 +17,7 @@ export default function Footer() {
             Ready to study smarter?
           </h3>
           <p className="text-gray-500 mb-6 max-w-md mx-auto">
-            Join 500+ students already using Krama. Free for 14 days, then ₹299 forever.
+            Join 500+ students already using Krama. Free forever, or go Pro for ₹149 lifetime.
           </p>
           <Link
             href="/signup"
@@ -95,7 +95,7 @@ export default function Footer() {
             &copy; {new Date().getFullYear()} Krama Systems. All rights reserved.
           </div>
           <div className="text-xs text-gray-400 font-medium">
-            ₹299 one-time · No subscriptions · No ads
+            Free forever · Pro ₹149 one-time · No subscriptions
           </div>
         </div>
       </div>

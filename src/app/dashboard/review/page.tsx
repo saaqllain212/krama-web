@@ -1,5 +1,6 @@
 'use client'
 import FeatureGate from '@/components/dashboard/FeatureGate'
+import PremiumGate from '@/components/dashboard/PremiumGate'
 
 import { useEffect, useState, useMemo } from 'react'
 import { createClient } from '@/lib/supabase/client'
@@ -25,7 +26,9 @@ const SCHEDULE_PRESETS = [
 export default function ReviewPage() {
   return (
     <FeatureGate flag="feature_review_enabled" featureName="Spaced Review">
-      <ReviewPageInner />
+      <PremiumGate featureName="Spaced Review">
+        <ReviewPageInner />
+      </PremiumGate>
     </FeatureGate>
   )
 }

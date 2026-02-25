@@ -16,24 +16,28 @@ interface RazorpayOptions {
 declare global { interface Window { Razorpay: new (options: RazorpayOptions) => any } }
 
 function getTrialBannerStyle(daysLeft: number, trialDays: number) {
+  if (daysLeft <= 0) {
+    return {
+      bg: 'bg-gradient-to-r from-primary-500 to-purple-500', text: 'text-white',
+      message: '✨ Upgrade to Pro for Spaced Review, Mock Analysis & more — ₹149 lifetime'
+    }
+  }
   if (daysLeft <= 3) {
     return {
-      bg: 'bg-red-500', text: 'text-white',
-      message: daysLeft === 1 
-        ? '⚠️ Last day of trial — Upgrade now to keep your data' 
-        : daysLeft <= 0 ? '⚠️ Trial expired' : `⚠️ Trial ends in ${daysLeft} days`
+      bg: 'bg-amber-100', text: 'text-amber-900',
+      message: `⚡ ${daysLeft} day${daysLeft === 1 ? '' : 's'} left to try Pro features free — Upgrade for ₹149 lifetime`
     }
   }
   if (daysLeft <= 7) {
     return {
-      bg: 'bg-amber-100', text: 'text-amber-900',
-      message: `Trial ends in ${daysLeft} days — Upgrade for lifetime access`
+      bg: 'bg-amber-50', text: 'text-amber-800',
+      message: `Pro trial ends in ${daysLeft} days — Enjoying Review & Mocks? Keep them forever for ₹149`
     }
   }
   if (daysLeft <= trialDays) {
     return {
       bg: 'bg-primary-50', text: 'text-primary-800',
-      message: `${daysLeft} days left in your free trial`
+      message: `${daysLeft} days left to try all Pro features free`
     }
   }
   return null
@@ -147,54 +151,13 @@ export default function TrialGuard({ children }: { children: React.ReactNode }) 
     )
   }
 
-  // LOCKED — paywall. FIX: Uses config.base_price from DB
-  if (isLocked) {
-    return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-stone-900/90 backdrop-blur-md p-6">
-        <div className="max-w-md w-full bg-gray-50 border border-gray-200 rounded-2xl shadow-xl p-8 text-center">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-black rounded-full mb-6">
-            <Lock className="text-white" size={32} />
-          </div>
-          
-          <h1 className="text-3xl font-bold mb-2">Trial Expired</h1>
-          <p className="text-gray-500 font-medium mb-8 leading-relaxed">
-            Your {config.trial_days}-day free access has ended. <br/>
-            Get lifetime access for just ₹{config.base_price} — one time, forever.
-          </p>
-
-          <div className="space-y-3 mb-8 text-left bg-white border border-gray-200 rounded-xl p-5">
-            <div className="flex items-center gap-2 text-sm font-bold">
-              <CheckCircle size={16} className="text-green-600"/> Unlimited Focus Logs
-            </div>
-            <div className="flex items-center gap-2 text-sm font-bold">
-              <CheckCircle size={16} className="text-green-600"/> Full Analytics History
-            </div>
-            <div className="flex items-center gap-2 text-sm font-bold">
-              <CheckCircle size={16} className="text-green-600"/> Cloud Sync
-            </div>
-          </div>
-
-          <button 
-            onClick={handlePayment}
-            disabled={paymentProcessing}
-            className="w-full bg-primary-500 text-white py-4 rounded-xl font-bold text-base hover:bg-primary-600 hover:-translate-y-1 transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-          >
-            {paymentProcessing ? <Loader2 className="animate-spin" size={20}/> : `Unlock Now • ₹${config.base_price}`}
-          </button>
-          
-          <button 
-            onClick={() => router.push('/')}
-            className="mt-4 text-xs font-semibold text-gray-400 hover:text-gray-700 transition-colors"
-          >
-            Back to Home
-          </button>
-        </div>
-      </div>
-    )
-  }
-
-  // ACCESS GRANTED — show banner if in trial
-  const bannerStyle = (!isPremium && !isLocked) ? getTrialBannerStyle(daysLeft, config.trial_days) : null
+  // FREEMIUM MODEL: Never hard-lock the entire dashboard.
+  // Free users get permanent access to: Focus Timer, Syllabus, AI MCQ.
+  // Pro features (Review, Mocks, Insights) are gated by PremiumGate per-page.
+  // TrialGuard only shows upgrade banners now.
+  
+  // ACCESS GRANTED — show banner if in trial or trial expired
+  const bannerStyle = (!isPremium) ? getTrialBannerStyle(daysLeft, config.trial_days) : null
 
   return (
     <>

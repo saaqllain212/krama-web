@@ -37,7 +37,7 @@ const TESTIMONIALS = [
     avatar: 'R',
     color: 'from-amber-400 to-orange-500',
     rating: 5,
-    text: "bhai ₹299 for lifetime?? i was paying ₹500/month for an app that did half of what this does. the mock analysis showing silly mistakes vs concept errors was an eye opener. stopped losing 15-20 marks to carelessness.",
+    text: "bhai ₹149 for lifetime?? i was paying ₹500/month for an app that did half of what this does. the mock analysis showing silly mistakes vs concept errors was an eye opener. stopped losing 15-20 marks to carelessness.",
     detail: 'Working + preparing',
   },
   {

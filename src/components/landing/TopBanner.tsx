@@ -40,7 +40,7 @@ export default function TopBanner() {
         <p className="text-xs font-medium md:text-sm flex items-center gap-2 flex-wrap">
           <span className="font-bold">First 100 Users</span> 
           <span className="text-white/90">get</span>
-          <span className="font-bold text-lg">₹150 OFF</span>
+          <span className="font-bold text-lg">₹50 OFF</span>
         </p>
         
         {/* Divider */}
