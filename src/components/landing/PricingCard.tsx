@@ -83,7 +83,7 @@ export default function PricingCard() {
             </Link>
 
             <p className="text-center text-sm text-gray-500 mt-4">
-              No credit card required · Cancel anytime
+              No credit card needed · Pay only if you love it
             </p>
           </div>
 
