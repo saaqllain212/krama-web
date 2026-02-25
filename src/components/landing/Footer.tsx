@@ -2,14 +2,30 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
-import { Mail, Heart } from 'lucide-react'
+import { Mail, Heart, ArrowRight } from 'lucide-react'
 
 export default function Footer() {
   const [showContact, setShowContact] = useState(false)
 
   return (
-    <footer className="border-t border-gray-200 bg-white px-6 py-16 md:px-12">
+    <footer className="border-t border-gray-200 bg-white px-6 pt-16 pb-8 md:px-12">
       <div className="max-w-6xl mx-auto">
+
+        {/* Final CTA — catches bottom-scrollers */}
+        <div className="text-center mb-16 pb-12 border-b border-gray-100">
+          <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">
+            Ready to study smarter?
+          </h3>
+          <p className="text-gray-500 mb-6 max-w-md mx-auto">
+            Join 500+ students already using Krama. Free for 14 days, then ₹299 forever.
+          </p>
+          <Link
+            href="/signup"
+            className="btn btn-primary inline-flex items-center gap-2 text-base px-8 py-3.5"
+          >
+            Start Free Trial <ArrowRight size={18} />
+          </Link>
+        </div>
         
         {/* Top Row */}
         <div className="flex flex-col items-center justify-between gap-10 md:flex-row md:items-start">

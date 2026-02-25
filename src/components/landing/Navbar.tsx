@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import KramaLogo from './KramaLogo'
 import { Menu, X } from 'lucide-react'
@@ -17,6 +17,13 @@ const NAV_LINKS = [
 
 export default function Navbar({ onLogoClick }: NavbarProps) {
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 500)
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   return (
     <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur-lg border-b border-gray-200/50 shadow-sm">
@@ -54,7 +61,9 @@ export default function Navbar({ onLogoClick }: NavbarProps) {
             </Link>
             <Link 
               href="/signup"
-              className="btn btn-primary group hidden sm:flex items-center"
+              className={`btn btn-primary group hidden sm:flex items-center transition-all duration-300 ${
+                scrolled ? 'ring-2 ring-primary-300 ring-offset-2' : ''
+              }`}
             >
               <span>Get Started Free</span>
               <svg 

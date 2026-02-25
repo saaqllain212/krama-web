@@ -32,7 +32,7 @@ export default function InteractiveConsole() {
   const [activeTab, setActiveTab] = useState<typeof TABS[number]['id']>('decode')
 
   return (
-    <section id="features" className="bg-gradient-to-b from-white to-gray-50 py-24 px-6 md:px-12">
+    <section id="how-it-works" className="bg-gradient-to-b from-white to-gray-50 py-24 px-6 md:px-12">
       <div className="max-w-6xl mx-auto">
         
         {/* SECTION HEADER */}

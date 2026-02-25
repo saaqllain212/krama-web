@@ -50,16 +50,16 @@ export default function LandingPage() {
           {/* 5. All Features — bento grid */}
           <ToolsGrid />
 
-          {/* 6. Social proof — testimonials */}
-          <TestimonialsSection />
-
-          {/* 7. Dual Companions — unique selling point */}
+          {/* 6. Dual Companions — unique selling point */}
           <DualBrainPreview />
 
-          {/* 8. AI MCQ Generator — another USP */}
+          {/* 7. AI MCQ Generator — another USP */}
           <AIMCQSection />
 
-          {/* 9. Pricing — clear CTA */}
+          {/* 8. Social proof — testimonials (dark bg breaks monotony, right before pricing) */}
+          <TestimonialsSection />
+
+          {/* 9. Pricing — clear CTA (immediately after social proof) */}
           <PricingCard />
 
           {/* 10. Mobile PWA — install on phone */}

@@ -157,7 +157,7 @@ const TOOLS = [
 
 export default function ToolsGrid() {
   return (
-    <section className="bg-gray-50 px-6 py-24 md:px-12">
+    <section id="features" className="bg-gray-50 px-6 py-24 md:px-12">
       <div className="max-w-7xl mx-auto">
         
         {/* Header */}
