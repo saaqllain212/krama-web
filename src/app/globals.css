@@ -441,6 +441,31 @@
     border: 1px solid rgba(255, 255, 255, 0.2);
   }
 
+  /* Shadow utilities — used across landing + dashboard */
+  .shadow-soft {
+    box-shadow: var(--shadow-soft);
+  }
+
+  .shadow-medium {
+    box-shadow: var(--shadow-medium);
+  }
+
+  .shadow-large {
+    box-shadow: var(--shadow-large);
+  }
+
+  .shadow-glow-primary {
+    box-shadow: var(--shadow-glow-primary);
+  }
+
+  .shadow-glow-success {
+    box-shadow: var(--shadow-glow-success);
+  }
+
+  .shadow-glow-warning {
+    box-shadow: var(--shadow-glow-warning);
+  }
+
   /* Subtle pulse animation */
   .pulse-soft {
     animation: pulse-soft 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
