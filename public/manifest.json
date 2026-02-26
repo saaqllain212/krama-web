@@ -21,5 +21,35 @@
       "type": "image/png",
       "purpose": "any maskable"
     }
-  ]
+  ],
+  "shortcuts": [
+    {
+      "name": "Start Focus Timer",
+      "short_name": "Focus",
+      "url": "/dashboard/focus",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Syllabus Tracker",
+      "short_name": "Syllabus",
+      "url": "/dashboard/syllabus",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "AI MCQ Generator",
+      "short_name": "MCQ",
+      "url": "/dashboard/mcq",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Krama Dashboard"
+    }
+  ],
+  "prefer_related_applications": false
 }

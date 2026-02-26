@@ -79,6 +79,13 @@ function FocusPageInner() {
   const [todayMinutes, setTodayMinutes] = useState(0)
   const [customTime, setCustomTime] = useState('')
 
+  // --- DISTRACTION TRACKING ---
+  const [distractionCount, setDistractionCount] = useState(0)
+  const [totalAwaySeconds, setTotalAwaySeconds] = useState(0)
+  const [showDistracted, setShowDistracted] = useState(false)
+  const [lastAwayDuration, setLastAwayDuration] = useState(0)
+  const tabLeftAtRef = useRef<number | null>(null)
+
   // --- REFS for accurate timing ---
   const startTimeRef = useRef<number | null>(null)
   const totalSecondsRef = useRef<number>(25 * 60)
@@ -110,9 +117,14 @@ function FocusPageInner() {
     rafRef.current = requestAnimationFrame(updateTimer)
   }, [targetMinutes])
 
-  // Handle tab visibility change - recalculate on return
+  // Handle tab visibility change - recalculate on return + track distractions
   useEffect(() => {
     const handleVisibility = () => {
+      if (document.visibilityState === 'hidden' && isActive) {
+        // User left the tab during active session
+        tabLeftAtRef.current = Date.now()
+      }
+      
       if (document.visibilityState === 'visible' && isActive && startTimeRef.current) {
         const now = Date.now()
         const elapsed = Math.floor((now - startTimeRef.current) / 1000)
@@ -125,6 +137,25 @@ function FocusPageInner() {
           startTimeRef.current = null
           playCompletionSound()
           handleSaveSession(targetMinutes)
+          return
+        }
+
+        // Track how long they were away
+        if (tabLeftAtRef.current) {
+          const awayMs = now - tabLeftAtRef.current
+          const awaySecs = Math.floor(awayMs / 1000)
+          tabLeftAtRef.current = null
+          
+          // Only count as distraction if away > 5 seconds (not just quick tab switch)
+          if (awaySecs >= 5) {
+            setDistractionCount(prev => prev + 1)
+            setTotalAwaySeconds(prev => prev + awaySecs)
+            setLastAwayDuration(awaySecs)
+            setShowDistracted(true)
+            
+            // Auto-hide after 4 seconds
+            setTimeout(() => setShowDistracted(false), 4000)
+          }
         }
       }
     }
@@ -244,6 +275,11 @@ function FocusPageInner() {
       totalSecondsRef.current = secondsLeft
       sessionStartRef.current = Date.now()
       setIsActive(true)
+      // Reset distraction tracking for new session
+      setDistractionCount(0)
+      setTotalAwaySeconds(0)
+      setShowDistracted(false)
+      tabLeftAtRef.current = null
     } else {
       // PAUSE — save the remaining seconds accurately
       if (startTimeRef.current) {
@@ -407,6 +443,50 @@ function FocusPageInner() {
           </CircularProgress>
           </div>
         </div>
+
+        {/* Distraction Alert - slides in when user returns from another tab */}
+        {showDistracted && isActive && (
+          <div className="w-full max-w-md mb-4 animate-in slide-in-from-top duration-300">
+            <div className={`rounded-xl px-4 py-3 flex items-center gap-3 ${
+              lastAwayDuration >= 60 
+                ? 'bg-red-500/15 border border-red-500/30' 
+                : 'bg-amber-500/15 border border-amber-500/30'
+            }`}>
+              <span className="text-2xl">{lastAwayDuration >= 60 ? '🚨' : '👀'}</span>
+              <div className="flex-1 min-w-0">
+                <p className={`text-sm font-bold ${lastAwayDuration >= 60 ? 'text-red-700' : 'text-amber-700'}`}>
+                  {lastAwayDuration >= 60 
+                    ? `You were away for ${Math.floor(lastAwayDuration / 60)}m ${lastAwayDuration % 60}s!` 
+                    : `You left for ${lastAwayDuration}s — stay focused!`}
+                </p>
+                <p className="text-xs text-gray-500 mt-0.5">
+                  Your timer kept running. Get back to it! 💪
+                </p>
+              </div>
+              <button 
+                onClick={() => setShowDistracted(false)}
+                className="text-gray-400 hover:text-gray-600 text-lg font-bold"
+              >
+                ×
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Distraction counter - shows during active session if any distractions */}
+        {isActive && distractionCount > 0 && !showDistracted && (
+          <div className="w-full max-w-md mb-4">
+            <div className={`rounded-lg px-3 py-2 text-center text-xs font-medium ${
+              distractionCount >= 3 
+                ? 'bg-red-50 text-red-600' 
+                : 'bg-amber-50 text-amber-600'
+            }`}>
+              {distractionCount >= 3 
+                ? `⚠️ ${distractionCount} distractions (${Math.floor(totalAwaySeconds / 60)}m ${totalAwaySeconds % 60}s lost) — your focus is breaking down`
+                : `${distractionCount} distraction${distractionCount > 1 ? 's' : ''} · ${totalAwaySeconds}s away — you can do better!`}
+            </div>
+          </div>
+        )}
 
         {/* Task Input */}
         {!isActive && (

@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Space_Grotesk } from "next/font/google"; 
 import "./globals.css";
 import Script from 'next/script'; 
@@ -16,6 +16,15 @@ const spaceGrotesk = Space_Grotesk({
   variable: '--font-space',
   weight: ['300', '400', '500', '600', '700'] 
 });
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  themeColor: '#6366f1',
+  viewportFit: 'cover',
+}
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.usekrama.com'),
@@ -47,6 +56,11 @@ export const metadata: Metadata = {
     icon: "/favicon.ico",
     apple: "/icon-192.png",
   },
+  other: {
+    'mobile-web-app-capable': 'yes',
+    'apple-mobile-web-app-capable': 'yes',
+    'apple-mobile-web-app-status-bar-style': 'black-translucent',
+  },
 };
 
 export default function RootLayout({
@@ -56,7 +70,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${spaceGrotesk.className} antialiased bg-gray-50 text-gray-900`}>
+      <body className={`${spaceGrotesk.className} antialiased bg-gray-50 text-gray-900 env-safe`}>
         
         {/* Watchtower: Error Monitoring */}
         <SentryWrapper />

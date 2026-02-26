@@ -557,3 +557,18 @@
     scroll-behavior: auto !important;
   }
 }
+/* PWA Standalone safe areas */
+.env-safe {
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+}
+
+/* Smooth animations for distraction alerts */
+@keyframes slide-in-from-top {
+  from { transform: translateY(-100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+.animate-in.slide-in-from-top {
+  animation: slide-in-from-top 0.3s ease-out;
+}
