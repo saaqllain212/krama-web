@@ -8,7 +8,7 @@ const TOOLS = [
     id: 'pomodoro',
     icon: Timer,
     title: 'Pomodoro Timer',
-    desc: 'Deep focus sessions with zero distractions',
+    desc: 'Deep focus sessions with distraction tracking & session reviews',
     size: 'large', // Takes 2 columns on desktop
     gradient: 'from-orange-400 to-red-500',
     preview: (

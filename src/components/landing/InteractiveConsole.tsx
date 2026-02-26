@@ -16,7 +16,7 @@ const TABS = [
     id: 'execute',
     label: '02. Execute',
     title: 'The Focus Protocol',
-    desc: 'The timer resets if you leave the screen. We force "Deep Work". No Instagram. No distractions. Just pure execution.',
+    desc: 'Start a focus session, then study. Krama silently tracks tab switches and shows you how much time you lost. After each session, rate your own focus. Real data, real discipline.',
     icon: <Clock size={18} />
   },
   {

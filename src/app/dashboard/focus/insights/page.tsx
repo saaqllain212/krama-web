@@ -13,6 +13,9 @@ type FocusLog = {
   duration_minutes: number
   target_minutes: number
   topic: string
+  tab_switches?: number
+  away_seconds?: number
+  focus_quality?: 'focused' | 'mixed' | 'distracted' | null
 }
 
 export default function FocusInsightsPage() {
@@ -92,7 +95,24 @@ export default function FocusInsightsPage() {
       maxHourVal,
       avgSession,
       deepWorkBadge,
-      streak
+      streak,
+      // Focus quality stats
+      focusStats: (() => {
+        const withQuality = logs.filter(l => l.focus_quality)
+        const withSwitches = logs.filter(l => (l.tab_switches ?? 0) > 0)
+        const focused = withQuality.filter(l => l.focus_quality === 'focused').length
+        const mixed = withQuality.filter(l => l.focus_quality === 'mixed').length
+        const distracted = withQuality.filter(l => l.focus_quality === 'distracted').length
+        const totalReviewed = focused + mixed + distracted
+        const totalSwitches = logs.reduce((sum, l) => sum + (l.tab_switches ?? 0), 0)
+        const totalAway = logs.reduce((sum, l) => sum + (l.away_seconds ?? 0), 0)
+        const avgSwitchesPerSession = withSwitches.length > 0 
+          ? Math.round(totalSwitches / withSwitches.length) : 0
+        // Focus score: 100 = all focused, 50 = all mixed, 0 = all distracted
+        const focusScore = totalReviewed > 0 
+          ? Math.round(((focused * 100) + (mixed * 50)) / totalReviewed) : null
+        return { focused, mixed, distracted, totalReviewed, totalSwitches, totalAway, avgSwitchesPerSession, focusScore }
+      })(),
     }
   }, [logs, dailyGoal])
 
@@ -222,6 +242,104 @@ export default function FocusInsightsPage() {
 
         {/* OPTIMAL SESSION LENGTH */}
         <OptimalSessionCard logs={logs} />
+
+        {/* FOCUS QUALITY & DISTRACTION ANALYSIS */}
+        {(stats.focusStats.totalReviewed > 0 || stats.focusStats.totalSwitches > 0) && (
+          <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="p-2 bg-gradient-to-br from-violet-500 to-purple-600 rounded-lg">
+                <Target size={20} className="text-white" />
+              </div>
+              <div>
+                <h2 className="text-xl font-bold text-gray-900">Focus Quality</h2>
+                <p className="text-xs text-gray-500">Self-reported distraction tracking</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Left: Focus Score + Breakdown */}
+              <div>
+                {stats.focusStats.focusScore !== null && (
+                  <div className="mb-6">
+                    <div className="flex items-end gap-3 mb-2">
+                      <span className={`text-5xl font-bold ${
+                        stats.focusStats.focusScore >= 75 ? 'text-green-600' :
+                        stats.focusStats.focusScore >= 40 ? 'text-amber-600' : 'text-red-600'
+                      }`}>
+                        {stats.focusStats.focusScore}
+                      </span>
+                      <span className="text-lg text-gray-400 mb-1">/100</span>
+                    </div>
+                    <p className="text-sm text-gray-500">
+                      {stats.focusStats.focusScore >= 75 ? 'Excellent focus discipline' :
+                       stats.focusStats.focusScore >= 40 ? 'Room for improvement' : 'High distraction levels'}
+                    </p>
+                  </div>
+                )}
+
+                {/* Quality breakdown bars */}
+                {stats.focusStats.totalReviewed > 0 && (
+                  <div className="space-y-3">
+                    {[
+                      { label: 'Focused', count: stats.focusStats.focused, color: 'bg-green-500', emoji: '📚' },
+                      { label: 'Mixed', count: stats.focusStats.mixed, color: 'bg-amber-500', emoji: '📱' },
+                      { label: 'Distracted', count: stats.focusStats.distracted, color: 'bg-red-500', emoji: '🎯' },
+                    ].map(item => {
+                      const pct = Math.round((item.count / stats.focusStats.totalReviewed) * 100)
+                      return (
+                        <div key={item.label}>
+                          <div className="flex justify-between text-sm mb-1">
+                            <span className="font-medium text-gray-700">{item.emoji} {item.label}</span>
+                            <span className="font-bold text-gray-900">{item.count} ({pct}%)</span>
+                          </div>
+                          <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                            <div className={`h-full ${item.color} rounded-full transition-all`} style={{ width: `${pct}%` }} />
+                          </div>
+                        </div>
+                      )
+                    })}
+                    <p className="text-xs text-gray-400 pt-1">Based on {stats.focusStats.totalReviewed} reviewed sessions</p>
+                  </div>
+                )}
+              </div>
+
+              {/* Right: Tab Switch Stats */}
+              <div className="space-y-4">
+                <div className="bg-gray-50 rounded-xl p-4">
+                  <div className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Total Tab Switches</div>
+                  <div className="text-3xl font-bold text-gray-900">{stats.focusStats.totalSwitches}</div>
+                  <p className="text-xs text-gray-500 mt-1">across all sessions</p>
+                </div>
+                
+                <div className="bg-gray-50 rounded-xl p-4">
+                  <div className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Avg Switches/Session</div>
+                  <div className={`text-3xl font-bold ${
+                    stats.focusStats.avgSwitchesPerSession <= 2 ? 'text-green-600' :
+                    stats.focusStats.avgSwitchesPerSession <= 5 ? 'text-amber-600' : 'text-red-600'
+                  }`}>
+                    {stats.focusStats.avgSwitchesPerSession}
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">
+                    {stats.focusStats.avgSwitchesPerSession <= 2 ? 'Great discipline!' :
+                     stats.focusStats.avgSwitchesPerSession <= 5 ? 'Try to reduce' : 'High distraction'}
+                  </p>
+                </div>
+
+                <div className="bg-gray-50 rounded-xl p-4">
+                  <div className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Total Time Away</div>
+                  <div className="text-3xl font-bold text-gray-900">
+                    {stats.focusStats.totalAway >= 3600 
+                      ? `${Math.floor(stats.focusStats.totalAway / 3600)}h ${Math.floor((stats.focusStats.totalAway % 3600) / 60)}m`
+                      : stats.focusStats.totalAway >= 60
+                        ? `${Math.floor(stats.focusStats.totalAway / 60)}m`
+                        : `${stats.focusStats.totalAway}s`}
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">spent outside Krama during sessions</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* BIO-RHYTHM CHART */}
         <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">

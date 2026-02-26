@@ -7,7 +7,7 @@ import { EVENTS } from '@/analytics/events'
 import { PricingCouponCard } from './PricingCoupon'
 
 const FREE_FEATURES = [
-  'Focus Timer (unlimited sessions)',
+  'Focus Timer + Distraction Tracker',
   'Visual Syllabus Tracker',
   'AI MCQ Generator (your API key)',
   'Study streaks & daily goals',
