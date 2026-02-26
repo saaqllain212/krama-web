@@ -79,11 +79,12 @@ function FocusPageInner() {
   const [todayMinutes, setTodayMinutes] = useState(0)
   const [customTime, setCustomTime] = useState('')
 
-  // --- DISTRACTION TRACKING ---
-  const [distractionCount, setDistractionCount] = useState(0)
+  // --- TAB SWITCH TRACKING (silent during session, reviewed at end) ---
+  const [tabSwitches, setTabSwitches] = useState<{ leftAt: number; returnedAt: number; duration: number }[]>([])
   const [totalAwaySeconds, setTotalAwaySeconds] = useState(0)
-  const [showDistracted, setShowDistracted] = useState(false)
+  const [showAwayAlert, setShowAwayAlert] = useState(false)  // only for 5+ min absences
   const [lastAwayDuration, setLastAwayDuration] = useState(0)
+  const [showSessionReview, setShowSessionReview] = useState(false)
   const tabLeftAtRef = useRef<number | null>(null)
 
   // --- REFS for accurate timing ---
@@ -117,11 +118,10 @@ function FocusPageInner() {
     rafRef.current = requestAnimationFrame(updateTimer)
   }, [targetMinutes])
 
-  // Handle tab visibility change - recalculate on return + track distractions
+  // Handle tab visibility change — silent tracking + alert only for long absences
   useEffect(() => {
     const handleVisibility = () => {
       if (document.visibilityState === 'hidden' && isActive) {
-        // User left the tab during active session
         tabLeftAtRef.current = Date.now()
       }
       
@@ -140,21 +140,25 @@ function FocusPageInner() {
           return
         }
 
-        // Track how long they were away
+        // Log the tab switch silently
         if (tabLeftAtRef.current) {
           const awayMs = now - tabLeftAtRef.current
           const awaySecs = Math.floor(awayMs / 1000)
+          const leftAt = tabLeftAtRef.current
           tabLeftAtRef.current = null
           
-          // Only count as distraction if away > 5 seconds (not just quick tab switch)
-          if (awaySecs >= 5) {
-            setDistractionCount(prev => prev + 1)
+          // Only log if away > 3 seconds (ignore accidental swipes)
+          if (awaySecs >= 3) {
+            setTabSwitches(prev => [...prev, { leftAt, returnedAt: now, duration: awaySecs }])
             setTotalAwaySeconds(prev => prev + awaySecs)
-            setLastAwayDuration(awaySecs)
-            setShowDistracted(true)
             
-            // Auto-hide after 4 seconds
-            setTimeout(() => setShowDistracted(false), 4000)
+            // Only show real-time alert for VERY long absences (5+ minutes)
+            // Short absences are silently logged for end-of-session review
+            if (awaySecs >= 300) {
+              setLastAwayDuration(awaySecs)
+              setShowAwayAlert(true)
+              setTimeout(() => setShowAwayAlert(false), 5000)
+            }
           }
         }
       }
@@ -199,6 +203,11 @@ function FocusPageInner() {
         totalSecondsRef.current = targetMinutes * 60
         sessionStartRef.current = null
         setTopic('')
+        
+        // Show session review if there were tab switches
+        if (tabSwitches.length > 0 || totalAwaySeconds > 0) {
+          setShowSessionReview(true)
+        }
       }
     } catch (err) {
       console.error('Failed to save:', err)
@@ -275,10 +284,11 @@ function FocusPageInner() {
       totalSecondsRef.current = secondsLeft
       sessionStartRef.current = Date.now()
       setIsActive(true)
-      // Reset distraction tracking for new session
-      setDistractionCount(0)
+      // Reset tab switch tracking for new session
+      setTabSwitches([])
       setTotalAwaySeconds(0)
-      setShowDistracted(false)
+      setShowAwayAlert(false)
+      setShowSessionReview(false)
       tabLeftAtRef.current = null
     } else {
       // PAUSE — save the remaining seconds accurately
@@ -343,6 +353,14 @@ function FocusPageInner() {
   const minutes = Math.floor(secondsLeft / 60)
   const seconds = secondsLeft % 60
   const timeDisplay = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+
+  // Format away time for display
+  const formatAwayTime = (secs: number) => {
+    if (secs < 60) return `${secs}s`
+    const m = Math.floor(secs / 60)
+    const s = secs % 60
+    return s > 0 ? `${m}m ${s}s` : `${m}m`
+  }
 
   // Calculate progress percentage
   const progress = ((targetMinutes * 60 - secondsLeft) / (targetMinutes * 60)) * 100
@@ -444,27 +462,21 @@ function FocusPageInner() {
           </div>
         </div>
 
-        {/* Distraction Alert - slides in when user returns from another tab */}
-        {showDistracted && isActive && (
+        {/* Long absence alert (5+ minutes only) — gentle nudge, not accusation */}
+        {showAwayAlert && isActive && (
           <div className="w-full max-w-md mb-4 animate-in slide-in-from-top duration-300">
-            <div className={`rounded-xl px-4 py-3 flex items-center gap-3 ${
-              lastAwayDuration >= 60 
-                ? 'bg-red-500/15 border border-red-500/30' 
-                : 'bg-amber-500/15 border border-amber-500/30'
-            }`}>
-              <span className="text-2xl">{lastAwayDuration >= 60 ? '🚨' : '👀'}</span>
+            <div className="rounded-xl px-4 py-3 flex items-center gap-3 bg-amber-500/15 border border-amber-500/30">
+              <span className="text-2xl">👋</span>
               <div className="flex-1 min-w-0">
-                <p className={`text-sm font-bold ${lastAwayDuration >= 60 ? 'text-red-700' : 'text-amber-700'}`}>
-                  {lastAwayDuration >= 60 
-                    ? `You were away for ${Math.floor(lastAwayDuration / 60)}m ${lastAwayDuration % 60}s!` 
-                    : `You left for ${lastAwayDuration}s — stay focused!`}
+                <p className="text-sm font-bold text-amber-700">
+                  Welcome back! You were away for {Math.floor(lastAwayDuration / 60)}m {lastAwayDuration % 60}s
                 </p>
                 <p className="text-xs text-gray-500 mt-0.5">
-                  Your timer kept running. Get back to it! 💪
+                  Your timer kept running — keep going! 💪
                 </p>
               </div>
               <button 
-                onClick={() => setShowDistracted(false)}
+                onClick={() => setShowAwayAlert(false)}
                 className="text-gray-400 hover:text-gray-600 text-lg font-bold"
               >
                 ×
@@ -473,17 +485,91 @@ function FocusPageInner() {
           </div>
         )}
 
-        {/* Distraction counter - shows during active session if any distractions */}
-        {isActive && distractionCount > 0 && !showDistracted && (
+        {/* Subtle tab-switch counter during session (non-judgmental) */}
+        {isActive && tabSwitches.length > 0 && !showAwayAlert && (
           <div className="w-full max-w-md mb-4">
-            <div className={`rounded-lg px-3 py-2 text-center text-xs font-medium ${
-              distractionCount >= 3 
-                ? 'bg-red-50 text-red-600' 
-                : 'bg-amber-50 text-amber-600'
-            }`}>
-              {distractionCount >= 3 
-                ? `⚠️ ${distractionCount} distractions (${Math.floor(totalAwaySeconds / 60)}m ${totalAwaySeconds % 60}s lost) — your focus is breaking down`
-                : `${distractionCount} distraction${distractionCount > 1 ? 's' : ''} · ${totalAwaySeconds}s away — you can do better!`}
+            <div className="rounded-lg px-3 py-2 text-center text-xs font-medium bg-gray-100 text-gray-500">
+              📊 {tabSwitches.length} tab switch{tabSwitches.length > 1 ? 'es' : ''} · {formatAwayTime(totalAwaySeconds)} away — reviewed at session end
+            </div>
+          </div>
+        )}
+
+        {/* SESSION REVIEW MODAL — shown after timer completes if there were tab switches */}
+        {showSessionReview && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-6">
+            <div className="max-w-sm w-full bg-white rounded-2xl shadow-xl p-6 animate-in slide-in-from-top duration-300">
+              <div className="text-center mb-5">
+                <div className="text-4xl mb-3">📊</div>
+                <h3 className="text-xl font-bold text-gray-900">Session Review</h3>
+                <p className="text-sm text-gray-500 mt-1">
+                  You switched tabs {tabSwitches.length} time{tabSwitches.length > 1 ? 's' : ''}, totaling {formatAwayTime(totalAwaySeconds)} away
+                </p>
+              </div>
+
+              <p className="text-sm font-semibold text-gray-700 text-center mb-4">
+                Was this time spent studying?
+              </p>
+
+              <div className="space-y-2">
+                <button
+                  onClick={() => {
+                    setShowSessionReview(false)
+                    setTabSwitches([])
+                    setTotalAwaySeconds(0)
+                    showAlert('Great focus session! 🎯', 'success')
+                  }}
+                  className="w-full flex items-center gap-3 px-4 py-3 rounded-xl border-2 border-green-200 bg-green-50 hover:bg-green-100 transition-colors"
+                >
+                  <span className="text-xl">📚</span>
+                  <div className="text-left">
+                    <p className="text-sm font-bold text-green-800">Yes, I was studying</p>
+                    <p className="text-xs text-green-600">Reading notes, watching lectures, etc.</p>
+                  </div>
+                </button>
+
+                <button
+                  onClick={() => {
+                    setShowSessionReview(false)
+                    setTabSwitches([])
+                    setTotalAwaySeconds(0)
+                    showAlert('Honest tracking builds real discipline 💪', 'success')
+                  }}
+                  className="w-full flex items-center gap-3 px-4 py-3 rounded-xl border-2 border-amber-200 bg-amber-50 hover:bg-amber-100 transition-colors"
+                >
+                  <span className="text-xl">📱</span>
+                  <div className="text-left">
+                    <p className="text-sm font-bold text-amber-800">Mix of both</p>
+                    <p className="text-xs text-amber-600">Some study, some distractions</p>
+                  </div>
+                </button>
+
+                <button
+                  onClick={() => {
+                    setShowSessionReview(false)
+                    setTabSwitches([])
+                    setTotalAwaySeconds(0)
+                    showAlert(`${formatAwayTime(totalAwaySeconds)} lost — you'll do better next time!`, 'success')
+                  }}
+                  className="w-full flex items-center gap-3 px-4 py-3 rounded-xl border-2 border-red-200 bg-red-50 hover:bg-red-100 transition-colors"
+                >
+                  <span className="text-xl">🎯</span>
+                  <div className="text-left">
+                    <p className="text-sm font-bold text-red-800">Mostly distracted</p>
+                    <p className="text-xs text-red-600">Social media, random browsing</p>
+                  </div>
+                </button>
+              </div>
+
+              <button
+                onClick={() => {
+                  setShowSessionReview(false)
+                  setTabSwitches([])
+                  setTotalAwaySeconds(0)
+                }}
+                className="w-full text-center text-xs text-gray-400 hover:text-gray-600 mt-4 py-2"
+              >
+                Skip
+              </button>
             </div>
           </div>
         )}
