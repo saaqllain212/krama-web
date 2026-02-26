@@ -86,6 +86,9 @@ function FocusPageInner() {
   const [lastAwayDuration, setLastAwayDuration] = useState(0)
   const [showSessionReview, setShowSessionReview] = useState(false)
   const tabLeftAtRef = useRef<number | null>(null)
+  // Refs mirror state so handleSaveSession always reads current values
+  const tabSwitchCountRef = useRef(0)
+  const totalAwaySecondsRef = useRef(0)
 
   // --- REFS for accurate timing ---
   const startTimeRef = useRef<number | null>(null)
@@ -151,6 +154,8 @@ function FocusPageInner() {
           if (awaySecs >= 3) {
             setTabSwitches(prev => [...prev, { leftAt, returnedAt: now, duration: awaySecs }])
             setTotalAwaySeconds(prev => prev + awaySecs)
+            tabSwitchCountRef.current += 1
+            totalAwaySecondsRef.current += awaySecs
             
             // Only show real-time alert for VERY long absences (5+ minutes)
             // Short absences are silently logged for end-of-session review
@@ -204,8 +209,8 @@ function FocusPageInner() {
         sessionStartRef.current = null
         setTopic('')
         
-        // Show session review if there were tab switches
-        if (tabSwitches.length > 0 || totalAwaySeconds > 0) {
+        // Show session review if there were tab switches (read from ref, not stale state)
+        if (tabSwitchCountRef.current > 0) {
           setShowSessionReview(true)
         }
       }
@@ -290,6 +295,8 @@ function FocusPageInner() {
       setShowAwayAlert(false)
       setShowSessionReview(false)
       tabLeftAtRef.current = null
+      tabSwitchCountRef.current = 0
+      totalAwaySecondsRef.current = 0
     } else {
       // PAUSE — save the remaining seconds accurately
       if (startTimeRef.current) {
