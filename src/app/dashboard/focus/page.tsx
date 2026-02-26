@@ -186,7 +186,9 @@ function FocusPageInner() {
           user_id: user.id,
           duration_minutes: duration,
           topic: topic || 'Unlabeled Session',
-          started_at: now 
+          started_at: now,
+          tab_switches: tabSwitchCountRef.current,
+          away_seconds: totalAwaySecondsRef.current,
         })
         
         if (logError) throw logError
@@ -218,6 +220,32 @@ function FocusPageInner() {
       showAlert('Failed to save session', 'error')
     }
     setIsSaving(false)
+  }
+
+  // Update the latest session with focus quality rating
+  const updateFocusQuality = async (quality: 'focused' | 'mixed' | 'distracted') => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
+      
+      // Update the most recent focus log for this user
+      const { data: latest } = await supabase
+        .from('focus_logs')
+        .select('id')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single()
+      
+      if (latest) {
+        await supabase
+          .from('focus_logs')
+          .update({ focus_quality: quality })
+          .eq('id', latest.id)
+      }
+    } catch (err) {
+      // Silent fail — not critical
+    }
   }
 
   // Fetch today's sessions
@@ -519,6 +547,7 @@ function FocusPageInner() {
               <div className="space-y-2">
                 <button
                   onClick={() => {
+                    updateFocusQuality('focused')
                     setShowSessionReview(false)
                     setTabSwitches([])
                     setTotalAwaySeconds(0)
@@ -535,6 +564,7 @@ function FocusPageInner() {
 
                 <button
                   onClick={() => {
+                    updateFocusQuality('mixed')
                     setShowSessionReview(false)
                     setTabSwitches([])
                     setTotalAwaySeconds(0)
@@ -551,6 +581,7 @@ function FocusPageInner() {
 
                 <button
                   onClick={() => {
+                    updateFocusQuality('distracted')
                     setShowSessionReview(false)
                     setTabSwitches([])
                     setTotalAwaySeconds(0)
