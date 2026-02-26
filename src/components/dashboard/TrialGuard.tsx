@@ -2,18 +2,8 @@
 
 import { useEffect, useState, useMemo } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { Lock, Loader2, CheckCircle } from 'lucide-react'
-import { useRouter } from 'next/navigation'
-import { useAlert } from '@/context/AlertContext'
+import { Loader2 } from 'lucide-react'
 import { useAppConfig } from '@/context/AppConfigContext'
-
-// Razorpay types
-interface RazorpayOptions {
-  key: string; amount: number; currency: string; name: string;
-  description: string; order_id: string; handler: (response: any) => void;
-  theme: { color: string }
-}
-declare global { interface Window { Razorpay: new (options: RazorpayOptions) => any } }
 
 function getTrialBannerStyle(daysLeft: number, trialDays: number) {
   if (daysLeft <= 0) {
@@ -45,13 +35,9 @@ function getTrialBannerStyle(daysLeft: number, trialDays: number) {
 
 export default function TrialGuard({ children }: { children: React.ReactNode }) {
   const supabase = useMemo(() => createClient(), [])
-  const router = useRouter()
-  const { showAlert } = useAlert()
   const { config } = useAppConfig()
   
   const [loading, setLoading] = useState(true)
-  const [paymentProcessing, setPaymentProcessing] = useState(false)
-  const [isLocked, setIsLocked] = useState(false)
   const [daysLeft, setDaysLeft] = useState(0)
   const [isPremium, setIsPremium] = useState(false)
 
@@ -61,7 +47,7 @@ export default function TrialGuard({ children }: { children: React.ReactNode }) 
 
   const checkStatus = async () => {
     const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return 
+    if (!user) { setLoading(false); return }
 
     const { data: access } = await supabase
       .from('user_access')
@@ -83,7 +69,6 @@ export default function TrialGuard({ children }: { children: React.ReactNode }) 
     if (access.trial_ends_at) {
       endDate = new Date(access.trial_ends_at)
     } else {
-      // FIX: Use config.trial_days from AppConfigContext instead of hardcoded 14
       const startDate = new Date(access.trial_starts_at)
       endDate = new Date(startDate)
       endDate.setDate(endDate.getDate() + config.trial_days)
@@ -93,54 +78,7 @@ export default function TrialGuard({ children }: { children: React.ReactNode }) 
     const daysLeftCalc = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
     
     setDaysLeft(daysLeftCalc)
-    if (daysLeftCalc <= 0) setIsLocked(true)
     setLoading(false)
-  }
-
-  const handlePayment = async () => {
-    setPaymentProcessing(true)
-    
-    try {
-      const res = await fetch('/api/payment/create-order', { method: 'POST' })
-      const data = await res.json()
-
-      if (!res.ok) throw new Error(data.error || 'Could not create order')
-
-      const options: RazorpayOptions = {
-        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!,
-        amount: data.amount,
-        currency: 'INR',
-        name: 'Krama App',
-        description: 'Lifetime Membership',
-        order_id: data.orderId,
-        handler: async function (response: any) {
-          const verifyRes = await fetch('/api/payment/verify', {
-            method: 'POST',
-            body: JSON.stringify({
-              orderCreationId: data.orderId,
-              razorpayPaymentId: response.razorpay_payment_id,
-              razorpaySignature: response.razorpay_signature,
-            }),
-          })
-          const verifyData = await verifyRes.json()
-          if (verifyData.success) {
-            showAlert('Payment Successful! Welcome to Pro.', 'success')
-            setTimeout(() => window.location.reload(), 1500)
-          } else {
-            showAlert('Payment Verification Failed.', 'error')
-          }
-        },
-        theme: { color: '#000000' },
-      }
-
-      const paymentObject = new window.Razorpay(options)
-      paymentObject.open()
-    } catch (error) {
-      console.error(error)
-      showAlert('Something went wrong. Please try again.', 'error')
-    } finally {
-      setPaymentProcessing(false)
-    }
   }
 
   if (loading) {
@@ -155,16 +93,17 @@ export default function TrialGuard({ children }: { children: React.ReactNode }) 
   // Free users get permanent access to: Focus Timer, Syllabus, AI MCQ.
   // Pro features (Review, Mocks, Insights) are gated by PremiumGate per-page.
   // TrialGuard only shows upgrade banners now.
-  
-  // ACCESS GRANTED — show banner if in trial or trial expired
   const bannerStyle = (!isPremium) ? getTrialBannerStyle(daysLeft, config.trial_days) : null
 
   return (
     <>
       {bannerStyle && (
-        <div className={`${bannerStyle.bg} ${bannerStyle.text} text-[10px] font-bold uppercase tracking-widest text-center py-1.5 -mx-6 lg:-mx-8 -mt-6 lg:-mt-8 mb-6 lg:mb-8`}>
+        <button
+          onClick={() => window.dispatchEvent(new CustomEvent('open-checkout'))}
+          className={`${bannerStyle.bg} ${bannerStyle.text} text-[10px] font-bold uppercase tracking-widest text-center py-1.5 -mx-6 lg:-mx-8 -mt-6 lg:-mt-8 mb-6 lg:mb-8 w-[calc(100%+3rem)] lg:w-[calc(100%+4rem)] block hover:opacity-90 transition-opacity cursor-pointer`}
+        >
           {bannerStyle.message}
-        </div>
+        </button>
       )}
       {children}
     </>

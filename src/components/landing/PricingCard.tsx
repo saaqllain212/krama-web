@@ -128,23 +128,23 @@ export default function PricingCard() {
           </div>
         </div>
 
-          {/* Trust Badge */}
-          <div className="mt-8 text-center space-y-3">
-            <div className="flex items-center justify-center gap-6 text-sm text-gray-500">
-              <span className="flex items-center gap-1.5">
-                <span className="text-amber-400">★★★★★</span>
-                <span className="font-medium text-gray-600">4.8/5</span>
-              </span>
-              <span className="w-px h-4 bg-gray-200" />
-              <span><span className="font-semibold text-gray-700">500+</span> students</span>
-              <span className="w-px h-4 bg-gray-200" />
-              <span>₹149 lifetime</span>
-            </div>
-            <p className="text-sm text-gray-500">
-              <span className="font-semibold">14-day free trial.</span> Not satisfied? Write to us — we genuinely want to improve.
-            </p>
+        {/* Trust Badge */}
+        <div className="mt-8 text-center space-y-3">
+          <div className="flex items-center justify-center gap-6 text-sm text-gray-500">
+            <span className="flex items-center gap-1.5">
+              <span className="text-amber-400">★★★★★</span>
+              <span className="font-medium text-gray-600">4.8/5</span>
+            </span>
+            <span className="w-px h-4 bg-gray-200" />
+            <span><span className="font-semibold text-gray-700">500+</span> students</span>
+            <span className="w-px h-4 bg-gray-200" />
+            <span>₹149 lifetime</span>
           </div>
+          <p className="text-sm text-gray-500">
+            <span className="font-semibold">14-day free trial.</span> Not satisfied? Write to us — we genuinely want to improve.
+          </p>
         </div>
+
       </div>
     </section>
   )
