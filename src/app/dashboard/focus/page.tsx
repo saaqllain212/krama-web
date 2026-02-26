@@ -134,37 +134,36 @@ function FocusPageInner() {
         const remaining = Math.max(0, totalSecondsRef.current - elapsed)
         
         setSecondsLeft(remaining)
-        
-        if (remaining <= 0) {
-          setIsActive(false)
-          startTimeRef.current = null
-          playCompletionSound()
-          handleSaveSession(targetMinutes)
-          return
-        }
 
-        // Log the tab switch silently
+        // IMPORTANT: Count the tab switch FIRST, before checking timer expiry
+        // Otherwise if timer expired while away, we'd skip counting this switch
         if (tabLeftAtRef.current) {
           const awayMs = now - tabLeftAtRef.current
           const awaySecs = Math.floor(awayMs / 1000)
           const leftAt = tabLeftAtRef.current
           tabLeftAtRef.current = null
           
-          // Only log if away > 3 seconds (ignore accidental swipes)
           if (awaySecs >= 3) {
             setTabSwitches(prev => [...prev, { leftAt, returnedAt: now, duration: awaySecs }])
             setTotalAwaySeconds(prev => prev + awaySecs)
             tabSwitchCountRef.current += 1
             totalAwaySecondsRef.current += awaySecs
             
-            // Only show real-time alert for VERY long absences (5+ minutes)
-            // Short absences are silently logged for end-of-session review
             if (awaySecs >= 300) {
               setLastAwayDuration(awaySecs)
               setShowAwayAlert(true)
               setTimeout(() => setShowAwayAlert(false), 5000)
             }
           }
+        }
+
+        // NOW check if timer expired (tab switch already counted above)
+        if (remaining <= 0) {
+          setIsActive(false)
+          startTimeRef.current = null
+          playCompletionSound()
+          handleSaveSession(targetMinutes)
+          return
         }
       }
     }
@@ -509,7 +508,7 @@ function FocusPageInner() {
                 <div className="text-4xl mb-3">📊</div>
                 <h3 className="text-xl font-bold text-gray-900">Session Review</h3>
                 <p className="text-sm text-gray-500 mt-1">
-                  You switched tabs {tabSwitches.length} time{tabSwitches.length > 1 ? 's' : ''}, totaling {formatAwayTime(totalAwaySeconds)} away
+                  You switched tabs {tabSwitchCountRef.current} time{tabSwitchCountRef.current > 1 ? 's' : ''}, totaling {formatAwayTime(totalAwaySecondsRef.current)} away
                 </p>
               </div>
 
@@ -555,7 +554,7 @@ function FocusPageInner() {
                     setShowSessionReview(false)
                     setTabSwitches([])
                     setTotalAwaySeconds(0)
-                    showAlert(`${formatAwayTime(totalAwaySeconds)} lost — you'll do better next time!`, 'success')
+                    showAlert(`${formatAwayTime(totalAwaySecondsRef.current)} lost — you'll do better next time!`, 'success')
                   }}
                   className="w-full flex items-center gap-3 px-4 py-3 rounded-xl border-2 border-red-200 bg-red-50 hover:bg-red-100 transition-colors"
                 >
