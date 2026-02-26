@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { X, Loader2, Tag, Check, Zap, Shield, Clock } from 'lucide-react' 
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAlert } from '@/context/AlertContext'
@@ -23,7 +22,6 @@ const FEATURES = [
 export default function CheckoutModal({ isOpen, onClose, userEmail, userName }: CheckoutModalProps) {
   const { showAlert } = useAlert()
   const { config } = useAppConfig()
-  const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [coupon, setCoupon] = useState('')
   const [couponStatus, setCouponStatus] = useState<'idle' | 'checking' | 'valid' | 'invalid'>('idle')
@@ -91,9 +89,12 @@ export default function CheckoutModal({ isOpen, onClose, userEmail, userName }: 
           const verifyData = await verifyRes.json()
           if (verifyRes.ok && verifyData.success) {
             showAlert('Payment successful! Welcome to Pro!', 'success')
-            setTimeout(() => router.refresh(), 1500)
+            // Full page reload — router.refresh() only re-runs server components
+            // but TrialGuard/PremiumGate are client components that cache is_premium on mount
+            setTimeout(() => window.location.reload(), 1500)
           } else {
             showAlert('Verification failed. Contact support.', 'error')
+            setLoading(false)
           }
         },
         modal: { ondismiss: () => setLoading(false) }

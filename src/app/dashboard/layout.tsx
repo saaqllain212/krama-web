@@ -16,6 +16,7 @@ import dynamic from 'next/dynamic'
 import { createClient } from '@/lib/supabase/client'
 
 const CheckoutModal = dynamic(() => import('@/components/dashboard/CheckoutModal'), { ssr: false })
+const PWAInstallPrompt = dynamic(() => import('@/components/dashboard/PWAInstallPrompt'), { ssr: false })
 
 const pageTransition = {
   duration: 0.25,
@@ -77,7 +78,7 @@ function DashboardInner({ children }: { children: React.ReactNode }) {
 
   return (
     <MaintenanceGate>
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 dashboard-scroll">
         {!isFocusMode && <Sidebar />}
         {!isFocusMode && <MobileNav />}
         
@@ -106,6 +107,7 @@ function DashboardInner({ children }: { children: React.ReactNode }) {
           userName={userName}
           userEmail={userEmail}
         />
+        <PWAInstallPrompt />
       </div>
     </MaintenanceGate>
   )

@@ -203,6 +203,9 @@ function FocusPageInner() {
         
         showAlert(`Completed: ${duration}m on "${topic || 'Task'}"`, 'success')
         
+        // Notify PWA install prompt that a session was completed
+        window.dispatchEvent(new CustomEvent('focus-session-saved'))
+        
         fetchTodayData()
         
         setSecondsLeft(targetMinutes * 60)
@@ -455,7 +458,7 @@ function FocusPageInner() {
         </div>
 
         {/* Circular Timer */}
-        <div className="mb-8 sm:mb-12">
+        <div className={`mb-8 sm:mb-12 touch-optimized ${isActive ? 'timer-active' : ''}`}>
           {/* Mobile: 200px, Desktop: 280px */}
           <div className="block sm:hidden">
             <CircularProgress
@@ -626,7 +629,7 @@ function FocusPageInner() {
         )}
 
         {/* Controls */}
-        <div className="flex items-center gap-3 sm:gap-4 mb-8 sm:mb-12">
+        <div className="flex items-center gap-3 sm:gap-4 mb-8 sm:mb-12 touch-optimized">
           <button
             onClick={toggleTimer}
             disabled={isSaving}

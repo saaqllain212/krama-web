@@ -572,3 +572,27 @@
 .animate-in.slide-in-from-top {
   animation: slide-in-from-top 0.3s ease-out;
 }
+
+/* ===== MOBILE PWA OPTIMIZATIONS ===== */
+
+/* Remove blue/gray tap highlight on all tappable elements (iOS/Android) */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Prevent pull-to-refresh and overscroll bounce on dashboard */
+.dashboard-scroll {
+  overscroll-behavior: none;
+  overscroll-behavior-y: contain;
+}
+
+/* Prevent 300ms tap delay + double-tap zoom on interactive elements */
+.touch-optimized {
+  touch-action: manipulation;
+}
+
+/* Prevent text selection during active timer (avoids accidental long-press selects) */
+.timer-active {
+  -webkit-user-select: none;
+  user-select: none;
+}
