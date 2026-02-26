@@ -13,13 +13,13 @@ import { useSyllabus } from '@/context/SyllabusContext'
 import { useAppConfig } from '@/context/AppConfigContext'
 
 const NAV_ITEMS = [
-  { label: 'Overview',       href: '/dashboard',           icon: LayoutDashboard, flag: null },
-  { label: 'Focus Mode',     href: '/dashboard/focus',     icon: Timer,           flag: 'feature_focus_enabled' },
-  { label: 'Spaced Review',  href: '/dashboard/review',    icon: RotateCw,        flag: 'feature_review_enabled' },
-  { label: 'Syllabus Map',   href: '/dashboard/syllabus',  icon: Map,             flag: null },
-  { label: 'Mock Scores',    href: '/dashboard/mocks',     icon: LineChart,        flag: 'feature_mocks_enabled' },
-  { label: 'Analytics',      href: '/dashboard/insights',  icon: Sparkles,        flag: 'feature_insights_enabled' },
-  { label: 'AI MCQ Gen',     href: '/dashboard/mcq',       icon: Brain,           flag: 'feature_mcq_enabled' },
+  { label: 'Overview',       href: '/dashboard',           icon: LayoutDashboard, flag: null,                       isPro: false },
+  { label: 'Focus Mode',     href: '/dashboard/focus',     icon: Timer,           flag: 'feature_focus_enabled',    isPro: false },
+  { label: 'Spaced Review',  href: '/dashboard/review',    icon: RotateCw,        flag: 'feature_review_enabled',   isPro: true },
+  { label: 'Syllabus Map',   href: '/dashboard/syllabus',  icon: Map,             flag: null,                       isPro: false },
+  { label: 'Mock Scores',    href: '/dashboard/mocks',     icon: LineChart,        flag: 'feature_mocks_enabled',   isPro: true },
+  { label: 'Analytics',      href: '/dashboard/insights',  icon: Sparkles,        flag: 'feature_insights_enabled', isPro: true },
+  { label: 'AI MCQ Gen',     href: '/dashboard/mcq',       icon: Brain,           flag: 'feature_mcq_enabled',     isPro: false },
 ]
 
 // Bottom tab items — max 5 for mobile bottom bar

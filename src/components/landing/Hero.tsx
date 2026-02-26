@@ -169,7 +169,7 @@ export default function Hero() {
             className="inline-flex items-center gap-2 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full border border-gray-200 shadow-soft"
           >
             <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-            <span className="text-xs font-semibold text-gray-600">Try free for 14 days · No card needed</span>
+            <span className="text-xs font-semibold text-gray-600">Free forever · No credit card needed</span>
           </motion.div>
 
           {/* Headline */}

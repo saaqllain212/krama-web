@@ -23,7 +23,7 @@ export default function Footer() {
             href="/signup"
             className="btn btn-primary inline-flex items-center gap-2 text-base px-8 py-3.5"
           >
-            Start Free Trial <ArrowRight size={18} />
+            Start for Free <ArrowRight size={18} />
           </Link>
         </div>
         

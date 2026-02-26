@@ -28,7 +28,6 @@ const DualCompanions = dynamic(() => import('@/components/companions/DualCompani
 // === MODALS — Lazy loaded (hidden until user interaction) ===
 const SettingsModal = dynamic(() => import('@/components/dashboard/SettingsModal'), { ssr: false })
 const OnboardingModal = dynamic(() => import('@/components/dashboard/OnboardingModal'), { ssr: false })
-const CheckoutModal = dynamic(() => import('@/components/dashboard/CheckoutModal'), { ssr: false })
 const InitiationModal = dynamic(() => import('@/components/dashboard/InitiationModal'), { ssr: false })
 const StreakEarnBack = dynamic(() => import('@/components/dashboard/StreakEarnBack'), { ssr: false })
 const MilestoneCelebration = dynamic(() => import('@/components/dashboard/MilestoneCelebration'), { ssr: false })
@@ -111,8 +110,7 @@ export default function DashboardPage() {
   const [weekData, setWeekData] = useState<number[]>([0, 0, 0, 0, 0, 0, 0])
   const [loading, setLoading] = useState(true)
   
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false) 
-  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false)
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   
   const [isPremium, setIsPremium] = useState(false)
   const [trialDaysLeft, setTrialDaysLeft] = useState<number | null>(null)
@@ -222,13 +220,6 @@ export default function DashboardPage() {
     getData()
   }, [getData])
 
-  // Listen for upgrade events from PremiumGate on sub-pages
-  useEffect(() => {
-    const handler = () => setIsCheckoutOpen(true)
-    window.addEventListener('open-checkout', handler)
-    return () => window.removeEventListener('open-checkout', handler)
-  }, [])
-
   const progressPercent = Math.min(Math.round((focusMinutes / dailyGoalMinutes) * 100), 100)
 
   if (loading) {
@@ -252,13 +243,6 @@ export default function DashboardPage() {
         open={isSettingsOpen} 
         onClose={() => setIsSettingsOpen(false)} 
         onGoalSaved={() => getData()}
-      />
-      
-      <CheckoutModal 
-        isOpen={isCheckoutOpen} 
-        onClose={() => setIsCheckoutOpen(false)} 
-        userName={userName}
-        userEmail={userEmail}
       />
 
       {/* === TOP BAR === */}

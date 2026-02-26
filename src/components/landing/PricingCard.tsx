@@ -119,7 +119,7 @@ export default function PricingCard() {
               onClick={() => track(EVENTS.AUTH_SIGNUP_CLICKED, { location: 'pricing_pro' })}
               className="btn btn-primary w-full text-center text-lg"
             >
-              Start 14-Day Free Trial
+              Try Pro Free for 14 Days
             </Link>
 
             <p className="text-center text-sm text-gray-500 mt-4">
@@ -141,7 +141,7 @@ export default function PricingCard() {
             <span>₹149 lifetime</span>
           </div>
           <p className="text-sm text-gray-500">
-            <span className="font-semibold">14-day free trial.</span> Not satisfied? Write to us — we genuinely want to improve.
+            <span className="font-semibold">14-day Pro trial included.</span> Not satisfied? Write to us — we genuinely want to improve.
           </p>
         </div>
 
