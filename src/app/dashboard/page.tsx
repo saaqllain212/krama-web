@@ -255,7 +255,7 @@ export default function DashboardPage() {
             </div>
           ) : (
             <button 
-              onClick={() => setIsCheckoutOpen(true)}
+              onClick={() => window.dispatchEvent(new CustomEvent('open-checkout'))}
               className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold uppercase tracking-wide shadow-soft transition-all hover:shadow-medium
                 ${(trialDaysLeft !== null && trialDaysLeft <= 3) 
                   ? 'bg-red-500 text-white' 
