@@ -1,17 +1,23 @@
 'use client'
 
+// src/context/AppConfigContext.tsx
+// UNCHANGED: all original config preserved.
+// ADDED: feature_buddy_enabled flag.
+
 import { createContext, useContext, useState, useEffect, ReactNode, useMemo } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
 export interface AppConfig {
-  // Feature flags
+  // Feature flags (ALL ORIGINAL — UNCHANGED)
   feature_focus_enabled: boolean
   feature_review_enabled: boolean
   feature_mocks_enabled: boolean
   feature_mcq_enabled: boolean
   feature_companions_enabled: boolean
   feature_insights_enabled: boolean
-  // System
+  // NEW: Accountability buddy feature flag
+  feature_buddy_enabled: boolean
+  // System (ALL ORIGINAL — UNCHANGED)
   maintenance_mode: boolean
   maintenance_message: string
   signup_active: boolean
@@ -19,7 +25,7 @@ export interface AppConfig {
   trial_days: number
   default_daily_goal_hours: number
   xp_multiplier: number
-  // Store
+  // Store (UNCHANGED)
   base_price: number
 }
 
@@ -30,6 +36,7 @@ const DEFAULT_CONFIG: AppConfig = {
   feature_mcq_enabled: true,
   feature_companions_enabled: true,
   feature_insights_enabled: true,
+  feature_buddy_enabled: true,    // NEW: defaults on
   maintenance_mode: false,
   maintenance_message: '',
   signup_active: true,
@@ -66,20 +73,24 @@ export function AppConfigProvider({ children }: { children: ReactNode }) {
 
       if (configRes.data) {
         setConfig({
-          feature_focus_enabled: configRes.data.feature_focus_enabled ?? true,
-          feature_review_enabled: configRes.data.feature_review_enabled ?? true,
-          feature_mocks_enabled: configRes.data.feature_mocks_enabled ?? true,
-          feature_mcq_enabled: configRes.data.feature_mcq_enabled ?? true,
+          // All original flags (UNCHANGED)
+          feature_focus_enabled:      configRes.data.feature_focus_enabled ?? true,
+          feature_review_enabled:     configRes.data.feature_review_enabled ?? true,
+          feature_mocks_enabled:      configRes.data.feature_mocks_enabled ?? true,
+          feature_mcq_enabled:        configRes.data.feature_mcq_enabled ?? true,
           feature_companions_enabled: configRes.data.feature_companions_enabled ?? true,
-          feature_insights_enabled: configRes.data.feature_insights_enabled ?? true,
-          maintenance_mode: configRes.data.maintenance_mode ?? false,
-          maintenance_message: configRes.data.maintenance_message ?? '',
-          signup_active: configRes.data.signup_active ?? true,
-          max_users: configRes.data.max_users ?? 100,
-          trial_days: configRes.data.trial_days ?? 14,
-          default_daily_goal_hours: configRes.data.default_daily_goal_hours ?? 6,
-          xp_multiplier: parseFloat(configRes.data.xp_multiplier) || 1,
-          base_price: storeRes.data?.base_price ?? 299,
+          feature_insights_enabled:   configRes.data.feature_insights_enabled ?? true,
+          // NEW flag
+          feature_buddy_enabled:      configRes.data.feature_buddy_enabled ?? true,
+          // System (UNCHANGED)
+          maintenance_mode:           configRes.data.maintenance_mode ?? false,
+          maintenance_message:        configRes.data.maintenance_message ?? '',
+          signup_active:              configRes.data.signup_active ?? true,
+          max_users:                  configRes.data.max_users ?? 100,
+          trial_days:                 configRes.data.trial_days ?? 14,
+          default_daily_goal_hours:   configRes.data.default_daily_goal_hours ?? 6,
+          xp_multiplier:              parseFloat(configRes.data.xp_multiplier) || 1,
+          base_price:                 storeRes.data?.base_price ?? 299,
         })
       }
     } catch (e) {

@@ -629,6 +629,8 @@ export default function AdminDashboard() {
                   value={config.feature_companions_enabled} onToggle={(f, v) => handleAction('UPDATE_FEATURE_FLAG', { flag: f, value: v }, true)} />
                 <FeatureToggle label="Insights" description="Analytics and insights page" flag="feature_insights_enabled"
                   value={config.feature_insights_enabled} onToggle={(f, v) => handleAction('UPDATE_FEATURE_FLAG', { flag: f, value: v }, true)} />
+                <FeatureToggle label="Study Buddy" description="Accountability partner matching system" flag="feature_buddy_enabled"
+                  value={(config as any).feature_buddy_enabled ?? true} onToggle={(f, v) => handleAction('UPDATE_FEATURE_FLAG', { flag: f, value: v }, true)} />
               </div>
             </div>
 

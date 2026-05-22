@@ -1,5 +1,9 @@
 'use client'
 
+// src/app/dashboard/page.tsx
+// UNCHANGED: all original code preserved.
+// ADDED: BuddyCard lazy loaded below WeekInReview, gated by feature_buddy_enabled.
+
 import { useEffect, useState, useMemo, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Crown, Clock, Settings as SettingsIcon } from 'lucide-react'
@@ -18,21 +22,23 @@ import GettingStartedCard from '@/components/dashboard/GettingStartedCard'
 import LiveStudyingCount from '@/components/dashboard/LiveStudyingCount'
 
 // === BELOW THE FOLD — Lazy loaded (not visible on first paint) ===
-const DailyQuests = dynamic(() => import('@/components/dashboard/DailyQuests'), { ssr: false })
+const DailyQuests       = dynamic(() => import('@/components/dashboard/DailyQuests'),       { ssr: false })
 const WeeklyLeaderboard = dynamic(() => import('@/components/dashboard/WeeklyLeaderboard'), { ssr: false })
 const StudyConstellation = dynamic(() => import('@/components/dashboard/StudyConstellation'), { ssr: false })
-const WeekInReview = dynamic(() => import('@/components/dashboard/WeekInReview'), { ssr: false })
-const AIMCQBanner = dynamic(() => import('@/components/dashboard/AIMCQBanner'), { ssr: false })
-const DualCompanions = dynamic(() => import('@/components/companions/DualCompanions'), { ssr: false })
+const WeekInReview      = dynamic(() => import('@/components/dashboard/WeekInReview'),      { ssr: false })
+const AIMCQBanner       = dynamic(() => import('@/components/dashboard/AIMCQBanner'),       { ssr: false })
+const DualCompanions    = dynamic(() => import('@/components/companions/DualCompanions'),   { ssr: false })
+// NEW: BuddyCard lazy loaded
+const BuddyCard         = dynamic(() => import('@/components/dashboard/BuddyCard'),         { ssr: false })
 
 // === MODALS — Lazy loaded (hidden until user interaction) ===
-const SettingsModal = dynamic(() => import('@/components/dashboard/SettingsModal'), { ssr: false })
-const OnboardingModal = dynamic(() => import('@/components/dashboard/OnboardingModal'), { ssr: false })
-const InitiationModal = dynamic(() => import('@/components/dashboard/InitiationModal'), { ssr: false })
-const StreakEarnBack = dynamic(() => import('@/components/dashboard/StreakEarnBack'), { ssr: false })
+const SettingsModal        = dynamic(() => import('@/components/dashboard/SettingsModal'),        { ssr: false })
+const OnboardingModal      = dynamic(() => import('@/components/dashboard/OnboardingModal'),      { ssr: false })
+const InitiationModal      = dynamic(() => import('@/components/dashboard/InitiationModal'),      { ssr: false })
+const StreakEarnBack        = dynamic(() => import('@/components/dashboard/StreakEarnBack'),       { ssr: false })
 const MilestoneCelebration = dynamic(() => import('@/components/dashboard/MilestoneCelebration'), { ssr: false })
 
-// Stagger animation wrapper
+// Stagger animation wrapper (UNCHANGED)
 const stagger = {
   container: {
     animate: { transition: { staggerChildren: 0.08, delayChildren: 0.1 } }
@@ -43,6 +49,7 @@ const stagger = {
   }
 }
 
+// UNCHANGED helpers
 const getGreeting = () => {
   const hour = new Date().getHours()
   if (hour < 12) return 'Good morning'
@@ -59,6 +66,7 @@ const getMotivation = (progress: number, streak: number) => {
   return "Every minute counts. Let's begin."
 }
 
+// UNCHANGED skeleton
 function DashboardSkeleton() {
   return (
     <div className="space-y-6 pb-24">
@@ -99,34 +107,36 @@ function DashboardSkeleton() {
 }
 
 export default function DashboardPage() {
+  // ALL ORIGINAL STATE — UNCHANGED
   const [userName, setUserName] = useState('Student')
   const [userEmail, setUserEmail] = useState('')
   const [user, setUser] = useState<{ id: string; user_metadata?: { full_name?: string }; email?: string } | null>(null)
-  
+
   const [focusMinutes, setFocusMinutes] = useState(0)
   const [dailyGoalMinutes, setDailyGoalMinutes] = useState(360)
   const [dueReviews, setDueReviews] = useState(0)
   const [mocksCount, setMocksCount] = useState(0)
   const [weekData, setWeekData] = useState<number[]>([0, 0, 0, 0, 0, 0, 0])
   const [loading, setLoading] = useState(true)
-  
+
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
-  
+
   const [isPremium, setIsPremium] = useState(false)
   const [trialDaysLeft, setTrialDaysLeft] = useState<number | null>(null)
 
-  const { stats, activeExam } = useSyllabus() 
+  const { stats, activeExam } = useSyllabus()
   const supabase = useMemo(() => createClient(), [])
   const { config: appConfig } = useAppConfig()
   const { stats: xpStats } = useXP()
   const streak = xpStats?.current_streak ?? 0
 
+  // ALL ORIGINAL DATA FETCH — UNCHANGED
   const getData = useCallback(async () => {
     const { data: { user } } = await supabase.auth.getUser()
-    
+
     if (user) {
       setUser(user)
-      
+
       if (user.user_metadata?.full_name) {
         setUserName(user.user_metadata.full_name.split(' ')[0])
       }
@@ -212,7 +222,7 @@ export default function DashboardPage() {
         setDailyGoalMinutes(goalRes.data.daily_goal_hours * 60)
       }
     }
-    
+
     setLoading(false)
   }, [supabase, activeExam])
 
@@ -227,25 +237,26 @@ export default function DashboardPage() {
   }
 
   return (
-    <motion.div 
+    <motion.div
       className="space-y-6 sm:space-y-8 pb-24"
       variants={stagger.container}
       initial="initial"
       animate="animate"
     >
+      {/* ALL ORIGINAL MODALS — UNCHANGED */}
       <InitiationModal />
       <OnboardingModal />
       <BroadcastBanner />
       <StreakEarnBack />
       <MilestoneCelebration />
-      
-      <SettingsModal 
-        open={isSettingsOpen} 
-        onClose={() => setIsSettingsOpen(false)} 
+
+      <SettingsModal
+        open={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
         onGoalSaved={() => getData()}
       />
 
-      {/* === TOP BAR === */}
+      {/* === TOP BAR (UNCHANGED) === */}
       <motion.div variants={stagger.item} className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           {isPremium ? (
@@ -254,22 +265,22 @@ export default function DashboardPage() {
               <span className="text-sm font-bold text-amber-900 uppercase tracking-wide">Pro</span>
             </div>
           ) : (
-            <button 
+            <button
               onClick={() => window.dispatchEvent(new CustomEvent('open-checkout'))}
               className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold uppercase tracking-wide shadow-soft transition-all hover:shadow-medium
-                ${(trialDaysLeft !== null && trialDaysLeft <= 3) 
-                  ? 'bg-red-500 text-white' 
+                ${(trialDaysLeft !== null && trialDaysLeft <= 3)
+                  ? 'bg-red-500 text-white'
                   : 'bg-white text-gray-900 border border-gray-200 hover:border-primary-300'}`}
             >
               <Clock size={14} />
-              {trialDaysLeft !== null && trialDaysLeft > 0 
-                ? `${trialDaysLeft}d left` 
+              {trialDaysLeft !== null && trialDaysLeft > 0
+                ? `${trialDaysLeft}d left`
                 : 'Upgrade'}
             </button>
           )}
         </div>
 
-        <button 
+        <button
           onClick={() => setIsSettingsOpen(true)}
           className="p-2.5 bg-white border border-gray-200 rounded-xl shadow-soft hover:shadow-medium hover:border-primary-300 transition-all"
           title="Settings"
@@ -278,7 +289,7 @@ export default function DashboardPage() {
         </button>
       </motion.div>
 
-      {/* === GREETING === */}
+      {/* === GREETING (UNCHANGED) === */}
       <motion.div variants={stagger.item}>
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-gray-900">
           {getGreeting()}, {userName}
@@ -291,29 +302,29 @@ export default function DashboardPage() {
         </div>
       </motion.div>
 
-      {/* === EXAM COUNTDOWN === */}
+      {/* === EXAM COUNTDOWN (UNCHANGED) === */}
       <motion.div variants={stagger.item}>
         <ExamCountdown />
       </motion.div>
 
-      {/* === WEEK IN REVIEW === */}
+      {/* === WEEK IN REVIEW (UNCHANGED) === */}
       <motion.div variants={stagger.item}>
         <WeekInReview />
       </motion.div>
 
-      {/* === GETTING STARTED (new users) === */}
+      {/* === GETTING STARTED (UNCHANGED) === */}
       <motion.div variants={stagger.item}>
-        <GettingStartedCard 
+        <GettingStartedCard
           focusMinutes={focusMinutes}
           dueReviews={dueReviews}
           syllabusPercentage={stats.percentage}
         />
       </motion.div>
 
-      {/* === DUAL COMPANIONS (feature-flagged) === */}
+      {/* === DUAL COMPANIONS (UNCHANGED, feature-flagged) === */}
       {appConfig.feature_companions_enabled && (
         <motion.div variants={stagger.item}>
-          <DualCompanions 
+          <DualCompanions
             userId={user?.id || ''}
             todayMinutes={focusMinutes}
             streak={streak}
@@ -322,9 +333,9 @@ export default function DashboardPage() {
         </motion.div>
       )}
 
-      {/* === TODAY'S PROGRESS === */}
+      {/* === TODAY'S PROGRESS (UNCHANGED) === */}
       <motion.div variants={stagger.item}>
-        <TodayProgressCard 
+        <TodayProgressCard
           focusMinutes={focusMinutes}
           dailyGoalMinutes={dailyGoalMinutes}
           weekData={weekData}
@@ -332,9 +343,9 @@ export default function DashboardPage() {
         />
       </motion.div>
 
-      {/* === QUICK STATS === */}
+      {/* === QUICK STATS (UNCHANGED) === */}
       <motion.div variants={stagger.item}>
-        <QuickStatsGrid 
+        <QuickStatsGrid
           focusMinutes={focusMinutes}
           dueReviews={dueReviews}
           syllabusPercentage={stats.percentage}
@@ -342,7 +353,7 @@ export default function DashboardPage() {
         />
       </motion.div>
 
-      {/* === DAILY QUESTS + CONSTELLATION + LEADERBOARD === */}
+      {/* === DAILY QUESTS + CONSTELLATION + LEADERBOARD (UNCHANGED layout) === */}
       <motion.div variants={stagger.item} className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
         <div className="lg:col-span-2">
           <DailyQuests />
@@ -355,7 +366,17 @@ export default function DashboardPage() {
         </div>
       </motion.div>
 
-      {/* === AI MCQ GENERATOR BANNER (feature-flagged) === */}
+      {/* === BUDDY CARD (NEW — feature-flagged, lazy loaded) === */}
+      {appConfig.feature_buddy_enabled && (
+        <motion.div variants={stagger.item}>
+          <BuddyCard
+            myTodayMinutes={focusMinutes}
+            activeExam={activeExam}
+          />
+        </motion.div>
+      )}
+
+      {/* === AI MCQ GENERATOR BANNER (UNCHANGED, feature-flagged) === */}
       {appConfig.feature_mcq_enabled && (
         <motion.div variants={stagger.item}>
           <AIMCQBanner />
