@@ -10,7 +10,7 @@ import { createClient } from '@/lib/supabase/client'
 import { useXP } from '@/context/XPContext'
 import { Trophy, Medal, Crown, ChevronUp, Star, Flame } from 'lucide-react'
 import { getLevelColor } from '@/lib/xp'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
