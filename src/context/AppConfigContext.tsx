@@ -1,23 +1,19 @@
 'use client'
 
-// src/context/AppConfigContext.tsx
-// UNCHANGED: all original config preserved.
-// ADDED: feature_buddy_enabled flag.
-
 import { createContext, useContext, useState, useEffect, ReactNode, useMemo } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
 export interface AppConfig {
-  // Feature flags (ALL ORIGINAL — UNCHANGED)
+  // Feature flags (original)
   feature_focus_enabled: boolean
   feature_review_enabled: boolean
   feature_mocks_enabled: boolean
   feature_mcq_enabled: boolean
   feature_companions_enabled: boolean
   feature_insights_enabled: boolean
-  // NEW: Accountability buddy feature flag
+  // NEW: Study buddy feature flag
   feature_buddy_enabled: boolean
-  // System (ALL ORIGINAL — UNCHANGED)
+  // System (original)
   maintenance_mode: boolean
   maintenance_message: string
   signup_active: boolean
@@ -25,8 +21,11 @@ export interface AppConfig {
   trial_days: number
   default_daily_goal_hours: number
   xp_multiplier: number
-  // Store (UNCHANGED)
+  // Store (original)
   base_price: number
+  // NEW: Global free mode — bypasses all paywalls when true
+  global_free_mode: boolean
+  free_mode_message: string
 }
 
 const DEFAULT_CONFIG: AppConfig = {
@@ -36,15 +35,17 @@ const DEFAULT_CONFIG: AppConfig = {
   feature_mcq_enabled: true,
   feature_companions_enabled: true,
   feature_insights_enabled: true,
-  feature_buddy_enabled: true,    // NEW: defaults on
+  feature_buddy_enabled: true,
   maintenance_mode: false,
   maintenance_message: '',
   signup_active: true,
-  max_users: 100,
+  max_users: 500,
   trial_days: 14,
   default_daily_goal_hours: 6,
   xp_multiplier: 1,
   base_price: 299,
+  global_free_mode: false,
+  free_mode_message: '🎉 Early access — everything is free for now!',
 }
 
 type AppConfigContextType = {
@@ -73,24 +74,28 @@ export function AppConfigProvider({ children }: { children: ReactNode }) {
 
       if (configRes.data) {
         setConfig({
-          // All original flags (UNCHANGED)
+          // Feature flags (original — unchanged)
           feature_focus_enabled:      configRes.data.feature_focus_enabled ?? true,
           feature_review_enabled:     configRes.data.feature_review_enabled ?? true,
           feature_mocks_enabled:      configRes.data.feature_mocks_enabled ?? true,
           feature_mcq_enabled:        configRes.data.feature_mcq_enabled ?? true,
           feature_companions_enabled: configRes.data.feature_companions_enabled ?? true,
           feature_insights_enabled:   configRes.data.feature_insights_enabled ?? true,
-          // NEW flag
+          // NEW: buddy flag
           feature_buddy_enabled:      configRes.data.feature_buddy_enabled ?? true,
-          // System (UNCHANGED)
+          // System (original — unchanged)
           maintenance_mode:           configRes.data.maintenance_mode ?? false,
           maintenance_message:        configRes.data.maintenance_message ?? '',
           signup_active:              configRes.data.signup_active ?? true,
-          max_users:                  configRes.data.max_users ?? 100,
+          max_users:                  configRes.data.max_users ?? 500,
           trial_days:                 configRes.data.trial_days ?? 14,
           default_daily_goal_hours:   configRes.data.default_daily_goal_hours ?? 6,
           xp_multiplier:              parseFloat(configRes.data.xp_multiplier) || 1,
+          // Store (original — unchanged)
           base_price:                 storeRes.data?.base_price ?? 299,
+          // NEW: global free mode
+          global_free_mode:           configRes.data.global_free_mode ?? false,
+          free_mode_message:          configRes.data.free_mode_message ?? '🎉 Early access — everything is free for now!',
         })
       }
     } catch (e) {

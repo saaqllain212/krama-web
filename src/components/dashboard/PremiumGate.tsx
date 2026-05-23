@@ -13,6 +13,7 @@ interface PremiumGateProps {
 /**
  * PremiumGate: Wraps Pro-only features.
  * 
+ * If global_free_mode is ON → everyone gets access (no paywall at all)
  * If user is premium OR trial is active → shows children
  * If trial expired AND not premium → shows upgrade prompt
  * 
@@ -27,6 +28,13 @@ export default function PremiumGate({ featureName, children }: PremiumGateProps)
 
   useEffect(() => {
     const check = async () => {
+      // ── GLOBAL FREE MODE: bypass all paywalls when enabled ──────────────────
+      if (config.global_free_mode) {
+        setHasAccess(true)
+        setLoading(false)
+        return
+      }
+
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) { setLoading(false); return }
 
@@ -60,7 +68,7 @@ export default function PremiumGate({ featureName, children }: PremiumGateProps)
       setLoading(false)
     }
     check()
-  }, [supabase, config.trial_days])
+  }, [supabase, config.trial_days, config.global_free_mode])
 
   if (loading) return null
 
@@ -120,12 +128,9 @@ export default function PremiumGate({ featureName, children }: PremiumGateProps)
           <p className="text-sm text-gray-500 mt-1">One-time payment · Lifetime access</p>
         </div>
 
-        {/* CTA - triggers checkout modal */}
+        {/* CTA */}
         <button
-          onClick={() => {
-            // Dispatch a custom event that the dashboard page listens for
-            window.dispatchEvent(new CustomEvent('open-checkout'))
-          }}
+          onClick={() => window.dispatchEvent(new CustomEvent('open-checkout'))}
           className="w-full btn btn-primary text-lg py-4"
         >
           Upgrade to Pro — ₹{config.base_price}
