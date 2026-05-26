@@ -14,29 +14,18 @@ export default function PremiumGate({ featureName, children }: PremiumGateProps)
 
   useEffect(() => {
     const check = async () => {
-      // GLOBAL FREE MODE: bypass all paywalls
       if (config.global_free_mode) { setHasAccess(true); setLoading(false); return }
-
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) { setLoading(false); return }
-
-      const { data: access } = await supabase
-        .from('user_access').select('is_premium, trial_starts_at, trial_ends_at')
-        .eq('user_id', user.id).single()
-
+      const { data: access } = await supabase.from('user_access')
+        .select('is_premium, trial_starts_at, trial_ends_at').eq('user_id', user.id).single()
       if (!access) { setLoading(false); return }
       if (access.is_premium) { setHasAccess(true); setLoading(false); return }
-
       const now = new Date()
-      let endDate: Date
-      if (access.trial_ends_at) {
-        endDate = new Date(access.trial_ends_at)
-      } else {
-        const start = new Date(access.trial_starts_at)
-        endDate = new Date(start)
-        endDate.setDate(endDate.getDate() + config.trial_days)
-      }
-      setHasAccess(now < endDate)
+      const end = access.trial_ends_at ? new Date(access.trial_ends_at) : (() => {
+        const d = new Date(access.trial_starts_at); d.setDate(d.getDate() + config.trial_days); return d
+      })()
+      setHasAccess(now < end)
       setLoading(false)
     }
     check()
@@ -52,9 +41,7 @@ export default function PremiumGate({ featureName, children }: PremiumGateProps)
           <Crown className="text-white" size={36} />
         </div>
         <h2 className="text-3xl font-bold text-gray-900 mb-3">Unlock {featureName}</h2>
-        <p className="text-gray-500 font-medium mb-8 leading-relaxed">
-          {featureName} is a Pro feature. Upgrade once, use forever — no subscriptions.
-        </p>
+        <p className="text-gray-500 font-medium mb-8 leading-relaxed">{featureName} is a Pro feature. Upgrade once, use forever.</p>
         <div className="bg-gradient-to-br from-gray-50 to-white rounded-2xl border border-gray-200 p-6 mb-8 text-left">
           <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">Everything in Pro</p>
           <div className="space-y-3">
@@ -80,7 +67,6 @@ export default function PremiumGate({ featureName, children }: PremiumGateProps)
         <div className="mb-6">
           <div className="flex items-baseline justify-center gap-2">
             <span className="text-4xl font-bold text-gray-900">₹{config.base_price}</span>
-            <span className="text-lg text-gray-400 line-through">₹299</span>
           </div>
           <p className="text-sm text-gray-500 mt-1">One-time payment · Lifetime access</p>
         </div>

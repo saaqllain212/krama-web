@@ -196,6 +196,8 @@ export default function MobileNav() {
                         <div className="flex items-center gap-3">
                           <Icon className="h-5 w-5" strokeWidth={2} />
                           {item.label}
+                        {item.isPro && !config.global_free_mode && <span className="text-[9px] font-bold bg-primary-100 text-primary-600 px-1.5 py-0.5 rounded ml-1">Pro</span>}
+                        {item.isPro && config.global_free_mode && <span className="text-[9px] font-bold bg-green-100 text-green-700 px-1.5 py-0.5 rounded ml-1">Free</span>}
                         </div>
                         {isActive && <ChevronRight size={16} />}
                       </Link>

@@ -69,8 +69,8 @@ export default function WeeklyLeaderboard() {
   }
 
 
-  const BADGE = { qualifier: { label:'Qualifier', bg:'bg-blue-50', text:'text-blue-700', border:'border-blue-200', icon:'🎯' }, finalist: { label:'Finalist', bg:'bg-purple-50', text:'text-purple-700', border:'border-purple-200', icon:'⭐' }, achiever: { label:'Achiever', bg:'bg-amber-50', text:'text-amber-700', border:'border-amber-200', icon:'🏅' }, legend: { label:'Legend', bg:'bg-yellow-50', text:'text-amber-800', border:'border-amber-300', icon:'👑' } } as any
-  const EXAM_L = { upsc:'UPSC', jee:'JEE', neet:'NEET', ssc:'SSC', bank:'Banking', rbi:'RBI' } as any
+  const BADGE: any = { qualifier:{label:'Qualifier',bg:'bg-blue-50',text:'text-blue-700',border:'border-blue-200',icon:'🎯'}, finalist:{label:'Finalist',bg:'bg-purple-50',text:'text-purple-700',border:'border-purple-200',icon:'⭐'}, achiever:{label:'Achiever',bg:'bg-amber-50',text:'text-amber-700',border:'border-amber-200',icon:'🏅'}, legend:{label:'Legend',bg:'bg-yellow-50',text:'text-amber-800',border:'border-amber-300',icon:'👑'} }
+  const EXAM_L: any = { upsc:'UPSC', jee:'JEE', neet:'NEET', ssc:'SSC', bank:'Banking', rbi:'RBI' }
   return (
     <div className="card">
       <div className="flex items-center justify-between mb-4">
@@ -89,29 +89,23 @@ export default function WeeklyLeaderboard() {
       {toppers.length > 0 && (
         <div className="mb-4">
           <button onClick={() => setShowToppers(v => !v)} className="w-full flex items-center justify-between mb-2">
-            <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
-              ⭐ Benchmarks · Toppers
-            </span>
-            <span className={`text-gray-400 text-xs transition-transform duration-200 inline-block ${showToppers ? '' : 'rotate-180'}`}>▲</span>
+            <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider flex items-center gap-1.5">⭐ Benchmarks · Toppers</span>
+            <span className={`text-gray-400 text-xs inline-block transition-transform duration-200 ${showToppers ? '' : 'rotate-180'}`}>▲</span>
           </button>
           <AnimatePresence initial={false}>
             {showToppers && (
-              <motion.div initial={{ opacity:0, height:0 }} animate={{ opacity:1, height:'auto' }} exit={{ opacity:0, height:0 }} className="overflow-hidden space-y-1.5">
-                {toppers.map((t, i) => {
-                  const cfg = BADGE[t.topper_badge] || BADGE.qualifier
-                  const exam = EXAM_L[t.topper_exam] || (t.topper_exam||'').toUpperCase()
-                  return (
-                    <motion.div key={t.user_id} initial={{ opacity:0, x:-8 }} animate={{ opacity:1, x:0 }} transition={{ delay: i*0.06 }}
-                      className={`flex items-center gap-2.5 p-2.5 rounded-xl border ${cfg.bg} ${cfg.border}`}>
-                      <div className="w-8 h-8 rounded-lg bg-white/70 flex items-center justify-center text-base shrink-0">{cfg.icon}</div>
-                      <div className="flex-1 min-w-0">
-                        <div className={`text-xs font-bold ${cfg.text} truncate`}>{t.display_name || `${exam} ${cfg.label}`}</div>
-                        <div className={`text-[10px] ${cfg.text} opacity-70`}>{exam}{t.topper_year ? ` · ${t.topper_year}` : ''}{t.topper_rank ? ` · ${t.topper_rank}` : ''}</div>
-                      </div>
-                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${cfg.bg} ${cfg.text} ${cfg.border} shrink-0`}>{cfg.label}</span>
-                    </motion.div>
-                  )
-                })}
+              <motion.div initial={{opacity:0,height:0}} animate={{opacity:1,height:'auto'}} exit={{opacity:0,height:0}} className="overflow-hidden space-y-1.5">
+                {toppers.map((t,i) => { const cfg=BADGE[t.topper_badge]||BADGE.qualifier; const exam=EXAM_L[t.topper_exam]||(t.topper_exam||'').toUpperCase(); return (
+                  <motion.div key={t.user_id} initial={{opacity:0,x:-8}} animate={{opacity:1,x:0}} transition={{delay:i*0.06}}
+                    className={`flex items-center gap-2.5 p-2.5 rounded-xl border ${cfg.bg} ${cfg.border}`}>
+                    <div className="w-8 h-8 rounded-lg bg-white/70 flex items-center justify-center text-base shrink-0">{cfg.icon}</div>
+                    <div className="flex-1 min-w-0">
+                      <div className={`text-xs font-bold ${cfg.text} truncate`}>{t.display_name||`${exam} ${cfg.label}`}</div>
+                      <div className={`text-[10px] ${cfg.text} opacity-70`}>{exam}{t.topper_year?` · ${t.topper_year}`:''}{t.topper_rank?` · ${t.topper_rank}`:''}</div>
+                    </div>
+                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${cfg.bg} ${cfg.text} ${cfg.border} shrink-0`}>{cfg.label}</span>
+                  </motion.div>
+                )})}
                 <div className="text-[10px] text-center text-gray-400 py-1">💡 These toppers study daily. Can you match them?</div>
               </motion.div>
             )}

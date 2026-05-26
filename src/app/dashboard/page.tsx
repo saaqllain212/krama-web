@@ -23,8 +23,8 @@ const WeeklyLeaderboard = dynamic(() => import('@/components/dashboard/WeeklyLea
 const StudyConstellation = dynamic(() => import('@/components/dashboard/StudyConstellation'), { ssr: false })
 const WeekInReview = dynamic(() => import('@/components/dashboard/WeekInReview'), { ssr: false })
 const AIMCQBanner = dynamic(() => import('@/components/dashboard/AIMCQBanner'), { ssr: false })
-const BuddyCard = dynamic(() => import('@/components/dashboard/BuddyCard'), { ssr: false })
 const DualCompanions = dynamic(() => import('@/components/companions/DualCompanions'), { ssr: false })
+const BuddyCard = dynamic(() => import('@/components/dashboard/BuddyCard'), { ssr: false })
 
 // === MODALS — Lazy loaded (hidden until user interaction) ===
 const SettingsModal = dynamic(() => import('@/components/dashboard/SettingsModal'), { ssr: false })
@@ -302,7 +302,23 @@ export default function DashboardPage() {
         <WeekInReview />
       </motion.div>
 
-            {/* === BUDDY CARD === */}
+            {/* === HERO CTA — shown when no sessions today === */}
+      {focusMinutes === 0 && (
+        <motion.div variants={stagger.item}>
+          <a href="/dashboard/focus"
+            className="flex items-center justify-between w-full p-5 bg-gradient-to-r from-primary-500 to-purple-600 rounded-2xl shadow-soft hover:shadow-medium active:scale-[0.98] transition-all group">
+            <div>
+              <p className="text-white/80 text-sm font-semibold uppercase tracking-wide">Today's Session</p>
+              <p className="text-white text-2xl font-bold mt-0.5">Start Studying →</p>
+            </div>
+            <div className="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+              <span className="text-3xl">⏱</span>
+            </div>
+          </a>
+        </motion.div>
+      )}
+
+      {/* === BUDDY CARD === */}
       {appConfig.feature_buddy_enabled && (
         <motion.div variants={stagger.item}>
           <BuddyCard myTodayMinutes={focusMinutes} activeExam={activeExam} />

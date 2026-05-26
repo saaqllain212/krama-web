@@ -619,7 +619,7 @@ export default function AdminDashboard() {
                 🎁 Global Free Mode
                 {config.global_free_mode && <span className="text-xs font-bold bg-green-500 text-white px-2 py-0.5 rounded-full ml-1">ACTIVE</span>}
               </h3>
-              <p className="text-sm text-gray-500 mb-5">When ON — everyone gets full access. PremiumGate and trial banners are suppressed. Turn OFF when you want to start monetising.</p>
+              <p className="text-sm text-gray-500 mb-5">When ON — everyone gets full access. PremiumGate and trial banners suppressed. Turn OFF when monetising.</p>
               <div className="flex items-center justify-between p-4 bg-white rounded-xl border border-gray-200 mb-4">
                 <div>
                   <div className="font-semibold text-gray-900">{config.global_free_mode ? '✅ All features FREE for everyone' : '🔒 Normal paywall active'}</div>

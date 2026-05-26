@@ -89,7 +89,7 @@ export default function TrialGuard({ children }: { children: React.ReactNode }) 
     )
   }
 
-  // GLOBAL FREE MODE — bypass paywall, show early-access banner
+  // GLOBAL FREE MODE — show early-access banner, bypass all paywalls
   if (config.global_free_mode) {
     return (
       <>

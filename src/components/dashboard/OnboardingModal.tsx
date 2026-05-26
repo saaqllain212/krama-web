@@ -133,7 +133,8 @@ export default function OnboardingModal() {
       if (selectedExam) setActiveExam(selectedExam)
 
       setIsOpen(false)
-      window.location.reload()
+      // Redirect to focus page on first login — drive that first session
+      router.push('/dashboard/focus?first=true')
 
     } catch (e) {
       console.error(e)

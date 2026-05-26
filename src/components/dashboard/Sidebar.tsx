@@ -142,10 +142,11 @@ export default function Sidebar() {
             >
               <Icon className="h-5 w-5 flex-shrink-0" strokeWidth={2} />
               <span>{item.label}</span>
-              {item.isPro && (
-                <span className="ml-auto text-[9px] font-bold uppercase tracking-wider bg-primary-100 text-primary-600 px-1.5 py-0.5 rounded">
-                  Pro
-                </span>
+              {item.isPro && !config.global_free_mode && (
+                <span className="ml-auto text-[9px] font-bold uppercase tracking-wider bg-primary-100 text-primary-600 px-1.5 py-0.5 rounded">Pro</span>
+              )}
+              {item.isPro && config.global_free_mode && (
+                <span className="ml-auto text-[9px] font-bold uppercase tracking-wider bg-green-100 text-green-700 px-1.5 py-0.5 rounded">Free</span>
               )}
             </Link>
           )
