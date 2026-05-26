@@ -89,7 +89,7 @@ export default function TrialGuard({ children }: { children: React.ReactNode }) 
     )
   }
 
-  // ── GLOBAL FREE MODE — bypass all paywalls, show early-access banner ────────
+  // GLOBAL FREE MODE — bypass paywall, show early-access banner
   if (config.global_free_mode) {
     return (
       <>
@@ -103,7 +103,7 @@ export default function TrialGuard({ children }: { children: React.ReactNode }) 
 
   // FREEMIUM MODEL: Never hard-lock the entire dashboard.
   // Free users get permanent access to: Focus Timer, Syllabus, AI MCQ.
-  // Pro features (Review, Mocks, Companions, Insights) are gated by PremiumGate per-page.
+  // Pro features (Review, Mocks, Insights) are gated by PremiumGate per-page.
   // TrialGuard only shows upgrade banners now.
   const bannerStyle = (!isPremium) ? getTrialBannerStyle(daysLeft, config.trial_days) : null
 

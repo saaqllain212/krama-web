@@ -617,45 +617,27 @@ export default function AdminDashboard() {
             <div className={`rounded-xl border-2 p-6 shadow-sm transition-all ${config.global_free_mode ? 'bg-green-50 border-green-400' : 'bg-white border-gray-200'}`}>
               <h3 className="font-bold text-lg mb-1 flex items-center gap-2 text-gray-900">
                 🎁 Global Free Mode
-                {config.global_free_mode && (
-                  <span className="text-xs font-bold bg-green-500 text-white px-2 py-0.5 rounded-full ml-1">ACTIVE</span>
-                )}
+                {config.global_free_mode && <span className="text-xs font-bold bg-green-500 text-white px-2 py-0.5 rounded-full ml-1">ACTIVE</span>}
               </h3>
-              <p className="text-sm text-gray-500 mb-5">
-                When ON — everyone gets full access. PremiumGate and trial banners are suppressed. Turn OFF when you want to start monetising new users.
-              </p>
+              <p className="text-sm text-gray-500 mb-5">When ON — everyone gets full access. PremiumGate and trial banners are suppressed. Turn OFF when you want to start monetising.</p>
               <div className="flex items-center justify-between p-4 bg-white rounded-xl border border-gray-200 mb-4">
                 <div>
-                  <div className="font-semibold text-gray-900">
-                    {config.global_free_mode ? '✅ All features FREE for everyone' : '🔒 Normal paywall active'}
-                  </div>
-                  <div className="text-sm text-gray-500 mt-0.5">
-                    {config.global_free_mode ? 'Users see the early-access banner below' : 'PremiumGate and trial banners are active'}
-                  </div>
+                  <div className="font-semibold text-gray-900">{config.global_free_mode ? '✅ All features FREE for everyone' : '🔒 Normal paywall active'}</div>
+                  <div className="text-sm text-gray-500 mt-0.5">{config.global_free_mode ? 'Green banner shown to users' : 'Trial and upgrade banners active'}</div>
                 </div>
-                <button
-                  onClick={() => handleAction('TOGGLE_GLOBAL_FREE', { enabled: !config.global_free_mode, message: freeModeMsg })}
-                  className={`${config.global_free_mode ? 'text-green-600' : 'text-gray-400'} transition-colors`}
-                >
+                <button onClick={() => handleAction('TOGGLE_GLOBAL_FREE', { enabled: !config.global_free_mode, message: freeModeMsg }, true)}
+                  className={`${config.global_free_mode ? 'text-green-600' : 'text-gray-400'} transition-colors`}>
                   {config.global_free_mode ? <ToggleRight size={44} /> : <ToggleLeft size={44} />}
                 </button>
               </div>
               <div>
                 <label className="text-xs font-semibold text-gray-500 block mb-2 uppercase tracking-wide">Banner message shown to users</label>
                 <div className="flex gap-2">
-                  <input
-                    type="text"
-                    value={freeModeMsg}
-                    onChange={(e) => setFreeModeMsg(e.target.value)}
+                  <input type="text" value={freeModeMsg} onChange={(e) => setFreeModeMsg(e.target.value)}
                     placeholder="🎉 Early access — everything is free for now!"
-                    className="flex-1 border border-gray-300 rounded-lg p-3 text-sm outline-none focus:ring-2 focus:ring-green-400/30"
-                  />
-                  <button
-                    onClick={() => handleAction('TOGGLE_GLOBAL_FREE', { enabled: config.global_free_mode, message: freeModeMsg }, true)}
-                    className="bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-800 whitespace-nowrap"
-                  >
-                    Save msg
-                  </button>
+                    className="flex-1 border border-gray-300 rounded-lg p-3 text-sm outline-none focus:ring-2 focus:ring-green-400/30" />
+                  <button onClick={() => handleAction('TOGGLE_GLOBAL_FREE', { enabled: config.global_free_mode, message: freeModeMsg }, true)}
+                    className="bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-800 whitespace-nowrap">Save msg</button>
                 </div>
               </div>
             </div>
@@ -678,7 +660,7 @@ export default function AdminDashboard() {
                   value={config.feature_companions_enabled} onToggle={(f, v) => handleAction('UPDATE_FEATURE_FLAG', { flag: f, value: v }, true)} />
                 <FeatureToggle label="Insights" description="Analytics and insights page" flag="feature_insights_enabled"
                   value={config.feature_insights_enabled} onToggle={(f, v) => handleAction('UPDATE_FEATURE_FLAG', { flag: f, value: v }, true)} />
-                <FeatureToggle label="Study Buddy" description="Accountability partner matching system" flag="feature_buddy_enabled"
+                <FeatureToggle label="Study Buddy" description="Accountability partner matching" flag="feature_buddy_enabled"
                   value={(config as any).feature_buddy_enabled ?? true} onToggle={(f, v) => handleAction('UPDATE_FEATURE_FLAG', { flag: f, value: v }, true)} />
               </div>
             </div>

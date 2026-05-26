@@ -47,6 +47,7 @@ export const AdminActionSchema = z.object({
     'UPDATE_USER_STATS',
     'RESET_USER_STREAK',
     'BULK_EXTEND_TRIALS',
+    'TOGGLE_GLOBAL_FREE',
   ]),
   payload: z.any()
 });

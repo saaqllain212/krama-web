@@ -76,7 +76,6 @@ async function adminActionHandler(req: NextRequest, validData: any) {
         await supabaseAdmin.from('app_config').update({ default_daily_goal_hours: payload.hours }).eq('id', 1)
         break
 
-      // === GLOBAL FREE MODE ===
       case 'TOGGLE_GLOBAL_FREE':
         await supabaseAdmin.from('app_config').update({
           global_free_mode: payload.enabled,

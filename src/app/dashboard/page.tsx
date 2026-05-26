@@ -23,8 +23,8 @@ const WeeklyLeaderboard = dynamic(() => import('@/components/dashboard/WeeklyLea
 const StudyConstellation = dynamic(() => import('@/components/dashboard/StudyConstellation'), { ssr: false })
 const WeekInReview = dynamic(() => import('@/components/dashboard/WeekInReview'), { ssr: false })
 const AIMCQBanner = dynamic(() => import('@/components/dashboard/AIMCQBanner'), { ssr: false })
-const DualCompanions = dynamic(() => import('@/components/companions/DualCompanions'), { ssr: false })
 const BuddyCard = dynamic(() => import('@/components/dashboard/BuddyCard'), { ssr: false })
+const DualCompanions = dynamic(() => import('@/components/companions/DualCompanions'), { ssr: false })
 
 // === MODALS — Lazy loaded (hidden until user interaction) ===
 const SettingsModal = dynamic(() => import('@/components/dashboard/SettingsModal'), { ssr: false })
@@ -302,7 +302,7 @@ export default function DashboardPage() {
         <WeekInReview />
       </motion.div>
 
-      {/* === BUDDY CARD (accountability partner) === */}
+            {/* === BUDDY CARD === */}
       {appConfig.feature_buddy_enabled && (
         <motion.div variants={stagger.item}>
           <BuddyCard myTodayMinutes={focusMinutes} activeExam={activeExam} />
