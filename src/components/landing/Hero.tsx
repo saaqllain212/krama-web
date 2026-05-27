@@ -61,7 +61,7 @@ function LiveMockup() {
                 initial={{ scaleY: 0 }} animate={{ scaleY: 1 }}
                 transition={{ delay: 1 + i*0.07, duration: 0.35, ease: 'easeOut' }}
                 style={{ transformOrigin: 'bottom' }}>
-                <div className={`w-full rounded-sm ${m===0?'bg-white/20':m>=90?'bg-white':'m>=60?bg-white/80':'bg-white/50'}`}
+                <div className={`w-full rounded-sm ${m===0?'bg-white/20':m>=90?'bg-white':m>=60?'bg-white/80':'bg-white/50'}`}
                   style={{ height: `${Math.max(m===0?2:4,(m/120)*22)}px`, backgroundColor: m===0?'rgba(255,255,255,0.2)':m>=90?'white':m>=60?'rgba(255,255,255,0.8)':'rgba(255,255,255,0.5)' }}/>
                 <span className="text-[8px] font-bold text-white/50">{days[i]}</span>
               </motion.div>
