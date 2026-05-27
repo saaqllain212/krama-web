@@ -1,193 +1,62 @@
 'use client'
-
-import Link from "next/link"
-import { ArrowRight, Sparkles } from "lucide-react"
-import { useState } from "react"
+import Link from 'next/link'
+import { ArrowRight } from 'lucide-react'
+import { useState } from 'react'
 
 const EXAMS = [
-  {
-    id: 'upsc',
-    href: '/signup',
-    emoji: '🏛️',
-    tag: 'Union',
-    tagColor: 'bg-blue-50 text-blue-700 border-blue-200',
-    name: 'UPSC CSE',
-    description: 'Complete tracker for Prelims & Mains. Covers History, Polity, Geography, Ethics & Optionals.',
-    gradient: 'from-blue-500/10 to-blue-600/5',
-    hoverGradient: 'group-hover:from-blue-500/20 group-hover:to-blue-600/10',
-  },
-  {
-    id: 'jee',
-    href: '/signup',
-    emoji: '⚛️',
-    tag: 'Engineering',
-    tagColor: 'bg-red-50 text-red-700 border-red-200',
-    name: 'JEE Mains',
-    description: 'Chapter-wise tracker for Physics, Chemistry & Maths. Includes weightage analysis.',
-    gradient: 'from-red-500/10 to-red-600/5',
-    hoverGradient: 'group-hover:from-red-500/20 group-hover:to-red-600/10',
-  },
-  {
-    id: 'neet',
-    href: '/signup',
-    emoji: '🧬',
-    tag: 'Medical',
-    tagColor: 'bg-green-50 text-green-700 border-green-200',
-    name: 'NEET UG',
-    description: 'NCERT-aligned syllabus tracker for Biology (Botany/Zoology), Physics & Chemistry.',
-    gradient: 'from-green-500/10 to-green-600/5',
-    hoverGradient: 'group-hover:from-green-500/20 group-hover:to-green-600/10',
-  },
-  {
-    id: 'ssc',
-    href: '/signup',
-    emoji: '📊',
-    tag: 'Govt Jobs',
-    tagColor: 'bg-orange-50 text-orange-700 border-orange-200',
-    name: 'SSC CGL',
-    description: 'Strategic tracker for Quant, Reasoning, English & GA. Tier I & II coverage.',
-    gradient: 'from-orange-500/10 to-orange-600/5',
-    hoverGradient: 'group-hover:from-orange-500/20 group-hover:to-orange-600/10',
-  },
-  {
-    id: 'rbi',
-    href: '/signup',
-    emoji: '🏦',
-    tag: 'Banking',
-    tagColor: 'bg-purple-50 text-purple-700 border-purple-200',
-    name: 'RBI Grade B',
-    description: 'Specialized Phase-II tracker for ESI, FM & English Writing skills.',
-    gradient: 'from-purple-500/10 to-purple-600/5',
-    hoverGradient: 'group-hover:from-purple-500/20 group-hover:to-purple-600/10',
-  },
+  { id:'upsc', href:'/signup', emoji:'🏛️', tag:'UPSC', tagColor:'bg-blue-50 text-blue-700 border-blue-200', name:'UPSC CSE', description:'Prelims + Mains covered. History, Polity, Geography, Ethics — every subject mapped topic by topic.', gradient:'from-blue-500/10 to-blue-600/5', border:'border-blue-200' },
+  { id:'jee', href:'/signup', emoji:'⚛️', tag:'JEE', tagColor:'bg-red-50 text-red-700 border-red-200', name:'JEE Mains & Advanced', description:'Chapter-wise Physics, Chemistry & Maths. See exactly which chapters you\'ve covered and which are pending.', gradient:'from-red-500/10 to-red-600/5', border:'border-red-200' },
+  { id:'neet', href:'/signup', emoji:'🧬', tag:'NEET', tagColor:'bg-green-50 text-green-700 border-green-200', name:'NEET UG', description:'NCERT-aligned. Biology (Botany + Zoology), Physics & Chemistry tracked chapter by chapter.', gradient:'from-green-500/10 to-green-600/5', border:'border-green-200' },
+  { id:'ssc', href:'/signup', emoji:'📊', tag:'SSC', tagColor:'bg-orange-50 text-orange-700 border-orange-200', name:'SSC CGL', description:'Quant, Reasoning, English & GA. Tier I & II fully mapped. Track daily progress per section.', gradient:'from-orange-500/10 to-orange-600/5', border:'border-orange-200' },
+  { id:'rbi', href:'/signup', emoji:'🏦', tag:'Banking', tagColor:'bg-purple-50 text-purple-700 border-purple-200', name:'RBI Grade B', description:'Phase-I & Phase-II tracker. ESI, Finance, English — every topic laid out so nothing gets missed.', gradient:'from-purple-500/10 to-purple-600/5', border:'border-purple-200' },
 ]
 
 export default function ExamSelector() {
-  const [hoveredCard, setHoveredCard] = useState<string | null>(null)
-
+  const [hovered, setHovered] = useState<string | null>(null)
   return (
-    <section className="py-24 bg-white">
-      <div className="max-w-6xl mx-auto px-6">
-        
-        {/* SECTION HEADER */}
-        <div className="text-center mb-16">
-          <div className="inline-block bg-gradient-to-r from-primary-500 to-primary-600 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-white rounded-full mb-6 shadow-lg shadow-primary-500/30">
-            Choose Your Path
+    <section className="py-24 bg-white px-6 md:px-12">
+      <div className="max-w-6xl mx-auto">
+        <div className="text-center mb-14">
+          <div className="inline-block bg-gradient-to-r from-primary-500 to-primary-600 px-4 py-1.5 text-xs font-black uppercase tracking-wider text-white rounded-full mb-5 shadow-lg shadow-primary-500/30">
+            Your Exam
           </div>
-          
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 tracking-tight">
-            Select Your Battleground
+          <h2 className="text-3xl md:text-5xl font-black text-gray-900 mb-4 tracking-tight">
+            Which exam are you<br/>
+            <span className="text-gradient">preparing for?</span>
           </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto font-medium">
-            Krama provides structured syllabus trackers for India's toughest exams. 
-            Choose yours to start tracking — or build your own.
+          <p className="text-lg text-gray-500 font-medium max-w-xl mx-auto">
+            Krama has a built-in syllabus for every major Indian competitive exam. Pick yours and your tracker is ready in 30 seconds.
           </p>
         </div>
-
-        {/* THE GRID */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          
-          {/* EXAM CARDS */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-5xl mx-auto">
           {EXAMS.map((exam) => (
-            <Link 
-              key={exam.id}
-              href={exam.href}
-              onMouseEnter={() => setHoveredCard(exam.id)}
-              onMouseLeave={() => setHoveredCard(null)}
-              className={`group relative bg-white p-8 border border-gray-200 rounded-2xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden bg-gradient-to-br ${exam.gradient} ${exam.hoverGradient}`}
-            >
-              {/* Gradient overlay on hover */}
-              <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-gray-50/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              
-              {/* Content */}
-              <div className="relative z-10">
-                {/* Top Row: Emoji + Tag */}
-                <div className="flex justify-between items-start mb-6">
-                  <span className="text-4xl transform group-hover:scale-110 transition-transform duration-300">
-                    {exam.emoji}
-                  </span>
-                  <span className={`px-3 py-1.5 border text-[10px] font-bold uppercase tracking-wider rounded-full ${exam.tagColor}`}>
-                    {exam.tag}
-                  </span>
+            <Link key={exam.id} href={exam.href}
+              onMouseEnter={() => setHovered(exam.id)} onMouseLeave={() => setHovered(null)}
+              className={`group relative overflow-hidden rounded-2xl border-2 p-6 bg-gradient-to-br ${exam.gradient} transition-all duration-300 hover:shadow-large hover:-translate-y-1 ${hovered === exam.id ? exam.border : 'border-gray-200'}`}>
+              <div className="flex items-start justify-between mb-4">
+                <div>
+                  <span className={`inline-flex text-[11px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full border ${exam.tagColor} mb-3`}>{exam.tag}</span>
+                  <h3 className="text-xl font-black text-gray-900">{exam.name}</h3>
                 </div>
-                
-                {/* Title with Arrow */}
-                <div className="flex items-center gap-2 mb-3">
-                  <h3 className="text-2xl font-bold text-gray-900 tracking-tight">
-                    {exam.name}
-                  </h3>
-                  <ArrowRight 
-                    size={20}
-                    className="text-gray-400 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 group-hover:text-gray-900 transition-all duration-300" 
-                  />
-                </div>
-                
-                {/* Description */}
-                <p className="text-gray-600 text-sm leading-relaxed">
-                  {exam.description}
-                </p>
+                <span className="text-3xl">{exam.emoji}</span>
               </div>
-
-              {/* Bottom accent line */}
-              <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-primary-500 to-primary-600 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left rounded-b-2xl" />
+              <p className="text-sm text-gray-600 leading-relaxed mb-4">{exam.description}</p>
+              <div className="flex items-center gap-1.5 text-sm font-black text-primary-600 group-hover:gap-2.5 transition-all">
+                Start tracking <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform"/>
+              </div>
             </Link>
           ))}
-
-          {/* CUSTOM SYLLABUS CARD */}
-          <div 
-            className="group relative bg-gradient-to-br from-gray-50 to-white p-8 border-2 border-dashed border-gray-300 rounded-2xl hover:border-primary-400 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col justify-between overflow-hidden"
-            onMouseEnter={() => setHoveredCard('custom')}
-            onMouseLeave={() => setHoveredCard(null)}
-          >
-            {/* Sparkle effect on hover */}
-            {hoveredCard === 'custom' && (
-              <div className="absolute top-4 right-4 text-primary-500 animate-bounce">
-                <Sparkles size={20} />
-              </div>
-            )}
-
-            <div className="relative z-10">
-              {/* Top Row */}
-              <div className="flex justify-between items-start mb-6">
-                <span className="text-4xl grayscale group-hover:grayscale-0 transition-all duration-300 transform group-hover:scale-110">
-                  🛠️
-                </span>
-                <span className="px-3 py-1.5 bg-gray-100 border border-gray-200 text-gray-500 text-[10px] font-bold uppercase tracking-wider group-hover:bg-primary-100 group-hover:text-primary-700 group-hover:border-primary-200 transition-all duration-300 rounded-full">
-                  Custom
-                </span>
-              </div>
-              
-              {/* Title */}
-              <div className="flex items-center gap-2 mb-3">
-                <h3 className="text-2xl font-bold text-gray-500 group-hover:text-gray-900 tracking-tight transition-colors duration-300">
-                  Bring Your Own
-                </h3>
-                <ArrowRight 
-                  size={20}
-                  className="text-gray-300 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 group-hover:text-primary-500 transition-all duration-300" 
-                />
-              </div>
-              
-              {/* Description */}
-              <p className="text-gray-400 group-hover:text-gray-600 text-sm leading-relaxed transition-colors duration-300">
-                Don't see your exam? Build your own syllabus structure using our Protocol Architect tool below.
-              </p>
+          {/* Custom exam card */}
+          <Link href="/signup"
+            className="group relative overflow-hidden rounded-2xl border-2 border-dashed border-gray-300 p-6 bg-gray-50/50 hover:border-primary-300 hover:bg-primary-50/50 transition-all duration-300 hover:shadow-medium hover:-translate-y-1 flex flex-col items-center justify-center text-center gap-3">
+            <span className="text-3xl">✏️</span>
+            <h3 className="text-lg font-black text-gray-700">Any Other Exam</h3>
+            <p className="text-sm text-gray-500">Build your own custom syllabus tracker from scratch.</p>
+            <div className="flex items-center gap-1.5 text-sm font-black text-primary-600">
+              Create custom <ArrowRight size={15}/>
             </div>
-
-            {/* Bottom accent line */}
-            <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-primary-500 to-purple-600 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left rounded-b-2xl" />
-          </div>
-
+          </Link>
         </div>
-
-        {/* DISCLAIMER */}
-        <div className="mt-16 mx-auto max-w-4xl p-6 bg-gradient-to-r from-blue-50 to-cyan-50 border border-blue-100 rounded-2xl text-center">
-          <p className="text-xs text-gray-600 leading-relaxed">
-            <span className="font-bold text-gray-900">⚠️ Note:</span> The syllabus data is structured for tracking purposes. 
-            Always refer to official notifications from conducting bodies (UPSC, NTA, SSC, etc.) for the legally accurate syllabus.
-          </p>
-        </div>
-
       </div>
     </section>
   )
