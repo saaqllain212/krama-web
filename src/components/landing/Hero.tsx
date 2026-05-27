@@ -1,14 +1,12 @@
 'use client'
-
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { ArrowRight, Flame, BookOpen, Target, Users } from 'lucide-react'
-import { useTracker } from '@/analytics/useTracker' 
+import { ArrowRight, Flame, BookOpen, Target, Users, CheckCircle, Timer } from 'lucide-react'
+import { useTracker } from '@/analytics/useTracker'
 import { EVENTS } from '@/analytics/events'
 import { motion } from 'framer-motion'
 
-// Animated stat that counts up
-function CountUp({ end, duration = 2000, suffix = '' }: { end: number; duration?: number; suffix?: string }) {
+function CountUp({ end, duration = 2000 }: { end: number; duration?: number }) {
   const [count, setCount] = useState(0)
   useEffect(() => {
     let start = 0
@@ -20,117 +18,86 @@ function CountUp({ end, duration = 2000, suffix = '' }: { end: number; duration?
     }, 16)
     return () => clearInterval(timer)
   }, [end, duration])
-  return <span className="tabular-nums">{count}{suffix}</span>
+  return <span className="tabular-nums">{count}</span>
 }
 
-// Floating mock dashboard card
-function DashboardMockup() {
+function LiveMockup() {
   const [progress, setProgress] = useState(0)
-  
-  useEffect(() => {
-    const timer = setTimeout(() => setProgress(72), 600)
-    return () => clearTimeout(timer)
-  }, [])
-
-  const weekData = [45, 90, 60, 120, 30, 75, 0]
-  const dayLabels = ['M', 'T', 'W', 'T', 'F', 'S', 'S']
-
+  useEffect(() => { const t = setTimeout(() => setProgress(72), 700); return () => clearTimeout(t) }, [])
+  const bars = [45, 90, 60, 120, 30, 75, 0]
+  const days = ['M','T','W','T','F','S','S']
   return (
-    <motion.div 
-      initial={{ opacity: 0, y: 30, rotateX: 5 }}
-      animate={{ opacity: 1, y: 0, rotateX: 0 }}
-      transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-      className="relative w-full max-w-md"
-    >
-      {/* Glow behind card */}
-      <div className="absolute -inset-4 bg-gradient-to-r from-primary-500/20 via-purple-500/15 to-cyan-500/20 rounded-3xl blur-2xl" />
-      
-      <div className="relative bg-white rounded-2xl shadow-large border border-gray-200/80 overflow-hidden">
-        {/* Header */}
-        <div className="px-6 pt-6 pb-4">
-          <div className="flex items-center justify-between mb-1">
+    <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.9, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
+      className="relative w-full max-w-[420px]">
+      <div className="absolute -inset-6 bg-gradient-to-br from-primary-400/25 via-purple-400/20 to-cyan-400/20 rounded-[2rem] blur-3xl" />
+      <div className="relative bg-white rounded-3xl shadow-[0_32px_80px_rgba(0,0,0,0.12)] border border-gray-100 overflow-hidden">
+        {/* Header bar */}
+        <div className="bg-gradient-to-r from-primary-500 to-purple-600 px-5 pt-5 pb-4">
+          <div className="flex items-center justify-between mb-3">
             <div>
-              <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Today&apos;s Progress</p>
-              <div className="flex items-baseline gap-1.5 mt-1">
-                <span className="text-4xl font-bold text-gray-900 tabular-nums">
-                  <CountUp end={4} duration={1500} />
-                  <span className="text-xl text-gray-400 font-semibold">h</span>
-                  {' '}
-                  <CountUp end={20} duration={1800} />
-                  <span className="text-xl text-gray-400 font-semibold">m</span>
-                </span>
-                <span className="text-sm text-gray-400 font-medium">/ 6h</span>
-              </div>
+              <p className="text-white/70 text-[10px] font-bold uppercase tracking-widest">Today's Focus</p>
+              <p className="text-white text-3xl font-black mt-0.5 tabular-nums">
+                <CountUp end={4} duration={1200} />h <CountUp end={20} duration={1600} />m
+              </p>
             </div>
-            
-            {/* Circular progress */}
-            <div className="relative w-16 h-16">
-              <svg className="transform -rotate-90" width="64" height="64">
-                <circle cx="32" cy="32" r="26" stroke="#f0f0f0" strokeWidth="6" fill="none" />
-                <circle 
-                  cx="32" cy="32" r="26" 
-                  stroke="url(#heroProgressGrad)" strokeWidth="6" fill="none"
-                  strokeLinecap="round"
-                  strokeDasharray={163.36}
-                  strokeDashoffset={163.36 - (progress / 100) * 163.36}
-                  className="transition-all duration-1000 ease-out"
-                  style={{ transitionDelay: '0.6s' }}
-                />
-                <defs>
-                  <linearGradient id="heroProgressGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stopColor="#5B8FF9" />
-                    <stop offset="100%" stopColor="#a855f7" />
-                  </linearGradient>
-                </defs>
+            <div className="relative w-14 h-14">
+              <svg className="-rotate-90" width="56" height="56" viewBox="0 0 56 56">
+                <circle cx="28" cy="28" r="22" stroke="rgba(255,255,255,0.2)" strokeWidth="5" fill="none"/>
+                <circle cx="28" cy="28" r="22" stroke="white" strokeWidth="5" fill="none"
+                  strokeLinecap="round" strokeDasharray={138.2}
+                  strokeDashoffset={138.2 - (progress/100)*138.2}
+                  className="transition-all duration-1000 ease-out" style={{transitionDelay:'0.7s'}}/>
               </svg>
               <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-sm font-bold text-gray-900">{progress}%</span>
+                <span className="text-white text-xs font-black">{progress}%</span>
               </div>
             </div>
           </div>
-        </div>
-
-        {/* Week heatmap */}
-        <div className="px-6 pb-4">
-          <div className="flex items-end gap-2 h-12">
-            {weekData.map((mins, i) => (
-              <motion.div 
-                key={i} 
-                className="flex-1 flex flex-col items-center gap-1"
-                initial={{ scaleY: 0 }}
-                animate={{ scaleY: 1 }}
-                transition={{ delay: 0.8 + i * 0.08, duration: 0.4, ease: 'easeOut' }}
-                style={{ transformOrigin: 'bottom' }}
-              >
-                <div 
-                  className={`w-full rounded-sm ${mins === 0 ? 'bg-gray-100' : mins >= 90 ? 'bg-primary-500' : mins >= 60 ? 'bg-primary-400' : 'bg-primary-200'}`}
-                  style={{ height: `${Math.max(mins === 0 ? 3 : 8, (mins / 120) * 32)}px` }}
-                />
-                <span className="text-[9px] font-semibold text-gray-400">{dayLabels[i]}</span>
+          {/* Week bars */}
+          <div className="flex items-end gap-1.5 h-8">
+            {bars.map((m, i) => (
+              <motion.div key={i} className="flex-1 flex flex-col items-center gap-0.5"
+                initial={{ scaleY: 0 }} animate={{ scaleY: 1 }}
+                transition={{ delay: 1 + i*0.07, duration: 0.35, ease: 'easeOut' }}
+                style={{ transformOrigin: 'bottom' }}>
+                <div className={`w-full rounded-sm ${m===0?'bg-white/20':m>=90?'bg-white':'m>=60?bg-white/80':'bg-white/50'}`}
+                  style={{ height: `${Math.max(m===0?2:4,(m/120)*22)}px`, backgroundColor: m===0?'rgba(255,255,255,0.2)':m>=90?'white':m>=60?'rgba(255,255,255,0.8)':'rgba(255,255,255,0.5)' }}/>
+                <span className="text-[8px] font-bold text-white/50">{days[i]}</span>
               </motion.div>
             ))}
           </div>
         </div>
-
-        {/* Stats row */}
-        <div className="grid grid-cols-3 border-t border-gray-100">
-          {[
-            { icon: Flame, value: '12', label: 'Streak', color: 'text-orange-500' },
-            { icon: BookOpen, value: '47%', label: 'Syllabus', color: 'text-cyan-500' },
-            { icon: Target, value: '85', label: 'Mock Score', color: 'text-green-500' },
-          ].map((stat, i) => (
-            <motion.div 
-              key={stat.label}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.2 + i * 0.1 }}
-              className="flex flex-col items-center py-4 border-r border-gray-100 last:border-r-0"
-            >
-              <stat.icon size={14} className={stat.color} />
-              <span className="text-lg font-bold text-gray-900 mt-1">{stat.value}</span>
-              <span className="text-[10px] font-medium text-gray-400">{stat.label}</span>
+        {/* Stats */}
+        <div className="grid grid-cols-3 border-b border-gray-100">
+          {[{icon:Flame,v:'12🔥',l:'Streak',c:'text-orange-500'},{icon:BookOpen,v:'47%',l:'Syllabus',c:'text-cyan-600'},{icon:Target,v:'85',l:'Mock',c:'text-green-600'}].map((s,i)=>(
+            <motion.div key={s.l} initial={{opacity:0,y:8}} animate={{opacity:1,y:0}}
+              transition={{delay:1.4+i*0.1}}
+              className="flex flex-col items-center py-3.5 border-r border-gray-100 last:border-r-0">
+              <span className="text-base font-black text-gray-900">{s.v}</span>
+              <span className="text-[10px] font-semibold text-gray-400 mt-0.5">{s.l}</span>
             </motion.div>
           ))}
+        </div>
+        {/* Buddy strip */}
+        <div className="flex items-center gap-2.5 px-5 py-3 bg-purple-50">
+          <div className="flex -space-x-1.5">
+            {['A','R','S'].map((l,i)=>(
+              <div key={i} className="w-6 h-6 rounded-full bg-gradient-to-br from-purple-400 to-indigo-600 flex items-center justify-center text-[9px] font-black text-white border-2 border-white">{l}</div>
+            ))}
+          </div>
+          <span className="text-[11px] font-bold text-purple-700">🤝 Buddy: Arjun studied 6h today · you're ahead!</span>
+        </div>
+        {/* XP bar */}
+        <div className="px-5 py-3 border-t border-gray-100">
+          <div className="flex items-center justify-between mb-1.5">
+            <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wide">Level 4 · Scholar</span>
+            <span className="text-[10px] font-bold text-primary-600">286 XP</span>
+          </div>
+          <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+            <motion.div className="h-full bg-gradient-to-r from-primary-500 to-purple-500 rounded-full"
+              initial={{width:0}} animate={{width:'68%'}} transition={{delay:1.6,duration:0.8,ease:'easeOut'}}/>
+          </div>
         </div>
       </div>
     </motion.div>
@@ -139,118 +106,95 @@ function DashboardMockup() {
 
 export default function Hero() {
   const { track } = useTracker()
-
   return (
-    <section className="relative min-h-[92vh] px-6 py-16 md:px-12 lg:px-16 overflow-hidden">
-      
-      {/* Gradient Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary-50/80 via-white to-purple-50/60" />
-      
-      {/* Subtle dot grid */}
-      <div 
-        className="absolute inset-0 opacity-[0.025]" 
-        style={{
-          backgroundImage: `radial-gradient(circle at 1px 1px, rgba(0,0,0,0.15) 1px, transparent 0)`,
-          backgroundSize: '32px 32px'
-        }}
-      />
+    <section className="relative min-h-[94vh] flex items-center px-6 py-16 md:px-12 lg:px-16 overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-br from-primary-50/90 via-white to-purple-50/70" />
+      <div className="absolute inset-0 opacity-[0.03]"
+        style={{backgroundImage:`radial-gradient(circle at 1px 1px,rgba(0,0,0,1) 1px,transparent 0)`,backgroundSize:'28px 28px'}}/>
+      <div className="absolute top-20 right-10 w-72 h-72 bg-primary-400/10 rounded-full blur-3xl" />
+      <div className="absolute bottom-20 left-10 w-72 h-72 bg-purple-400/10 rounded-full blur-3xl" />
 
-      {/* Content */}
-      <div className="relative z-10 grid min-h-[85vh] grid-cols-1 items-center gap-12 md:grid-cols-2 md:gap-16 max-w-7xl mx-auto">
-        
-        {/* Left Column */}
-        <div className="flex flex-col items-start gap-6">
-          
-          {/* Badge */}
-          <motion.div 
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full border border-gray-200 shadow-soft"
-          >
-            <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-            <span className="text-xs font-semibold text-gray-600">Free forever · No credit card needed</span>
+      <div className="relative z-10 grid grid-cols-1 items-center gap-14 md:grid-cols-2 md:gap-16 max-w-7xl mx-auto w-full">
+        {/* LEFT */}
+        <div className="flex flex-col items-start gap-7">
+
+          {/* Free pill */}
+          <motion.div initial={{opacity:0,y:12}} animate={{opacity:1,y:0}} transition={{duration:0.5}}
+            className="flex items-center gap-2 bg-green-50 border border-green-200 px-4 py-2 rounded-full">
+            <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"/>
+            <span className="text-xs font-bold text-green-700">🎉 100% Free right now — no credit card, no catch</span>
           </motion.div>
 
-          {/* Headline */}
-          <motion.h1 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-4xl font-bold leading-[1.1] tracking-tight sm:text-5xl md:text-6xl lg:text-7xl"
-          >
-            Study without <br />
-            <span className="text-gradient">the overwhelm.</span>
-          </motion.h1>
-          
-          {/* Subheadline */}
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="max-w-lg text-base sm:text-lg md:text-xl font-medium text-gray-500 leading-relaxed"
-          >
-            Focus timer, syllabus tracker, spaced revision, AI MCQs — 
-            everything you need to crack UPSC, JEE, NEET & more. In one place.
-          </motion.p>
+          {/* Headline — pain first */}
+          <motion.div initial={{opacity:0,y:24}} animate={{opacity:1,y:0}} transition={{duration:0.7,delay:0.1}}>
+            <h1 className="text-4xl font-black leading-[1.08] tracking-tight sm:text-5xl md:text-6xl lg:text-[4.5rem]">
+              You study hard.<br />
+              <span className="text-gradient">But still forget.</span>
+            </h1>
+            <p className="mt-5 max-w-xl text-lg md:text-xl font-medium text-gray-500 leading-relaxed">
+              Krama tracks every minute you study, tells you exactly what to revise before your brain forgets it, and finds you a study buddy — so you never fall off again.
+            </p>
+          </motion.div>
 
           {/* Exam tags */}
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="flex flex-wrap gap-2"
-          >
-            {['UPSC', 'JEE', 'NEET', 'SSC', 'RBI'].map((exam) => (
-              <span key={exam} className="px-3 py-1.5 bg-white border border-gray-200 rounded-full text-xs font-semibold text-gray-600 shadow-soft">
-                {exam}
-              </span>
+          <motion.div initial={{opacity:0,y:16}} animate={{opacity:1,y:0}} transition={{duration:0.6,delay:0.2}}
+            className="flex flex-wrap gap-2">
+            {['UPSC','JEE','NEET','SSC','RBI Grade B','Bank PO'].map(e=>(
+              <span key={e} className="px-3 py-1.5 bg-white border border-gray-200 rounded-full text-xs font-bold text-gray-700 shadow-sm">{e}</span>
+            ))}
+          </motion.div>
+
+          {/* 4 bullets */}
+          <motion.div initial={{opacity:0,y:16}} animate={{opacity:1,y:0}} transition={{duration:0.6,delay:0.28}}
+            className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 w-full">
+            {[
+              {icon:Timer, text:'Focus timer — tracks when you really study'},
+              {icon:BookOpen, text:'Spaced review — never forget anything again'},
+              {icon:Target, text:'AI MCQs from your own notes, zero cost'},
+              {icon:Users, text:'Study buddy matched to your exam & goal'},
+            ].map((item,i)=>(
+              <div key={i} className="flex items-center gap-2.5 bg-white/70 border border-gray-100 rounded-xl px-3 py-2.5 shadow-sm">
+                <div className="w-7 h-7 bg-primary-100 rounded-lg flex items-center justify-center shrink-0">
+                  <item.icon size={14} className="text-primary-600"/>
+                </div>
+                <span className="text-sm font-semibold text-gray-700">{item.text}</span>
+              </div>
             ))}
           </motion.div>
 
           {/* CTA */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mt-2"
-          >
-            <Link 
-              href="/signup" 
-              onClick={() => track(EVENTS.AUTH_SIGNUP_CLICKED, { location: 'hero_section' })}
-              className="btn btn-primary group inline-flex items-center gap-3 text-base md:text-lg px-8 py-4 rounded-xl"
-            >
-              Get Started Free
-              <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+          <motion.div initial={{opacity:0,y:16}} animate={{opacity:1,y:0}} transition={{duration:0.6,delay:0.38}}
+            className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+            <Link href="/signup"
+              onClick={() => track(EVENTS.AUTH_SIGNUP_CLICKED, { location: 'hero' })}
+              className="btn btn-primary group inline-flex items-center gap-3 text-base md:text-lg px-8 py-4 rounded-xl shadow-glow-primary">
+              Join Free — Takes 30 Seconds
+              <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1"/>
             </Link>
-            <span className="text-sm text-gray-400 font-medium">
-              Free forever · Pro for ₹149 lifetime
-            </span>
+            <p className="text-sm text-gray-400 font-medium">500 student cap · <span className="text-red-500 font-bold">spots filling fast</span></p>
           </motion.div>
 
-          {/* Social proof strip */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.8 }}
-            className="flex items-center gap-4 mt-4 pt-6 border-t border-gray-200/60"
-          >
+          {/* Social proof */}
+          <motion.div initial={{opacity:0}} animate={{opacity:1}} transition={{duration:0.8,delay:0.9}}
+            className="flex flex-wrap items-center gap-5 pt-6 border-t border-gray-200/70 w-full">
             <div className="flex items-center gap-2 text-sm text-gray-500">
-              <Users size={16} className="text-gray-400" />
-              <span className="font-semibold text-gray-700">500+</span>
-              <span>students joined</span>
+              <Users size={15} className="text-gray-400"/>
+              <span className="font-black text-gray-900">500+</span> students in
             </div>
-            <span className="w-px h-4 bg-gray-200" />
             <div className="flex items-center gap-1.5 text-sm text-gray-500">
-              <span className="font-semibold text-gray-700">₹149</span>
-              <span>lifetime after trial</span>
+              <CheckCircle size={15} className="text-green-500"/>
+              <span>No subscription ever</span>
+            </div>
+            <div className="flex items-center gap-1.5 text-sm text-gray-500">
+              <CheckCircle size={15} className="text-green-500"/>
+              <span>Built for Indian exams</span>
             </div>
           </motion.div>
         </div>
 
-        {/* Right Column - Product Mockup */}
+        {/* RIGHT */}
         <div className="hidden md:flex justify-center md:justify-end">
-          <DashboardMockup />
+          <LiveMockup />
         </div>
       </div>
     </section>
