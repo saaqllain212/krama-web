@@ -1,16 +1,20 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
-import { ArrowRight, Flame, BookOpen, Target, Users } from 'lucide-react'
-import { useTracker } from '@/analytics/useTracker' 
+import { ArrowRight, Flame, BookOpen, Target, Users, CheckCircle, Timer } from 'lucide-react'
+import { useTracker } from '@/analytics/useTracker'
 import { EVENTS } from '@/analytics/events'
-import { motion } from 'framer-motion'
+import { motion, useInView } from 'framer-motion'
 
-// Animated stat that counts up
-function CountUp({ end, duration = 2000, suffix = '' }: { end: number; duration?: number; suffix?: string }) {
+// ─── Animated counter ─────────────────────────────────────────────────────────
+function CountUp({ end, duration = 1800 }: { end: number; duration?: number }) {
   const [count, setCount] = useState(0)
+  const ref = useRef(null)
+  const inView = useInView(ref, { once: true })
+
   useEffect(() => {
+    if (!inView) return
     let start = 0
     const step = end / (duration / 16)
     const timer = setInterval(() => {
@@ -19,240 +23,310 @@ function CountUp({ end, duration = 2000, suffix = '' }: { end: number; duration?
       else setCount(Math.floor(start))
     }, 16)
     return () => clearInterval(timer)
-  }, [end, duration])
-  return <span className="tabular-nums">{count}{suffix}</span>
+  }, [inView, end, duration])
+
+  return <span ref={ref} className="tabular-nums">{count}</span>
 }
 
-// Floating mock dashboard card
-function DashboardMockup() {
+// ─── Scrolling ticker ─────────────────────────────────────────────────────────
+const TICKER_ITEMS = [
+  '🏛️ UPSC CSE', '⚛️ JEE Mains', '🧬 NEET UG', '📊 SSC CGL',
+  '🏦 RBI Grade B', '🎯 Bank PO', '📚 UPSC CAPF', '🔬 JEE Advanced',
+  '🌿 NEET PG', '💼 SEBI Grade A',
+]
+
+function Ticker() {
+  return (
+    <div className="relative overflow-hidden w-full py-3">
+      <div className="flex gap-6 animate-marquee whitespace-nowrap">
+        {[...TICKER_ITEMS, ...TICKER_ITEMS].map((item, i) => (
+          <span key={i}
+            className="inline-flex items-center gap-2 text-xs font-bold text-white/40 uppercase tracking-widest px-4 py-1.5 rounded-full border border-white/10 bg-white/5">
+            {item}
+          </span>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// ─── Glowing dashboard mockup ─────────────────────────────────────────────────
+function GlowingMockup() {
   const [progress, setProgress] = useState(0)
-  
   useEffect(() => {
-    const timer = setTimeout(() => setProgress(72), 600)
-    return () => clearTimeout(timer)
+    const t = setTimeout(() => setProgress(72), 800)
+    return () => clearTimeout(t)
   }, [])
 
-  const weekData = [45, 90, 60, 120, 30, 75, 0]
-  const dayLabels = ['M', 'T', 'W', 'T', 'F', 'S', 'S']
+  const bars = [45, 90, 60, 120, 30, 75, 0]
+  const days = ['M', 'T', 'W', 'T', 'F', 'S', 'S']
 
   return (
-    <motion.div 
-      initial={{ opacity: 0, y: 30, rotateX: 5 }}
-      animate={{ opacity: 1, y: 0, rotateX: 0 }}
-      transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-      className="relative w-full max-w-md"
+    <motion.div
+      initial={{ opacity: 0, y: 50, scale: 0.95 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ duration: 1, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
+      className="relative w-full max-w-[400px] mx-auto"
     >
-      {/* Glow behind card */}
-      <div className="absolute -inset-4 bg-gradient-to-r from-primary-500/20 via-purple-500/15 to-cyan-500/20 rounded-3xl blur-2xl" />
-      
-      <div className="relative bg-white rounded-2xl shadow-large border border-gray-200/80 overflow-hidden">
-        {/* Header */}
-        <div className="px-6 pt-6 pb-4">
-          <div className="flex items-center justify-between mb-1">
+      {/* Multi-layer glow */}
+      <div className="absolute -inset-8 bg-primary-500/20 rounded-[2.5rem] blur-3xl" />
+      <div className="absolute -inset-4 bg-purple-500/15 rounded-[2rem] blur-2xl" />
+
+      {/* Card */}
+      <div className="relative bg-gray-900/80 backdrop-blur-xl rounded-3xl border border-white/10 overflow-hidden shadow-[0_32px_80px_rgba(0,0,0,0.6)]">
+
+        {/* Gradient header */}
+        <div className="bg-gradient-to-r from-primary-600 to-purple-600 px-5 pt-5 pb-4">
+          <div className="flex items-center justify-between mb-3">
             <div>
-              <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Today&apos;s Progress</p>
-              <div className="flex items-baseline gap-1.5 mt-1">
-                <span className="text-4xl font-bold text-gray-900 tabular-nums">
-                  <CountUp end={4} duration={1500} />
-                  <span className="text-xl text-gray-400 font-semibold">h</span>
-                  {' '}
-                  <CountUp end={20} duration={1800} />
-                  <span className="text-xl text-gray-400 font-semibold">m</span>
-                </span>
-                <span className="text-sm text-gray-400 font-medium">/ 6h</span>
-              </div>
+              <p className="text-white/60 text-[10px] font-black uppercase tracking-widest">Today's Focus</p>
+              <p className="text-white text-3xl font-black mt-0.5 tabular-nums">
+                <CountUp end={4} duration={1200} />h{' '}
+                <CountUp end={20} duration={1600} />m
+              </p>
             </div>
-            
             {/* Circular progress */}
-            <div className="relative w-16 h-16">
-              <svg className="transform -rotate-90" width="64" height="64">
-                <circle cx="32" cy="32" r="26" stroke="#f0f0f0" strokeWidth="6" fill="none" />
-                <circle 
-                  cx="32" cy="32" r="26" 
-                  stroke="url(#heroProgressGrad)" strokeWidth="6" fill="none"
+            <div className="relative w-14 h-14">
+              <svg className="-rotate-90" width="56" height="56" viewBox="0 0 56 56">
+                <circle cx="28" cy="28" r="22" stroke="rgba(255,255,255,0.15)" strokeWidth="5" fill="none" />
+                <circle cx="28" cy="28" r="22" stroke="white" strokeWidth="5" fill="none"
                   strokeLinecap="round"
-                  strokeDasharray={163.36}
-                  strokeDashoffset={163.36 - (progress / 100) * 163.36}
+                  strokeDasharray={138.2}
+                  strokeDashoffset={138.2 - (progress / 100) * 138.2}
                   className="transition-all duration-1000 ease-out"
-                  style={{ transitionDelay: '0.6s' }}
+                  style={{ transitionDelay: '0.8s' }}
                 />
-                <defs>
-                  <linearGradient id="heroProgressGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stopColor="#5B8FF9" />
-                    <stop offset="100%" stopColor="#a855f7" />
-                  </linearGradient>
-                </defs>
               </svg>
               <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-sm font-bold text-gray-900">{progress}%</span>
+                <span className="text-white text-xs font-black">{progress}%</span>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Week heatmap */}
-        <div className="px-6 pb-4">
-          <div className="flex items-end gap-2 h-12">
-            {weekData.map((mins, i) => (
-              <motion.div 
-                key={i} 
-                className="flex-1 flex flex-col items-center gap-1"
-                initial={{ scaleY: 0 }}
-                animate={{ scaleY: 1 }}
-                transition={{ delay: 0.8 + i * 0.08, duration: 0.4, ease: 'easeOut' }}
-                style={{ transformOrigin: 'bottom' }}
-              >
-                <div 
-                  className={`w-full rounded-sm ${mins === 0 ? 'bg-gray-100' : mins >= 90 ? 'bg-primary-500' : mins >= 60 ? 'bg-primary-400' : 'bg-primary-200'}`}
-                  style={{ height: `${Math.max(mins === 0 ? 3 : 8, (mins / 120) * 32)}px` }}
-                />
-                <span className="text-[9px] font-semibold text-gray-400">{dayLabels[i]}</span>
+          {/* Week bars */}
+          <div className="flex items-end gap-1.5 h-8">
+            {bars.map((m, i) => (
+              <motion.div key={i}
+                className="flex-1 flex flex-col items-center gap-0.5"
+                initial={{ scaleY: 0 }} animate={{ scaleY: 1 }}
+                transition={{ delay: 1.1 + i * 0.07, duration: 0.35, ease: 'easeOut' }}
+                style={{ transformOrigin: 'bottom' }}>
+                <div className="w-full rounded-sm"
+                  style={{
+                    height: `${Math.max(m === 0 ? 2 : 4, (m / 120) * 22)}px`,
+                    backgroundColor: m === 0 ? 'rgba(255,255,255,0.15)' : m >= 90 ? 'white' : m >= 60 ? 'rgba(255,255,255,0.75)' : 'rgba(255,255,255,0.4)'
+                  }} />
+                <span className="text-[8px] font-bold text-white/40">{days[i]}</span>
               </motion.div>
             ))}
           </div>
         </div>
 
         {/* Stats row */}
-        <div className="grid grid-cols-3 border-t border-gray-100">
+        <div className="grid grid-cols-3 border-b border-white/10">
           {[
-            { icon: Flame, value: '12', label: 'Streak', color: 'text-orange-500' },
-            { icon: BookOpen, value: '47%', label: 'Syllabus', color: 'text-cyan-500' },
-            { icon: Target, value: '85', label: 'Mock Score', color: 'text-green-500' },
-          ].map((stat, i) => (
-            <motion.div 
-              key={stat.label}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.2 + i * 0.1 }}
-              className="flex flex-col items-center py-4 border-r border-gray-100 last:border-r-0"
-            >
-              <stat.icon size={14} className={stat.color} />
-              <span className="text-lg font-bold text-gray-900 mt-1">{stat.value}</span>
-              <span className="text-[10px] font-medium text-gray-400">{stat.label}</span>
+            { icon: Flame, value: '12🔥', label: 'Streak' },
+            { icon: BookOpen, value: '47%', label: 'Syllabus' },
+            { icon: Target, value: '85', label: 'Mock' },
+          ].map((s, i) => (
+            <motion.div key={s.label}
+              initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.5 + i * 0.1 }}
+              className="flex flex-col items-center py-3.5 border-r border-white/10 last:border-r-0">
+              <span className="text-base font-black text-white">{s.value}</span>
+              <span className="text-[10px] font-semibold text-white/40 mt-0.5">{s.label}</span>
             </motion.div>
           ))}
         </div>
+
+        {/* Study Buddy strip */}
+        <div className="flex items-center gap-2.5 px-4 py-3 bg-purple-500/20 border-b border-white/10">
+          <div className="flex -space-x-1.5">
+            {['A', 'R', 'S'].map((l, i) => (
+              <div key={i}
+                className="w-5 h-5 rounded-full bg-gradient-to-br from-purple-400 to-indigo-600 flex items-center justify-center text-[8px] font-black text-white border-2 border-gray-900">
+                {l}
+              </div>
+            ))}
+          </div>
+          <span className="text-[11px] font-bold text-purple-300">🤝 Buddy: Arjun studied 6h · you&apos;re ahead</span>
+        </div>
+
+        {/* XP bar */}
+        <div className="px-5 py-3.5">
+          <div className="flex items-center justify-between mb-1.5">
+            <span className="text-[10px] font-black text-white/40 uppercase tracking-wide">Level 4 · Scholar</span>
+            <span className="text-[10px] font-black text-primary-400">286 XP</span>
+          </div>
+          <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
+            <motion.div
+              className="h-full bg-gradient-to-r from-primary-400 to-purple-500 rounded-full"
+              initial={{ width: 0 }}
+              animate={{ width: '68%' }}
+              transition={{ delay: 1.8, duration: 0.9, ease: 'easeOut' }}
+            />
+          </div>
+        </div>
       </div>
+
+      {/* Floating badge — streak */}
+      <motion.div
+        initial={{ opacity: 0, x: -20, y: 10 }}
+        animate={{ opacity: 1, x: 0, y: 0 }}
+        transition={{ delay: 2, duration: 0.5, type: 'spring' }}
+        className="absolute -left-10 top-16 bg-orange-500 text-white text-[11px] font-black px-3 py-2 rounded-xl shadow-lg shadow-orange-500/30 flex items-center gap-1.5">
+        🔥 12-day streak
+      </motion.div>
+
+      {/* Floating badge — XP earned */}
+      <motion.div
+        initial={{ opacity: 0, x: 20, y: 10 }}
+        animate={{ opacity: 1, x: 0, y: 0 }}
+        transition={{ delay: 2.3, duration: 0.5, type: 'spring' }}
+        className="absolute -right-8 bottom-20 bg-green-500 text-white text-[11px] font-black px-3 py-2 rounded-xl shadow-lg shadow-green-500/30 flex items-center gap-1.5">
+        +50 XP earned ⚡
+      </motion.div>
     </motion.div>
   )
 }
 
+// ─── Main Hero ────────────────────────────────────────────────────────────────
 export default function Hero() {
   const { track } = useTracker()
 
   return (
-    <section className="relative min-h-[92vh] px-6 py-16 md:px-12 lg:px-16 overflow-hidden">
-      
-      {/* Gradient Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary-50/80 via-white to-purple-50/60" />
-      
-      {/* Subtle dot grid */}
-      <div 
-        className="absolute inset-0 opacity-[0.025]" 
-        style={{
-          backgroundImage: `radial-gradient(circle at 1px 1px, rgba(0,0,0,0.15) 1px, transparent 0)`,
-          backgroundSize: '32px 32px'
-        }}
-      />
+    <section className="relative min-h-[96vh] flex flex-col overflow-hidden bg-gray-950">
 
-      {/* Content */}
-      <div className="relative z-10 grid min-h-[85vh] grid-cols-1 items-center gap-12 md:grid-cols-2 md:gap-16 max-w-7xl mx-auto">
-        
-        {/* Left Column */}
-        <div className="flex flex-col items-start gap-6">
-          
-          {/* Badge */}
-          <motion.div 
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full border border-gray-200 shadow-soft"
-          >
-            <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-            <span className="text-xs font-semibold text-gray-600">Free forever · No credit card needed</span>
-          </motion.div>
+      {/* Background layers */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(91,143,249,0.15)_0%,_transparent_60%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,_rgba(168,85,247,0.12)_0%,_transparent_60%)]" />
+      {/* Dot grid */}
+      <div className="absolute inset-0 opacity-[0.04]"
+        style={{ backgroundImage: `radial-gradient(circle at 1px 1px, rgba(255,255,255,0.8) 1px, transparent 0)`, backgroundSize: '28px 28px' }} />
+      {/* Bottom fade to white for transition */}
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white to-transparent z-10" />
 
-          {/* Headline */}
-          <motion.h1 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-4xl font-bold leading-[1.1] tracking-tight sm:text-5xl md:text-6xl lg:text-7xl"
-          >
-            Study without <br />
-            <span className="text-gradient">the overwhelm.</span>
-          </motion.h1>
-          
-          {/* Subheadline */}
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="max-w-lg text-base sm:text-lg md:text-xl font-medium text-gray-500 leading-relaxed"
-          >
-            Focus timer, syllabus tracker, spaced revision, AI MCQs — 
-            everything you need to crack UPSC, JEE, NEET & more. In one place.
-          </motion.p>
+      {/* Main content */}
+      <div className="relative z-10 flex-1 flex items-center px-6 py-20 md:px-12 lg:px-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-14 md:gap-16 max-w-7xl mx-auto w-full">
 
-          {/* Exam tags */}
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="flex flex-wrap gap-2"
-          >
-            {['UPSC', 'JEE', 'NEET', 'SSC', 'RBI'].map((exam) => (
-              <span key={exam} className="px-3 py-1.5 bg-white border border-gray-200 rounded-full text-xs font-semibold text-gray-600 shadow-soft">
-                {exam}
+          {/* LEFT */}
+          <div className="flex flex-col items-start gap-7">
+
+            {/* Free pill */}
+            <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
+              className="flex items-center gap-2.5 bg-green-500/15 border border-green-500/30 px-4 py-2 rounded-full">
+              <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+              <span className="text-xs font-black text-green-400 tracking-wide">🎉 100% Free right now — no credit card, no catch</span>
+            </motion.div>
+
+            {/* Headline */}
+            <motion.h1
+              initial={{ opacity: 0, y: 28 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.1 }}
+              className="text-5xl font-black leading-[1.05] tracking-tight sm:text-6xl md:text-6xl lg:text-[5rem] text-white">
+              You study hard.<br />
+              <span className="bg-gradient-to-r from-primary-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">
+                But still forget.
               </span>
-            ))}
-          </motion.div>
+            </motion.h1>
 
-          {/* CTA */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mt-2"
-          >
-            <Link 
-              href="/signup" 
-              onClick={() => track(EVENTS.AUTH_SIGNUP_CLICKED, { location: 'hero_section' })}
-              className="btn btn-primary group inline-flex items-center gap-3 text-base md:text-lg px-8 py-4 rounded-xl"
-            >
-              Get Started Free
-              <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
-            </Link>
-            <span className="text-sm text-gray-400 font-medium">
-              Free forever · Pro for ₹149 lifetime
-            </span>
-          </motion.div>
+            {/* Subline */}
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="max-w-lg text-lg md:text-xl font-medium text-white/50 leading-relaxed">
+              Krama tracks every minute you study, tells you what to revise before you forget it, and matches you with a study buddy — all free.
+            </motion.p>
 
-          {/* Social proof strip */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.8 }}
-            className="flex items-center gap-4 mt-4 pt-6 border-t border-gray-200/60"
-          >
-            <div className="flex items-center gap-2 text-sm text-gray-500">
-              <Users size={16} className="text-gray-400" />
-              <span className="font-semibold text-gray-700">500+</span>
-              <span>students joined</span>
-            </div>
-            <span className="w-px h-4 bg-gray-200" />
-            <div className="flex items-center gap-1.5 text-sm text-gray-500">
-              <span className="font-semibold text-gray-700">₹149</span>
-              <span>lifetime after trial</span>
-            </div>
-          </motion.div>
-        </div>
+            {/* 4 bullets */}
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.28 }}
+              className="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full">
+              {[
+                { icon: Timer, text: 'Focus timer — honest tracking' },
+                { icon: BookOpen, text: 'Spaced review — never forget' },
+                { icon: Target, text: 'AI MCQs from your own notes' },
+                { icon: Users, text: 'Study buddy — stay accountable' },
+              ].map((item, i) => (
+                <div key={i} className="flex items-center gap-2.5 bg-white/5 border border-white/10 rounded-xl px-3 py-2.5">
+                  <div className="w-6 h-6 bg-primary-500/20 rounded-lg flex items-center justify-center shrink-0">
+                    <item.icon size={13} className="text-primary-400" />
+                  </div>
+                  <span className="text-sm font-semibold text-white/70">{item.text}</span>
+                </div>
+              ))}
+            </motion.div>
 
-        {/* Right Column - Product Mockup */}
-        <div className="hidden md:flex justify-center md:justify-end">
-          <DashboardMockup />
+            {/* CTA */}
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.38 }}
+              className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+              <Link href="/signup"
+                onClick={() => track(EVENTS.AUTH_SIGNUP_CLICKED, { location: 'hero' })}
+                className="group relative inline-flex items-center gap-3 bg-primary-500 hover:bg-primary-400 text-white font-black text-base md:text-lg px-8 py-4 rounded-xl transition-all duration-200 shadow-[0_0_30px_rgba(91,143,249,0.4)] hover:shadow-[0_0_50px_rgba(91,143,249,0.6)] active:scale-[0.98]">
+                {/* Pulse ring */}
+                <span className="absolute inset-0 rounded-xl border-2 border-primary-400 animate-ping opacity-20" />
+                Join Free — Takes 30 Seconds
+                <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+              </Link>
+              <p className="text-sm text-white/30 font-semibold">
+                500 cap · <span className="text-red-400 font-black">spots filling fast</span>
+              </p>
+            </motion.div>
+
+            {/* Social proof */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.8, delay: 0.9 }}
+              className="flex flex-wrap items-center gap-5 pt-6 border-t border-white/10 w-full">
+              <div className="flex items-center gap-2 text-sm text-white/40">
+                <Users size={14} />
+                <span className="font-black text-white/70">
+                  <CountUp end={500} duration={2000} />+
+                </span>
+                <span>students in</span>
+              </div>
+              <div className="flex items-center gap-1.5 text-sm text-white/40">
+                <CheckCircle size={14} className="text-green-400" />
+                <span>No subscription ever</span>
+              </div>
+              <div className="flex items-center gap-1.5 text-sm text-white/40">
+                <CheckCircle size={14} className="text-green-400" />
+                <span>Built for Indian exams</span>
+              </div>
+            </motion.div>
+          </div>
+
+          {/* RIGHT — mockup */}
+          <div className="hidden md:flex justify-center md:justify-end pr-8">
+            <GlowingMockup />
+          </div>
         </div>
       </div>
+
+      {/* Exam ticker at bottom of hero */}
+      <div className="relative z-10 border-t border-white/5">
+        <Ticker />
+      </div>
+
+      {/* Keyframe for marquee — injected inline */}
+      <style>{`
+        @keyframes marquee {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+        .animate-marquee {
+          animation: marquee 25s linear infinite;
+        }
+      `}</style>
     </section>
   )
 }
