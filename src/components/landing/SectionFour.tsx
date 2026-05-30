@@ -14,7 +14,7 @@ const EXAMS = [
 ]
 
 function reveal(i: number) {
-  return { initial:{opacity:0,y:20}, whileInView:{opacity:1,y:0}, viewport:{once:true}, transition:{delay:i*0.08,duration:0.6,ease:[0.16,1,0.3,1]} }
+  return { initial:{opacity:0,y:20}, whileInView:{opacity:1,y:0}, viewport:{once:true}, transition:{delay:i*0.08,duration:0.6,ease:[0.16,1,0.3,1] as [number,number,number,number]} }
 }
 
 export default function SectionFour() {
