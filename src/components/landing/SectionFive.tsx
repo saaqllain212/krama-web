@@ -45,7 +45,7 @@ export default function SectionFive() {
             <span className="text-[10px] font-black text-white/20 uppercase tracking-widest">What Students Say</span>
           </div>
           <motion.h2 initial={{opacity:0,y:30}} whileInView={{opacity:1,y:0}} viewport={{once:true}}
-            transition={{duration:0.8,ease:[0.16,1,0.3,1]}}
+            transition={{duration:0.8,ease:[0.16,1,0.3,1] as [number,number,number,number]}}
             className="text-4xl md:text-6xl font-black text-white tracking-tight leading-tight max-w-2xl"
             style={{fontFamily:"'Playfair Display',Georgia,serif",fontStyle:'italic'}}>
             Unfiltered.<br/>In their own words.

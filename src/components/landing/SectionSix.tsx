@@ -41,7 +41,7 @@ export default function SectionSix() {
           </div>
 
           <motion.h2 initial={{opacity:0,y:30}} whileInView={{opacity:1,y:0}} viewport={{once:true}}
-            transition={{duration:0.8,ease:[0.16,1,0.3,1]}}
+            transition={{duration:0.8,ease:[0.16,1,0.3,1] as [number,number,number,number]}}
             className="text-4xl md:text-6xl font-black text-black mb-4 tracking-tight leading-tight"
             style={{fontFamily:"'Playfair Display',Georgia,serif",fontStyle:'italic'}}>
             Free now.<br/>Honest later.

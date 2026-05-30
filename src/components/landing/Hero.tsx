@@ -63,7 +63,7 @@ function MockupCard() {
   const days = ['M','T','W','T','F','S','S']
   return (
     <motion.div initial={{opacity:0,y:50,rotate:2}} animate={{opacity:1,y:0,rotate:2}}
-      transition={{duration:1,delay:0.6,ease:[0.16,1,0.3,1]}}
+      transition={{duration:1,delay:0.6,ease:[0.16,1,0.3,1] as [number,number,number,number]}}
       className="relative w-full max-w-[380px]">
       <div className="absolute -inset-8 bg-primary-500/15 rounded-[3rem] blur-3xl"/>
       <div className="absolute -inset-4 bg-purple-500/10 rounded-[2.5rem] blur-2xl"/>
@@ -171,7 +171,7 @@ export default function Hero() {
             </motion.div>
 
             {/* Headline — serif + sans contrast */}
-            <motion.h1 initial={{opacity:0,y:30}} animate={{opacity:1,y:0}} transition={{duration:0.8,delay:0.15,ease:[0.16,1,0.3,1]}}
+            <motion.h1 initial={{opacity:0,y:30}} animate={{opacity:1,y:0}} transition={{duration:0.8,delay:0.15,ease:[0.16,1,0.3,1] as [number,number,number,number]}}
               className="text-5xl font-black leading-[1.05] tracking-tight sm:text-6xl lg:text-[5.5rem]">
               <span className="block text-white italic" style={{fontFamily:"'Playfair Display', Georgia, serif", fontWeight:700}}>
                 You study hard.
